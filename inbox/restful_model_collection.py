@@ -26,7 +26,7 @@ class RestfulModelCollection(list):
             for item in items:
                 yield item
 
-            offset += items.length
+            offset += len(items)
 
     def first(self):
         return self._get_model_collection(0, 1)[0]
@@ -39,7 +39,7 @@ class RestfulModelCollection(list):
         collection.filters = filters
         return collection
 
-    def range(offset = 0, limit = CHUNK_SIZE):
+    def range(self, offset = 0, limit = CHUNK_SIZE):
         accumulated = []
         finished = False
         chunk_size = CHUNK_SIZE

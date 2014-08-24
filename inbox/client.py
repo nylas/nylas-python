@@ -30,8 +30,9 @@ class APIClient(json.JSONEncoder):
     @access_token.setter
     def access_token(self, value):
         self._access_token = value
-        self.session.headers.update({'Authorization': 'Basic ' +
-                                     b64encode(value + ':')})
+        if value:
+            self.session.headers.update({'Authorization': 'Basic ' +
+                                         b64encode(value + ':')})
 
     def set_api_server(self, api_server):
         self.api_server = api_server
