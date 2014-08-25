@@ -5,7 +5,9 @@ setup(
     version = "0.1",
     packages = find_packages(),
 
-    install_requires = [],
+    install_requires = [
+        "requests>=2.3.0",
+    ],
     dependency_links = [],
 
     package_data = {
@@ -18,7 +20,7 @@ setup(
     author = "Inbox Team",
     author_email = "admin@inboxapp.com",
     description = "The Inbox Client Library",
-    license = "AGPLv3",
+    license = "MIT",
     keywords = "inbox app appserver email",
     url = "https://www.inboxapp.com",
 )
