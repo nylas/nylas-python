@@ -116,6 +116,7 @@ class File(InboxAPIObject):
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, File, api, namespace)
 
+
 class Event(InboxAPIObject):
     attrs = ["id", "namespace", "subject", "body", "location", "read_only",
              "start", "end", "participants"]
@@ -123,6 +124,7 @@ class Event(InboxAPIObject):
 
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, Event, api, namespace)
+
 
 class Namespace(InboxAPIObject):
     attrs = ["account", "email_address", "id", "namespace", "object",
