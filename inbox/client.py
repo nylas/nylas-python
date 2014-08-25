@@ -49,7 +49,7 @@ class APIClient(json.JSONEncoder):
 
         return url_concat(self.authorize_url, args)
 
-    def auth_code_for_token(self, code):
+    def token_for_code(self, code):
         args = {'client_id': self.app_id,
                 'client_secret': self.app_secret,
                 'grant_type': 'authorization_code',
@@ -77,7 +77,6 @@ class APIClient(json.JSONEncoder):
 
         response = self.session.get(url)
         if response.status_code != 200:
-            print "failed url: ", url
             response.raise_for_status()
 
         results = response.json()

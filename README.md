@@ -62,7 +62,7 @@ def login_callback():
     # Exchange the authorization code for an access token
     client = APIClient(APP_ID, APP_SECRET)
     code = request.args.get('code')
-    session['access_token'] = client.auth_code_for_token(code)
+    session['access_token'] = client.token_for_code(code)
 ```
 
 You can take a look at [examples/server.py](examples/server.py) to see a server
