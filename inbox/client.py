@@ -102,7 +102,7 @@ class APIClient(json.JSONEncoder):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}/{}".format(self.api_server, prefix, cls.collection_name, id)
 
-        response = self.session.put(url, data=json.dumps(contents))
+        response = self.session.post(url, data=json.dumps(contents))
         if response.status_code != 200:
             response.raise_for_status()
 
@@ -121,7 +121,6 @@ class APIClient(json.JSONEncoder):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}/{}".format(self.api_server, prefix, cls.collection_name, id)
 
-        #response = self.session.post(url, data=json.dumps(data))
         response = self.session.put(url, data=json.dumps(data))
         if response.status_code != 200:
             response.raise_for_status()
