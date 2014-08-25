@@ -34,9 +34,9 @@ class RestfulModelCollection(list):
     def all(self):
         return self.range(0, maxint)
 
-    def where(filters):
+    def where(self, **kwargs):
         collection = deepcopy(self)
-        collection.filters = filters
+        collection.filters = kwargs
         return collection
 
     def range(self, offset = 0, limit = CHUNK_SIZE):
