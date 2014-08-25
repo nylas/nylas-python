@@ -32,10 +32,8 @@ from flask import Flask, url_for, session, request, redirect, Response
 
 from inbox.client import APIClient
 
-#APP_ID = 'YOUR_APP_ID'
-#APP_SECRET = 'YOUR_APP_SECRET'
-APP_ID = '6r7ncwns7a9wo2ex4lauvq4lg'
-APP_SECRET = '6x48foq1t4dcmv43crx7jizuc'
+APP_ID = 'YOUR_APP_ID'
+APP_SECRET = 'YOUR_APP_SECRET'
 
 app = Flask(__name__)
 app.debug = True
