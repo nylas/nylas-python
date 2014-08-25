@@ -1,5 +1,3 @@
-# Inbox Python bindings
-
 Python bindings for Inbox, the next-generation email platform.
 
 ## Installation
@@ -8,7 +6,7 @@ This library is available on pypi. You can install it by running `pip install in
 
 ##Requirements
 
-- requests 
+- requests (>= 2.3.0)
 
 ## Examples
 
@@ -66,6 +64,9 @@ def login_callback():
     code = request.args.get('code')
     session['access_token'] = client.auth_code_for_token(code)
 ```
+
+You can take a look at [examples/server.py](examples/server.py) to see a server
+implementing the auth flow.
 
 ### Fetching Namespaces
 
@@ -147,34 +148,10 @@ for file in namespace.files:
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where(to='ben@inboxapp.com`)
+messages = namespace.messages.where(to='ben@inboxapp.com').all()
 ```
 
 The `where` method accepts a hash of filters, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters). 
-
-### Creating and Sending Drafts
-
-```python
-# Create a new draft
-draft = namespace.new_draft(
-    {"to": [{"name": 'Ben Gotow', "email": 'ben@inboxapp.com'}],
-     "subject": 'Sent by Ruby',
-      "body": 'Hi there!<strong>This is HTML</strong>'
-    })
-
-# Modify attributes as necessary
-draft.cc = [{:name => 'Michael', :email => 'mg@inboxapp.com'}]
-
-# Add the file we uploaded as an attachment
-draft.attach(file)
-
-# Save the draft
-draft = draft.save()
-
-# Send the draft. This method returns immediately and queues the message
-# with Inbox for delivery through the user's SMTP gateway.
-draft.send()
-```
 
 ## Open-Source Sync Engine
 
