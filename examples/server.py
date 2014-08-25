@@ -32,8 +32,10 @@ from flask import Flask, url_for, session, request, redirect, Response
 
 from inbox.client import APIClient
 
-APP_ID = 'YOUR_APP_ID'
-APP_SECRET = 'YOUR_APP_SECRET'
+#APP_ID = 'YOUR_APP_ID'
+#APP_SECRET = 'YOUR_APP_SECRET'
+APP_ID = '6r7ncwns7a9wo2ex4lauvq4lg'
+APP_SECRET = '6x48foq1t4dcmv43crx7jizuc'
 
 app = Flask(__name__)
 app.debug = True
@@ -47,6 +49,7 @@ def index():
     # If we have an access_token, we may interact with the Inbox Server
     if 'access_token' in session:
         client = APIClient(APP_ID, APP_SECRET, session['access_token'])
+        import pdb ; pdb.set_trace()
         try:
             # Get the latest message from namespace zero.
             message = client.namespaces[0].messages.first()
