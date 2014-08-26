@@ -179,7 +179,7 @@ class File(InboxAPIObject):
 
 
 class Contact(InboxAPIObject):
-    attrs = ["id", "namespace", "name", "email_address"]
+    attrs = ["id", "namespace", "name", "email"]
     collection_name = 'contacts'
 
     def __init__(self, api, namespace):
@@ -229,3 +229,7 @@ class Namespace(InboxAPIObject):
     @property
     def contacts(self):
         return self.child_collection(Contact)
+
+    @property
+    def events(self):
+        return self.child_collection(Event)

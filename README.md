@@ -97,7 +97,7 @@ for thread in namespace.threads.items():
     print thread.subject
 
 # List the 5 most recent unread threads
-for thread in namespace.threads.where(tag='unread').items():
+for thread in namespace.threads.where({'tag':'unread'}).items():
     print thread.subject
 
 # List all threads with 'ben@inboxapp.com'
@@ -135,12 +135,47 @@ for message in thread.messages.items():
 
 ### Working with Files
 
+Files can be uploaded via two interfaces. One is providing data directly, another is by providing a stream (e.g. to an open file).
+
 ```python
 # List files
 for file in namespace.files:
     print file.filename
 
-# Create a new file - not yet implemented
+# Create a new file with the stream interface
+f = open('test.py', 'r')
+myfile = namespace.files.create()
+myfile.filename = 'test.py'
+myfile.stream = f
+myfile.save()
+f.close()
+
+# Create a new file with the data interface
+myfile2 = ns.files.create()
+myfile2.filename = 'test.txt'
+myfile2.data = "Hello World."
+myfile2.save()
+```
+
+Once the files have been created, they can be added to a draft via the `attach()` function.
+
+### Working with Drafts
+
+Drafts can be created, saved and then sent. The following example will create a draft, attach a file to it and then send it.
+
+```python
+# Create the attachment
+myfile = namespace.files.create()
+myfile.filename = 'test.txt'
+myfile.data = "hello world"
+
+# Create a new draft
+draft = namespace.drafts.create()
+draft.to = [{'name': 'My Friend', 'email': 'my.friend@example.com'}]
+draft.subject = "Here's an attachment"
+draft.body = "Cheers mate!"
+draft.attach(myfile)
+draft.send()
 ```
 
 ### Working with Messages, Contacts, etc.
@@ -148,7 +183,7 @@ for file in namespace.files:
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where(to='ben@inboxapp.com').all()
+messages = namespace.messages.where({'to':'ben@inboxapp.com'}).all()
 ```
 
 The `where` method accepts a hash of filters, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters). 

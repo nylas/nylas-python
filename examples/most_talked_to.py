@@ -3,13 +3,10 @@
 from operator import itemgetter
 from inbox import APIClient
 
-APP_ID = 'a1xtxfwqk6feg9gcr2ixevvku'
-APP_SECRET = 'bd1pzi5pvkkb7xrk8n2870txr'
-ACCESS_TOKEN = 'PjHcduuK03mYGBLwZTADV3IQDFES5f'
-
-ACCESS_TOKEN = 'io4b2p6t3ndozs5b1hyf7TbJopgB7B'
-ACCESS_TOKEN = 'I2kR65MmTEnAAiZ30bFqW5rEvK3Ybg'
-client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
+APP_ID = '[YOUR_APP_ID]'
+APP_SECRET = '[YOUR_APP_SECRET]'
+ACCESS_TOKEN = '[YOUR_ACCESS_TOKEN]'
+inbox = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 
 counts = {}
 

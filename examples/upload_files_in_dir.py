@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import time
 from inbox import APIClient
 from inbox.util import generate_id
@@ -12,30 +13,25 @@ inbox = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 ns = inbox.namespaces[0]
 
 subject = generate_id()
-
-f = open('test.py', 'r')
-data = f.read()
-f.close()
-
-myfile = ns.files.create()
-myfile.filename = 'test.py'
-myfile.data = data
-
 # Create a new draft
 draft = ns.drafts.create()
-draft.to = [{'name': 'Charles Gruenwald', 'email': 'inboxtestempty@gmail.com'}]
+draft.to = [{'name': 'Inbox PythonSDK', 'email': 'inboxtestempty@gmail.com'}]
 draft.subject = subject
 draft.body = ""
-draft.attach(myfile)
+
+for filename in filter(lambda x: not os.path.isdir(x), os.listdir(".")):
+    f = open(filename, 'r')
+    attachment = ns.files.create()
+    attachment.filename = filename
+    attachment.stream = f
+    attachment.save()
+    draft.attach(attachment)
+
 draft.send()
 
-x = 0
 th = ns.threads.where({'tag': 'sent', 'subject': subject}).first()
 while not th:
     time.sleep(0.5)
-    x += 1
     th = ns.threads.where({'tag': 'sent', 'subject': subject}).first()
 
-m = th.messages[0]
-
-print m.attachments[0].download()
+print th.messages[0].attachments[0].download()
