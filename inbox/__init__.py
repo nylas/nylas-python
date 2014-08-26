@@ -1,3 +1,3 @@
-from client import APIClient
+from .client import APIClient
 
 __all__ = ['APIClient']

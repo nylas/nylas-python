@@ -7,6 +7,7 @@ setup(
 
     install_requires = [
         "requests>=2.3.0",
+        "six>=1.4.1",
     ],
     dependency_links = [],
 

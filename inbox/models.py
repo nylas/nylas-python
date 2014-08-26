@@ -1,4 +1,4 @@
-from restful_model_collection import RestfulModelCollection
+from .restful_model_collection import RestfulModelCollection
 
 
 class InboxAPIObject(dict):

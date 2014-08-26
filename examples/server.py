@@ -51,8 +51,8 @@ def index():
         try:
             # Get the latest message from namespace zero.
             message = client.namespaces[0].messages.first()
-        except Exception, e:
-            print e.message
+        except Exception as e:
+            print(e.message)
 
         # Format the output
         text = "<html><h1>Here's a message from your Inbox:</h1><b>From:</b> "

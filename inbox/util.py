@@ -1,4 +1,5 @@
-from urllib import urlencode
+import six
+from six.moves.urllib.parse import urlencode
 from uuid import uuid4
 from struct import unpack
 

@@ -1,11 +1,12 @@
 import requests
+import six
 import json
 from base64 import b64encode
 from collections import namedtuple
-from urllib import urlencode
-from util import url_concat, generate_id
-from restful_model_collection import RestfulModelCollection
-from models import Namespace
+from six.moves.urllib.parse import urlencode
+from .util import url_concat, generate_id
+from .restful_model_collection import RestfulModelCollection
+from .models import Namespace
 
 API_SERVER = "https://api.inboxapp.com"
 

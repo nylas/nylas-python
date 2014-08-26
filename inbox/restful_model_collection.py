@@ -1,4 +1,3 @@
-from sys import maxint
 from copy import deepcopy
 
 CHUNK_SIZE = 50
@@ -32,6 +31,7 @@ class RestfulModelCollection(list):
         return self._get_model_collection(0, 1)[0]
 
     def all(self):
+        maxint = 2**64-1    # XXX
         return self.range(0, maxint)
 
     def where(self, **kwargs):
