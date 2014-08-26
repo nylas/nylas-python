@@ -112,6 +112,12 @@ class Thread(InboxAPIObject):
     def unstar(self):
         self.update_tags([], ['starred'])
 
+    def create_reply(self):
+        d = self.drafts.create()
+        d.reply_to_thread = self.id
+        d.subject = self.subject
+        return d
+
 
 # This is a dummy class that allows us to use the create_resource function
 # and pass in a 'Send' object that will translate into a 'send' endpoint.
@@ -123,10 +129,10 @@ class Send(Message):
 
 
 class Draft(Message):
-    attrs = Message.attrs + ["state", "reply_to_thread"]
+    attrs = Message.attrs + ["state", "reply_to_thread", "version"]
     collection_name = 'drafts'
 
-    def __init__(self, api, namespace):
+    def __init__(self, api, namespace, reply_to_thread=None):
         Message.__init__(self, api, namespace)
         InboxAPIObject.__init__(self, Thread, api, namespace)
         # We should probably move to using 'file_ids' instead of 'files'
@@ -144,7 +150,11 @@ class Draft(Message):
         if not self.id:
             self.save()
 
-        self.api._create_resource(self.namespace, Send, {'draft_id': self.id})
+        d_params = {'draft_id': self.id, 'version': self.version}
+        if hasattr(self, 'reply_to_thread'):
+            d_params['reply_to_thread'] = self.reply_to_thread
+
+        self.api._create_resource(self.namespace, Send, d_params)
 
 
 class File(InboxAPIObject):
