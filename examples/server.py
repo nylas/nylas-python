@@ -40,14 +40,14 @@ app.debug = True
 app.secret_key = 'secret'
 
 assert APP_ID != 'YOUR_APP_ID' or APP_SECRET != 'YOUR_APP_SECRET',\
-       "You should change the value of APP_ID and APP_SECRET"
+    "You should change the value of APP_ID and APP_SECRET"
+
 
 @app.route('/')
 def index():
     # If we have an access_token, we may interact with the Inbox Server
     if 'access_token' in session:
         client = APIClient(APP_ID, APP_SECRET, session['access_token'])
-        import pdb ; pdb.set_trace()
         try:
             # Get the latest message from namespace zero.
             message = client.namespaces[0].messages.first()

@@ -4,7 +4,7 @@ CHUNK_SIZE = 50
 
 
 class RestfulModelCollection(list):
-    def __init__(self, cls, api, namespace, filters = {}):
+    def __init__(self, cls, api, namespace, filters={}):
         from inbox import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
@@ -42,14 +42,13 @@ class RestfulModelCollection(list):
         collection.filters = filters
         return collection
 
-    def range(self, offset = 0, limit = CHUNK_SIZE):
+    def range(self, offset=0, limit=CHUNK_SIZE):
         accumulated = []
-        finished = False
         chunk_size = CHUNK_SIZE
 
         while len(accumulated) < limit:
             results = self._get_model_collection(offset + len(accumulated),
-                                                chunk_size)
+                                                 chunk_size)
             accumulated.extend(results)
 
             # done if more than 'limit' items, less than asked for
@@ -74,14 +73,14 @@ class RestfulModelCollection(list):
 
     # Private functions
 
-    def _get_model_collection(self, offset = 0, limit = CHUNK_SIZE):
+    def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
         filters = deepcopy(self.filters)
         filters['offset'] = offset
         filters['limit'] = limit
 
         return self.api._get_resources(self.namespace, self.model_class,
-                                      filters)
+                                       filters)
 
     def _get_model(self, id):
         return self.api._get_resource(self.namespace, self.model_class, id,
-                                      filters)
+                                      self.filters)

@@ -3,6 +3,7 @@ from six.moves.urllib.parse import urlencode
 from uuid import uuid4
 from struct import unpack
 
+
 # From tornado.httputil
 def url_concat(url, args, fragments=None):
     """Concatenate url and argument dictionary regardless of whether
@@ -30,6 +31,7 @@ def url_concat(url, args, fragments=None):
         args_tail += urlencode(args)
 
     return url + args_tail + fragment_tail
+
 
 def generate_id():
     a, b = unpack('>QQ', uuid4().bytes)

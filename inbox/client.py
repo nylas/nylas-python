@@ -2,7 +2,6 @@ import requests
 import six
 import json
 from base64 import b64encode
-from collections import namedtuple
 from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
@@ -14,9 +13,11 @@ API_SERVER = "https://api.inboxapp.com"
 class APIClient(json.JSONEncoder):
     """API client for the Inbox API."""
 
-    def __init__(self, app_id, app_secret, access_token=None, api_server=API_SERVER):
+    def __init__(self, app_id, app_secret, access_token=None,
+                 api_server=API_SERVER):
         if "://" not in api_server:
-            raise Exception("When overriding the Inbox API server address, you must include https://")
+            raise Exception("When overriding the Inbox API server address, you"
+                            " must include https://")
         self.set_api_server(api_server)
         self.session = requests.Session()
         self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
@@ -69,7 +70,7 @@ class APIClient(json.JSONEncoder):
     def namespaces(self):
         return RestfulModelCollection(Namespace, self, None)
 
-    def _get_resources(self, namespace, cls, filters = {}):
+    def _get_resources(self, namespace, cls, filters={}):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
 
@@ -83,11 +84,12 @@ class APIClient(json.JSONEncoder):
         results = response.json()
         return map(lambda x: cls.from_dict(self, namespace, x), results)
 
-    def _get_resource_raw(self, namespace, cls, id, filters = {}, extra = ''):
+    def _get_resource_raw(self, namespace, cls, id, filters={}, extra=''):
         """Get an individual REST resource"""
         prefix = "/n/{}".format(namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
-        url = "{}{}/{}/{}{}".format(self.api_server, prefix, cls.collection_name, id, postfix)
+        url = "{}{}/{}/{}{}".format(self.api_server, prefix,
+                                    cls.collection_name, id, postfix)
 
         if filters:
             url = url_concat(url, filters)
@@ -98,13 +100,12 @@ class APIClient(json.JSONEncoder):
 
         return response
 
-    def _get_resource(self, namespace, cls, id, filters = {}, extra = ''):
+    def _get_resource(self, namespace, cls, id, filters={}, extra=''):
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
         result = response.json()
         return cls.from_dict(self, namespace, result)
 
-
-    def _get_resource_data(self, namespace, cls, id, filters = {}, extra = ''):
+    def _get_resource_data(self, namespace, cls, id, filters={}, extra=''):
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
         return response.content
 
@@ -115,9 +116,10 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            hdrs = {'content_type': 'json'}
-            hdrs.update(self.session.headers)
-            response = self.session.post(url, data=json.dumps(data), headers=hdrs)
+            headers = {'content_type': 'json'}
+            headers.update(self.session.headers)
+            response = self.session.post(url, data=json.dumps(data),
+                                         headers=headers)
 
         if response.status_code != 200:
             print "failing url: ", url
@@ -134,9 +136,10 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            hdrs = {'content_type': 'json'}
-            hdrs.update(self.session.headers)
-            response = self.session.post(url, data=json.dumps(data), headers=hdrs)
+            headers = {'content_type': 'json'}
+            headers.update(self.session.headers)
+            response = self.session.post(url, data=json.dumps(data),
+                                         headers=headers)
 
         if response.status_code != 200:
             print "failing url: ", url
@@ -148,7 +151,8 @@ class APIClient(json.JSONEncoder):
 
     def _delete_resource(self, namespace, cls, id):
         prefix = "/n/{}".format(namespace) if namespace else ''
-        url = "{}{}/{}/{}".format(self.api_server, prefix, cls.collection_name, id)
+        name = cls.collection_name
+        url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
 
         response = self.session.delete(url)
         if response.status_code != 200:
@@ -156,7 +160,8 @@ class APIClient(json.JSONEncoder):
 
     def _update_resource(self, namespace, cls, id, data):
         prefix = "/n/{}".format(namespace) if namespace else ''
-        url = "{}{}/{}/{}".format(self.api_server, prefix, cls.collection_name, id)
+        name = cls.collection_name
+        url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
 
         response = self.session.put(url, data=json.dumps(data))
         if response.status_code != 200:
