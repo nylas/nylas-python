@@ -1,11 +1,12 @@
 from .restful_model_collection import RestfulModelCollection
+from cStringIO import StringIO
 
 
 class InboxAPIObject(dict):
     attrs = []
 
     def __init__(self, cls, api, namespace):
-        self.dct = {'id': None}
+        self.id = None
         self.cls = cls
         self.api = api
         self.namespace = namespace
@@ -21,13 +22,16 @@ class InboxAPIObject(dict):
         for attr in cls.attrs:
             if attr in dct:
                 obj[attr] = dct[attr]
+        if 'id' not in dct:
+            obj['id'] = None
 
         return obj
 
     def as_json(self):
         dct = {}
-        for attr in cls.attrs:
-            dct[attr] = getattr(self, attr)
+        for attr in self.cls.attrs:
+            if hasattr(self, attr):
+                dct[attr] = getattr(self, attr)
         return dct
 
     def child_collection(self, cls, filters = {}):
@@ -37,7 +41,10 @@ class InboxAPIObject(dict):
         if self.id:
             self.api._update_resource(self.namespace, self.cls, self.id, self.as_json())
         else:
-            self.api._create_resource(self.namespace, self.cls, self.id, self.as_json())
+            new_obj = self.api._create_resource(self.namespace, self.cls, self.as_json())
+            for attr in self.cls.attrs:
+                if hasattr(new_obj, attr):
+                    setattr(self, attr, getattr(new_obj, attr))
 
     def update(self):
         self.api._update_resource(self.namespace, self.cls, self.id, self.as_json())
@@ -50,6 +57,10 @@ class Message(InboxAPIObject):
 
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, Message, api, namespace)
+
+    @property
+    def attachments(self):
+        return self.child_collection(File, {'message': self.id})
 
 
 class Tag(InboxAPIObject):
@@ -99,6 +110,15 @@ class Thread(InboxAPIObject):
       self.update_tags([], ['starred'])
 
 
+# This is a dummy class that allows us to use the create_resource function
+# and pass in a 'Send' object that will translate into a 'send' endpoint.
+class Send(Message):
+    collection_name='send'
+
+    def __init__(self, api, namespace):
+        InboxAPIObject.__init__(self, Send, api, namespace)
+
+
 class Draft(Message):
     attrs = Message.attrs + ["state", "reply_to_thread"]
     collection_name = 'drafts'
@@ -106,12 +126,48 @@ class Draft(Message):
     def __init__(self, api, namespace):
         Message.__init__(self, api, namespace)
         InboxAPIObject.__init__(self, Thread, api, namespace)
+        #self.file_ids = []
+        self.files = []
+
+    def attach(self, file):
+        if not file.id:
+            file.save()
+
+        self.files.append(file.id)
+
+    def send(self):
+        #self.files = self.file_ids
+        if not self.id:
+            self.save()
+
+        self.api._create_resource(self.namespace, Send, {'draft_id': self.id})
 
 
 class File(InboxAPIObject):
     attrs = ["content_type", "filename", "id", "is_embedded", "message",
              "namespace", "object", "size"]
     collection_name = 'files'
+
+    def save(self):
+        if hasattr(self, 'stream'):
+            data = {self.filename: self.stream}
+        elif hasattr(self, 'data'):
+            data = {self.filename: StringIO(self.data)}
+        else:
+            raise Exception("File object not properly formatted, must provide"
+                    " either a stream or data.")
+
+        new_obj = self.api._create_resources(self.namespace, File, data)
+        new_obj = new_obj[0]
+        for attr in self.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
+
+    def download(self):
+        if not self.id:
+            raise Exception("Can't download a file that hasn't been uploaded.")
+
+        return self.api._get_resource_data(self.namespace, File, self.id, extra = 'download')
 
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, File, api, namespace)
