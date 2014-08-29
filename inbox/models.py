@@ -150,9 +150,11 @@ class Draft(Message):
         if not self.id:
             self.save()
 
-        d_params = {'draft_id': self.id, 'version': self.version}
+        d_params = {'draft_id': self.id}
         if hasattr(self, 'reply_to_thread'):
             d_params['reply_to_thread'] = self.reply_to_thread
+        if hasattr(self, 'version'):
+            d_params['version'] = self.version
 
         self.api._create_resource(self.namespace, Send, d_params)
 
