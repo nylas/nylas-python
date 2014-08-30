@@ -94,6 +94,12 @@ class Thread(InboxAPIObject):
         update = {'add_tags': tags_to_add, 'remove_tags': tags_to_remove}
         self.api._update_resource(self.namespace, self.cls, self.id, update)
 
+    def remove_tags(self, tags):
+        self.update_tags([], tags)
+
+    def add_tags(self, tags):
+        self.update_tags(tags, [])
+
     def mark_as_read(self):
         self.update_tags([], ['unread'])
 
