@@ -1,3 +1,4 @@
+from os import environ
 import requests
 import six
 import json
@@ -6,6 +7,7 @@ from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .models import Namespace, File
+from .errors import ConnectionError, NotAuthorizedError, APIError
 
 API_SERVER = "https://api.inboxapp.com"
 
@@ -13,7 +15,9 @@ API_SERVER = "https://api.inboxapp.com"
 class APIClient(json.JSONEncoder):
     """API client for the Inbox API."""
 
-    def __init__(self, app_id, app_secret, access_token=None,
+    def __init__(self, app_id=environ.get('INBOX_APP_ID'),
+                 app_secret=environ.get('INBOX_APP_SECRET'),
+                 access_token=environ.get('INBOX_ACCESS_TOKEN'),
                  api_server=API_SERVER):
         if "://" not in api_server:
             raise Exception("When overriding the Inbox API server address, you"
