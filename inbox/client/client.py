@@ -7,9 +7,54 @@ from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .models import Namespace, File
-from .errors import ConnectionError, NotAuthorizedError, APIError
+from .errors import (APIClientError, ConnectionError, NotAuthorizedError, APIError,
+                     NotFoundError, ConflictError)
+from requests.exceptions import ConnectionError as RequestsConnectionError
 
 API_SERVER = "https://api.inboxapp.com"
+
+def _validate(response):
+    status_code_to_exc = {400: APIError, 404: NotFoundError, 409: ConflictError}
+    request = response.request
+    url = request.url
+    status_code = response.status_code
+    data = request.body
+
+    try:
+        data = json.loads(data) if data else None
+    except (ValueError, TypeError):
+        pass
+
+    if status_code == 200:
+        return response
+    elif status_code == 401:
+        raise NotAuthorizedError(url=url, status_code=status_code, data=data)
+    elif status_code in [400, 404, 409]:
+        cls = status_code_to_exc[status_code]
+        try:
+            response = json.loads(response.text)
+            if 'message' in response:
+                raise cls(url=url, status_code=status_code,
+                          data=data, message=response['message'])
+            else:
+                raise cls(url=url, status_code=status_code,
+                          data=data, message="N/A")
+        except (ValueError, TypeError):
+            raise cls(url=url, status_code=status_code,
+                      data=data, message="Malformed")
+    else:
+        raise APIClientError(url=url, status_code=status_code,
+                             data=data, message="Uknown status code.")
+
+
+def inbox_excepted(f):
+    def caught(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except RequestsConnectionError as e:
+            server = args[0].api_server
+            raise ConnectionError(url=server)
+    return caught
 
 
 class APIClient(json.JSONEncoder):
@@ -74,35 +119,25 @@ class APIClient(json.JSONEncoder):
     def namespaces(self):
         return RestfulModelCollection(Namespace, self, None)
 
+    @inbox_excepted
     def _get_resources(self, namespace, cls, filters={}):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
+        url = url_concat(url, filters)
 
-        if filters:
-            url = url_concat(url, filters)
-
-        response = self.session.get(url)
-        if response.status_code != 200:
-            response.raise_for_status()
-
-        results = response.json()
+        results = _validate(self.session.get(url)).json()
         return map(lambda x: cls.from_dict(self, namespace, x), results)
 
+    @inbox_excepted
     def _get_resource_raw(self, namespace, cls, id, filters={}, extra=''):
         """Get an individual REST resource"""
         prefix = "/n/{}".format(namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
         url = "{}{}/{}/{}{}".format(self.api_server, prefix,
                                     cls.collection_name, id, postfix)
+        url = url_concat(url, filters)
 
-        if filters:
-            url = url_concat(url, filters)
-
-        response = self.session.get(url)
-        if response.status_code != 200:
-            response.raise_for_status()
-
-        return response
+        return _validate(self.session.get(url))
 
     def _get_resource(self, namespace, cls, id, filters={}, extra=''):
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
@@ -113,6 +148,7 @@ class APIClient(json.JSONEncoder):
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
         return response.content
 
+    @inbox_excepted
     def _create_resource(self, namespace, cls, data):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
@@ -120,19 +156,14 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            headers = {'content_type': 'json'}
-            headers.update(self.session.headers)
-            response = self.session.post(url, data=json.dumps(data),
-                                         headers=headers)
+            data=json.dumps(data)
+            headers = {'content_type': 'json'}.update(self.session.headers)
+            response = self.session.post(url, data=data, headers=headers)
 
-        if response.status_code != 200:
-            print "failing url: ", url
-            print "Error: ", response.text
-            response.raise_for_status()
-
-        result = response.json()
+        result = _validate(response).json()
         return cls.from_dict(self, namespace, result)
 
+    @inbox_excepted
     def _create_resources(self, namespace, cls, data):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
@@ -140,36 +171,27 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            headers = {'content_type': 'json'}
-            headers.update(self.session.headers)
-            response = self.session.post(url, data=json.dumps(data),
-                                         headers=headers)
+            data=json.dumps(data)
+            headers = {'content_type': 'json'}.update(self.session.headers)
+            response = self.session.post(url, data=data, headers=headrs)
 
-        if response.status_code != 200:
-            print "failing url: ", url
-            print "Error: ", response.text
-            response.raise_for_status()
-
-        results = response.json()
+        results = _validate(response).json()
         return map(lambda x: cls.from_dict(self, namespace, x), results)
 
+    @inbox_excepted
     def _delete_resource(self, namespace, cls, id):
         prefix = "/n/{}".format(namespace) if namespace else ''
         name = cls.collection_name
         url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
+        _validate(self.session.delete(url))
 
-        response = self.session.delete(url)
-        if response.status_code != 200:
-            response.raise_for_status()
-
+    @inbox_excepted
     def _update_resource(self, namespace, cls, id, data):
         prefix = "/n/{}".format(namespace) if namespace else ''
         name = cls.collection_name
         url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
 
         response = self.session.put(url, data=json.dumps(data))
-        if response.status_code != 200:
-            response.raise_for_status()
 
-        result = response.json()
+        result = _validate(response).json()
         return cls.from_dict(self, namespace, result)

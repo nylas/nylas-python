@@ -20,14 +20,16 @@ def create_todo_tag():
     except:
         pass
 
+
 @app.before_request
 def login():
-    if 'access_token' not in session:
-        redirect_uri = url_for('.login_callback', _external=True)
-        client = APIClient(APP_ID, APP_SECRET)
-        return redirect(client.authentication_url(redirect_uri))
-    else:
-        create_todo_tag()
+    if request.endpoint != 'login_callback':
+        if 'access_token' not in session:
+            redirect_uri = url_for('.login_callback', _external=True)
+            client = APIClient(APP_ID, APP_SECRET)
+            return redirect(client.authentication_url(redirect_uri))
+        else:
+            create_todo_tag()
 
 @app.route('/')
 def index():
