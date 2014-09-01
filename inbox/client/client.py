@@ -1,22 +1,22 @@
 from os import environ
 import requests
-import six
 import json
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File
-from .errors import (APIClientError, ConnectionError, NotAuthorizedError, APIError,
-                     NotFoundError, ConflictError)
+from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
+                     APIError, NotFoundError, ConflictError)
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
-DEBUG=environ.get('INBOX_CLIENT_DEBUG')
+DEBUG = environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.inboxapp.com"
 
 
 def _validate(response):
-    status_code_to_exc = {400: APIError, 404: NotFoundError, 409: ConflictError}
+    status_code_to_exc = {400: APIError, 404: NotFoundError,
+                          409: ConflictError}
     request = response.request
     url = request.url
     status_code = response.status_code
@@ -57,7 +57,7 @@ def inbox_excepted(f):
     def caught(*args, **kwargs):
         try:
             return f(*args, **kwargs)
-        except RequestsConnectionError as e:
+        except RequestsConnectionError:
             server = args[0].api_server
             raise ConnectionError(url=server)
     return caught
@@ -125,6 +125,18 @@ class APIClient(json.JSONEncoder):
     def namespaces(self):
         return RestfulModelCollection(Namespace, self, None)
 
+    def __getattr__(self, attr):
+        """ Use the default namespaces for all of the known collections"""
+        import restful_models
+        for mn in dir(restful_models):
+            cn = getattr(getattr(restful_models, mn), 'collection_name', '')
+            if cn == attr:
+                return getattr(self.namespaces[0], attr)
+
+    ##########################################################
+    #   Private functions used by Restful Model Collection   #
+    ##########################################################
+
     @inbox_excepted
     def _get_resources(self, namespace, cls, **filters):
         prefix = "/n/{}".format(namespace) if namespace else ''
@@ -164,7 +176,7 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            data=json.dumps(data)
+            data = json.dumps(data)
             headers = {'content_type': 'json'}.update(self.session.headers)
             response = self.session.post(url, data=data, headers=headers)
 
@@ -179,9 +191,9 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = self.session.post(url, files=data)
         else:
-            data=json.dumps(data)
+            data = json.dumps(data)
             headers = {'content_type': 'json'}.update(self.session.headers)
-            response = self.session.post(url, data=data, headers=headrs)
+            response = self.session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
         return map(lambda x: cls.create(self, namespace, **x), results)
