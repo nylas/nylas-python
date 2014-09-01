@@ -6,12 +6,14 @@ from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
-from .models import Namespace, File
+from .restful_models import Namespace, File
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError, APIError,
                      NotFoundError, ConflictError)
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
+DEBUG=environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.inboxapp.com"
+
 
 def _validate(response):
     status_code_to_exc = {400: APIError, 404: NotFoundError, 409: ConflictError}
@@ -19,6 +21,10 @@ def _validate(response):
     url = request.url
     status_code = response.status_code
     data = request.body
+
+    if DEBUG:
+        print "{} {} ({}) => {}: {}".format(request.method, url, data,
+                                            status_code, response.text)
 
     try:
         data = json.loads(data) if data else None
@@ -120,17 +126,18 @@ class APIClient(json.JSONEncoder):
         return RestfulModelCollection(Namespace, self, None)
 
     @inbox_excepted
-    def _get_resources(self, namespace, cls, filters={}):
+    def _get_resources(self, namespace, cls, **filters):
         prefix = "/n/{}".format(namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
         url = url_concat(url, filters)
 
         results = _validate(self.session.get(url)).json()
-        return map(lambda x: cls.from_dict(self, namespace, x), results)
+        return map(lambda x: cls.create(self, namespace, **x), results)
 
     @inbox_excepted
-    def _get_resource_raw(self, namespace, cls, id, filters={}, extra=''):
+    def _get_resource_raw(self, namespace, cls, id, **filters):
         """Get an individual REST resource"""
+        extra = filters.pop('extra', None)
         prefix = "/n/{}".format(namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
         url = "{}{}/{}/{}{}".format(self.api_server, prefix,
@@ -139,10 +146,11 @@ class APIClient(json.JSONEncoder):
 
         return _validate(self.session.get(url))
 
-    def _get_resource(self, namespace, cls, id, filters={}, extra=''):
+    def _get_resource(self, namespace, cls, id, **filters):
+        extra = filters.pop('extra', None)
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
         result = response.json()
-        return cls.from_dict(self, namespace, result)
+        return cls.create(self, namespace, **result)
 
     def _get_resource_data(self, namespace, cls, id, filters={}, extra=''):
         response = self._get_resource_raw(namespace, cls, id, filters, extra)
@@ -161,7 +169,7 @@ class APIClient(json.JSONEncoder):
             response = self.session.post(url, data=data, headers=headers)
 
         result = _validate(response).json()
-        return cls.from_dict(self, namespace, result)
+        return cls.create(self, namespace, **result)
 
     @inbox_excepted
     def _create_resources(self, namespace, cls, data):
@@ -176,7 +184,7 @@ class APIClient(json.JSONEncoder):
             response = self.session.post(url, data=data, headers=headrs)
 
         results = _validate(response).json()
-        return map(lambda x: cls.from_dict(self, namespace, x), results)
+        return map(lambda x: cls.create(self, namespace, **x), results)
 
     @inbox_excepted
     def _delete_resource(self, namespace, cls, id):
@@ -194,4 +202,4 @@ class APIClient(json.JSONEncoder):
         response = self.session.put(url, data=json.dumps(data))
 
         result = _validate(response).json()
-        return cls.from_dict(self, namespace, result)
+        return cls.create(self, namespace, **result)

@@ -16,13 +16,13 @@ class InboxAPIObject(dict):
     __delattr__ = dict.__delitem__
 
     @classmethod
-    def from_dict(cls, api, namespace, dct):
-        obj = cls(api, namespace)
+    def create(cls, api, namespace_, **kwargs):
+        obj = cls(api, namespace_)
         obj.cls = cls
         for attr in cls.attrs:
-            if attr in dct:
-                obj[attr] = dct[attr]
-        if 'id' not in dct:
+            if attr in kwargs:
+                obj[attr] = kwargs[attr]
+        if 'id' not in kwargs:
             obj['id'] = None
 
         return obj
@@ -34,8 +34,8 @@ class InboxAPIObject(dict):
                 dct[attr] = getattr(self, attr)
         return dct
 
-    def child_collection(self, cls, filters={}):
-        return RestfulModelCollection(cls, self.api, self.namespace, filters)
+    def child_collection(self, cls, **filters):
+        return RestfulModelCollection(cls, self.api, self.namespace, **filters)
 
     def save(self):
         if self.id:
@@ -63,11 +63,14 @@ class Message(InboxAPIObject):
 
     @property
     def attachments(self):
-        return self.child_collection(File, {'message': self.id})
+        return self.child_collection(File, message=self.id)
 
 
 class Tag(InboxAPIObject):
-    attrs = ["id", "name", "namespace", "object"]
+    # TODO: tags actually do have a namespace and id, but there is a bug on prod
+    # that won't let this pass for now. Put the 'namespace' and 'id' back in later.
+    #attrs = ["id", "name", "namespace", "object"]
+    attrs = ["name", "object"]
     collection_name = 'tags'
 
     def __init__(self, api, namespace):
@@ -84,27 +87,27 @@ class Thread(InboxAPIObject):
 
     @property
     def messages(self):
-        return self.child_collection(Message, {'thread': self.id})
+        return self.child_collection(Message, thread=self.id)
 
     @property
     def drafts(self):
-        return self.child_collection(Draft, {'thread': self.id})
+        return self.child_collection(Draft, thread=self.id)
 
-    def update_tags(self, tags_to_add=[], tags_to_remove=[]):
-        update = {'add_tags': tags_to_add, 'remove_tags': tags_to_remove}
+    def update_tags(self, add=[], remove=[]):
+        update = {'add_tags': add, 'remove_tags': remove}
         self.api._update_resource(self.namespace, self.cls, self.id, update)
 
     def remove_tags(self, tags):
-        self.update_tags([], tags)
+        self.update_tags(remove=tags)
 
     def add_tags(self, tags):
-        self.update_tags(tags, [])
+        self.update_tags(add=tags)
 
     def mark_as_read(self):
-        self.update_tags([], ['unread'])
+        self.remove_tags(['unread'])
 
     def mark_as_seen(self):
-        self.update_tags([], ['unseen'])
+        self.remove_tags(['unseen'])
 
     def archive(self):
         self.update_tags(['archive'], ['inbox'])
@@ -113,10 +116,10 @@ class Thread(InboxAPIObject):
         self.update_tags(['inbox'], ['archive'])
 
     def star(self):
-        self.update_tags(['starred'], [''])
+        self.add_tags(['starred'])
 
     def unstar(self):
-        self.update_tags([], ['starred'])
+        self.remove_tags(['starred'])
 
     def create_reply(self):
         d = self.drafts.create()
@@ -221,8 +224,8 @@ class Namespace(InboxAPIObject):
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, Namespace, api, namespace)
 
-    def child_collection(self, cls, filters={}):
-        return RestfulModelCollection(cls, self.api, self.id, filters)
+    def child_collection(self, cls, **filters):
+        return RestfulModelCollection(cls, self.api, self.id, **filters)
 
     @property
     def threads(self):

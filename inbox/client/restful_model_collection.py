@@ -4,7 +4,8 @@ CHUNK_SIZE = 50
 
 
 class RestfulModelCollection(list):
-    def __init__(self, cls, api, namespace, filters={}):
+    def __init__(self, cls, api, namespace, filter={}, **filters):
+        filters.update(filter)
         from inbox import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
@@ -37,7 +38,8 @@ class RestfulModelCollection(list):
         maxint = 2**64-1    # XXX
         return self.range(0, maxint)
 
-    def where(self, filters):
+    def where(self, filter={}, **filters):
+        filters.update(filter)
         collection = deepcopy(self)
         collection.filters = filters
         return collection
@@ -60,13 +62,13 @@ class RestfulModelCollection(list):
     def find(self, id):
         return self._get_model(id)
 
-    def build(self, args):
-        return self.model_class.from_dict(self.api,
-                                          self.namespace,
-                                          args)
+    def build(self, **args):
+        return self.model_class.create(self.api,
+                                       self.namespace,
+                                       **args)
 
     def create(self):
-        return self.build({})
+        return self.build()
 
     def __getitem__(self, offset):
         return self._get_model_collection(offset, 1)[0]
@@ -79,8 +81,8 @@ class RestfulModelCollection(list):
         filters['limit'] = limit
 
         return self.api._get_resources(self.namespace, self.model_class,
-                                       filters)
+                                       **filters)
 
     def _get_model(self, id):
         return self.api._get_resource(self.namespace, self.model_class, id,
-                                      self.filters)
+                                      **self.filters)
