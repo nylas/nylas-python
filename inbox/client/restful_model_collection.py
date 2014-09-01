@@ -1,9 +1,35 @@
-from copy import deepcopy
+from copy import copy
 
 CHUNK_SIZE = 50
+MAX_ITEMS = 2**64-1  # XXX
 
 
-class RestfulModelCollection(list):
+class RestfulModelCollectionIterator():
+    def __init__(self, collection, offset=0, limit=MAX_ITEMS, **filters):
+        self.collection = collection
+        self.offset = offset
+        self.limit = limit
+        self.cache = []
+
+    def next(self):
+        if self.cache:
+            return self.cache.pop()
+        elif not self.limit:
+            raise StopIteration()
+
+        max_results = min(self.limit, CHUNK_SIZE)
+        self.cache = self.collection.range(self.offset, max_results)
+
+        if not self.cache:
+            raise StopIteration()
+
+        self.limit -= len(self.cache)
+        self.offset += len(self.cache)
+
+        return self.cache.pop()
+
+
+class RestfulModelCollection():
     def __init__(self, cls, api, namespace, filter={}, **filters):
         filters.update(filter)
         from inbox import APIClient
@@ -15,10 +41,12 @@ class RestfulModelCollection(list):
         self.namespace = namespace
         self.api = api
 
+    def __iter__(self):
+        return RestfulModelCollectionIterator(self, **self.filters)
+
     def items(self):
         offset = 0
-        finished = False
-        while not finished:
+        while True:
             items = self._get_model_collection(offset)
             if not items:
                 break
@@ -35,37 +63,33 @@ class RestfulModelCollection(list):
         return None
 
     def all(self):
-        maxint = 2**64-1    # XXX
-        return self.range(0, maxint)
+        return self.range(0, MAX_ITEMS)
 
     def where(self, filter={}, **filters):
         filters.update(filter)
-        collection = deepcopy(self)
+        collection = copy(self)
         collection.filters = filters
         return collection
 
     def range(self, offset=0, limit=CHUNK_SIZE):
         accumulated = []
-        chunk_size = CHUNK_SIZE
-
-        while len(accumulated) < limit:
+        while accumulated < limit:
+            to_fetch = min(limit-len(accumulated), CHUNK_SIZE)
             results = self._get_model_collection(offset + len(accumulated),
-                                                 chunk_size)
+                                                 to_fetch)
             accumulated.extend(results)
 
             # done if more than 'limit' items, less than asked for
-            if not len(results) or len(results) % chunk_size:
+            if not results or len(results) % to_fetch:
                 break
 
-        return accumulated[0:limit]
+        return accumulated
 
     def find(self, id):
         return self._get_model(id)
 
     def build(self, **args):
-        return self.model_class.create(self.api,
-                                       self.namespace,
-                                       **args)
+        return self.model_class.create(self.api, self.namespace, **args)
 
     def create(self):
         return self.build()
@@ -76,7 +100,7 @@ class RestfulModelCollection(list):
     # Private functions
 
     def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
-        filters = deepcopy(self.filters)
+        filters = copy(self.filters)
         filters['offset'] = offset
         filters['limit'] = limit
 
