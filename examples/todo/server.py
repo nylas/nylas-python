@@ -14,7 +14,7 @@ def get_client():
 
 def create_todo_tag():
     c = get_client()
-    t = c.tags.build({'name': 'todo'})
+    t = c.tags.build(name='todo')
     try:
         t.save()
     except:
@@ -43,15 +43,15 @@ def index():
 @app.route('/add')
 def add():
     c = get_client()
-    draft = c.drafts.build({'subject': request.args['text']})
+    draft = c.drafts.build(subject=request.args['text'])
     draft.save()
-    thread = c.threads.where({'thread': draft.thread}).first()
+    thread = c.threads.where(thread=draft.thread).first()
     thread.add_tags(['todo'])
     return index()
 
 @app.route('/delete/<id>')
 def delete(id):
-    thread = get_client().threads.where({'thread': id}).first()
+    thread = get_client().threads.where(thread=id).first()
     thread.remove_tags(['todo'])
     return index()
 
@@ -63,7 +63,7 @@ def update(id):
     draft = c.drafts.create()
     draft.subject = request.args['text']
     draft.save()
-    thread = c.threads.where({'thread': draft.thread}).first()
+    thread = c.threads.where(thread=draft.thread).first()
     thread.add_tags(['todo'])
     return index()
 
