@@ -73,7 +73,7 @@ class RestfulModelCollection():
 
     def range(self, offset=0, limit=CHUNK_SIZE):
         accumulated = []
-        while accumulated < limit:
+        while len(accumulated) < limit:
             to_fetch = min(limit-len(accumulated), CHUNK_SIZE)
             results = self._get_model_collection(offset + len(accumulated),
                                                  to_fetch)
