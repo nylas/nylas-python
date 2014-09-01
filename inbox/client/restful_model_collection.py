@@ -88,11 +88,8 @@ class RestfulModelCollection():
     def find(self, id):
         return self._get_model(id)
 
-    def build(self, **args):
+    def create(self, **args):
         return self.model_class.create(self.api, self.namespace, **args)
-
-    def create(self):
-        return self.build()
 
     def __getitem__(self, offset):
         return self._get_model_collection(offset, 1)[0]
