@@ -32,3 +32,6 @@ class ConflictError(APIClientError):
 
 class NotFoundError(APIClientError):
     pass
+
+class ServerError(APIClientError):
+    pass
