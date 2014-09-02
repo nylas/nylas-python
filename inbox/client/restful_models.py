@@ -39,23 +39,27 @@ class InboxAPIObject(dict):
 
     def save(self):
         if self.id:
-            self.api._update_resource(self.namespace, self.cls, self.id,
-                                      self.as_json())
+            new_obj = self.api._update_resource(self.namespace,
+                                                self.cls, self.id,
+                                                self.as_json())
         else:
             new_obj = self.api._create_resource(self.namespace, self.cls,
                                                 self.as_json())
-            for attr in self.cls.attrs:
-                if hasattr(new_obj, attr):
-                    setattr(self, attr, getattr(new_obj, attr))
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
 
     def update(self):
-        self.api._update_resource(self.namespace, self.cls, self.id,
-                                  self.as_json())
+        new_obj = self.api._update_resource(self.namespace, self.cls,
+                                            self.id, self.as_json())
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
 
 
 class Message(InboxAPIObject):
-    attrs = ["bcc", "body", "date", "files", "from", "id", "namespace",
-             "object", "subject", "thread", "to", "unread"]
+    attrs = ["bcc", "body", "date", "files", "from", "id", "namespace_id",
+             "object", "subject", "thread_id", "to", "unread"]
     collection_name = 'messages'
 
     def __init__(self, api, namespace):
@@ -67,10 +71,7 @@ class Message(InboxAPIObject):
 
 
 class Tag(InboxAPIObject):
-    # TODO: tags actually do have a namespace and id, but there is a bug on prod
-    # that won't let this pass for now. Put the 'namespace' and 'id' back in later.
-    #attrs = ["id", "name", "namespace", "object"]
-    attrs = ["name", "object"]
+    attrs = ["id", "name", "namespace_id", "object"]
     collection_name = 'tags'
 
     def __init__(self, api, namespace):
@@ -78,7 +79,7 @@ class Tag(InboxAPIObject):
 
 
 class Thread(InboxAPIObject):
-    attrs = ["drafts", "id", "messages", "namespace", "object", "participants",
+    attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object", "participants",
              "snippet", "subject", "subject_date", "tags"]
     collection_name = 'threads'
 
@@ -87,11 +88,11 @@ class Thread(InboxAPIObject):
 
     @property
     def messages(self):
-        return self.child_collection(Message, thread=self.id)
+        return self.child_collection(Message, thread_id=self.id)
 
     @property
     def drafts(self):
-        return self.child_collection(Draft, thread=self.id)
+        return self.child_collection(Draft, thread_id=self.id)
 
     def update_tags(self, add=[], remove=[]):
         update = {'add_tags': add, 'remove_tags': remove}
@@ -123,7 +124,7 @@ class Thread(InboxAPIObject):
 
     def create_reply(self):
         d = self.drafts.create()
-        d.reply_to_thread = self.id
+        d.thread_id = self.id
         d.subject = self.subject
         return d
 
@@ -138,15 +139,15 @@ class Send(Message):
 
 
 class Draft(Message):
-    attrs = Message.attrs + ["state", "reply_to_thread", "version"]
+    attrs = ["bcc", "body", "date", "files", "from", "id",
+            "namespace_id", "object", "subject", "thread_id", "to",
+            "unread", "state", "version", "file_ids"]
     collection_name = 'drafts'
 
     def __init__(self, api, namespace, reply_to_thread=None):
         Message.__init__(self, api, namespace)
         InboxAPIObject.__init__(self, Thread, api, namespace)
-        # We should probably move to using 'file_ids' instead of 'files'
-        # self.file_ids = []
-        self.files = []
+        self.file_ids = []
 
     def attach(self, file):
         if not file.id:
@@ -160,8 +161,8 @@ class Draft(Message):
             self.save()
 
         d_params = {'draft_id': self.id}
-        if hasattr(self, 'reply_to_thread'):
-            d_params['reply_to_thread'] = self.reply_to_thread
+        if hasattr(self, 'thread_id'):
+            d_params['thread_id'] = self.reply_to_thread
         if hasattr(self, 'version'):
             d_params['version'] = self.version
 
@@ -169,8 +170,8 @@ class Draft(Message):
 
 
 class File(InboxAPIObject):
-    attrs = ["content_type", "filename", "id", "is_embedded", "message",
-             "namespace", "object", "size"]
+    attrs = ["content_type", "filename", "id", "is_embedded", "message_id",
+             "namespace_id", "object", "size"]
     collection_name = 'files'
 
     def save(self):
@@ -200,7 +201,7 @@ class File(InboxAPIObject):
 
 
 class Contact(InboxAPIObject):
-    attrs = ["id", "namespace", "name", "email"]
+    attrs = ["id", "namespace_id", "name", "email"]
     collection_name = 'contacts'
 
     def __init__(self, api, namespace):
@@ -208,7 +209,7 @@ class Contact(InboxAPIObject):
 
 
 class Event(InboxAPIObject):
-    attrs = ["id", "namespace", "subject", "body", "location", "read_only",
+    attrs = ["id", "namespace_id", "subject", "body", "location", "read_only",
              "start", "end", "participants"]
     collection_name = 'events'
 
@@ -217,7 +218,7 @@ class Event(InboxAPIObject):
 
 
 class Namespace(InboxAPIObject):
-    attrs = ["account", "email_address", "id", "namespace", "object",
+    attrs = ["account", "email_address", "id", "namespace_id", "object",
              "provider"]
     collection_name = 'n'
 

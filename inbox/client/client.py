@@ -7,7 +7,7 @@ from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
-                     APIError, NotFoundError, ConflictError)
+                     APIError, NotFoundError, ServerError, ConflictError)
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
@@ -48,6 +48,9 @@ def _validate(response):
         except (ValueError, TypeError):
             raise cls(url=url, status_code=status_code,
                       data=data, message="Malformed")
+    elif status_code == 500:
+        raise ServerError(url=url, status_code=status_code,
+                             data=data, message="ServerError.")
     else:
         raise APIClientError(url=url, status_code=status_code,
                              data=data, message="Uknown status code.")
@@ -160,12 +163,12 @@ class APIClient(json.JSONEncoder):
 
     def _get_resource(self, namespace, cls, id, **filters):
         extra = filters.pop('extra', None)
-        response = self._get_resource_raw(namespace, cls, id, filters, extra)
+        response = self._get_resource_raw(namespace, cls, id, **filters)
         result = response.json()
         return cls.create(self, namespace, **result)
 
-    def _get_resource_data(self, namespace, cls, id, filters={}, extra=''):
-        response = self._get_resource_raw(namespace, cls, id, filters, extra)
+    def _get_resource_data(self, namespace, cls, id, **filters):
+        response = self._get_resource_raw(namespace, cls, id, **filters)
         return response.content
 
     @inbox_excepted
