@@ -97,7 +97,7 @@ for thread in namespace.threads.items():
     print thread.subject
 
 # List the 5 most recent unread threads
-for thread in namespace.threads.where({'tag':'unread'}).items():
+for thread in namespace.threads.where(tag=unread):
     print thread.subject
 
 # List all threads with 'ben@inboxapp.com'
@@ -183,10 +183,10 @@ draft.send()
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where({'to':'ben@inboxapp.com'}).all()
+messages = namespace.messages.where(to=ben@inboxapp.com).all()
 ```
 
-The `where` method accepts a hash of filters, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters). 
+The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters). 
 
 ## Open-Source Sync Engine
 
