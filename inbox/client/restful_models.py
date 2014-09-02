@@ -153,7 +153,10 @@ class Draft(Message):
         if not file.id:
             file.save()
 
-        self.files.append(file.id)
+        self.file_ids.append(file.id)
+
+    def detach(self, file):
+        self.file_ids.remove(file.id)
 
     def send(self):
         # self.files = self.file_ids
@@ -208,9 +211,21 @@ class Contact(InboxAPIObject):
         InboxAPIObject.__init__(self, Contact, api, namespace)
 
 
+class Calendar(InboxAPIObject):
+    attrs = ["id", "namespace_id", "name", "description", "event_ids"]
+    collection_name = 'calendars'
+
+    def __init__(self, api, namespace):
+        InboxAPIObject.__init__(self, Calendar, api, namespace)
+
+    @property
+    def events(self):
+        return self.child_collection(Event, calendar_id=self.id)
+
+
 class Event(InboxAPIObject):
-    attrs = ["id", "namespace_id", "subject", "body", "location", "read_only",
-             "start", "end", "participants"]
+    attrs = ["id", "namespace_id", "title", "description", "location", "read_only",
+             "when", "participants"]
     collection_name = 'events'
 
     def __init__(self, api, namespace):
@@ -255,3 +270,7 @@ class Namespace(InboxAPIObject):
     @property
     def events(self):
         return self.child_collection(Event)
+
+    @property
+    def calendars(self):
+        return self.child_collection(Calendar)
