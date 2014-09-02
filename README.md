@@ -178,7 +178,7 @@ draft.attach(myfile)
 draft.send()
 ```
 
-### Working with Messages, Contacts, etc.
+### Working with Messages, Contacts, Calendars, Events, etc.
 
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
