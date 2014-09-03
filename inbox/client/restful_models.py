@@ -116,6 +116,9 @@ class Thread(InboxAPIObject):
     def unarchive(self):
         self.update_tags(['inbox'], ['archive'])
 
+    def trash(self):
+        self.add_tags(['trash'])
+
     def star(self):
         self.add_tags(['starred'])
 
