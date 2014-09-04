@@ -147,7 +147,7 @@ class Draft(Message):
             "unread", "state", "version", "file_ids"]
     collection_name = 'drafts'
 
-    def __init__(self, api, namespace, reply_to_thread=None):
+    def __init__(self, api, namespace, thread_id=None):
         Message.__init__(self, api, namespace)
         InboxAPIObject.__init__(self, Thread, api, namespace)
         self.file_ids = []
@@ -168,7 +168,7 @@ class Draft(Message):
 
         d_params = {'draft_id': self.id}
         if hasattr(self, 'thread_id'):
-            d_params['thread_id'] = self.reply_to_thread
+            d_params['thread_id'] = self.thread_id
         if hasattr(self, 'version'):
             d_params['version'] = self.version
 
