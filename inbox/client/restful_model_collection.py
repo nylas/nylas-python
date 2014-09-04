@@ -32,7 +32,7 @@ class RestfulModelCollectionIterator():
 class RestfulModelCollection():
     def __init__(self, cls, api, namespace, filter={}, **filters):
         filters.update(filter)
-        from inbox import APIClient
+        from inbox.client import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
 

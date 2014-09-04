@@ -30,7 +30,7 @@
 
 from flask import Flask, url_for, session, request, redirect, Response
 
-from inbox.client import APIClient
+from inbox import APIClient
 
 APP_ID = 'YOUR_APP_ID'
 APP_SECRET = 'YOUR_APP_SECRET'
