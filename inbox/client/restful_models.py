@@ -67,7 +67,7 @@ class Message(InboxAPIObject):
 
     @property
     def attachments(self):
-        return self.child_collection(File, message=self.id)
+        return self.child_collection(File, message_id=self.id)
 
 
 class Tag(InboxAPIObject):
