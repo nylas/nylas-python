@@ -30,11 +30,15 @@ class RestfulModelCollectionIterator():
 
 
 class RestfulModelCollection():
-    def __init__(self, cls, api, namespace, filter={}, **filters):
+    def __init__(self, cls, api, namespace, filter={}, offset=0,
+                 limit=MAX_ITEMS, **filters):
         filters.update(filter)
         from inbox.client import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
+
+        filters.setdefault('offset', 0)
+        filters.setdefault('limit', MAX_ITEMS)
 
         self.model_class = cls
         self.filters = filters
@@ -63,10 +67,13 @@ class RestfulModelCollection():
         return None
 
     def all(self):
-        return self.range(0, MAX_ITEMS)
+        return self.range(self.filters['offset'],
+                          self.filters['limit'])
 
     def where(self, filter={}, **filters):
         filters.update(filter)
+        filters.setdefault('offset', 0)
+        filters.setdefault('limit', MAX_ITEMS)
         collection = copy(self)
         collection.filters = filters
         return collection
