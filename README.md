@@ -10,7 +10,7 @@ This library is available on pypi. You can install it by running `pip install in
 
 ## Examples
 
-There's an example flask app in the `examples` directory. You can run the sample app to see how an authentication flow might be implemented. 
+There's an example flask app in the `examples` directory. You can run the sample app to see how an authentication flow might be implemented.
 
 *Note: you will need to replace the APP_ID and APP_SECRET with your Inbox App ID and secret to use the sample app.*
 
@@ -186,7 +186,7 @@ Each of the primary collections (contacts, messages, etc.) behave the same way a
 messages = namespace.messages.where(to=ben@inboxapp.com).all()
 ```
 
-The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters). 
+The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters).
 
 ## Open-Source Sync Engine
 
@@ -203,3 +203,8 @@ inbox = APIClient(None, None, None, 'http://localhost:5555/')
 We'd love your help making Inbox better. Join the Google Group for project updates and feature discussion. We also hang out in `##inbox` on [irc.freenode.net](http://irc.freenode.net), or you can email [help@inboxapp.com](mailto:help@inboxapp.com).
 
 Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
+
+
+## Looking for inbox.py?
+
+If you're looking for Kenneth Reitz's SMTP project, please update your `requirements.txt` file to use `inbox.py` or see the [Inbox.py repo on GitHub](https://github.com/kennethreitz/inbox.py).
