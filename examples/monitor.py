@@ -26,7 +26,7 @@ def self_send(client, email):
         if th:
             return th
         sleep(0.1)
-    raise TimeoutError()
+    raise TimeoutError('self-send')
 
 
 def self_receive(client, thread):
@@ -36,7 +36,7 @@ def self_receive(client, thread):
             if 'inbox' in [t['name'] for t in th.tags]:
                 return th
         sleep(0.1)
-    raise TimeoutError()
+    raise TimeoutError('self-recv')
 
 
 def remove(client, thread):
@@ -48,7 +48,7 @@ def remove(client, thread):
                                         subject=thread.subject).all()):
             return
         sleep(0.1)
-    raise TimeoutError()
+    raise TimeoutError('archive')
 
 
 def do_run(email, access_token):
@@ -82,8 +82,14 @@ def do_run(email, access_token):
 @click.option('--email', default=None, help='Email address')
 @click.option('--access_token', default=None, help='Access token')
 def main(email, access_token):
-    stats = do_run(email, access_token)
-    print json.dumps(stats)
+    try:
+        stats = do_run(email, access_token)
+        print json.dumps(stats)
+    except TimeoutError as e:
+        print json.dumps({'email': email,
+                          'message': "Timed out.",
+                          'event': str(e)})
+        sys.exit(2)
 
 
 if __name__ == '__main__':
