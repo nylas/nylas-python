@@ -1,8 +1,10 @@
-Python bindings for Inbox, the next-generation email platform.
+# inbox-python
+
+Python bindings for the Inbox API. https://www.inboxapp.com
 
 ## Installation
 
-This library is available on pypi. You can install it by running `pip install inbox-python`.
+This library is available on pypi. You can install it by running `pip install inbox`.
 
 ##Requirements
 
