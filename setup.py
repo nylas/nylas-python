@@ -1,8 +1,16 @@
+import os
+import sys
 from setuptools import setup, find_packages
 
+# Publish Helper.
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
+
+
 setup(
-    name="inbox-python",
-    version="0.1",
+    name="inbox",
+    version="0.1.0",
     packages=find_packages(),
 
     install_requires=[
@@ -20,8 +28,8 @@ setup(
 
     author="Inbox Team",
     author_email="admin@inboxapp.com",
-    description="The Inbox Client Library",
+    description='Python bindings for Inbox, the next-generation email platform.',
     license="MIT",
     keywords="inbox app appserver email",
-    url="https://www.inboxapp.com",
+    url='https://github.com/inboxapp/inbox-python'
 )
