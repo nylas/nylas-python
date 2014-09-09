@@ -5,6 +5,7 @@ import json
 from time import time, sleep
 from inbox import APIClient
 from inbox.client.util import generate_id
+import sys
 
 TIMEOUT = 120
 
@@ -34,6 +35,7 @@ def self_receive(client, thread):
         for th in client.threads.where(subject=thread.subject):
             if 'inbox' in [t['name'] for t in th.tags]:
                 return th
+        sleep(0.1)
     raise TimeoutError()
 
 
@@ -45,19 +47,21 @@ def remove(client, thread):
         if not len(client.threads.where(tag='inbox',
                                         subject=thread.subject).all()):
             return
+        sleep(0.1)
     raise TimeoutError()
 
 
 def do_run(email, access_token):
     client = APIClient(access_token=access_token)
-    stats = {}
+    stats = {'email': email}
 
     start = time()
-    client.contacts.where(limit=1000).all()
+    client.contacts.where(limit=100).all()
     stats['contacts'] = time() - start
 
     start = time()
-    client.threads.where(limit=1000).all()
+    client.threads.where(limit=100).all()
+
     stats['threads'] = time() - start
 
     start = time()
