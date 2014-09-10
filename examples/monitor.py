@@ -5,9 +5,11 @@ import json
 from time import time, sleep
 from inbox import APIClient
 from inbox.client.util import generate_id
+from inbox.client.errors import APIClientError
 import sys
 
 TIMEOUT = 120
+current_operation = ""
 
 
 class TimeoutError(Exception):
@@ -52,29 +54,34 @@ def remove(client, thread):
 
 
 def do_run(email, access_token):
+    global current_operation
     client = APIClient(access_token=access_token)
     stats = {'email': email}
 
+    current_operation = 'contacts'
     start = time()
     client.contacts.where(limit=100).all()
-    stats['contacts'] = time() - start
+    stats[current_operation] = time() - start
 
+    current_operation = 'threads'
     start = time()
     client.threads.where(limit=100).all()
+    stats[current_operation] = time() - start
 
-    stats['threads'] = time() - start
-
+    current_operation = 'send'
     start = time()
     th = self_send(client, email)
-    stats['send'] = time() - start
+    stats[current_operation] = time() - start
 
+    current_operation = 'recv'
     start = time()
     th = self_receive(client, th)
-    stats['recv'] = time() - start
+    stats[current_operation] = time() - start
 
+    current_operation = 'trash'
     start = time()
     remove(client, th)
-    stats['trash'] = time() - start
+    stats[current_operation] = time() - start
     return stats
 
 
@@ -90,6 +97,14 @@ def main(email, access_token):
                           'message': "Timed out.",
                           'event': str(e)})
         sys.exit(2)
+    except APIClientError as e:
+        msg = "Error during: {}".format(current_operation)
+        print json.dumps({'email': email,
+                          'message': msg,
+                          'event': e.as_dict()})
+        sys.exit(2)
+
+
 
 
 if __name__ == '__main__':
