@@ -8,11 +8,14 @@ class APIClientError(Exception):
 
         Exception.__init__(self, str(kwargs))
 
-    def __str__(self):
+    def as_dict(self):
         resp = {}
         for attr in self.attrs:
             resp[attr] = getattr(self, attr)
-        return json.dumps(resp)
+        return resp
+
+    def __str__(self):
+        return json.dumps(self.as_dict())
 
 class ConnectionError(APIClientError):
     pass
