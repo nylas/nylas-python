@@ -8,7 +8,7 @@ from inbox.client.util import generate_id
 from inbox.client.errors import APIClientError
 import sys
 
-TIMEOUT = 120
+TIMEOUT = 350
 current_operation = ""
 
 
