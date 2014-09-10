@@ -12,6 +12,7 @@ from requests.exceptions import ConnectionError as RequestsConnectionError
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.inboxapp.com"
+AUTH_SERVER = "https://www.inboxapp.com"
 
 
 def _validate(response):
@@ -72,11 +73,14 @@ class APIClient(json.JSONEncoder):
     def __init__(self, app_id=environ.get('INBOX_APP_ID'),
                  app_secret=environ.get('INBOX_APP_SECRET'),
                  access_token=environ.get('INBOX_ACCESS_TOKEN'),
-                 api_server=API_SERVER):
+                 api_server=API_SERVER,
+                 auth_server=AUTH_SERVER):
         if "://" not in api_server:
             raise Exception("When overriding the Inbox API server address, you"
                             " must include https://")
-        self.set_api_server(api_server)
+        self.api_server = api_server
+        self.authorize_url = auth_server + '/oauth/authorize'
+        self.access_token_url = auth_server + '/oauth/token'
         self.session = requests.Session()
         self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
         self.access_token = access_token
@@ -93,11 +97,6 @@ class APIClient(json.JSONEncoder):
         if value:
             self.session.headers.update({'Authorization': 'Basic ' +
                                          b64encode(value + ':')})
-
-    def set_api_server(self, api_server):
-        self.api_server = api_server
-        self.authorize_url = self.api_server+"/oauth/authorize"
-        self.access_token_url = self.api_server+"/oauth/token"
 
     def authentication_url(self, redirect_uri, login_hint=''):
         args = {'redirect_uri': redirect_uri,
