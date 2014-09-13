@@ -79,7 +79,7 @@ def do_run(email, access_token, random_email):
     start = time()
     client.threads.where(limit=100).all()
     stats[current_operation] = time() - start
-    if stats[current_opartion] > QUERY_THRESHOLD:
+    if stats[current_operation] > QUERY_THRESHOLD:
         raise TimeoutError(current_operation)
 
     current_operation = 'send'
