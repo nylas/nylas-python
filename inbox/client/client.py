@@ -24,8 +24,8 @@ def _validate(response):
     data = request.body
 
     if DEBUG:
-        print "{} {} ({}) => {}: {}".format(request.method, url, data,
-                                            status_code, response.text)
+        print("{} {} ({}) => {}: {}".format(request.method, url, data,
+                                            status_code, response.text))
 
     try:
         data = json.loads(data) if data else None
