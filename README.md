@@ -99,7 +99,7 @@ for thread in namespace.threads.items():
     print thread.subject
 
 # List the 5 most recent unread threads
-for thread in namespace.threads.where(tag=unread):
+for thread in namespace.threads.where(tag='unread'):
     print thread.subject
 
 # List all threads with 'ben@inboxapp.com'
