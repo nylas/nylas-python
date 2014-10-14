@@ -159,7 +159,8 @@ class Draft(Message):
         self.file_ids.append(file.id)
 
     def detach(self, file):
-        self.file_ids.remove(file.id)
+        if file.id in self.file_ids:
+            self.file_ids.remove(file.id)
 
     def send(self):
         # self.files = self.file_ids
