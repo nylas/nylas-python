@@ -238,7 +238,7 @@ class Event(InboxAPIObject):
 
 class Namespace(InboxAPIObject):
     attrs = ["account", "email_address", "id", "namespace_id", "object",
-             "provider"]
+             "provider", "name"]
     collection_name = 'n'
 
     def __init__(self, api, namespace):
