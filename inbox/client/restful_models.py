@@ -229,7 +229,7 @@ class Calendar(InboxAPIObject):
 
 class Event(InboxAPIObject):
     attrs = ["id", "namespace_id", "title", "description", "location", "read_only",
-             "when", "participants"]
+             "when", "participants", "calendar_id"]
     collection_name = 'events'
 
     def __init__(self, api, namespace):

@@ -179,7 +179,8 @@ class APIClient(json.JSONEncoder):
             response = self.session.post(url, files=data)
         else:
             data = json.dumps(data)
-            headers = {'content_type': 'json'}.update(self.session.headers)
+            headers = {'Content-Type': 'application/json'}
+            headers.update(self.session.headers)
             response = self.session.post(url, data=data, headers=headers)
 
         result = _validate(response).json()
@@ -194,7 +195,8 @@ class APIClient(json.JSONEncoder):
             response = self.session.post(url, files=data)
         else:
             data = json.dumps(data)
-            headers = {'content_type': 'json'}.update(self.session.headers)
+            headers = {'Content-Type': 'application/json'}
+            headers.update(self.session.headers)
             response = self.session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
