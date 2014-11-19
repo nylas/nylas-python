@@ -235,6 +235,15 @@ class Event(InboxAPIObject):
     def __init__(self, api, namespace):
         InboxAPIObject.__init__(self, Event, api, namespace)
 
+    def as_json(self):
+        dct = InboxAPIObject.as_json(self)
+        # Filter some parameters we got from the API
+        if 'when' in dct:
+            if 'object' in dct['when']:
+                del dct['when']['object']
+
+        return dct
+
 
 class Namespace(InboxAPIObject):
     attrs = ["account", "email_address", "id", "namespace_id", "object",
