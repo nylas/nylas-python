@@ -1,7 +1,7 @@
 from copy import copy
 
 CHUNK_SIZE = 50
-MAX_ITEMS = 2**64-1  # XXX
+MAX_ITEMS = 500  # XXX
 
 
 class RestfulModelCollectionIterator():
