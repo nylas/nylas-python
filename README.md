@@ -180,7 +180,28 @@ draft.attach(myfile)
 draft.send()
 ```
 
-### Working with Messages, Contacts, Calendars, Events, etc.
+### Working with Events
+
+The following example shows how to create, update and delete an event.
+
+```python
+# Create the event
+ev = namespace.events.create()
+ev.title = "Party at the Ritz"
+ev.when = {"start_time": 1416423667, "end_time": 1416448867} # These numbers are UTC timestamps
+ev.location = "The Old Ritz"
+ev.participants = [{"name": "My Friend', 'email': 'my.friend@example.com'}]
+ev.save()
+
+# Update it
+ev.location = "The Waldorf-Astoria"
+ev.save()
+
+# Delete it
+namespace.events.delete(ev.id)
+```
+
+### Working with Messages, Contacts, Calendars, etc.
 
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
