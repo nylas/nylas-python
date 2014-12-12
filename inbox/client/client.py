@@ -7,8 +7,8 @@ from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
-                     APIError, NotFoundError, ServerError, ConflictError)
-from requests.exceptions import ConnectionError as RequestsConnectionError
+                     APIError, NotFoundError, ServerError, ConflictError,
+                     RateLimitedError)
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.inboxapp.com"
@@ -16,8 +16,13 @@ AUTH_SERVER = "https://www.inboxapp.com"
 
 
 def _validate(response):
-    status_code_to_exc = {400: APIError, 404: NotFoundError,
-                          409: ConflictError}
+    status_code_to_exc = {400: APIError,
+                          401: NotAuthorizedError,
+                          403: NotAuthorizedError,
+                          404: NotFoundError,
+                          409: ConflictError,
+                          429: RateLimitedError,
+                          500: ServerError}
     request = response.request
     url = request.url
     status_code = response.status_code
@@ -34,9 +39,7 @@ def _validate(response):
 
     if status_code == 200:
         return response
-    elif status_code == 401:
-        raise NotAuthorizedError(url=url, status_code=status_code, data=data)
-    elif status_code in [400, 404, 409]:
+    elif status_code in status_code_to_exc:
         cls = status_code_to_exc[status_code]
         try:
             response = json.loads(response.text)
@@ -49,9 +52,6 @@ def _validate(response):
         except (ValueError, TypeError):
             raise cls(url=url, status_code=status_code,
                       data=data, message="Malformed")
-    elif status_code == 500:
-        raise ServerError(url=url, status_code=status_code,
-                             data=data, message="ServerError.")
     else:
         raise APIClientError(url=url, status_code=status_code,
                              data=data, message="Uknown status code.")
@@ -61,7 +61,7 @@ def inbox_excepted(f):
     def caught(*args, **kwargs):
         try:
             return f(*args, **kwargs)
-        except RequestsConnectionError:
+        except requests.exceptions.ConnectionError:
             server = args[0].api_server
             raise ConnectionError(url=server)
     return caught

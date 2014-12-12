@@ -17,6 +17,7 @@ class APIClientError(Exception):
     def __str__(self):
         return json.dumps(self.as_dict())
 
+
 class ConnectionError(APIClientError):
     pass
 
@@ -33,8 +34,13 @@ class ConflictError(APIClientError):
     pass
 
 
+class RateLimitedError(APIClientError):
+    pass
+
+
 class NotFoundError(APIClientError):
     pass
+
 
 class ServerError(APIClientError):
     pass
