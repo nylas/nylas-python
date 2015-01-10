@@ -232,7 +232,6 @@ If you have access to the PyPI repository, you can make a new release as such:
 ```shell
 python setup.py release <major/minor/patch>
 git log # to verify
-git push --tags
 python setup.py publish
 ```
 

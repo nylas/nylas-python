@@ -10,7 +10,7 @@ def main():
     # A few handy release helpers.
     if len(sys.argv) > 1:
         if sys.argv[1] == 'publish':
-            os.system('python setup.py sdist upload')
+            os.system('git push --follow-tags && python setup.py sdist upload')
             sys.exit()
         elif sys.argv[1] == 'release':
             if len(sys.argv) < 3:
