@@ -1,35 +1,45 @@
 import os
 import sys
+
 from setuptools import setup, find_packages
 
-# Publish Helper.
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
+__VERSION__ = "0.1.3"
 
 
-setup(
-    name="inbox",
-    version="0.1.2",
-    packages=find_packages(),
+def main():
+    # A few handy release helpers.
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'publish':
+            os.system('python setup.py sdist upload')
+            sys.exit()
+        elif sys.argv[1] == 'release':
+            if len(sys.argv) < 3:
+                type_ = 'patch'
+            else:
+                type_ = sys.argv[2]
+            os.system('bumpversion --current-version {} {}'
+                      .format(__VERSION__, type_))
+            sys.exit()
 
-    install_requires=[
-        "requests>=2.3.0",
-        "six>=1.4.1",
-    ],
-    dependency_links=[],
+    setup(
+        name="inbox",
+        version=__VERSION__,
+        packages=find_packages(),
 
-    package_data={
-        # If any package contains *.txt or *.rst files, include them:
-        # '': ['*.txt', '*.rst'],
-        # And include any *.msg files found in the 'hello' package, too:
-        # 'hello': ['*.msg'],
-    },
+        install_requires=[
+            "requests>=2.3.0",
+            "six>=1.4.1",
+            "bumpversion==0.5.0",
+        ],
+        dependency_links=[],
 
-    author="Inbox Team",
-    author_email="admin@inboxapp.com",
-    description='Python bindings for Inbox, the next-generation email platform.',
-    license="MIT",
-    keywords="inbox app appserver email",
-    url='https://github.com/inboxapp/inbox-python'
-)
+        author="Inbox Team",
+        author_email="support@inboxapp.com",
+        description='Python bindings for Inbox, the next-generation email platform.',
+        license="MIT",
+        keywords="inbox app appserver email",
+        url='https://github.com/inboxapp/inbox-python'
+    )
+
+if __name__ == '__main__':
+    sys.exit(main())

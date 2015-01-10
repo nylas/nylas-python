@@ -227,6 +227,15 @@ We'd love your help making Inbox better. Join the Google Group for project updat
 
 Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
+If you have access to the PyPI repository, you can make a new release as such:
+
+```shell
+python setup.py release <major/minor/patch>
+git log # to verify
+git push --tags
+python setup.py publish
+```
+
 
 ## Looking for inbox.py?
 
