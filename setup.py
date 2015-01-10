@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-__VERSION__ = "0.1.3"
+__VERSION__ = "0.1.4"
 
 
 def main():
