@@ -211,6 +211,17 @@ messages = namespace.messages.where(to=ben@inboxapp.com).all()
 
 The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters).
 
+## Account Management
+
+### Account status
+
+It's possible to query the status of the all the user accounts registered to an app by using `.accounts`:
+
+```python
+accounts = client.accounts
+print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc in accounts.all()]
+```
+
 ## Open-Source Sync Engine
 
 The [Inbox Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide nil for the App ID, App Secret, and API Token, and pass the fully-qualified address to your copy of the sync engine:

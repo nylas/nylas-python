@@ -4,6 +4,11 @@ from cStringIO import StringIO
 
 class InboxAPIObject(dict):
     attrs = []
+    # The inbox API holds most objects under '/n/', but some of
+    # them are under '/a' (mostly the account-management and billing code).
+    # api_root is a tiny metaprogramming hack to let us use the same
+    # code for both.
+    api_root = 'n'
 
     def __init__(self, cls, api, namespace):
         self.id = None
@@ -287,3 +292,27 @@ class Namespace(InboxAPIObject):
     @property
     def calendars(self):
         return self.child_collection(Calendar)
+
+
+class Account(InboxAPIObject):
+    # The inbox API holds most objects under '/n/', but some of
+    # them are under '/a' (mostly the account-management and billing code).
+    # api_root is a tiny metaprogramming hack to let us use the same
+    # code for both.
+    api_root = 'a'
+
+    attrs = ["account_id", "trial", "trial_expires", "sync_state"]
+    collection_name = 'accounts'
+
+    def __init__(self, api, namespace):
+        InboxAPIObject.__init__(self, Account, api, namespace)
+
+    def as_json(self):
+        dct = InboxAPIObject.as_json(self)
+        return dct
+
+    def upgrade(self):
+        self.api._call_resource_method(self.namespace, self, self.account_id, 'upgrade', None)
+
+    def downgrade(self):
+        self.api._call_resource_method(self.namespace, self, self.account_id, 'downgrade', None)

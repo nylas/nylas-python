@@ -5,7 +5,7 @@ from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
-from .restful_models import Namespace, File
+from .restful_models import Namespace, File, Account
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      APIError, NotFoundError, ServerError, ConflictError,
                      RateLimitedError)
@@ -81,12 +81,22 @@ class APIClient(json.JSONEncoder):
         self.api_server = api_server
         self.authorize_url = auth_server + '/oauth/authorize'
         self.access_token_url = auth_server + '/oauth/token'
-        self.session = requests.Session()
-        self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
-        self.access_token = access_token
+
         self.app_secret = app_secret
         self.app_id = app_id
 
+        self.session = requests.Session()
+        self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
+        self.access_token = access_token
+
+        # Requests to the /a/ namespace don't use an auth token but
+        # the app_secret. Set up a specific session for this.
+        self.admin_session = requests.Session()
+
+        if app_secret is not None:
+            self.admin_session.headers = {'Authorization': 'Basic ' +
+                                          b64encode(self.app_secret + ':'),
+                                          'X-Inbox-API-Wrapper': 'python'}
     @property
     def access_token(self):
         return self._access_token
@@ -127,6 +137,10 @@ class APIClient(json.JSONEncoder):
     def namespaces(self):
         return RestfulModelCollection(Namespace, self, None)
 
+    @property
+    def accounts(self):
+        return RestfulModelCollection(Account, self, self.app_id)
+
     def __getattr__(self, attr):
         """ Use the default namespaces for all of the known collections"""
         import restful_models
@@ -139,26 +153,37 @@ class APIClient(json.JSONEncoder):
     #   Private functions used by Restful Model Collection   #
     ##########################################################
 
+    def _get_http_session(self, api_root):
+        # Is this a request for a resource under the /n/ namespace or the
+        # accounts/billing/admin namespace (/a). If the latter, pass the app_secret
+        # instead of the secret_token
+        if api_root == 'n':
+            return self.session
+        elif api_root == 'a':
+            return self.admin_session
+
     @inbox_excepted
     def _get_resources(self, namespace, cls, **filters):
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
         url = url_concat(url, filters)
 
-        results = _validate(self.session.get(url)).json()
+        response = self._get_http_session(cls.api_root).get(url)
+        results = _validate(response).json()
         return map(lambda x: cls.create(self, namespace, **x), results)
 
     @inbox_excepted
     def _get_resource_raw(self, namespace, cls, id, **filters):
         """Get an individual REST resource"""
         extra = filters.pop('extra', None)
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
         url = "{}{}/{}/{}{}".format(self.api_server, prefix,
                                     cls.collection_name, id, postfix)
         url = url_concat(url, filters)
 
-        return _validate(self.session.get(url))
+        response = self._get_http_session(cls.api_root).get(url)
+        return _validate(response)
 
     def _get_resource(self, namespace, cls, id, **filters):
         extra = filters.pop('extra', None)
@@ -172,50 +197,68 @@ class APIClient(json.JSONEncoder):
 
     @inbox_excepted
     def _create_resource(self, namespace, cls, data):
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
+        session = self._get_http_session(cls.api_root)
 
         if cls == File:
-            response = self.session.post(url, files=data)
+            response = session.post(url, files=data)
         else:
             data = json.dumps(data)
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = self.session.post(url, data=data, headers=headers)
+            response = session.post(url, data=data, headers=headers)
 
         result = _validate(response).json()
         return cls.create(self, namespace, **result)
 
     @inbox_excepted
     def _create_resources(self, namespace, cls, data):
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
+        session = self._get_http_session(cls.api_root)
 
         if cls == File:
-            response = self.session.post(url, files=data)
+            response = session.post(url, files=data)
         else:
             data = json.dumps(data)
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = self.session.post(url, data=data, headers=headers)
+            response = session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
         return map(lambda x: cls.create(self, namespace, **x), results)
 
     @inbox_excepted
     def _delete_resource(self, namespace, cls, id):
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         name = cls.collection_name
         url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
-        _validate(self.session.delete(url))
+        session = self._get_http_session(cls.api_root)
+
+        _validate(session.delete(url))
 
     @inbox_excepted
     def _update_resource(self, namespace, cls, id, data):
-        prefix = "/n/{}".format(namespace) if namespace else ''
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         name = cls.collection_name
         url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
+        session = self._get_http_session(cls.api_root)
 
-        response = self.session.put(url, data=json.dumps(data))
+        response = session.put(url, data=json.dumps(data))
 
         result = _validate(response).json()
         return cls.create(self, namespace, **result)
+
+    @inbox_excepted
+    def _call_resource_method(self, namespace, cls, id, method_name, data):
+        """POST a dictionnary to an API method,
+        for example /a/.../accounts/id/upgrade"""
+        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
+        name = cls.collection_name
+        url = "{}{}/{}/{}/{}".format(self.api_server, prefix, name, id,
+                                     method_name)
+        session = self._get_http_session(cls.api_root)
+        response = session.post(url, data=json.dumps(data))
+
+        return _validate(response).json()
