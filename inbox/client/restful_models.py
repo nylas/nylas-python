@@ -322,7 +322,9 @@ class Account(InboxAPIObject):
     # code for both.
     api_root = 'a'
 
-    attrs = ["account_id", "trial", "trial_expires", "sync_state"]
+    attrs = ["account_id", "trial", "trial_expires", "sync_state",
+             "billing_state", "namespace_id"]
+
     collection_name = 'accounts'
 
     def __init__(self, api, namespace):
