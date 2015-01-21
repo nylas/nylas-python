@@ -1,6 +1,7 @@
 from os import environ
 import requests
 import json
+import pkg_resources
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from .util import url_concat, generate_id
@@ -86,7 +87,13 @@ class APIClient(json.JSONEncoder):
         self.app_id = app_id
 
         self.session = requests.Session()
-        self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
+        try:
+            self.version = pkg_resources.get_distribution("inbox").version
+        except pkg_resources.DistributionNotFound:
+            self.version = 'dev'
+        version_header = 'Inbox Python SDK {}'.format(self.version)
+        self.session.headers = {'X-Inbox-API-Wrapper': 'python',
+                                'User-Agent': version_header}
         self.access_token = access_token
 
         # Requests to the /a/ namespace don't use an auth token but
@@ -96,7 +103,9 @@ class APIClient(json.JSONEncoder):
         if app_secret is not None:
             self.admin_session.headers = {'Authorization': 'Basic ' +
                                           b64encode(self.app_secret + ':'),
-                                          'X-Inbox-API-Wrapper': 'python'}
+                                          'X-Inbox-API-Wrapper': 'python',
+                                          'User-Agent': version_header}
+
     @property
     def access_token(self):
         return self._access_token
