@@ -1,5 +1,7 @@
 from .restful_model_collection import RestfulModelCollection
 from cStringIO import StringIO
+import base64
+import json
 
 
 class InboxAPIObject(dict):
@@ -73,6 +75,25 @@ class Message(InboxAPIObject):
     @property
     def attachments(self):
         return self.child_collection(File, message_id=self.id)
+
+    @property
+    def raw(self):
+        data = self.api._get_resource_data(self.namespace, Message, self.id, extra='rfc2822')
+        data = json.loads(data)
+        return RawMessage.create(self.api, self.namespace, **data)
+
+
+class RawMessage(InboxAPIObject):
+    """a raw message, as returned by the /message/<id>/rfc2822 endpoint"""
+    attrs = ["rfc2822"]
+
+    def __init__(self, api, namespace):
+        InboxAPIObject.__init__(self, RawMessage, api, namespace)
+
+    @property
+    def rfc2822(self):
+        # base64-decode the contents, for convenience
+        return base64.b64decode(self['rfc2822'])
 
 
 class Tag(InboxAPIObject):
