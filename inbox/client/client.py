@@ -3,6 +3,7 @@ import requests
 import json
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
+from inbox._version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account
@@ -86,7 +87,10 @@ class APIClient(json.JSONEncoder):
         self.app_id = app_id
 
         self.session = requests.Session()
-        self.session.headers = {'X-Inbox-API-Wrapper': 'python'}
+        self.version = __VERSION__
+        version_header = 'Inbox Python SDK {}'.format(self.version)
+        self.session.headers = {'X-Inbox-API-Wrapper': 'python',
+                                'User-Agent': version_header}
         self.access_token = access_token
 
         # Requests to the /a/ namespace don't use an auth token but
@@ -96,7 +100,9 @@ class APIClient(json.JSONEncoder):
         if app_secret is not None:
             self.admin_session.headers = {'Authorization': 'Basic ' +
                                           b64encode(self.app_secret + ':'),
-                                          'X-Inbox-API-Wrapper': 'python'}
+                                          'X-Inbox-API-Wrapper': 'python',
+                                          'User-Agent': version_header}
+
     @property
     def access_token(self):
         return self._access_token

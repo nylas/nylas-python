@@ -2,8 +2,7 @@ import os
 import sys
 
 from setuptools import setup, find_packages
-
-__VERSION__ = "0.1.4"
+from inbox._version import __VERSION__
 
 
 def main():
