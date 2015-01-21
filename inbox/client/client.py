@@ -1,9 +1,9 @@
 from os import environ
 import requests
 import json
-import pkg_resources
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
+from inbox._version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account
@@ -87,10 +87,7 @@ class APIClient(json.JSONEncoder):
         self.app_id = app_id
 
         self.session = requests.Session()
-        try:
-            self.version = pkg_resources.get_distribution("inbox").version
-        except pkg_resources.DistributionNotFound:
-            self.version = 'dev'
+        self.version = __VERSION__
         version_header = 'Inbox Python SDK {}'.format(self.version)
         self.session.headers = {'X-Inbox-API-Wrapper': 'python',
                                 'User-Agent': version_header}
