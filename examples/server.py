@@ -28,6 +28,7 @@
 # 6. In the browser, visit http://localhost:8888/
 #
 
+import time
 from flask import Flask, url_for, session, request, redirect, Response
 
 from inbox import APIClient
@@ -48,12 +49,17 @@ def index():
     # If we have an access_token, we may interact with the Inbox Server
     if 'access_token' in session:
         client = APIClient(APP_ID, APP_SECRET, session['access_token'])
-        try:
-            # Get the latest message from namespace zero.
-            message = client.namespaces[0].messages.first()
-        except Exception as e:
-            print(e.message)
-
+        message = None
+        while not message:
+            try:
+                # Get the latest message from namespace zero.
+                message = client.namespaces[0].messages.first()
+                if not message:  # A new account takes a little time to sync
+                    print "No messages yet. Checking again in 2 seconds."
+                    time.sleep(2)
+            except Exception as e:
+                print(e.message)
+                return Response("<html>An error occurred.</html>")
         # Format the output
         text = "<html><h1>Here's a message from your Inbox:</h1><b>From:</b> "
         for sender in message["from"]:
