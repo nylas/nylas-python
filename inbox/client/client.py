@@ -9,7 +9,7 @@ from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      APIError, NotFoundError, ServerError, ConflictError,
-                     RateLimitedError)
+                     RateLimitedError, ServerTimeoutError)
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.inboxapp.com"
@@ -23,7 +23,8 @@ def _validate(response):
                           404: NotFoundError,
                           409: ConflictError,
                           429: RateLimitedError,
-                          500: ServerError}
+                          500: ServerError,
+                          504: ServerTimeoutError}
     request = response.request
     url = request.url
     status_code = response.status_code
@@ -55,7 +56,7 @@ def _validate(response):
                       data=data, message="Malformed")
     else:
         raise APIClientError(url=url, status_code=status_code,
-                             data=data, message="Uknown status code.")
+                             data=data, message="Unknown status code.")
 
 
 def inbox_excepted(f):

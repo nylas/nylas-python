@@ -44,3 +44,7 @@ class NotFoundError(APIClientError):
 
 class ServerError(APIClientError):
     pass
+
+
+class ServerTimeoutError(APIClientError):
+    pass
