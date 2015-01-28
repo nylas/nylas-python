@@ -1,6 +1,6 @@
 # inbox-python
 
-Python bindings for the Inbox API. https://www.nilas.com
+Python bindings for the Nilas REST API. https://www.nilas.com/docs
 
 ## Installation
 
@@ -20,14 +20,14 @@ There's an example flask app in the `examples` directory. You can run the sample
 
 ### App ID and Secret
 
-Before you can interact with the Inbox API, you need to register for the Inbox Developer Program at [http://www.nilas.com/](http://www.nilas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Nilas REST API, you need to register for the Nilas Developer Program at [https://www.nilas.com/](https://www.nilas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
 
 Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. That said, in the example project and code snippets below, the values are hardcoded for convenience.
 
 
 ### Authentication
 
-The Inbox API uses server-side (three-legged) OAuth, and this library provides convenience methods to simplify the OAuth process.
+The Nilas REST API uses server-side (three-legged) OAuth, and this library provides convenience methods to simplify the OAuth process.
 Here's how it works:
 
 1. You redirect the user to our login page, along with your App Id and Secret
@@ -35,9 +35,9 @@ Here's how it works:
 3. She is redirected to a callback URL of your own, along with an access code
 4. You use this access code to get an authorization token to the API
 
-For more information about authenticating with Inbox, visit the [Developer Documentation](https://www.nilas.com/docs/gettingstarted-hosted#authenticating).
+For more information about authenticating with Nilas, visit the [Developer Documentation](https://www.nilas.com/docs/gettingstarted-hosted#authenticating).
 
-In practice, the Inbox client simplifies this down to two steps.
+In practice, the Nilas REST API client simplifies this down to two steps.
 
 **Step 1: Redirect the user to Inbox:**
 
@@ -224,7 +224,7 @@ print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc i
 
 ## Open-Source Sync Engine
 
-The [Inbox Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide nil for the App ID, App Secret, and API Token, and pass the fully-qualified address to your copy of the sync engine:
+The [Nilas Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide nil for the App ID, App Secret, and API Token, and pass the fully-qualified address to your copy of the sync engine:
 
 ```python
 from inbox import APIClient
@@ -234,7 +234,7 @@ inbox = APIClient(None, None, None, 'http://localhost:5555/')
 
 ## Contributing
 
-We'd love your help making Inbox better. Join the Google Group for project updates and feature discussion. We also hang out in `##inbox` on [irc.freenode.net](http://irc.freenode.net), or you can email [help@nilas.com](mailto:help@nilas.com).
+We'd love your help making Nilas better. Join the Google Group for project updates and feature discussion. We also hang out in `#nilas` on [irc.freenode.net](http://irc.freenode.net), or you can email [support@nilas.com](mailto:support@nilas.com).
 
 Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
