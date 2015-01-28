@@ -33,7 +33,7 @@ def main():
         dependency_links=[],
 
         author="Inbox Team",
-        author_email="support@inboxapp.com",
+        author_email="support@nilas.com",
         description='Python bindings for Inbox, the next-generation email platform.',
         license="MIT",
         keywords="inbox app appserver email",

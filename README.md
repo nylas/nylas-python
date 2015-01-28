@@ -1,6 +1,6 @@
 # inbox-python
 
-Python bindings for the Inbox API. https://www.inboxapp.com
+Python bindings for the Inbox API. https://www.nilas.com
 
 ## Installation
 
@@ -20,7 +20,7 @@ There's an example flask app in the `examples` directory. You can run the sample
 
 ### App ID and Secret
 
-Before you can interact with the Inbox API, you need to register for the Inbox Developer Program at [http://www.inboxapp.com/](http://www.inboxapp.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Inbox API, you need to register for the Inbox Developer Program at [http://www.nilas.com/](http://www.nilas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
 
 Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. That said, in the example project and code snippets below, the values are hardcoded for convenience.
 
@@ -35,7 +35,7 @@ Here's how it works:
 3. She is redirected to a callback URL of your own, along with an access code
 4. You use this access code to get an authorization token to the API
 
-For more information about authenticating with Inbox, visit the [Developer Documentation](https://www.inboxapp.com/docs/gettingstarted-hosted#authenticating).
+For more information about authenticating with Inbox, visit the [Developer Documentation](https://www.nilas.com/docs/gettingstarted-hosted#authenticating).
 
 In practice, the Inbox client simplifies this down to two steps.
 
@@ -102,8 +102,8 @@ for thread in namespace.threads.items():
 for thread in namespace.threads.where(tag='unread'):
     print thread.subject
 
-# List all threads with 'ben@inboxapp.com'
-for thread in namespace.threads.where(any_email='ben@inboxapp.com').items():
+# List all threads with 'ben@nilas.com'
+for thread in namespace.threads.where(any_email='ben@nilas.com').items():
     print thread.subject
 ```
 
@@ -206,10 +206,10 @@ namespace.events.delete(ev.id)
 Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where(to=ben@inboxapp.com).all()
+messages = namespace.messages.where(to=ben@nilas.com).all()
 ```
 
-The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.inboxapp.com/docs/api#filters).
+The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.nilas.com/docs/api#filters).
 
 ## Account Management
 
@@ -234,7 +234,7 @@ inbox = APIClient(None, None, None, 'http://localhost:5555/')
 
 ## Contributing
 
-We'd love your help making Inbox better. Join the Google Group for project updates and feature discussion. We also hang out in `##inbox` on [irc.freenode.net](http://irc.freenode.net), or you can email [help@inboxapp.com](mailto:help@inboxapp.com).
+We'd love your help making Inbox better. Join the Google Group for project updates and feature discussion. We also hang out in `##inbox` on [irc.freenode.net](http://irc.freenode.net), or you can email [help@nilas.com](mailto:help@nilas.com).
 
 Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
