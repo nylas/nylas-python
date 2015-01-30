@@ -73,10 +73,10 @@ implementing the auth flow.
 ### Fetching Namespaces
 
 ```python
-inbox = APIClient(APP_ID, APP_SECRET, token)
+client = APIClient(APP_ID, APP_SECRET, token)
 
 # Get the first namespace
-namespace = inbox.namespaces.first()
+namespace = client.namespaces.first()
 
 # Print out the email address and provider (Gmail, Exchange)
 print namespace.email_address
@@ -127,7 +127,7 @@ thread.unarchive()
 # Add or remove arbitrary tags
 tagsToAdd = ['inbox', 'cfa1233ef123acd12']
 tagsToRemove = []
-thread.update_tags(tagsToAd, tagsToRemove)
+thread.update_tags(tagsToAdd, tagsToRemove)
 
 # List messages
 for message in thread.messages.items():
@@ -203,19 +203,19 @@ namespace.events.delete(ev.id)
 
 ### Working with Messages, Contacts, Calendars, etc.
 
-Each of the primary collections (contacts, messages, etc.) behave the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
+Each of the primary collections (contacts, messages, etc.) behaves the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
 messages = namespace.messages.where(to=ben@nilas.com).all()
 ```
 
-The `where` method accepts a hash of filters or keyword arguments, as documented in the [Inbox Filters Documentation](https://www.nilas.com/docs/api#filters).
+The `where` method accepts a keyword argument for each of the filters documented in the [Inbox Filters Documentation](https://www.nilas.com/docs/api#filters).
 
 ## Account Management
 
 ### Account status
 
-It's possible to query the status of the all the user accounts registered to an app by using `.accounts`:
+It's possible to query the status of all the user accounts registered to an app by using `.accounts`:
 
 ```python
 accounts = client.accounts
@@ -224,11 +224,11 @@ print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc i
 
 ## Open-Source Sync Engine
 
-The [Nilas Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide nil for the App ID, App Secret, and API Token, and pass the fully-qualified address to your copy of the sync engine:
+The [Nilas Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
 
 ```python
 from inbox import APIClient
-inbox = APIClient(None, None, None, 'http://localhost:5555/')
+client = APIClient(None, None, None, 'http://localhost:5555/')
 ```
 
 
