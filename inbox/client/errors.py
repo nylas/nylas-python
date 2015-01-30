@@ -1,5 +1,6 @@
 import json
 
+
 class APIClientError(Exception):
     def __init__(self, **kwargs):
         self.attrs = kwargs.keys()
@@ -26,7 +27,11 @@ class NotAuthorizedError(APIClientError):
     pass
 
 
-class APIError(APIClientError):
+class InvalidRequestError(APIClientError):
+    pass
+
+
+class MessageRejectedError(APIClientError):
     pass
 
 
@@ -34,7 +39,7 @@ class ConflictError(APIClientError):
     pass
 
 
-class RateLimitedError(APIClientError):
+class SendingQuotaExceededError(APIClientError):
     pass
 
 
@@ -43,6 +48,10 @@ class NotFoundError(APIClientError):
 
 
 class ServerError(APIClientError):
+    pass
+
+
+class ServiceUnavailableError(APIClientError):
     pass
 
 

@@ -8,8 +8,10 @@ from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
-                     APIError, NotFoundError, ServerError, ConflictError,
-                     RateLimitedError, ServerTimeoutError)
+                     InvalidRequestError, NotFoundError, ServerError,
+                     ServiceUnavailableError, ConflictError,
+                     SendingQuotaExceededError, ServerTimeoutError,
+                     MessageRejectedError)
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
 API_SERVER = "https://api.nilas.com"
@@ -17,13 +19,15 @@ AUTH_SERVER = "https://www.nilas.com"
 
 
 def _validate(response):
-    status_code_to_exc = {400: APIError,
+    status_code_to_exc = {400: InvalidRequestError,
                           401: NotAuthorizedError,
+                          402: MessageRejectedError,
                           403: NotAuthorizedError,
                           404: NotFoundError,
                           409: ConflictError,
-                          429: RateLimitedError,
+                          429: SendingQuotaExceededError,
                           500: ServerError,
+                          503: ServiceUnavailableError,
                           504: ServerTimeoutError}
     request = response.request
     url = request.url
