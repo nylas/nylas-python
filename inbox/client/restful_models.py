@@ -78,7 +78,8 @@ class Message(InboxAPIObject):
 
     @property
     def raw(self):
-        data = self.api._get_resource_data(self.namespace, Message, self.id, extra='rfc2822')
+        data = self.api._get_resource_data(self.namespace, Message, self.id,
+                                           extra='rfc2822')
         data = json.loads(data)
         return RawMessage.create(self.api, self.namespace, **data)
 
@@ -105,8 +106,8 @@ class Tag(InboxAPIObject):
 
 
 class Thread(InboxAPIObject):
-    attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object", "participants",
-             "snippet", "subject", "subject_date", "tags"]
+    attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object",
+             "participants", "snippet", "subject", "subject_date", "tags"]
     collection_name = 'threads'
 
     def __init__(self, api, namespace):
@@ -169,8 +170,8 @@ class Send(Message):
 
 class Draft(Message):
     attrs = ["bcc", "body", "date", "files", "from", "id",
-            "namespace_id", "object", "subject", "thread_id", "to",
-            "unread", "state", "version", "file_ids"]
+             "namespace_id", "object", "subject", "thread_id", "to",
+             "unread", "version", "file_ids"]
     collection_name = 'drafts'
 
     def __init__(self, api, namespace, thread_id=None):
@@ -254,8 +255,8 @@ class Calendar(InboxAPIObject):
 
 
 class Event(InboxAPIObject):
-    attrs = ["id", "namespace_id", "title", "description", "location", "read_only",
-             "when", "participants", "calendar_id"]
+    attrs = ["id", "namespace_id", "title", "description", "location",
+             "read_only", "when", "participants", "calendar_id"]
     collection_name = 'events'
 
     def __init__(self, api, namespace):
@@ -335,7 +336,9 @@ class Account(InboxAPIObject):
         return dct
 
     def upgrade(self):
-        self.api._call_resource_method(self.namespace, self, self.account_id, 'upgrade', None)
+        self.api._call_resource_method(self.namespace, self, self.account_id,
+                                       'upgrade', None)
 
     def downgrade(self):
-        self.api._call_resource_method(self.namespace, self, self.account_id, 'downgrade', None)
+        self.api._call_resource_method(self.namespace, self, self.account_id,
+                                       'downgrade', None)
