@@ -28,7 +28,11 @@ def main():
         install_requires=[
             "requests>=2.3.0",
             "six>=1.4.1",
-            "bumpversion==0.5.0",
+            "bumpversion>=0.5.0",
+            # needed for SNI support, required by api.nilas.com
+            "pyOpenSSL",
+            "ndg-httpsclient",
+            "pyasn1",
         ],
         dependency_links=[],
 
