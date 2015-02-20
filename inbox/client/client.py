@@ -1,6 +1,7 @@
-from os import environ
+import sys
 import requests
 import json
+from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from inbox._version import __VERSION__
@@ -93,7 +94,10 @@ class APIClient(json.JSONEncoder):
 
         self.session = requests.Session()
         self.version = __VERSION__
-        version_header = 'Inbox Python SDK {}'.format(self.version)
+        major, minor, revision, _, __ = sys.version_info
+        version_header = 'Inbox Python SDK {} - {}.{}.{}'.format(self.version,
+                                                                 major, minor,
+                                                                 revision)
         self.session.headers = {'X-Inbox-API-Wrapper': 'python',
                                 'User-Agent': version_header}
         self.access_token = access_token
