@@ -2,7 +2,8 @@ import os
 import sys
 
 from setuptools import setup, find_packages
-from inbox._version import __VERSION__
+sys.path.append('inbox/')
+from _version import __VERSION__
 
 
 def main():
