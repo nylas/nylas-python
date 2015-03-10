@@ -185,7 +185,7 @@ class APIClient(json.JSONEncoder):
 
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
-        return map(lambda x: cls.create(self, namespace, **x), results)
+        return list(map(lambda x: cls.create(self, namespace, **x), results))
 
     @inbox_excepted
     def _get_resource_raw(self, namespace, cls, id, **filters):
@@ -242,7 +242,7 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
-        return map(lambda x: cls.create(self, namespace, **x), results)
+        return list(map(lambda x: cls.create(self, namespace, **x), results))
 
     @inbox_excepted
     def _delete_resource(self, namespace, cls, id):
