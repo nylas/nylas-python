@@ -4,7 +4,7 @@ import json
 class APIClientError(Exception):
     def __init__(self, **kwargs):
         self.attrs = kwargs.keys()
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         Exception.__init__(self, str(kwargs))

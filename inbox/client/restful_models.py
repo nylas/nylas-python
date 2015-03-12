@@ -1,5 +1,5 @@
 from .restful_model_collection import RestfulModelCollection
-from cStringIO import StringIO
+from six import StringIO
 import base64
 import json
 
@@ -18,9 +18,13 @@ class InboxAPIObject(dict):
         self.api = api
         self.namespace = namespace
 
-    __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+    def __getattr__(self, what):
+        if what not in self:
+            raise AttributeError("no such attribute: '{}'".format(what))
+        return self[what]
 
     @classmethod
     def create(cls, api, namespace_, **kwargs):
