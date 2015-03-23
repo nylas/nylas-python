@@ -20,11 +20,7 @@ class InboxAPIObject(dict):
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-
-    def __getattr__(self, what):
-        if what not in self:
-            raise AttributeError("no such attribute: '{}'".format(what))
-        return self[what]
+    __getattr__ = dict.get
 
     @classmethod
     def create(cls, api, namespace_, **kwargs):
@@ -247,7 +243,7 @@ class Contact(InboxAPIObject):
 
 
 class Calendar(InboxAPIObject):
-    attrs = ["id", "namespace_id", "name", "description", "event_ids"]
+    attrs = ["id", "namespace_id", "name", "description"]
     collection_name = 'calendars'
 
     def __init__(self, api, namespace):
@@ -260,7 +256,9 @@ class Calendar(InboxAPIObject):
 
 class Event(InboxAPIObject):
     attrs = ["id", "namespace_id", "title", "description", "location",
-             "read_only", "when", "participants", "calendar_id"]
+             "read_only", "when", "busy", "participants", "calendar_id",
+             "recurrence", "cancelled", "master_event_id",
+             "original_start_time"]
     collection_name = 'events'
 
     def __init__(self, api, namespace):
