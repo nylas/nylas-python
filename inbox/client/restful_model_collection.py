@@ -84,6 +84,8 @@ class RestfulModelCollection():
             to_fetch = min(limit-len(accumulated), CHUNK_SIZE)
             results = self._get_model_collection(offset + len(accumulated),
                                                  to_fetch)
+            results.reverse()  # to keep ordering consistent across chunks
+                               # since we access the first item via pop()
             accumulated.extend(results)
 
             # done if more than 'limit' items, less than asked for
