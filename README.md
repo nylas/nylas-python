@@ -1,10 +1,10 @@
 # inbox-python
 
-Python bindings for the Nilas REST API. https://www.nilas.com/docs
+Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
 ## Installation
 
-This library is available on pypi. You can install it by running `pip install inbox`.
+This library is available on pypi. You can install it by running `pip install nylas`.
 
 ##Requirements
 
@@ -12,22 +12,22 @@ This library is available on pypi. You can install it by running `pip install in
 
 ## Examples
 
-There's an example flask app in the `examples` directory. You can run the sample app to see how an authentication flow might be implemented.
+There's an example Flask app in the `examples` directory. You can run the sample app to see how an authentication flow might be implemented.
 
-*Note: you will need to replace the APP_ID and APP_SECRET with your Inbox App ID and secret to use the sample app.*
+*Note: you will need to replace the APP_ID and APP_SECRET with your Nylas App ID and secret to use the sample app.*
 
 ## Usage
 
 ### App ID and Secret
 
-Before you can interact with the Nilas REST API, you need to register for the Nilas Developer Program at [https://www.nilas.com/](https://www.nilas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Nylas REST API, you need to register for the Nylas Developer Program at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
 
 Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. That said, in the example project and code snippets below, the values are hardcoded for convenience.
 
 
 ### Authentication
 
-The Nilas REST API uses server-side (three-legged) OAuth, and this library provides convenience methods to simplify the OAuth process.
+The Nylas REST API uses server-side (three-legged) OAuth, and this library provides convenience methods to simplify the OAuth process.
 Here's how it works:
 
 1. You redirect the user to our login page, along with your App Id and Secret
@@ -35,11 +35,11 @@ Here's how it works:
 3. She is redirected to a callback URL of your own, along with an access code
 4. You use this access code to get an authorization token to the API
 
-For more information about authenticating with Nilas, visit the [Developer Documentation](https://www.nilas.com/docs/gettingstarted-hosted#authenticating).
+For more information about authenticating with Nylas, visit the [Developer Documentation](https://www.nylas.com/docs/gettingstarted-hosted#authenticating).
 
-In practice, the Nilas REST API client simplifies this down to two steps.
+In practice, the Nylas REST API client simplifies this down to two steps.
 
-**Step 1: Redirect the user to Inbox:**
+**Step 1: Redirect the user to Nylas:**
 
 ```python
 from flask import Flask, session, request, redirect, Response
@@ -102,8 +102,8 @@ for thread in namespace.threads.items():
 for thread in namespace.threads.where(tag='unread'):
     print thread.subject
 
-# List all threads with 'ben@nilas.com'
-for thread in namespace.threads.where(any_email='ben@nilas.com').items():
+# List all threads with 'ben@nylas.com'
+for thread in namespace.threads.where(any_email='ben@nylas.com').items():
     print thread.subject
 ```
 
@@ -206,10 +206,10 @@ namespace.events.delete(ev.id)
 Each of the primary collections (contacts, messages, etc.) behaves the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where(to=ben@nilas.com).all()
+messages = namespace.messages.where(to=ben@nylas.com).all()
 ```
 
-The `where` method accepts a keyword argument for each of the filters documented in the [Inbox Filters Documentation](https://www.nilas.com/docs/api#filters).
+The `where` method accepts a keyword argument for each of the filters documented in the [Nylas Filters Documentation](https://www.nylas.com/docs/api#filters).
 
 ## Account Management
 
@@ -224,7 +224,7 @@ print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc i
 
 ## Open-Source Sync Engine
 
-The [Nilas Sync Engine](http://github.com/inboxapp/inbox) is open-source, and you can also use the python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
+The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the Python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
 
 ```python
 from inbox import APIClient
@@ -234,7 +234,7 @@ client = APIClient(None, None, None, 'http://localhost:5555/')
 
 ## Contributing
 
-We'd love your help making Nilas better. Join the Google Group for project updates and feature discussion. We also hang out in `#nilas` on [irc.freenode.net](http://irc.freenode.net), or you can email [support@nilas.com](mailto:support@nilas.com).
+We'd love your help making Nylas better. Join the Google Group for project updates and feature discussion. We also hang out in `#nylas` on [irc.freenode.net](http://irc.freenode.net), or you can email [support@nylas.com](mailto:support@nylas.com).
 
 Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 

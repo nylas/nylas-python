@@ -22,7 +22,7 @@ def main():
             sys.exit()
 
     setup(
-        name="inbox",
+        name="nylas",
         version=__VERSION__,
         packages=find_packages(),
 
@@ -37,12 +37,12 @@ def main():
         ],
         dependency_links=[],
 
-        author="Inbox Team",
-        author_email="support@nilas.com",
-        description='Python bindings for Inbox, the next-generation email platform.',
+        author="Nylas Team",
+        author_email="support@nylas.com",
+        description='Python bindings for Nylas, the next-generation email platform.',
         license="MIT",
-        keywords="inbox app appserver email",
-        url='https://github.com/inboxapp/inbox-python'
+        keywords="inbox app appserver email nylas",
+        url='https://github.com/nylas/inbox-python'
     )
 
 if __name__ == '__main__':
