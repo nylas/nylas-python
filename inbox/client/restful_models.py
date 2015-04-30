@@ -209,9 +209,9 @@ class File(InboxAPIObject):
     collection_name = 'files'
 
     def save(self):
-        if hasattr(self, 'stream'):
+        if hasattr(self, 'stream') and self.stream is not None:
             data = {self.filename: self.stream}
-        elif hasattr(self, 'data'):
+        elif hasattr(self, 'data') and self.data is not None:
             data = {self.filename: StringIO(self.data)}
         else:
             raise Exception("File object not properly formatted, must provide"
