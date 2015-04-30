@@ -243,7 +243,7 @@ class Contact(InboxAPIObject):
 
 
 class Calendar(InboxAPIObject):
-    attrs = ["id", "namespace_id", "name", "description"]
+    attrs = ["id", "namespace_id", "name", "description", "read_only"]
     collection_name = 'calendars'
 
     def __init__(self, api, namespace):
