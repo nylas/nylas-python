@@ -257,7 +257,7 @@ class Calendar(InboxAPIObject):
 class Event(InboxAPIObject):
     attrs = ["id", "namespace_id", "title", "description", "location",
              "read_only", "when", "busy", "participants", "calendar_id",
-             "recurrence", "cancelled", "master_event_id",
+             "recurrence", "status", "master_event_id",
              "original_start_time"]
     collection_name = 'events'
 
