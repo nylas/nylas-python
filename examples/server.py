@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# This demo app shows how to use the Inbox client to authenticate against
-# the inbox api and how to fetch emails from an authenticated account.
+# This demo app shows how to use the Nylas client to authenticate against
+# the Nylas API and how to fetch emails from an authenticated account.
 #
 # NOTE: This app does NOT use SSL. Before deploying this code to a
 # server environment, you should ENABLE SSL to avoid exposing your API
@@ -10,11 +10,12 @@
 # To run this demo app:
 # 1. Save this file to your computer as `server.py`
 #
-# 2. In the Inbox Developer Portal, create a new application. Replace the
+# 2. In the Nylas Developer Portal, create a new application. Replace the
 #    APP_ID and APP_SECRET variables below with the App ID and App
 #    Secret of your application.
+#    https://nylas.com/
 #
-# 3. In the Inbox Developer Portal, edit your application and add the
+# 3. In the Nylas Developer Portal, edit your application and add the
 #    callback URL: http://localhost:8888/login_callback
 #
 # 4. On the command line, `cd` to the folder where you saved the file
@@ -23,7 +24,11 @@
 #    - You may need to install Python: https://www.python.org/download/
 #    - You may need to install dependencies using pip:
 #      (http://pip.readthedocs.org/en/latest/installing.html)
-#      pip install flask requests urllib
+#      pip install inbox flask requests
+#    - Note: You may want to set up a virtualenv to isolate these
+#      dependencies from other packages on your system. Otherwise, you
+#      will need to sudo pip install, to install them globally.
+#      http://docs.python-guide.org/en/latest/dev/virtualenvs/
 #
 # 6. In the browser, visit http://localhost:8888/
 #
@@ -46,7 +51,7 @@ assert APP_ID != 'YOUR_APP_ID' or APP_SECRET != 'YOUR_APP_SECRET',\
 
 @app.route('/')
 def index():
-    # If we have an access_token, we may interact with the Inbox Server
+    # If we have an access_token, we may interact with the Nylas Server
     if 'access_token' in session:
         client = APIClient(APP_ID, APP_SECRET, session['access_token'])
         message = None
@@ -61,7 +66,7 @@ def index():
                 print(e.message)
                 return Response("<html>An error occurred.</html>")
         # Format the output
-        text = "<html><h1>Here's a message from your Inbox:</h1><b>From:</b> "
+        text = "<html><h1>Here's a message from your inbox:</h1><b>From:</b> "
         for sender in message["from"]:
             text += "{} &lt;{}&gt;".format(sender['name'], sender['email'])
         text += "<br /><b>Subject:</b> " + message.subject
