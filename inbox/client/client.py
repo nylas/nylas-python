@@ -15,8 +15,8 @@ from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      MessageRejectedError)
 
 DEBUG = environ.get('INBOX_CLIENT_DEBUG')
-API_SERVER = "https://api.nilas.com"
-AUTH_SERVER = "https://www.nilas.com"
+API_SERVER = "https://api.nylas.com"
+AUTH_SERVER = "https://www.nylas.com"
 
 
 def _validate(response):
