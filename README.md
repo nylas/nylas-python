@@ -185,12 +185,15 @@ draft.send()
 The following example shows how to create, update and delete an event.
 
 ```python
+# Get a calendar that's not read only
+calendar = filter(lambda cal: not cal.read_only, namespace.calendars)[0]
 # Create the event
 ev = namespace.events.create()
 ev.title = "Party at the Ritz"
 ev.when = {"start_time": 1416423667, "end_time": 1416448867} # These numbers are UTC timestamps
 ev.location = "The Old Ritz"
 ev.participants = [{"name": "My Friend', 'email': 'my.friend@example.com'}]
+ev.calendar_id = calendar.id
 ev.save()
 
 # Update it
