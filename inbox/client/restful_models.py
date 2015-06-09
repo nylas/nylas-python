@@ -169,7 +169,7 @@ class Send(Message):
 
 
 class Draft(Message):
-    attrs = ["bcc", "body", "date", "files", "from", "id",
+    attrs = ["bcc", "cc", "body", "date", "files", "from", "id",
              "namespace_id", "object", "subject", "thread_id", "to",
              "unread", "version", "file_ids"]
     collection_name = 'drafts'
