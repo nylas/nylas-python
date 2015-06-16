@@ -214,6 +214,13 @@ messages = namespace.messages.where(to=ben@nylas.com).all()
 
 The `where` method accepts a keyword argument for each of the filters documented in the [Nylas Filters Documentation](https://www.nylas.com/docs/api#filters).
 
+Note: Because `from` is a reserved word in Python, to filter by the 'from' field, there are two options:
+```python
+messages = namespace.messages.where(from_='email@example.com')
+# or
+messages = namespace.messages.where(**{'from': 'email@example.com'})
+```
+
 ## Account Management
 
 ### Account status

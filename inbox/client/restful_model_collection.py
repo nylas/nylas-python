@@ -1,44 +1,16 @@
 from copy import copy
 
 CHUNK_SIZE = 50
-MAX_ITEMS = 500  # XXX
 
-
-class RestfulModelCollectionIterator():
-    def __init__(self, collection, offset=0, limit=MAX_ITEMS, **filters):
-        self.collection = collection
-        self.offset = offset
-        self.limit = limit
-        self.cache = []
-
-    def next(self):
-        if self.cache:
-            return self.cache.pop()
-        elif not self.limit:
-            raise StopIteration()
-
-        max_results = min(self.limit, CHUNK_SIZE)
-        self.cache = self.collection.range(self.offset, max_results)
-
-        if not self.cache:
-            raise StopIteration()
-
-        self.limit -= len(self.cache)
-        self.offset += len(self.cache)
-
-        return self.cache.pop()
-
-
-class RestfulModelCollection():
+class RestfulModelCollection(object):
     def __init__(self, cls, api, namespace, filter={}, offset=0,
-                 limit=MAX_ITEMS, **filters):
+                 **filters):
         filters.update(filter)
         from inbox.client import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
 
         filters.setdefault('offset', 0)
-        filters.setdefault('limit', MAX_ITEMS)
 
         self.model_class = cls
         self.filters = filters
@@ -46,17 +18,22 @@ class RestfulModelCollection():
         self.api = api
 
     def __iter__(self):
-        return RestfulModelCollectionIterator(self, **self.filters)
+        return self.items()
 
     def items(self):
         offset = 0
         while True:
-            items = self._get_model_collection(offset)
+            items = self._get_model_collection(offset, CHUNK_SIZE)
             if not items:
                 break
 
             for item in items:
                 yield item
+
+            if len(items) < CHUNK_SIZE:
+                # This is only here because namespaces are
+                # treated like other collections
+                break
 
             offset += len(items)
 
@@ -66,33 +43,18 @@ class RestfulModelCollection():
             return results[0]
         return None
 
-    def all(self):
-        return self.range(self.filters['offset'],
-                          self.filters['limit'])
+    def all(self, limit=float('infinity')):
+        return self._range(self.filters['offset'], limit)
 
     def where(self, filter={}, **filters):
+        if 'from_' in filters:
+            filters['from'] = filters.get('from_')
+            del filters['from_']
         filters.update(filter)
         filters.setdefault('offset', 0)
-        filters.setdefault('limit', MAX_ITEMS)
         collection = copy(self)
         collection.filters = filters
         return collection
-
-    def range(self, offset=0, limit=CHUNK_SIZE):
-        accumulated = []
-        while len(accumulated) < limit:
-            to_fetch = min(limit-len(accumulated), CHUNK_SIZE)
-            results = self._get_model_collection(offset + len(accumulated),
-                                                 to_fetch)
-            results.reverse()  # to keep ordering consistent across chunks
-                               # since we access the first item via pop()
-            accumulated.extend(results)
-
-            # done if more than 'limit' items, less than asked for
-            if not results or len(results) % to_fetch:
-                break
-
-        return accumulated
 
     def find(self, id):
         return self._get_model(id)
@@ -103,8 +65,20 @@ class RestfulModelCollection():
     def delete(self, id):
         return self.api._delete_resource(self.namespace, self.model_class, id)
 
-    def __getitem__(self, offset):
-        return self._get_model_collection(offset, 1)[0]
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            if key.step is not None:
+                raise ValueError("'step' not supported for slicing "
+                                "RestfulModelCollection objects "
+                                "(e.g. messages[::step])")
+            elif key.start < 0 or key.stop < 0:
+                raise ValueError("slice indices must be positive")
+            elif key.stop - key.start < 0:
+                raise ValueError("ending slice index cannot be less than "
+                                "starting index")
+            return self._range(key.start, key.stop-key.start)
+        else:
+            return self._get_model_collection(key, 1)[0]
 
     # Private functions
 
@@ -119,3 +93,17 @@ class RestfulModelCollection():
     def _get_model(self, id):
         return self.api._get_resource(self.namespace, self.model_class, id,
                                       **self.filters)
+
+    def _range(self, offset=0, limit=CHUNK_SIZE):
+        accumulated = []
+        while len(accumulated) < limit:
+            to_fetch = min(limit-len(accumulated), CHUNK_SIZE)
+            results = self._get_model_collection(offset + len(accumulated),
+                                                 to_fetch)
+            accumulated.extend(results)
+
+            # done if we run out of items to fetch
+            if not results or len(results) < to_fetch:
+                break
+
+        return accumulated

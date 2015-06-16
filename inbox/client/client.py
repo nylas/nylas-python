@@ -148,6 +148,13 @@ class APIClient(json.JSONEncoder):
         self.auth_token = resp[u'access_token']
         return self.auth_token
 
+    def get_namespace(self):
+        ns = self._get_resources(None, Namespace)
+        if len(ns):
+            return ns[0]
+        else:
+            return None
+
     @property
     def namespaces(self):
         return RestfulModelCollection(Namespace, self, None)
