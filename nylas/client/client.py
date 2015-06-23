@@ -4,7 +4,7 @@ import json
 from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
-from inbox._version import __VERSION__
+from nylas._version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account
@@ -14,7 +14,7 @@ from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      SendingQuotaExceededError, ServerTimeoutError,
                      MessageRejectedError)
 
-DEBUG = environ.get('INBOX_CLIENT_DEBUG')
+DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
 AUTH_SERVER = "https://www.nylas.com"
 
@@ -64,7 +64,7 @@ def _validate(response):
                              data=data, message="Unknown status code.")
 
 
-def inbox_excepted(f):
+def nylas_excepted(f):
     def caught(*args, **kwargs):
         try:
             return f(*args, **kwargs)
@@ -75,15 +75,15 @@ def inbox_excepted(f):
 
 
 class APIClient(json.JSONEncoder):
-    """API client for the Inbox API."""
+    """API client for the Nylas API."""
 
-    def __init__(self, app_id=environ.get('INBOX_APP_ID'),
-                 app_secret=environ.get('INBOX_APP_SECRET'),
-                 access_token=environ.get('INBOX_ACCESS_TOKEN'),
+    def __init__(self, app_id=environ.get('NYLAS_APP_ID'),
+                 app_secret=environ.get('NYLAS_APP_SECRET'),
+                 access_token=environ.get('NYLAS_ACCESS_TOKEN'),
                  api_server=API_SERVER,
                  auth_server=AUTH_SERVER):
         if "://" not in api_server:
-            raise Exception("When overriding the Inbox API server address, you"
+            raise Exception("When overriding the Nylas API server address, you"
                             " must include https://")
         self.api_server = api_server
         self.authorize_url = auth_server + '/oauth/authorize'
@@ -95,10 +95,10 @@ class APIClient(json.JSONEncoder):
         self.session = requests.Session()
         self.version = __VERSION__
         major, minor, revision, _, __ = sys.version_info
-        version_header = 'Inbox Python SDK {} - {}.{}.{}'.format(self.version,
+        version_header = 'Nylas Python SDK {} - {}.{}.{}'.format(self.version,
                                                                  major, minor,
                                                                  revision)
-        self.session.headers = {'X-Inbox-API-Wrapper': 'python',
+        self.session.headers = {'X-Nylas-API-Wrapper': 'python',
                                 'User-Agent': version_header}
         self.access_token = access_token
 
@@ -109,7 +109,7 @@ class APIClient(json.JSONEncoder):
         if app_secret is not None:
             self.admin_session.headers = {'Authorization': 'Basic ' +
                                           b64encode(self.app_secret + ':'),
-                                          'X-Inbox-API-Wrapper': 'python',
+                                          'X-Nylas-API-Wrapper': 'python',
                                           'User-Agent': version_header}
 
     @property
@@ -184,7 +184,7 @@ class APIClient(json.JSONEncoder):
         elif api_root == 'a':
             return self.admin_session
 
-    @inbox_excepted
+    @nylas_excepted
     def _get_resources(self, namespace, cls, **filters):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
@@ -194,7 +194,7 @@ class APIClient(json.JSONEncoder):
         results = _validate(response).json()
         return list(map(lambda x: cls.create(self, namespace, **x), results))
 
-    @inbox_excepted
+    @nylas_excepted
     def _get_resource_raw(self, namespace, cls, id, **filters):
         """Get an individual REST resource"""
         extra = filters.pop('extra', None)
@@ -217,7 +217,7 @@ class APIClient(json.JSONEncoder):
         response = self._get_resource_raw(namespace, cls, id, **filters)
         return response.content
 
-    @inbox_excepted
+    @nylas_excepted
     def _create_resource(self, namespace, cls, data):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
@@ -234,7 +234,7 @@ class APIClient(json.JSONEncoder):
         result = _validate(response).json()
         return cls.create(self, namespace, **result)
 
-    @inbox_excepted
+    @nylas_excepted
     def _create_resources(self, namespace, cls, data):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
@@ -251,7 +251,7 @@ class APIClient(json.JSONEncoder):
         results = _validate(response).json()
         return list(map(lambda x: cls.create(self, namespace, **x), results))
 
-    @inbox_excepted
+    @nylas_excepted
     def _delete_resource(self, namespace, cls, id):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         name = cls.collection_name
@@ -260,7 +260,7 @@ class APIClient(json.JSONEncoder):
 
         _validate(session.delete(url))
 
-    @inbox_excepted
+    @nylas_excepted
     def _update_resource(self, namespace, cls, id, data):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         name = cls.collection_name
@@ -272,7 +272,7 @@ class APIClient(json.JSONEncoder):
         result = _validate(response).json()
         return cls.create(self, namespace, **result)
 
-    @inbox_excepted
+    @nylas_excepted
     def _call_resource_method(self, namespace, cls, id, method_name, data):
         """POST a dictionnary to an API method,
         for example /a/.../accounts/id/upgrade"""

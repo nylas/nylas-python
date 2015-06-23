@@ -4,9 +4,9 @@ import base64
 import json
 
 
-class InboxAPIObject(dict):
+class NylasAPIObject(dict):
     attrs = []
-    # The inbox API holds most objects under '/n/', but some of
+    # The Nylas API holds most objects under '/n/', but some of
     # them are under '/a' (mostly the account-management and billing code).
     # api_root is a tiny metaprogramming hack to let us use the same
     # code for both.
@@ -64,13 +64,13 @@ class InboxAPIObject(dict):
                 setattr(self, attr, getattr(new_obj, attr))
 
 
-class Message(InboxAPIObject):
+class Message(NylasAPIObject):
     attrs = ["bcc", "body", "date", "files", "from", "id", "namespace_id",
              "object", "subject", "thread_id", "to", "unread"]
     collection_name = 'messages'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Message, api, namespace)
+        NylasAPIObject.__init__(self, Message, api, namespace)
 
     @property
     def attachments(self):
@@ -84,12 +84,12 @@ class Message(InboxAPIObject):
         return RawMessage.create(self.api, self.namespace, **data)
 
 
-class RawMessage(InboxAPIObject):
+class RawMessage(NylasAPIObject):
     """a raw message, as returned by the /message/<id>/rfc2822 endpoint"""
     attrs = ["rfc2822"]
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, RawMessage, api, namespace)
+        NylasAPIObject.__init__(self, RawMessage, api, namespace)
 
     @property
     def rfc2822(self):
@@ -97,21 +97,21 @@ class RawMessage(InboxAPIObject):
         return base64.b64decode(self['rfc2822'])
 
 
-class Tag(InboxAPIObject):
+class Tag(NylasAPIObject):
     attrs = ["id", "name", "namespace_id", "object"]
     collection_name = 'tags'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Tag, api, namespace)
+        NylasAPIObject.__init__(self, Tag, api, namespace)
 
 
-class Thread(InboxAPIObject):
+class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object",
              "participants", "snippet", "subject", "subject_date", "tags"]
     collection_name = 'threads'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Thread, api, namespace)
+        NylasAPIObject.__init__(self, Thread, api, namespace)
 
     @property
     def messages(self):
@@ -165,7 +165,7 @@ class Send(Message):
     collection_name = 'send'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Send, api, namespace)
+        NylasAPIObject.__init__(self, Send, api, namespace)
 
 
 class Draft(Message):
@@ -176,7 +176,7 @@ class Draft(Message):
 
     def __init__(self, api, namespace, thread_id=None):
         Message.__init__(self, api, namespace)
-        InboxAPIObject.__init__(self, Thread, api, namespace)
+        NylasAPIObject.__init__(self, Thread, api, namespace)
         self.file_ids = []
 
     def attach(self, file):
@@ -203,7 +203,7 @@ class Draft(Message):
         self.api._create_resource(self.namespace, Send, d_params)
 
 
-class File(InboxAPIObject):
+class File(NylasAPIObject):
     attrs = ["content_type", "filename", "id", "is_embedded", "message_id",
              "namespace_id", "object", "size"]
     collection_name = 'files'
@@ -231,30 +231,30 @@ class File(InboxAPIObject):
                                            extra='download')
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, File, api, namespace)
+        NylasAPIObject.__init__(self, File, api, namespace)
 
 
-class Contact(InboxAPIObject):
+class Contact(NylasAPIObject):
     attrs = ["id", "namespace_id", "name", "email"]
     collection_name = 'contacts'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Contact, api, namespace)
+        NylasAPIObject.__init__(self, Contact, api, namespace)
 
 
-class Calendar(InboxAPIObject):
+class Calendar(NylasAPIObject):
     attrs = ["id", "namespace_id", "name", "description", "read_only"]
     collection_name = 'calendars'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Calendar, api, namespace)
+        NylasAPIObject.__init__(self, Calendar, api, namespace)
 
     @property
     def events(self):
         return self.child_collection(Event, calendar_id=self.id)
 
 
-class Event(InboxAPIObject):
+class Event(NylasAPIObject):
     attrs = ["id", "namespace_id", "title", "description", "location",
              "read_only", "when", "busy", "participants", "calendar_id",
              "recurrence", "status", "master_event_id",
@@ -262,10 +262,10 @@ class Event(InboxAPIObject):
     collection_name = 'events'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Event, api, namespace)
+        NylasAPIObject.__init__(self, Event, api, namespace)
 
     def as_json(self):
-        dct = InboxAPIObject.as_json(self)
+        dct = NylasAPIObject.as_json(self)
         # Filter some parameters we got from the API
         if 'when' in dct:
             if 'object' in dct['when']:
@@ -274,13 +274,13 @@ class Event(InboxAPIObject):
         return dct
 
 
-class Namespace(InboxAPIObject):
+class Namespace(NylasAPIObject):
     attrs = ["account", "email_address", "id", "namespace_id", "object",
              "provider", "name"]
     collection_name = 'n'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Namespace, api, namespace)
+        NylasAPIObject.__init__(self, Namespace, api, namespace)
 
     def child_collection(self, cls, **filters):
         return RestfulModelCollection(cls, self.api, self.id, **filters)
@@ -318,8 +318,8 @@ class Namespace(InboxAPIObject):
         return self.child_collection(Calendar)
 
 
-class Account(InboxAPIObject):
-    # The inbox API holds most objects under '/n/', but some of
+class Account(NylasAPIObject):
+    # The Nylas API holds most objects under '/n/', but some of
     # them are under '/a' (mostly the account-management and billing code).
     # api_root is a tiny metaprogramming hack to let us use the same
     # code for both.
@@ -331,10 +331,10 @@ class Account(InboxAPIObject):
     collection_name = 'accounts'
 
     def __init__(self, api, namespace):
-        InboxAPIObject.__init__(self, Account, api, namespace)
+        NylasAPIObject.__init__(self, Account, api, namespace)
 
     def as_json(self):
-        dct = InboxAPIObject.as_json(self)
+        dct = NylasAPIObject.as_json(self)
         return dct
 
     def upgrade(self):

@@ -6,7 +6,7 @@ class RestfulModelCollection(object):
     def __init__(self, cls, api, namespace, filter={}, offset=0,
                  **filters):
         filters.update(filter)
-        from inbox.client import APIClient
+        from nylas.client import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
 

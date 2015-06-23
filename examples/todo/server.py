@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from flask import (Flask, url_for, session, request, redirect,
                    Response, render_template)
-from inbox import APIClient
+from nylas import APIClient
 
 APP_ID = '[YOUR_APP_ID]'
 APP_SECRET = '[YOUR_APP_SECRET]'

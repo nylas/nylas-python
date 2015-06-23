@@ -7,10 +7,10 @@ from sys import argv, exit
 from time import time
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 
-from inbox import APIClient
-from inbox.client.errors import NotFoundError
+from nylas import APIClient
+from nylas.client.errors import NotFoundError
 
-inboxfs='ibxfs'
+nylasfs='ibxfs'
 refresh_s=30
 
 
@@ -34,7 +34,7 @@ class Memory(LoggingMixIn, Operations):
             return
         self.updated = now
 
-        for th in self.c.threads.where(tag=inboxfs):
+        for th in self.c.threads.where(tag=nylasfs):
             in_dr = th.drafts[0]
             self.files[str("/" + in_dr.subject)] = dict(st_mode=(S_IFDIR | 0755), st_ctime=now,
                                        st_mtime=now, st_atime=now, st_nlink=2,
@@ -126,12 +126,12 @@ class Memory(LoggingMixIn, Operations):
                 draft.save()
                 thread = c.threads.where(thread_id=draft.thread_id).first()
                 try:
-                    thread.add_tags([inboxfs])
+                    thread.add_tags([nylasfs])
                 except NotFoundError as e:
                     print "didn't find inbox tag, creating."
                     if "No tag found" in e.message:
-                        c.tags.create(name=inboxfs).save()
-                        thread.add_tags([inboxfs])
+                        c.tags.create(name=nylasfs).save()
+                        thread.add_tags([nylasfs])
 
         self.files['/']['st_nlink'] += 1
 

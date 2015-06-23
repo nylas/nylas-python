@@ -24,7 +24,7 @@
 #    - You may need to install Python: https://www.python.org/download/
 #    - You may need to install dependencies using pip:
 #      (http://pip.readthedocs.org/en/latest/installing.html)
-#      pip install inbox flask requests
+#      pip install nylas flask requests
 #    - Note: You may want to set up a virtualenv to isolate these
 #      dependencies from other packages on your system. Otherwise, you
 #      will need to sudo pip install, to install them globally.
@@ -36,7 +36,7 @@
 import time
 from flask import Flask, url_for, session, request, redirect, Response
 
-from inbox import APIClient
+from nylas import APIClient
 
 APP_ID = 'YOUR_APP_ID'
 APP_SECRET = 'YOUR_APP_SECRET'

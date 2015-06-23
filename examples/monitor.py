@@ -4,9 +4,9 @@ import click
 import json
 import random
 from time import time, sleep
-from inbox import APIClient
-from inbox.client.util import generate_id
-from inbox.client.errors import APIClientError
+from nylas import APIClient
+from nylas.client.util import generate_id
+from nylas.client.errors import APIClientError
 from lib.random_words import random_words
 import sys
 

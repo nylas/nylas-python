@@ -2,20 +2,20 @@
 
 import os
 import time
-from inbox import APIClient
-from inbox.util import generate_id
+from nylas import APIClient
+from nylas.util import generate_id
 
 APP_ID = '[YOUR_APP_ID]'
 APP_SECRET = '[YOUR_APP_SECRET]'
 ACCESS_TOKEN = '[YOUR_ACCESS_TOKEN]'
-inbox = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
+client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 
-ns = inbox.namespaces[0]
+ns = client.namespaces[0]
 
 subject = generate_id()
 # Create a new draft
 draft = ns.drafts.create()
-draft.to = [{'name': 'Inbox PythonSDK', 'email': 'inboxtestempty@gmail.com'}]
+draft.to = [{'name': 'Nylas PythonSDK', 'email': 'nylastestempty@gmail.com'}]
 draft.subject = subject
 draft.body = ""
 

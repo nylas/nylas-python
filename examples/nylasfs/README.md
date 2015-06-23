@@ -1,4 +1,4 @@
-InboxFS - use python-fuse and Inbox client api to support a filesystem
+InboxFS - use python-fuse and Nylas client api to support a filesystem
 
 Requirements:
 - python-fuse

@@ -1,15 +1,15 @@
 #!/usr/bin/python
 
 import time
-from inbox import APIClient
-from inbox.util import generate_id
+from nylas import APIClient
+from nylas.util import generate_id
 
 APP_ID = '[YOUR_APP_ID]'
 APP_SECRET = '[YOUR_APP_SECRET]'
 ACCESS_TOKEN = '[YOUR_ACCESS_TOKEN]'
-inbox = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
+client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 
-ns = inbox.namespaces[0]
+ns = client.namespaces[0]
 
 subject = generate_id()
 
@@ -23,7 +23,7 @@ myfile.data = data
 
 # Create a new draft
 draft = ns.drafts.create()
-draft.to = [{'name': 'Charles Gruenwald', 'email': 'inboxtestempty@gmail.com'}]
+draft.to = [{'name': 'Charles Gruenwald', 'email': 'nylastestempty@gmail.com'}]
 draft.subject = subject
 draft.body = ""
 draft.attach(myfile)

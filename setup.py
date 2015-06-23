@@ -2,7 +2,7 @@ import os
 import sys
 
 from setuptools import setup, find_packages
-sys.path.append('inbox/')
+sys.path.append('nylas/')
 from _version import __VERSION__
 
 
@@ -30,7 +30,7 @@ def main():
             "requests>=2.3.0",
             "six>=1.4.1",
             "bumpversion>=0.5.0",
-            # needed for SNI support, required by api.nilas.com
+            # needed for SNI support, required by api.nylas.com
             "pyOpenSSL",
             "ndg-httpsclient",
             "pyasn1",
@@ -42,7 +42,31 @@ def main():
         description='Python bindings for Nylas, the next-generation email platform.',
         license="MIT",
         keywords="inbox app appserver email nylas",
-        url='https://github.com/nylas/inbox-python'
+        url='https://github.com/nylas/nylas-python'
+    )
+
+    setup(
+        name="inbox",
+        version=__VERSION__,
+        packages=find_packages(),
+
+        install_requires=[
+            "requests>=2.3.0",
+            "six>=1.4.1",
+            "bumpversion>=0.5.0",
+            # needed for SNI support, required by api.nylas.com
+            "pyOpenSSL",
+            "ndg-httpsclient",
+            "pyasn1",
+        ],
+        dependency_links=[],
+
+        author="Nylas Team",
+        author_email="support@nylas.com",
+        description='Python bindings for Nylas, the next-generation email platform.',
+        license="MIT",
+        keywords="inbox app appserver email nylas",
+        url='https://github.com/nylas/nylas-python'
     )
 
 if __name__ == '__main__':

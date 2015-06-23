@@ -1,4 +1,4 @@
-# inbox-python
+# nylas-python
 
 Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
@@ -43,7 +43,7 @@ In practice, the Nylas REST API client simplifies this down to two steps.
 
 ```python
 from flask import Flask, session, request, redirect, Response
-from inbox import APIClient
+from nylas import APIClient
 
 @app.route('/')
 def index():
@@ -234,10 +234,10 @@ print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc i
 
 ## Open-Source Sync Engine
 
-The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the Python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Inbox object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
+The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the Python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Nylas object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
 
 ```python
-from inbox import APIClient
+from nylas import APIClient
 client = APIClient(None, None, None, 'http://localhost:5555/')
 ```
 

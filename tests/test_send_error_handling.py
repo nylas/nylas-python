@@ -2,8 +2,8 @@ import json
 import re
 import pytest
 import responses
-from inbox import APIClient
-from inbox.client.errors import *
+from nylas import APIClient
+from nylas.client.errors import *
 
 API_URL = 'http://localhost:2222'
 
