@@ -65,8 +65,8 @@ class NylasAPIObject(dict):
 
 
 class Message(NylasAPIObject):
-    attrs = ["bcc", "body", "date", "files", "from", "id", "namespace_id",
-             "object", "subject", "thread_id", "to", "unread"]
+    attrs = ["bcc", "body", "cc", "date", "files", "from", "id",
+             "namespace_id", "object", "subject", "thread_id", "to", "unread"]
     collection_name = 'messages'
 
     def __init__(self, api, namespace):
