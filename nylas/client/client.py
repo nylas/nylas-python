@@ -195,26 +195,30 @@ class APIClient(json.JSONEncoder):
         return list(map(lambda x: cls.create(self, namespace, **x), results))
 
     @nylas_excepted
-    def _get_resource_raw(self, namespace, cls, id, **filters):
+    def _get_resource_raw(self, namespace, cls, id, extra=None,
+                          headers=None, **filters):
         """Get an individual REST resource"""
-        extra = filters.pop('extra', None)
+        headers = headers or {}
+        headers.update(self.session.headers)
+
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
         url = "{}{}/{}/{}{}".format(self.api_server, prefix,
                                     cls.collection_name, id, postfix)
         url = url_concat(url, filters)
 
-        response = self._get_http_session(cls.api_root).get(url)
+        response = self._get_http_session(cls.api_root).get(url, headers=headers)
         return _validate(response)
 
     def _get_resource(self, namespace, cls, id, **filters):
-        extra = filters.pop('extra', None)
         response = self._get_resource_raw(namespace, cls, id, **filters)
         result = response.json()
         return cls.create(self, namespace, **result)
 
-    def _get_resource_data(self, namespace, cls, id, **filters):
-        response = self._get_resource_raw(namespace, cls, id, **filters)
+    def _get_resource_data(self, namespace, cls, id,
+                           extra=None, headers=None, **filters):
+        response = self._get_resource_raw(namespace, cls, id, extra=extra,
+                                          headers=headers, **filters)
         return response.content
 
     @nylas_excepted

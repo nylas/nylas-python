@@ -78,23 +78,22 @@ class Message(NylasAPIObject):
 
     @property
     def raw(self):
+        headers = {"Accept": "message/rfc822"}
         data = self.api._get_resource_data(self.namespace, Message, self.id,
-                                           extra='rfc2822')
-        data = json.loads(data)
+                                           headers=headers)
+        data = {'rfc822': data}
         return RawMessage.create(self.api, self.namespace, **data)
 
 
 class RawMessage(NylasAPIObject):
-    """a raw message, as returned by the /message/<id>/rfc2822 endpoint"""
-    attrs = ["rfc2822"]
+    """
+    a raw message, as returned by the /message/<id> endpoint when
+    the "Accept" is set to "message/rfc822" in the request header
+    """
+    attrs = ["rfc822"]
 
     def __init__(self, api, namespace):
         NylasAPIObject.__init__(self, RawMessage, api, namespace)
-
-    @property
-    def rfc2822(self):
-        # base64-decode the contents, for convenience
-        return base64.b64decode(self['rfc2822'])
 
 
 class Tag(NylasAPIObject):
