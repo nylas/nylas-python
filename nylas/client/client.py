@@ -16,7 +16,6 @@ from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
-AUTH_SERVER = "https://www.nylas.com"
 
 
 def _validate(response):
@@ -81,13 +80,13 @@ class APIClient(json.JSONEncoder):
                  app_secret=environ.get('NYLAS_APP_SECRET'),
                  access_token=environ.get('NYLAS_ACCESS_TOKEN'),
                  api_server=API_SERVER,
-                 auth_server=AUTH_SERVER):
+                 auth_server=None):
         if "://" not in api_server:
             raise Exception("When overriding the Nylas API server address, you"
                             " must include https://")
         self.api_server = api_server
-        self.authorize_url = auth_server + '/oauth/authorize'
-        self.access_token_url = auth_server + '/oauth/token'
+        self.authorize_url = api_server + '/oauth/authorize'
+        self.access_token_url = api_server + '/oauth/token'
 
         self.app_secret = app_secret
         self.app_id = app_id
@@ -189,10 +188,14 @@ class APIClient(json.JSONEncoder):
         prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
         url = url_concat(url, filters)
-
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
-        return list(map(lambda x: cls.create(self, namespace, **x), results))
+        return list(
+            filter(
+                lambda x: x is not None,
+                map(lambda x: cls.create(self, namespace, **x), results)
+                )
+            )
 
     @nylas_excepted
     def _get_resource_raw(self, namespace, cls, id, extra=None,
@@ -213,6 +216,8 @@ class APIClient(json.JSONEncoder):
     def _get_resource(self, namespace, cls, id, **filters):
         response = self._get_resource_raw(namespace, cls, id, **filters)
         result = response.json()
+        if isinstance(result, list):
+            result = result[0]
         return cls.create(self, namespace, **result)
 
     def _get_resource_data(self, namespace, cls, id,

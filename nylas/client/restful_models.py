@@ -24,11 +24,21 @@ class NylasAPIObject(dict):
 
     @classmethod
     def create(cls, api, namespace_, **kwargs):
+        if kwargs.get('object') and kwargs['object'] != cls.__name__.lower():
+            # We were given a specific object type and we're trying to
+            # instantiate something different; abort. (Relevant for folders
+            # and labels API.)
+            return
         obj = cls(api, namespace_)
         obj.cls = cls
         for attr in cls.attrs:
+            # Support attributes we want to override with properties where
+            # the property names overlap with the JSON names (e.g. folders)
+            attr_name = attr
+            if attr_name.startswith('_'):
+                attr = attr_name[1:]
             if attr in kwargs:
-                obj[attr] = kwargs[attr]
+                obj[attr_name] = kwargs[attr]
         if 'id' not in kwargs:
             obj['id'] = None
 
@@ -66,7 +76,8 @@ class NylasAPIObject(dict):
 
 class Message(NylasAPIObject):
     attrs = ["bcc", "body", "cc", "date", "files", "from", "id",
-             "namespace_id", "object", "subject", "thread_id", "to", "unread"]
+             "namespace_id", "object", "subject", "thread_id", "to", "unread",
+             "starred", "_folder", "_labels"]
     collection_name = 'messages'
 
     def __init__(self, api, namespace):
@@ -75,6 +86,69 @@ class Message(NylasAPIObject):
     @property
     def attachments(self):
         return self.child_collection(File, message_id=self.id)
+
+    @property
+    def folder(self):
+        # Instantiate a Folder object from the API response
+        if self._folder:
+            return Folder.create(self.api, self.namespace, **self._folder)
+
+    @property
+    def labels(self):
+        if self._labels:
+            return [Label.create(self.api, self.namespace, **l)
+                    for l in self._labels]
+        else:
+            return []
+
+    def update_folder(self, folder_id):
+        update = {'folder': folder_id}
+        new_obj = self.api._update_resource(self.namespace,
+            self.cls, self.id, update)
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
+        return self.folder
+
+    def update_labels(self, label_ids=[]):
+        update = {'labels': label_ids}
+        new_obj = self.api._update_resource(self.namespace,
+            self.cls, self.id, update)
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
+        return self.labels
+
+    def add_labels(self, label_ids=[]):
+        labels = [l.id for l in self.labels]
+        labels = list(set(labels).union(set(label_ids)))
+        return self.update_labels(labels)
+
+    def add_label(self, label_id):
+        return self.add_labels([label_id])
+
+    def remove_labels(self, label_ids=[]):
+        labels = [l.id for l in self.labels]
+        labels = list(set(labels) - set(label_ids))
+        return self.update_labels(labels)
+
+    def remove_label(self, label_id):
+        return self.remove_labels([label_id])
+
+    def mark_as_read(self):
+        update = {'unread': False}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.unread = False
+
+    def star(self):
+        update = {'starred': True}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.starred = True
+
+    def unstar(self):
+        update = {'starred': False}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.starred = False
 
     @property
     def raw(self):
@@ -104,9 +178,42 @@ class Tag(NylasAPIObject):
         NylasAPIObject.__init__(self, Tag, api, namespace)
 
 
+class Folder(NylasAPIObject):
+    attrs = ["id", "display_name", "name"]
+    collection_name = "folders"
+
+    def __init__(self, api, namespace):
+        NylasAPIObject.__init__(self, Folder, api, namespace)
+
+    @property
+    def threads(self):
+        return self.child_collection({'in': self.id})
+
+    @property
+    def messages(self):
+        return self.child_collection({'in': self.id})
+
+
+class Label(NylasAPIObject):
+    attrs = ["id", "display_name", "name"]
+    collection_name = "labels"
+
+    def __init__(self, api, namespace):
+        NylasAPIObject.__init__(self, Label, api, namespace)
+
+    @property
+    def threads(self):
+        return self.child_collection({'in': self.id})
+
+    @property
+    def messages(self):
+        return self.child_collection({'in': self.id})
+
+
 class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object",
-             "participants", "snippet", "subject", "subject_date", "tags"]
+             "participants", "snippet", "subject", "subject_date", "tags",
+             "unread", "starred", "version", "_folders", "_labels"]
     collection_name = 'threads'
 
     def __init__(self, api, namespace):
@@ -120,36 +227,98 @@ class Thread(NylasAPIObject):
     def drafts(self):
         return self.child_collection(Draft, thread_id=self.id)
 
+    @property
+    def folders(self):
+        if self._folders:
+            return [Folder.create(self.api, self.namespace, **f)
+                    for f in self._folders]
+        else:
+            return []
+
+    @property
+    def labels(self):
+        if self._labels:
+            return [Label.create(self.api, self.namespace, **l)
+                    for l in self._labels]
+        else:
+            return []
+
+    def update_folder(self, folder_id):
+        update = {'folder': folder_id}
+        new_obj = self.api._update_resource(self.namespace,
+            self.cls, self.id, update)
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
+        return self.folder
+
+    def update_labels(self, label_ids=[]):
+        update = {'labels': label_ids}
+        new_obj = self.api._update_resource(self.namespace,
+            self.cls, self.id, update)
+        for attr in self.cls.attrs:
+            if hasattr(new_obj, attr):
+                setattr(self, attr, getattr(new_obj, attr))
+        return self.labels
+
+    def add_labels(self, label_ids=[]):
+        labels = [l.id for l in self.labels]
+        labels = list(set(labels).union(set(label_ids)))
+        return self.update_labels(labels)
+
+    def add_label(self, label_id):
+        return self.add_labels([label_id])
+
+    def remove_labels(self, label_ids=[]):
+        labels = [l.id for l in self.labels]
+        labels = list(set(labels) - set(label_ids))
+        return self.update_labels(labels)
+
+    def remove_label(self, label_id):
+        return self.remove_labels([label_id])
+
     def update_tags(self, add=[], remove=[]):
+        # DEPRECATED
         update = {'add_tags': add, 'remove_tags': remove}
         self.api._update_resource(self.namespace, self.cls, self.id, update)
 
     def remove_tags(self, tags):
+        # DEPRECATED
         self.update_tags(remove=tags)
 
     def add_tags(self, tags):
+        # DEPRECATED
         self.update_tags(add=tags)
 
     def mark_as_read(self):
-        self.remove_tags(['unread'])
+        update = {'unread': False}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.unread = False
 
     def mark_as_seen(self):
-        self.remove_tags(['unseen'])
+        self.mark_as_read()
 
     def archive(self):
+        # DEPRECATED
         self.update_tags(['archive'], ['inbox'])
 
     def unarchive(self):
+        # DEPRECATED
         self.update_tags(['inbox'], ['archive'])
 
     def trash(self):
+        # DEPRECATED
         self.add_tags(['trash'])
 
     def star(self):
-        self.add_tags(['starred'])
+        update = {'starred': True}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.starred = True
 
     def unstar(self):
-        self.remove_tags(['starred'])
+        update = {'starred': False}
+        self.api._update_resource(self.namespace, self.cls, self.id, update)
+        self.starred = False
 
     def create_reply(self):
         d = self.drafts.create()
@@ -275,7 +444,7 @@ class Event(NylasAPIObject):
 
 class Namespace(NylasAPIObject):
     attrs = ["account", "email_address", "id", "namespace_id", "object",
-             "provider", "name"]
+             "provider", "name", "organization_unit"]
     collection_name = 'n'
 
     def __init__(self, api, namespace):
@@ -291,6 +460,28 @@ class Namespace(NylasAPIObject):
     @property
     def tags(self):
         return self.child_collection(Tag)
+
+    def has_folders(self):
+        return self.organization_unit == 'folder'
+
+    def has_labels(self):
+        return self.organization_unit == 'label'
+
+    @property
+    def categories(self):
+        if self.has_labels():
+            return self.child_collection(Label)
+        else:
+            return self.child_collection(Folder)
+
+    @property
+    def folders(self):
+        # folders and labels are served by the same underlying API
+        return self.categories
+
+    @property
+    def labels(self):
+        return self.categories
 
     @property
     def messages(self):

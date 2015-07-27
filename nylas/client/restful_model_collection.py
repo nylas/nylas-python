@@ -69,13 +69,13 @@ class RestfulModelCollection(object):
         if isinstance(key, slice):
             if key.step is not None:
                 raise ValueError("'step' not supported for slicing "
-                                "RestfulModelCollection objects "
-                                "(e.g. messages[::step])")
+                                 "RestfulModelCollection objects "
+                                 "(e.g. messages[::step])")
             elif key.start < 0 or key.stop < 0:
                 raise ValueError("slice indices must be positive")
             elif key.stop - key.start < 0:
                 raise ValueError("ending slice index cannot be less than "
-                                "starting index")
+                                 "starting index")
             return self._range(key.start, key.stop-key.start)
         else:
             return self._get_model_collection(key, 1)[0]
@@ -85,7 +85,8 @@ class RestfulModelCollection(object):
     def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
         filters = copy(self.filters)
         filters['offset'] = offset
-        filters['limit'] = limit
+        if not filters.get('limit'):
+            filters['limit'] = limit
 
         return self.api._get_resources(self.namespace, self.model_class,
                                        **filters)

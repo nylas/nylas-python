@@ -99,7 +99,11 @@ for thread in namespace.threads.items():
     print thread.subject
 
 # List the 5 most recent unread threads
-for thread in namespace.threads.where(tag='unread'):
+for thread in namespace.threads.where(unread=True, limit=5):
+    print thread.subject
+
+# List starred threads
+for thread in namespace.threads.where(starred=True):
     print thread.subject
 
 # List all threads with 'ben@nylas.com'
@@ -116,24 +120,78 @@ for participant in thread.participants:
     print participant["email"]
 
 # Mark as read
-thread.mark_as_read()
+thread.unread = False
+thread.save()
 
-# Archive
-thread.archive()
-
-# Unarchive
-thread.unarchive()
-
-# Add or remove arbitrary tags
+# Add or remove tags (DEPRECATED -- you should use the new labels and folders API)
 tagsToAdd = ['inbox', 'cfa1233ef123acd12']
 tagsToRemove = []
 thread.update_tags(tagsToAdd, tagsToRemove)
+
+# Add a new label to a message or thread (Gmail) 
+
+important_id = 'aw6p0mya6v3r96vyj8kooxa5v'
+message.add_label(important_id)
+
+# Remove a label from a message or thread (Gmail)
+important_id = 'aw6p0mya6v3r96vyj8kooxa5v'
+message.remove_label(important_id)
+
+# Batch update labels on a message or thread (Gmail)
+label_ids = ['aw6p0mya6v3r96vyj8kooxa5v', '2ywxapx5g8vybui7hgpzbr33d']
+message.update_labels(label_ids)
+
+# Move a message or thread to a different folder (Non-Gmail)
+
+trash_id = 'ds36ik7o55gdqlvpbrjbg9ovn'
+message.update_folder(trash_id)
+
+# Star a message 
+
+message.starred = True
+message.save()
+
+# Star a thread
+
+thread.starred = True
+thread.save()
 
 # List messages
 for message in thread.messages.items():
     print message.subject
 ```
 
+### Working with Folders and Labels
+
+The Folders and Labels API replaces the now deprecated Tags API. For Gmail accounts, this API allows you to apply labels to whole threads or individual messages. For providers other than Gmail, you can move threads and messages between folders -- a message can only belong to one folder.
+
+```python
+# Check if a namespace should be using folders or labels
+print namespace.organization_unit
+assert namespace.has_labels()
+
+# List labels
+for label in namespace.labels:
+    print label.id, label.display_name
+
+# Create a label
+label = namespace.labels.create()
+label.display_name = 'My Label'
+label.save()
+
+# Create a folder
+# Note that folders and labels behave identically, except that a message can have many labels but only belong to a single folder.
+folder = namespace.folders.create()
+folder.display_name = 'My Folder'
+folder.save()
+
+# Rename a folder (or label)
+
+# Note that you can't rename core folders like INBOX, Trash, etc.
+folder = namespace.folders.first()
+folder.display_name = 'A Different Folder'
+folder.save()
+```
 
 ### Working with Files
 
