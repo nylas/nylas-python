@@ -109,6 +109,10 @@ for thread in namespace.threads.where(starred=True):
 # List all threads with 'ben@nylas.com'
 for thread in namespace.threads.where(any_email='ben@nylas.com').items():
     print thread.subject
+
+# List threads in order of most recently received message (excludes sent messages)
+for thread in namespace.threads.where(sort='received_recent_date'):
+    print thread.subject
 ```
 
 

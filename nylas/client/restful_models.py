@@ -213,6 +213,7 @@ class Label(NylasAPIObject):
 class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "namespace_id", "object",
              "participants", "snippet", "subject", "subject_date", "tags",
+             "last_message_timestamp", "first_message_timestamp",
              "unread", "starred", "version", "_folders", "_labels"]
     collection_name = 'threads'
 
