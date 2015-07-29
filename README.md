@@ -314,6 +314,7 @@ git log # to verify
 python setup.py publish
 ```
 
+Also, don't forget to `git push --tags` to update the release tags on GitHub.
 
 ## Looking for inbox.py?
 
