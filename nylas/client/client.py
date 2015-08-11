@@ -4,7 +4,7 @@ import json
 from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
-from nylas.client._version import __VERSION__
+from nylas._client_sdk_version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import Namespace, File, Account

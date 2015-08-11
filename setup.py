@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages
 sys.path.append('nylas/')
-from client._version import __VERSION__
+from _client_sdk_version import __VERSION__
 
 
 def main():
