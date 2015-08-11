@@ -20,7 +20,7 @@ There's an example Flask app in the `examples` directory. You can run the sample
 
 ### App ID and Secret
 
-Before you can interact with the Nylas REST API, you need to register for the Nylas Developer Program at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Nylas REST API, you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
 
 Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. That said, in the example project and code snippets below, the values are hardcoded for convenience.
 
@@ -302,9 +302,9 @@ client = APIClient(None, None, None, 'http://localhost:5555/')
 
 ## Contributing
 
-We'd love your help making Nylas better. Join the Google Group for project updates and feature discussion. We also hang out in `#nylas` on [irc.freenode.net](http://irc.freenode.net), or you can email [support@nylas.com](mailto:support@nylas.com).
+We'd love your help making Nylas better. We hang out on Slack. [Join the channel here ![Slack Invite Button](http://slack-invite.nylas.com/badge.svg)](http://slack-invite.nylas.com) You can also email [support@nylas.com](mailto:support@nylas.com).
 
-Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
+Please sign the [Contributor License Agreement](https://nylas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
 If you have access to the PyPI repository, you can make a new release as such:
 
