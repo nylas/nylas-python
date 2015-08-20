@@ -7,7 +7,8 @@ from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
-from .restful_models import Namespace, File, Account
+from .restful_models import (Calendar, Contact, Event, Message, Thread, File,
+                             Account, Tag, Folder, Label, Draft)
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      InvalidRequestError, NotFoundError, ServerError,
                      ServiceUnavailableError, ConflictError,
@@ -147,89 +148,107 @@ class APIClient(json.JSONEncoder):
         self.auth_token = resp[u'access_token']
         return self.auth_token
 
-    def get_namespace(self):
-        ns = self._get_resources(None, Namespace)
-        if len(ns):
-            return ns[0]
-        else:
-            return None
-
-    @property
-    def namespaces(self):
-        return RestfulModelCollection(Namespace, self, None)
-
     @property
     def accounts(self):
         return RestfulModelCollection(Account, self, self.app_id)
 
-    def __getattr__(self, attr):
-        """ Use the default namespaces for all of the known collections"""
-        import restful_models
-        for mn in dir(restful_models):
-            cn = getattr(getattr(restful_models, mn), 'collection_name', '')
-            if cn == attr:
-                return getattr(self.namespaces[0], attr)
+    @property
+    def threads(self):
+        return RestfulModelCollection(Thread, self)
+
+    @property
+    def tags(self):
+        return RestfulModelCollection(Tag, self)
+
+    @property
+    def folders(self):
+        return RestfulModelCollection(Folder, self)
+
+    @property
+    def labels(self):
+        return RestfulModelCollection(Label, self)
+
+    @property
+    def messages(self):
+        return RestfulModelCollection(Message, self)
+
+    @property
+    def files(self):
+        return RestfulModelCollection(File, self)
+
+    @property
+    def drafts(self):
+        return RestfulModelCollection(Draft, self)
+
+    @property
+    def contacts(self):
+        return RestfulModelCollection(Contact, self)
+
+    @property
+    def events(self):
+        return RestfulModelCollection(Event, self)
+
+    @property
+    def calendars(self):
+        return RestfulModelCollection(Calendar, self)
 
     ##########################################################
     #   Private functions used by Restful Model Collection   #
     ##########################################################
 
     def _get_http_session(self, api_root):
-        # Is this a request for a resource under the /n/ namespace or the
-        # accounts/billing/admin namespace (/a). If the latter, pass the app_secret
+        # Is this a request for a resource under the accounts/billing/admin
+        # namespace (/a)? If the latter, pass the app_secret
         # instead of the secret_token
-        if api_root == 'n':
-            return self.session
-        elif api_root == 'a':
+        if api_root == 'a':
             return self.admin_session
+        else:
+            return self.session
 
     @nylas_excepted
-    def _get_resources(self, namespace, cls, **filters):
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
-        url = "{}{}/{}".format(self.api_server, prefix, cls.collection_name)
+    def _get_resources(self, cls, **filters):
+        url = "{}/{}".format(self.api_server, cls.collection_name)
         url = url_concat(url, filters)
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
         return list(
             filter(
                 lambda x: x is not None,
-                map(lambda x: cls.create(self, namespace, **x), results)
+                map(lambda x: cls.create(self, **x), results)
                 )
             )
 
     @nylas_excepted
-    def _get_resource_raw(self, namespace, cls, id, extra=None,
+    def _get_resource_raw(self, cls, id, extra=None,
                           headers=None, **filters):
         """Get an individual REST resource"""
         headers = headers or {}
         headers.update(self.session.headers)
 
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         postfix = "/{}".format(extra) if extra else ''
-        url = "{}{}/{}/{}{}".format(self.api_server, prefix,
-                                    cls.collection_name, id, postfix)
+        url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id,
+                                  postfix)
         url = url_concat(url, filters)
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
         return _validate(response)
 
-    def _get_resource(self, namespace, cls, id, **filters):
-        response = self._get_resource_raw(namespace, cls, id, **filters)
+    def _get_resource(self, cls, id, **filters):
+        response = self._get_resource_raw(cls, id, **filters)
         result = response.json()
         if isinstance(result, list):
             result = result[0]
-        return cls.create(self, namespace, **result)
+        return cls.create(self, **result)
 
-    def _get_resource_data(self, namespace, cls, id,
+    def _get_resource_data(self, cls, id,
                            extra=None, headers=None, **filters):
-        response = self._get_resource_raw(namespace, cls, id, extra=extra,
+        response = self._get_resource_raw(cls, id, extra=extra,
                                           headers=headers, **filters)
         return response.content
 
     @nylas_excepted
-    def _create_resource(self, namespace, cls, data):
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
-        url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
+    def _create_resource(self, cls, data):
+        url = "{}/{}/".format(self.api_server, cls.collection_name)
         session = self._get_http_session(cls.api_root)
 
         if cls == File:
@@ -241,12 +260,11 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, data=data, headers=headers)
 
         result = _validate(response).json()
-        return cls.create(self, namespace, **result)
+        return cls.create(self, **result)
 
     @nylas_excepted
-    def _create_resources(self, namespace, cls, data):
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
-        url = "{}{}/{}/".format(self.api_server, prefix, cls.collection_name)
+    def _create_resources(self, cls, data):
+        url = "{}/{}/".format(self.api_server, cls.collection_name)
         session = self._get_http_session(cls.api_root)
 
         if cls == File:
@@ -258,37 +276,33 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
-        return list(map(lambda x: cls.create(self, namespace, **x), results))
+        return list(map(lambda x: cls.create(self, **x), results))
 
     @nylas_excepted
-    def _delete_resource(self, namespace, cls, id):
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
+    def _delete_resource(self, cls, id):
         name = cls.collection_name
-        url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
+        url = "{}/{}".format(self.api_server, name, id)
         session = self._get_http_session(cls.api_root)
 
         _validate(session.delete(url))
 
     @nylas_excepted
-    def _update_resource(self, namespace, cls, id, data):
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
+    def _update_resource(self, cls, id, data):
         name = cls.collection_name
-        url = "{}{}/{}/{}".format(self.api_server, prefix, name, id)
+        url = "{}/{}/{}".format(self.api_server, name, id)
         session = self._get_http_session(cls.api_root)
 
         response = session.put(url, data=json.dumps(data))
 
         result = _validate(response).json()
-        return cls.create(self, namespace, **result)
+        return cls.create(self, **result)
 
     @nylas_excepted
-    def _call_resource_method(self, namespace, cls, id, method_name, data):
+    def _call_resource_method(self, cls, id, method_name, data):
         """POST a dictionnary to an API method,
         for example /a/.../accounts/id/upgrade"""
-        prefix = "/{}/{}".format(cls.api_root, namespace) if namespace else ''
         name = cls.collection_name
-        url = "{}{}/{}/{}/{}".format(self.api_server, prefix, name, id,
-                                     method_name)
+        url = "{}/{}/{}/{}".format(self.api_server, name, id, method_name)
         session = self._get_http_session(cls.api_root)
         response = session.post(url, data=json.dumps(data))
 

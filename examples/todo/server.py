@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'secret'
 
 def get_client():
-    return APIClient(APP_ID, APP_SECRET, session['access_token']).namespaces[0]
+    return APIClient(APP_ID, APP_SECRET, session['access_token'])
 
 def create_todo_tag():
     c = get_client()

@@ -70,17 +70,14 @@ def login_callback():
 You can take a look at [examples/server.py](examples/server.py) to see a server
 implementing the auth flow.
 
-### Fetching Namespaces
+### Connecting to an account
 
 ```python
 client = APIClient(APP_ID, APP_SECRET, token)
 
-# Get the first namespace
-namespace = client.namespaces.first()
-
 # Print out the email address and provider (Gmail, Exchange)
-print namespace.email_address
-print namespace.provider
+print client.email_address
+print client.provider
 ```
 
 
@@ -88,26 +85,26 @@ print namespace.provider
 
 ```python
 # Fetch the first thread
-thread = namespace.threads.first()
+thread = client.threads.first()
 
 # Fetch a specific thread
-thread = namespace.threads.find('ac123acd123ef123')
+thread = client.threads.find('ac123acd123ef123')
 
 # List all threads tagged `inbox`
 # (paginating 50 at a time until no more are returned.)
-for thread in namespace.threads.items():
+for thread in client.threads.items():
     print thread.subject
 
 # List the 5 most recent unread threads
-for thread in namespace.threads.where(unread=True, limit=5):
+for thread in client.threads.where(unread=True, limit=5):
     print thread.subject
 
 # List starred threads
-for thread in namespace.threads.where(starred=True):
+for thread in client.threads.where(starred=True):
     print thread.subject
 
 # List all threads with 'ben@nylas.com'
-for thread in namespace.threads.where(any_email='ben@nylas.com').items():
+for thread in client.threads.where(any_email='ben@nylas.com').items():
     print thread.subject
 ```
 
@@ -128,7 +125,7 @@ tagsToAdd = ['inbox', 'cfa1233ef123acd12']
 tagsToRemove = []
 thread.update_tags(tagsToAdd, tagsToRemove)
 
-# Add a new label to a message or thread (Gmail) 
+# Add a new label to a message or thread (Gmail)
 
 important_id = 'aw6p0mya6v3r96vyj8kooxa5v'
 message.add_label(important_id)
@@ -146,7 +143,7 @@ message.update_labels(label_ids)
 trash_id = 'ds36ik7o55gdqlvpbrjbg9ovn'
 message.update_folder(trash_id)
 
-# Star a message 
+# Star a message
 
 message.starred = True
 message.save()
@@ -166,29 +163,25 @@ for message in thread.messages.items():
 The Folders and Labels API replaces the now deprecated Tags API. For Gmail accounts, this API allows you to apply labels to whole threads or individual messages. For providers other than Gmail, you can move threads and messages between folders -- a message can only belong to one folder.
 
 ```python
-# Check if a namespace should be using folders or labels
-print namespace.organization_unit
-assert namespace.has_labels()
-
 # List labels
-for label in namespace.labels:
+for label in client.labels:
     print label.id, label.display_name
 
 # Create a label
-label = namespace.labels.create()
+label = client.labels.create()
 label.display_name = 'My Label'
 label.save()
 
 # Create a folder
 # Note that folders and labels behave identically, except that a message can have many labels but only belong to a single folder.
-folder = namespace.folders.create()
+folder = client.folders.create()
 folder.display_name = 'My Folder'
 folder.save()
 
 # Rename a folder (or label)
 
 # Note that you can't rename core folders like INBOX, Trash, etc.
-folder = namespace.folders.first()
+folder = client.folders.first()
 folder.display_name = 'A Different Folder'
 folder.save()
 ```
@@ -199,12 +192,12 @@ Files can be uploaded via two interfaces. One is providing data directly, anothe
 
 ```python
 # List files
-for file in namespace.files:
+for file in client.files:
     print file.filename
 
 # Create a new file with the stream interface
 f = open('test.py', 'r')
-myfile = namespace.files.create()
+myfile = client.files.create()
 myfile.filename = 'test.py'
 myfile.stream = f
 myfile.save()
@@ -225,12 +218,12 @@ Drafts can be created, saved and then sent. The following example will create a 
 
 ```python
 # Create the attachment
-myfile = namespace.files.create()
+myfile = client.files.create()
 myfile.filename = 'test.txt'
 myfile.data = "hello world"
 
 # Create a new draft
-draft = namespace.drafts.create()
+draft = client.drafts.create()
 draft.to = [{'name': 'My Friend', 'email': 'my.friend@example.com'}]
 draft.subject = "Here's an attachment"
 draft.body = "Cheers mate!"
@@ -244,13 +237,13 @@ The following example shows how to create, update and delete an event.
 
 ```python
 # Get a calendar that's not read only
-calendar = filter(lambda cal: not cal.read_only, namespace.calendars)[0]
+calendar = filter(lambda cal: not cal.read_only, client.calendars)[0]
 # Create the event
-ev = namespace.events.create()
+ev = client.events.create()
 ev.title = "Party at the Ritz"
 ev.when = {"start_time": 1416423667, "end_time": 1416448867} # These numbers are UTC timestamps
 ev.location = "The Old Ritz"
-ev.participants = [{"name": "My Friend', 'email': 'my.friend@example.com'}]
+ev.participants = [{"name": "My Friend", 'email': 'my.friend@example.com'}]
 ev.calendar_id = calendar.id
 ev.save()
 
@@ -259,7 +252,7 @@ ev.location = "The Waldorf-Astoria"
 ev.save()
 
 # Delete it
-namespace.events.delete(ev.id)
+client.events.delete(ev.id)
 ```
 
 ### Working with Messages, Contacts, Calendars, etc.
@@ -267,16 +260,16 @@ namespace.events.delete(ev.id)
 Each of the primary collections (contacts, messages, etc.) behaves the same way as `threads`. For example, finding messages with a filter is similar to finding threads:
 
 ```python
-messages = namespace.messages.where(to=ben@nylas.com).all()
+messages = client.messages.where(to=ben@nylas.com).all()
 ```
 
 The `where` method accepts a keyword argument for each of the filters documented in the [Nylas Filters Documentation](https://www.nylas.com/docs/api#filters).
 
 Note: Because `from` is a reserved word in Python, to filter by the 'from' field, there are two options:
 ```python
-messages = namespace.messages.where(from_='email@example.com')
+messages = client.messages.where(from_='email@example.com')
 # or
-messages = namespace.messages.where(**{'from': 'email@example.com'})
+messages = client.messages.where(**{'from': 'email@example.com'})
 ```
 
 ## Account Management

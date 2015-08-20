@@ -14,15 +14,14 @@ def api_client():
 
 
 @pytest.fixture
-def mock_namespace():
+def mock_account():
     response_body = json.dumps([
         {
-            "account_id": "4ennivvrcgsqytgybfk912dto",
+            "account_id": "4dl0ni6vxomazo73r5ozdo16j",
             "email_address": "ben.bitdiddle1861@gmail.com",
             "id": "4dl0ni6vxomazo73r5ozdo16j",
             "name": "Ben Bitdiddle",
-            "namespace_id": "4dl0ni6vxomazo73r5ozdo16j",
-            "object": "namespace",
+            "object": "account",
             "provider": "gmail"
         }
     ])
@@ -33,7 +32,7 @@ def mock_namespace():
 
 @pytest.fixture
 def mock_save_draft():
-    save_endpoint = re.compile(API_URL + '/n/[(a-z)|(0-9)]+/drafts/')
+    save_endpoint = re.compile(API_URL + '/drafts/')
     response_body = json.dumps({
         "id": "4dl0ni6vxomazo73r5oydo16k",
         "version": "4dw0ni6txomazo33r5ozdo16j"
@@ -44,7 +43,7 @@ def mock_save_draft():
 
 
 def mock_sending_error(http_code, message):
-    send_endpoint = re.compile(API_URL + '/n/[(a-z)|(0-9)]+/send')
+    send_endpoint = re.compile(API_URL + '/send')
     response_body = json.dumps({
         "type": "api_error",
         "message": message
@@ -55,9 +54,8 @@ def mock_sending_error(http_code, message):
 
 
 @responses.activate
-def test_handle_message_rejected(api_client, mock_namespace, mock_save_draft):
-    namespace = api_client.namespaces.first()
-    draft = namespace.drafts.create()
+def test_handle_message_rejected(api_client, mock_account, mock_save_draft):
+    draft = api_client.drafts.create()
     error_message = 'Sending to all recipients failed'
     mock_sending_error(402, error_message)
     with pytest.raises(MessageRejectedError) as exc:
@@ -66,9 +64,8 @@ def test_handle_message_rejected(api_client, mock_namespace, mock_save_draft):
 
 
 @responses.activate
-def test_handle_quota_exceeded(api_client, mock_namespace, mock_save_draft):
-    namespace = api_client.namespaces.first()
-    draft = namespace.drafts.create()
+def test_handle_quota_exceeded(api_client, mock_account, mock_save_draft):
+    draft = api_client.drafts.create()
     error_message = 'Daily sending quota exceeded'
     mock_sending_error(429, error_message)
     with pytest.raises(SendingQuotaExceededError) as exc:
@@ -77,10 +74,9 @@ def test_handle_quota_exceeded(api_client, mock_namespace, mock_save_draft):
 
 
 @responses.activate
-def test_handle_service_unavailable(api_client, mock_namespace,
+def test_handle_service_unavailable(api_client, mock_account,
                                     mock_save_draft):
-    namespace = api_client.namespaces.first()
-    draft = namespace.drafts.create()
+    draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
     mock_sending_error(503, error_message)
     with pytest.raises(ServiceUnavailableError) as exc:

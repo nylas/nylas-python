@@ -3,7 +3,7 @@ from copy import copy
 CHUNK_SIZE = 50
 
 class RestfulModelCollection(object):
-    def __init__(self, cls, api, namespace, filter={}, offset=0,
+    def __init__(self, cls, api, filter={}, offset=0,
                  **filters):
         filters.update(filter)
         from nylas.client import APIClient
@@ -14,7 +14,6 @@ class RestfulModelCollection(object):
 
         self.model_class = cls
         self.filters = filters
-        self.namespace = namespace
         self.api = api
 
     def __iter__(self):
@@ -31,8 +30,6 @@ class RestfulModelCollection(object):
                 yield item
 
             if len(items) < CHUNK_SIZE:
-                # This is only here because namespaces are
-                # treated like other collections
                 break
 
             offset += len(items)
@@ -60,10 +57,10 @@ class RestfulModelCollection(object):
         return self._get_model(id)
 
     def create(self, **args):
-        return self.model_class.create(self.api, self.namespace, **args)
+        return self.model_class.create(self.api, **args)
 
     def delete(self, id):
-        return self.api._delete_resource(self.namespace, self.model_class, id)
+        return self.api._delete_resource(self.model_class, id)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -88,11 +85,11 @@ class RestfulModelCollection(object):
         if not filters.get('limit'):
             filters['limit'] = limit
 
-        return self.api._get_resources(self.namespace, self.model_class,
+        return self.api._get_resources(self.model_class,
                                        **filters)
 
     def _get_model(self, id):
-        return self.api._get_resource(self.namespace, self.model_class, id,
+        return self.api._get_resource(self.model_class, id,
                                       **self.filters)
 
     def _range(self, offset=0, limit=CHUNK_SIZE):

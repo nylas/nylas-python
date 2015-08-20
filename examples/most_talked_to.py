@@ -10,7 +10,7 @@ client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 
 counts = {}
 
-for m in client.namespaces[0].messages:
+for m in client.messages:
 	for p in map(lambda x: x['email'], m['from']):
 		if p not in counts:
 			counts[p] = 0

@@ -8,7 +8,7 @@ from nylas.client.errors import *
 
 API_URL = 'http://localhost:2222'
 
-MOCK_NS_ID = 'asdf'
+MOCK_ACCOUNT_ID = '4ennivvrcgsqytgybfk912dto'
 
 
 @pytest.fixture
@@ -17,39 +17,37 @@ def api_client():
 
 
 @pytest.fixture
-def mock_namespace():
-    response_body = json.dumps([
+def mock_account():
+    response_body = json.dumps(
         {
-            "account_id": "4ennivvrcgsqytgybfk912dto",
+            "account_id": MOCK_ACCOUNT_ID,
             "email_address": "ben.bitdiddle1861@gmail.com",
-            "id": MOCK_NS_ID,
+            "id": MOCK_ACCOUNT_ID,
             "name": "Ben Bitdiddle",
-            "namespace_id": MOCK_NS_ID,
-            "object": "namespace",
+            "object": "account",
             "provider": "gmail",
             "organization_unit": "label"
         }
-    ])
-    responses.add(responses.GET, API_URL + '/n?limit=1&offset=0',
+    )
+    responses.add(responses.GET, API_URL + '/account',
                   content_type='application/json', status=200,
                   body=response_body, match_querystring=True)
 
 
 @pytest.fixture
-def mock_folder_namespace():
-    response_body = json.dumps([
+def mock_folder_account():
+    response_body = json.dumps(
         {
-            "account_id": "1e3niqvrcgsqytgybfk912dto",
             "email_address": "ben.bitdiddle1861@office365.com",
-            "id": 'asdg',
+            "id": MOCK_ACCOUNT_ID,
             "name": "Ben Bitdiddle",
-            "namespace_id": 'asdg',
-            "object": "namespace",
+            "account_id": MOCK_ACCOUNT_ID,
+            "object": "account",
             "provider": "eas",
             "organization_unit": "folder"
         }
-    ])
-    responses.add(responses.GET, API_URL + '/n?limit=1&offset=0',
+    )
+    responses.add(responses.GET, API_URL + '/account',
                   content_type='application/json', status=200,
                   body=response_body, match_querystring=True)
 
@@ -61,39 +59,39 @@ def mock_labels():
             "display_name": "Important",
             "id": "anuep8pe5ugmxrucchrzba2o8",
             "name": "important",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         },
         {
             "display_name": "Trash",
             "id": "f1xgowbgcehk235xiy3c3ek42",
             "name": "trash",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         },
         {
             "display_name": "Sent Mail",
             "id": "ah14wp5fvypvjjnplh7nxgb4h",
             "name": "sent",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         },
         {
             "display_name": "All Mail",
             "id": "ah14wp5fvypvjjnplh7nxgb4h",
             "name": "all",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         },
         {
             "display_name": "Inbox",
             "id": "dc11kl3s9lj4760g6zb36spms",
             "name": "inbox",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         }
     ])
-    endpoint = re.compile(API_URL + '/n/asdf/labels.*')
+    endpoint = re.compile(API_URL + '/labels.*')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -106,11 +104,11 @@ def mock_label():
             "display_name": "Important",
             "id": "anuep8pe5ugmxrucchrzba2o8",
             "name": "important",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "label"
         }
     )
-    endpoint = re.compile(API_URL + '/n/asdf/labels/anuep8pe5ugmxrucchrzba2o8')
+    endpoint = re.compile(API_URL + '/labels/anuep8pe5ugmxrucchrzba2o8')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -122,11 +120,11 @@ def mock_folder():
         "display_name": "My Folder",
         "id": "anuep8pe5ug3xrupchwzba2o8",
         "name": None,
-        "namespace_id": "asdg",
+        "account_id": MOCK_ACCOUNT_ID,
         "object": "folder"
         }
     response_body = json.dumps(folder)
-    endpoint = re.compile(API_URL + '/n/asdg/folders/anuep8pe5ug3xrupchwzba2o8')
+    endpoint = re.compile(API_URL + '/folders/anuep8pe5ug3xrupchwzba2o8')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -148,7 +146,7 @@ def mock_messages():
         {
             "id": "1234",
             "subject": "Test Message",
-            "namespace_id": "asdf",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "message",
             "labels": [
                 {
@@ -161,7 +159,7 @@ def mock_messages():
             "unread": True
         }
     ])
-    endpoint = re.compile(API_URL + '/n/asdf/messages')
+    endpoint = re.compile(API_URL + '/messages')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -172,7 +170,7 @@ def mock_message():
     base_msg = {
         "id": "1234",
         "subject": "Test Message",
-        "namespace_id": "asdf",
+        "account_id": MOCK_ACCOUNT_ID,
         "object": "message",
         "labels": [
             {
@@ -194,7 +192,7 @@ def mock_message():
             base_msg['labels'] = labels
         return (200, {}, json.dumps(base_msg))
 
-    endpoint = re.compile(API_URL + '/n/asdf/messages/1234')
+    endpoint = re.compile(API_URL + '/messages/1234')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -209,7 +207,7 @@ def mock_threads():
         {
             "id": "5678",
             "subject": "Test Thread",
-            "namespace_id": "asdg",
+            "account_id": MOCK_ACCOUNT_ID,
             "object": "thread",
             "folders": [{
                 "name": "inbox",
@@ -220,7 +218,7 @@ def mock_threads():
             "unread": False
         }
     ])
-    endpoint = re.compile(API_URL + '/n/asdg/threads')
+    endpoint = re.compile(API_URL + '/threads')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -231,7 +229,7 @@ def mock_thread():
     base_thrd = {
         "id": "5678",
         "subject": "Test Thread",
-        "namespace_id": "asdg",
+        "account_id": MOCK_ACCOUNT_ID,
         "object": "thread",
         "folders": [{
             "name": "inbox",
@@ -251,7 +249,7 @@ def mock_thread():
             base_thrd['folders'] = [folder]
         return (200, {}, json.dumps(base_thrd))
 
-    endpoint = re.compile(API_URL + '/n/asdg/threads/5678')
+    endpoint = re.compile(API_URL + '/threads/5678')
     responses.add(responses.GET, endpoint,
                   content_type='application/json', status=200,
                   body=response_body)
@@ -261,27 +259,24 @@ def mock_thread():
 
 
 @responses.activate
-def test_list_labels(api_client, mock_namespace, mock_labels):
-    namespace = api_client.namespaces.first()
-    labels = namespace.labels
+def test_list_labels(api_client, mock_labels):
+    labels = api_client.labels
     labels = [l for l in labels]
     assert len(labels) == 5
     assert all(isinstance(x, Label) for x in labels)
 
 
 @responses.activate
-def test_get_label(api_client, mock_namespace, mock_label):
-    namespace = api_client.namespaces.first()
-    label = namespace.labels.find('anuep8pe5ugmxrucchrzba2o8')
+def test_get_label(api_client, mock_label):
+    label = api_client.labels.find('anuep8pe5ugmxrucchrzba2o8')
     assert label is not None
     assert isinstance(label, Label)
     assert label.display_name == 'Important'
 
 
 @responses.activate
-def test_get_change_folder(api_client, mock_folder_namespace, mock_folder):
-    namespace = api_client.namespaces.first()
-    folder = namespace.folders.find('anuep8pe5ug3xrupchwzba2o8')
+def test_get_change_folder(api_client, mock_folder):
+    folder = api_client.folders.find('anuep8pe5ug3xrupchwzba2o8')
     assert folder is not None
     assert isinstance(folder, Folder)
     assert folder.display_name == 'My Folder'
@@ -291,9 +286,8 @@ def test_get_change_folder(api_client, mock_folder_namespace, mock_folder):
 
 
 @responses.activate
-def test_messages(api_client, mock_namespace, mock_messages):
-    namespace = api_client.namespaces.first()
-    message = namespace.messages.first()
+def test_messages(api_client, mock_messages):
+    message = api_client.messages.first()
     assert len(message.labels) == 1
     assert message.labels[0].display_name == 'Inbox'
     assert message.folder is None
@@ -302,9 +296,9 @@ def test_messages(api_client, mock_namespace, mock_messages):
 
 
 @responses.activate
-def test_message_change(api_client, mock_namespace, mock_messages,
+def test_message_change(api_client, mock_account, mock_messages,
                         mock_message):
-    message = api_client.namespaces.first().messages.first()
+    message = api_client.messages.first()
     message.star()
     assert message.starred is True
     message.unstar()
@@ -327,9 +321,8 @@ def test_message_change(api_client, mock_namespace, mock_messages,
 
 
 @responses.activate
-def test_thread_folder(api_client, mock_folder_namespace, mock_threads):
-    namespace = api_client.namespaces.first()
-    thread = namespace.threads.first()
+def test_thread_folder(api_client, mock_threads):
+    thread = api_client.threads.first()
     assert len(thread.labels) == 0
     assert len(thread.folders) == 1
     assert thread.folders[0].display_name == 'Inbox'
@@ -338,10 +331,9 @@ def test_thread_folder(api_client, mock_folder_namespace, mock_threads):
 
 
 @responses.activate
-def test_thread_change(api_client, mock_folder_namespace,
+def test_thread_change(api_client, mock_folder_account,
                        mock_threads, mock_thread):
-    namespace = api_client.namespaces.first()
-    thread = namespace.threads.first()
+    thread = api_client.threads.first()
 
     assert thread.starred
     thread.unstar()
