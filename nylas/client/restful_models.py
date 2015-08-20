@@ -352,17 +352,14 @@ class Draft(Message):
             self.file_ids.remove(file.id)
 
     def send(self):
-        # self.files = self.file_ids
         if not self.id:
-            self.save()
+            data = self.as_json()
+        else:
+            data = {'draft_id': self.id}
+            if hasattr(self, 'version'):
+                data['version'] = self.version
 
-        d_params = {'draft_id': self.id}
-        if hasattr(self, 'thread_id'):
-            d_params['thread_id'] = self.thread_id
-        if hasattr(self, 'version'):
-            d_params['version'] = self.version
-
-        self.api._create_resource(Send, d_params)
+        self.api._create_resource(Send, data)
 
 
 class File(NylasAPIObject):
