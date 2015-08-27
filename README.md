@@ -204,7 +204,7 @@ myfile.save()
 f.close()
 
 # Create a new file with the data interface
-myfile2 = ns.files.create()
+myfile2 = client.files.create()
 myfile2.filename = 'test.txt'
 myfile2.data = "Hello World."
 myfile2.save()
@@ -290,6 +290,14 @@ The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and
 ```python
 from nylas import APIClient
 client = APIClient(None, None, None, 'http://localhost:5555/')
+
+# Get the id of the first account -- this is the access token we're
+# going to use.
+account_id = client.accounts.first().id
+
+# Display the contents of the first message for the first account
+client = APIClient(None, None, account_id, 'http://localhost:5555/')
+puts client.messages.first().body
 ```
 
 
@@ -302,6 +310,7 @@ Please sign the [Contributor License Agreement](https://nylas.com/cla.html) befo
 If you have access to the PyPI repository, you can make a new release as such:
 
 ```shell
+python setup.py test
 python setup.py release <major/minor/patch>
 git log # to verify
 python setup.py publish

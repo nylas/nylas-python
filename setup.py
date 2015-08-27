@@ -1,9 +1,29 @@
 import os
 import sys
+sys.path.append('nylas/')
 
 from setuptools import setup, find_packages
-sys.path.append('nylas/')
+from setuptools.command.test import test as TestCommand
 from _client_sdk_version import __VERSION__
+
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = ['tests/']
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        import pytest
+        errno = pytest.main(self.pytest_args)
+        sys.exit(errno)
 
 
 def main():
@@ -36,7 +56,8 @@ def main():
             "pyasn1",
         ],
         dependency_links=[],
-
+        tests_require=["pytest", "coverage"],
+        cmdclass={'test': PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
         description='Python bindings for Nylas, the next-generation email platform.',

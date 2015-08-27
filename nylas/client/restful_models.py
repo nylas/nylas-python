@@ -23,10 +23,14 @@ class NylasAPIObject(dict):
 
     @classmethod
     def create(cls, api, **kwargs):
-        if kwargs.get('object') and kwargs['object'] != cls.__name__.lower():
+        object_type = kwargs.get('object')
+        if (object_type and object_type != cls.__name__.lower() and
+                object_type != 'account'):
             # We were given a specific object type and we're trying to
             # instantiate something different; abort. (Relevant for folders
             # and labels API.)
+            # We need a special case for accounts because the /accounts API
+            # is different between the open source and hosted API.
             return
         obj = cls(api)
         obj.cls = cls
@@ -53,13 +57,13 @@ class NylasAPIObject(dict):
     def child_collection(self, cls, **filters):
         return RestfulModelCollection(cls, self.api, **filters)
 
-    def save(self):
+    def save(self, **kwargs):
         if self.id:
             new_obj = self.api._update_resource(self.cls, self.id,
-                                                self.as_json())
+                                                self.as_json(), **kwargs)
         else:
             new_obj = self.api._create_resource(self.cls,
-                                                self.as_json())
+                                                self.as_json(), **kwargs)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
                 setattr(self, attr, getattr(new_obj, attr))
@@ -471,3 +475,17 @@ class Account(NylasAPIObject):
     def downgrade(self):
         self.api._call_resource_method(self, self.account_id,
                                        'downgrade', None)
+
+
+class APIAccount(NylasAPIObject):
+    attrs = ["email_address", "id", "account_id", "object",
+             "provider", "name", "organization_unit"]
+
+    collection_name = 'accounts'
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, APIAccount, api)
+
+    def as_json(self):
+        dct = NylasAPIObject.as_json(self)
+        return dct

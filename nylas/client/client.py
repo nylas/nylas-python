@@ -1,6 +1,7 @@
 import sys
 import requests
 import json
+from urllib import urlencode
 from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
@@ -8,7 +9,7 @@ from nylas._client_sdk_version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import (Calendar, Contact, Event, Message, Thread, File,
-                             Account, Tag, Folder, Label, Draft)
+                             Account, APIAccount, Tag, Folder, Label, Draft)
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      InvalidRequestError, NotFoundError, ServerError,
                      ServiceUnavailableError, ConflictError,
@@ -148,9 +149,18 @@ class APIClient(json.JSONEncoder):
         self.auth_token = resp[u'access_token']
         return self.auth_token
 
+    def is_opensource_api(self):
+        if self.app_id is None and self.app_secret is None:
+            return True
+
+        return False
+
     @property
     def accounts(self):
-        return RestfulModelCollection(Account, self, self.app_id)
+        if self.is_opensource_api():
+            return RestfulModelCollection(APIAccount, self)
+        else:
+            return RestfulModelCollection(Account, self, self.app_id)
 
     @property
     def threads(self):
@@ -247,8 +257,12 @@ class APIClient(json.JSONEncoder):
         return response.content
 
     @nylas_excepted
-    def _create_resource(self, cls, data):
+    def _create_resource(self, cls, data, **kwargs):
         url = "{}/{}/".format(self.api_server, cls.collection_name)
+
+        if len(kwargs.keys()) > 0:
+            url = "{}?{}".format(url, urlencode(kwargs))
+
         session = self._get_http_session(cls.api_root)
 
         if cls == File:
@@ -279,17 +293,24 @@ class APIClient(json.JSONEncoder):
         return list(map(lambda x: cls.create(self, **x), results))
 
     @nylas_excepted
-    def _delete_resource(self, cls, id):
-        name = cls.collection_name
-        url = "{}/{}".format(self.api_server, name, id)
-        session = self._get_http_session(cls.api_root)
-
-        _validate(session.delete(url))
-
-    @nylas_excepted
-    def _update_resource(self, cls, id, data):
+    def _delete_resource(self, cls, id, **kwargs):
         name = cls.collection_name
         url = "{}/{}/{}".format(self.api_server, name, id)
+
+        if len(kwargs.keys()) > 0:
+            url = "{}?{}".format(url, urlencode(kwargs))
+        session = self._get_http_session(cls.api_root)
+
+        _validate(session.delete(url, params=kwargs))
+
+    @nylas_excepted
+    def _update_resource(self, cls, id, data, **kwargs):
+        name = cls.collection_name
+        url = "{}/{}/{}".format(self.api_server, name, id)
+
+        if len(kwargs.keys()) > 0:
+            url = "{}?{}".format(url, urlencode(kwargs))
+
         session = self._get_http_session(cls.api_root)
 
         response = session.put(url, data=json.dumps(data))
