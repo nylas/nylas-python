@@ -7,11 +7,13 @@ from nylas import APIClient
 from nylas.client.restful_models import Label, Folder
 from nylas.client.errors import *
 
-API_URL = 'http://localhost:5555'
-
 client = APIClient(None, None, access_token="1qqlrm3m82toh86nevz0o1l24", api_server='http://localhost:5555')
 
 count = 0
+
+print "Listing accounts"
+for account in client.accounts:
+    print (account.email_address, account.provider)
 
 print "Displaying 10 thread subjects"
 for thread in client.threads.items():
