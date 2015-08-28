@@ -335,7 +335,14 @@ class APIClient(json.JSONEncoder):
         """POST a dictionnary to an API method,
         for example /a/.../accounts/id/upgrade"""
         name = cls.collection_name
-        url = "{}/{}/{}/{}".format(self.api_server, name, id, method_name)
+        if cls.api_root != 'a':
+            url = "{}/{}/{}/{}".format(self.api_server, name, id, method_name)
+        else:
+            # Management method.
+            url = "{}/a/{}/{}/{}/{}".format(self.api_server, self.app_id,
+                                      cls.collection_name, id, method_name)
+
+
         session = self._get_http_session(cls.api_root)
         response = session.post(url, data=json.dumps(data))
 
