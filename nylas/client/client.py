@@ -160,7 +160,7 @@ class APIClient(json.JSONEncoder):
         if self.is_opensource_api():
             return RestfulModelCollection(APIAccount, self)
         else:
-            return RestfulModelCollection(Account, self, self.app_id)
+            return RestfulModelCollection(Account, self)
 
     @property
     def threads(self):
@@ -217,7 +217,14 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _get_resources(self, cls, **filters):
-        url = "{}/{}".format(self.api_server, cls.collection_name)
+        # FIXME @karim: remove this interim code when we've got rid
+        # of the old accounts API.
+        if cls.api_root != 'a':
+            url = "{}/{}".format(self.api_server, cls.collection_name)
+        else:
+            url = "{}/a/{}/{}".format(self.api_server, self.app_id,
+                                      cls.collection_name)
+
         url = url_concat(url, filters)
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
@@ -236,8 +243,13 @@ class APIClient(json.JSONEncoder):
         headers.update(self.session.headers)
 
         postfix = "/{}".format(extra) if extra else ''
-        url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id,
-                                  postfix)
+        if cls.api_root != 'a':
+            url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id,
+                                      postfix)
+        else:
+            url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
+                                           cls.collection_name, id, postfix)
+
         url = url_concat(url, filters)
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
