@@ -56,7 +56,7 @@ def main():
             "pyasn1",
         ],
         dependency_links=[],
-        tests_require=["pytest", "coverage"],
+        tests_require=["pytest", "coverage", "responses", "httpretty"],
         cmdclass={'test': PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
