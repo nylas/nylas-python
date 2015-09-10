@@ -109,7 +109,7 @@ for thread in client.threads.where(any_email='ben@nylas.com').items():
 ```
 
 
-### Working with Threads
+### Working with Threads and Messages
 
 ```python
 # List thread participants
@@ -156,6 +156,9 @@ thread.save()
 # List messages
 for message in thread.messages.items():
     print message.subject
+
+# Get the raw contents of a message
+print message.raw
 ```
 
 ### Working with Folders and Labels

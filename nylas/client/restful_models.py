@@ -154,19 +154,7 @@ class Message(NylasAPIObject):
     def raw(self):
         headers = {"Accept": "message/rfc822"}
         data = self.api._get_resource_data(Message, self.id, headers=headers)
-        data = {'rfc822': data}
-        return RawMessage.create(self.api, **data)
-
-
-class RawMessage(NylasAPIObject):
-    """
-    a raw message, as returned by the /message/<id> endpoint when
-    the "Accept" is set to "message/rfc822" in the request header
-    """
-    attrs = ["rfc822"]
-
-    def __init__(self, api):
-        NylasAPIObject.__init__(self, RawMessage, api)
+        return data
 
 
 class Tag(NylasAPIObject):
