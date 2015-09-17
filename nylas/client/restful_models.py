@@ -408,7 +408,7 @@ class Calendar(NylasAPIObject):
 class Event(NylasAPIObject):
     attrs = ["id", "account_id", "title", "description", "location",
              "read_only", "when", "busy", "participants", "calendar_id",
-             "recurrence", "status", "master_event_id",
+             "recurrence", "status", "master_event_id", "owner",
              "original_start_time"]
     collection_name = 'events'
 
