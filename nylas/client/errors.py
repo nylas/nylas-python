@@ -47,6 +47,10 @@ class NotFoundError(APIClientError):
     pass
 
 
+class MethodNotSupportedError(APIClientError):
+    pass
+
+
 class ServerError(APIClientError):
     pass
 

@@ -11,8 +11,8 @@ from .restful_model_collection import RestfulModelCollection
 from .restful_models import (Calendar, Contact, Event, Message, Thread, File,
                              Account, APIAccount, Tag, Folder, Label, Draft)
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
-                     InvalidRequestError, NotFoundError, ServerError,
-                     ServiceUnavailableError, ConflictError,
+                     InvalidRequestError, NotFoundError, MethodNotSupportedError,
+                     ServerError, ServiceUnavailableError, ConflictError,
                      SendingQuotaExceededError, ServerTimeoutError,
                      MessageRejectedError)
 
@@ -26,6 +26,7 @@ def _validate(response):
                           402: MessageRejectedError,
                           403: NotAuthorizedError,
                           404: NotFoundError,
+                          405: MethodNotSupportedError,
                           409: ConflictError,
                           429: SendingQuotaExceededError,
                           500: ServerError,
