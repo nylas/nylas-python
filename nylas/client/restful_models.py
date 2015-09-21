@@ -77,9 +77,9 @@ class NylasAPIObject(dict):
 
 
 class Message(NylasAPIObject):
-    attrs = ["bcc", "body", "cc", "date", "files", "from", "id",
-             "account_id", "object", "subject", "thread_id", "to", "unread",
-             "starred", "_folder", "_labels"]
+    attrs = ["bcc", "body", "cc", "date", "events", "files", "from", "id",
+             "account_id", "object", "snippet", "starred", "subject",
+             "thread_id", "to", "unread", "starred", "_folder", "_labels"]
     collection_name = 'messages'
 
     def __init__(self, api):
@@ -166,7 +166,7 @@ class Tag(NylasAPIObject):
 
 
 class Folder(NylasAPIObject):
-    attrs = ["id", "display_name", "name"]
+    attrs = ["id", "display_name", "name", "object", "account_id"]
     collection_name = "folders"
 
     def __init__(self, api):
@@ -182,7 +182,7 @@ class Folder(NylasAPIObject):
 
 
 class Label(NylasAPIObject):
-    attrs = ["id", "display_name", "name"]
+    attrs = ["id", "display_name", "name", "object", "account_id"]
     collection_name = "labels"
 
     def __init__(self, api):
@@ -201,7 +201,8 @@ class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "account_id", "object",
              "participants", "snippet", "subject", "subject_date", "tags",
              "last_message_timestamp", "first_message_timestamp",
-             "unread", "starred", "version", "_folders", "_labels"]
+             "unread", "starred", "version", "_folders", "_labels",
+             "received_recent_date"]
     collection_name = 'threads'
 
     def __init__(self, api):
@@ -325,7 +326,8 @@ class Send(Message):
 class Draft(Message):
     attrs = ["bcc", "cc", "body", "date", "files", "from", "id",
              "account_id", "object", "subject", "thread_id", "to",
-             "unread", "version", "file_ids"]
+             "unread", "version", "file_ids", "reply_to_message_id",
+             "reply_to", "starred", "snippet"]
     collection_name = 'drafts'
 
     def __init__(self, api, thread_id=None):
@@ -355,8 +357,8 @@ class Draft(Message):
 
 
 class File(NylasAPIObject):
-    attrs = ["content_type", "filename", "id", "is_embedded", "message_id",
-             "account_id", "object", "size"]
+    attrs = ["content_type", "filename", "id", "content_id",
+             "account_id", "object", "size", "message_ids", ]
     collection_name = 'files'
 
     def save(self):
@@ -386,7 +388,7 @@ class File(NylasAPIObject):
 
 
 class Contact(NylasAPIObject):
-    attrs = ["id", "account_id", "name", "email"]
+    attrs = ["id", "account_id", "name", "email", "object"]
     collection_name = 'contacts'
 
     def __init__(self, api):
@@ -394,7 +396,7 @@ class Contact(NylasAPIObject):
 
 
 class Calendar(NylasAPIObject):
-    attrs = ["id", "account_id", "name", "description", "read_only"]
+    attrs = ["id", "account_id", "name", "description", "read_only", "object"]
     collection_name = 'calendars'
 
     def __init__(self, api):
@@ -409,7 +411,7 @@ class Event(NylasAPIObject):
     attrs = ["id", "account_id", "title", "description", "location",
              "read_only", "when", "busy", "participants", "calendar_id",
              "recurrence", "status", "master_event_id", "owner",
-             "original_start_time"]
+             "original_start_time", "object"]
     collection_name = 'events'
 
     def __init__(self, api):
