@@ -1,37 +1,4 @@
 #!/usr/bin/env python
-#
-# This demo app shows how to use the Nylas client to authenticate against
-# the Nylas API and how to fetch emails from an authenticated account.
-#
-# NOTE: This app does NOT use SSL. Before deploying this code to a
-# server environment, you should ENABLE SSL to avoid exposing your API
-# access token in plaintext.
-#
-# To run this demo app:
-# 1. Save this file to your computer as `server.py`
-#
-# 2. In the Nylas Developer Portal, create a new application. Replace the
-#    APP_ID and APP_SECRET variables below with the App ID and App
-#    Secret of your application.
-#    https://nylas.com/
-#
-# 3. In the Nylas Developer Portal, edit your application and add the
-#    callback URL: http://localhost:8888/login_callback
-#
-# 4. On the command line, `cd` to the folder where you saved the file
-#
-# 5. On the command line, run `python ./server.py`
-#    - You may need to install Python: https://www.python.org/download/
-#    - You may need to install dependencies using pip:
-#      (http://pip.readthedocs.org/en/latest/installing.html)
-#      pip install nylas flask requests
-#    - Note: You may want to set up a virtualenv to isolate these
-#      dependencies from other packages on your system. Otherwise, you
-#      will need to sudo pip install, to install them globally.
-#      http://docs.python-guide.org/en/latest/dev/virtualenvs/
-#
-# 6. In the browser, visit http://localhost:8888/
-#
 
 import time
 from flask import Flask, url_for, session, request, redirect, Response
@@ -78,4 +45,7 @@ def login_callback():
     return token
 
 if __name__ == '__main__':
+    print "\033[94mOauth self-test. Please browse to http://localhost:5555 and make\033[0m"
+    print "\033[94msure that you're seeing a valid API token.\033[0m"
+
     app.run(host='0.0.0.0', port=5555)

@@ -6,8 +6,9 @@ import datetime
 from nylas import APIClient
 from nylas.client.restful_models import Label, Folder
 from nylas.client.errors import *
+from credentials import LOCAL_ACCESS_TOKEN
 
-client = APIClient(None, None, access_token="1qqlrm3m82toh86nevz0o1l24", api_server='http://localhost:5555')
+client = APIClient(None, None, access_token=LOCAL_ACCESS_TOKEN, api_server='http://localhost:5555')
 
 count = 0
 
