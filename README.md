@@ -323,16 +323,21 @@ We'd love your help making Nylas better. We hang out on Slack. [Join the channel
 
 Please sign the [Contributor License Agreement](https://nylas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
-If you have access to the PyPI repository, you can make a new release as such:
+### Releasing a new version
 
-```shell
-python setup.py test
-python setup.py release <major/minor/patch>
-git log # to verify
-python setup.py publish
-```
-
-Also, don't forget to `git push --tags` to update the release tags on GitHub.
+We have a three-step process for releasing a new version of the Python SDK. Remember that people depend on this library not breaking, so don't cut corners.
+1. Run the unit tests.
+    `python setup.py test`
+2. Run the "system" tests. They use a live server to check that everything works as expected, so you'll need to have a valid Nylas application id and secret.
+   In the tests directory you'll find a file named `tests/credentials.py.template`. Rename it into `credentials.py` and change the APP_ID and APP_SECRET to your own app id and secret.
+   Run `PYTHONPATH=/your-sdk-path python tests/oauth.py` and `PYTHONPATH=/your-sdk-path python tests/system.py`.
+3. Finally, you can create a new release by doing:
+    ```shell
+    python setup.py release <major/minor/patch>
+    git log # to verify
+    python setup.py publish
+    git push --tags # update the release tags on GitHub.
+    ```
 
 ## Looking for inbox.py?
 
