@@ -1,4 +1,5 @@
 from .restful_model_collection import RestfulModelCollection
+from .errors import FileUploadError
 from six import StringIO
 import base64
 import json
@@ -367,8 +368,9 @@ class File(NylasAPIObject):
         elif hasattr(self, 'data') and self.data is not None:
             data = {self.filename: StringIO(self.data)}
         else:
-            raise Exception("File object not properly formatted, must provide"
-                            " either a stream or data.")
+            raise FileUploadError(message=("File object not properly "
+                                               "formatted, must provide "
+                                               "either a stream or data."))
 
         new_obj = self.api._create_resources(File, data)
         new_obj = new_obj[0]
@@ -378,7 +380,8 @@ class File(NylasAPIObject):
 
     def download(self):
         if not self.id:
-            raise Exception("Can't download a file that hasn't been uploaded.")
+            raise FileUploadError(message=("Can't download a file that "
+                                               "hasn't been uploaded."))
 
         return self.api._get_resource_data(File, self.id,
                                            extra='download')

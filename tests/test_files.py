@@ -4,7 +4,7 @@ import responses
 import httpretty
 from httpretty import Response
 from conftest import API_URL
-from nylas.client.errors import InvalidRequestError
+from nylas.client.errors import InvalidRequestError, FileUploadError
 
 
 def test_file_upload(api_client):
@@ -23,13 +23,25 @@ def test_file_upload(api_client):
     httpretty.register_uri(httpretty.GET, API_URL + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
                            body='test body')
 
-    myfile2 = api_client.files.create()
-    myfile2.filename = 'test.txt'
-    myfile2.data = "Hello World."
-    myfile2.save()
+    myfile = api_client.files.create()
+    myfile.filename = 'test.txt'
+    myfile.data = "Hello World."
+    myfile.save()
 
-    assert myfile2.filename == 'a.txt'
-    assert myfile2.size == 762878
+    assert myfile.filename == 'a.txt'
+    assert myfile.size == 762878
 
-    data = myfile2.download()
+    data = myfile.download()
     assert data == 'test body'
+
+
+def test_file_upload_errors(api_client):
+    myfile = api_client.files.create()
+    myfile.filename = 'test.txt'
+    myfile.data = "Hello World."
+
+    with pytest.raises(FileUploadError) as exc:
+        myfile.download()
+
+    assert exc.value.message == ("Can't download a file that "
+                                 "hasn't been uploaded.")

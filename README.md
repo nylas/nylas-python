@@ -231,7 +231,20 @@ draft.to = [{'name': 'My Friend', 'email': 'my.friend@example.com'}]
 draft.subject = "Here's an attachment"
 draft.body = "Cheers mate!"
 draft.attach(myfile)
-draft.send()
+
+# Send it
+try:
+    draft.send()
+except nylas.client.errors.ConnectionError as e:
+    print "Unable to connect to the SMTP server."
+except nylas.client.errors.MessageRejectedError as e:
+    print "Message got rejected by the SMTP server!"
+    print e.message
+
+    # Sometimes the API gives us the exact error message
+    # returned by the server. Display it since it can be
+    # helpful to know exactly why our message got rejected:
+    print e.server_error
 ```
 
 ### Working with Events

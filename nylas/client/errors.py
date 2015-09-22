@@ -3,11 +3,14 @@ import json
 
 class APIClientError(Exception):
     def __init__(self, **kwargs):
+        if 'message' in kwargs:
+            Exception.__init__(self, kwargs['message'])
+        else:
+            Exception.__init__(self, '')
+
         self.attrs = kwargs.keys()
         for k, v in kwargs.items():
             setattr(self, k, v)
-
-        Exception.__init__(self, str(kwargs))
 
     def as_dict(self):
         resp = {}
@@ -60,4 +63,8 @@ class ServiceUnavailableError(APIClientError):
 
 
 class ServerTimeoutError(APIClientError):
+    pass
+
+
+class FileUploadError(APIClientError):
     pass

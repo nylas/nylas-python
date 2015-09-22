@@ -52,12 +52,15 @@ def _validate(response):
         cls = status_code_to_exc[status_code]
         try:
             response = json.loads(response.text)
-            if 'message' in response:
-                raise cls(url=url, status_code=status_code,
-                          data=data, message=response['message'])
-            else:
-                raise cls(url=url, status_code=status_code,
-                          data=data, message="N/A")
+            kwargs = dict(url=url, status_code=status_code,
+                          data=data)
+
+            for key in ['message', 'server_error']:
+                if key in response:
+                    kwargs[key] = response[key]
+
+            raise cls(**kwargs)
+
         except (ValueError, TypeError):
             raise cls(url=url, status_code=status_code,
                       data=data, message="Malformed")
