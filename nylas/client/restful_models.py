@@ -7,10 +7,10 @@ import json
 
 class NylasAPIObject(dict):
     attrs = []
-    # The Nylas API holds most objectsfor an acount, but some of
-    # them are under '/a' (mostly the account-management and billing code).
-    # api_root is a tiny metaprogramming hack to let us use the same
-    # code for both.
+    # The Nylas API holds most objects for an account directly under '/',
+    # but some of them are under '/a' (mostly the account-management
+    # and billing code). api_root is a tiny metaprogramming hack to let
+    # us use the same code for both.
     api_root = 'n'
 
     def __init__(self, cls, api):
@@ -443,10 +443,6 @@ class Namespace(NylasAPIObject):
 
 
 class Account(NylasAPIObject):
-    # The Nylas API holds most objects under '/n/', but some of
-    # them are under '/a' (mostly the account-management and billing code).
-    # api_root is a tiny metaprogramming hack to let us use the same
-    # code for both.
     api_root = 'a'
 
     attrs = ["account_id", "trial", "trial_expires", "sync_state",
@@ -482,3 +478,8 @@ class APIAccount(NylasAPIObject):
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
         return dct
+
+
+class SingletonAccount(APIAccount):
+    # This is an APIAccount that lives under /account.
+    collection_name = 'account'

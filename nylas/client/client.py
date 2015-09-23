@@ -9,7 +9,8 @@ from nylas._client_sdk_version import __VERSION__
 from .util import url_concat, generate_id
 from .restful_model_collection import RestfulModelCollection
 from .restful_models import (Calendar, Contact, Event, Message, Thread, File,
-                             Account, APIAccount, Tag, Folder, Label, Draft)
+                             Account, APIAccount, SingletonAccount, Tag,
+                             Folder, Label, Draft)
 from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
                      InvalidRequestError, NotFoundError, MethodNotSupportedError,
                      ServerError, ServiceUnavailableError, ConflictError,
@@ -158,6 +159,10 @@ class APIClient(json.JSONEncoder):
             return True
 
         return False
+
+    @property
+    def account(self):
+        return self._get_resource(SingletonAccount, '')
 
     @property
     def accounts(self):

@@ -49,7 +49,7 @@ from nylas import APIClient
 def index():
     redirect_url = "http://0.0.0.0:8888/login_callback"
     client = APIClient(APP_ID, APP_SECRET)
-    return redirect(client.authentication_url(redirect_uri))
+    return redirect(client.authentication_url(redirect_url))
 
 ```
 
@@ -76,8 +76,8 @@ implementing the auth flow.
 client = APIClient(APP_ID, APP_SECRET, token)
 
 # Print out the email address and provider (Gmail, Exchange)
-print client.email_address
-print client.provider
+print client.account.email_address
+print client.account.provider
 ```
 
 
