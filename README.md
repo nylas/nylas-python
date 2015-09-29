@@ -75,10 +75,9 @@ implementing the auth flow.
 ```python
 client = APIClient(APP_ID, APP_SECRET, token)
 
-# Print out the account_id
-account = client.accounts.first()
-print account.as_json()
-print account.as_json()['account_id']
+# Print out the email address and provider (Gmail, Exchange)
+print client.account.email_address
+print client.account.provider
 ```
 
 
