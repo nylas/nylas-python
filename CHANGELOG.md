@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-v1.0.3
+v1.1.0
 ------
 
 Released October 8, 2015:
