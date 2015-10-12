@@ -31,7 +31,7 @@ def test_file_upload(api_client):
     assert myfile.filename == 'a.txt'
     assert myfile.size == 762878
 
-    data = myfile.download()
+    data = myfile.download().decode()
     assert data == 'test body'
 
 
