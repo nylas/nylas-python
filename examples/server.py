@@ -58,7 +58,7 @@ def index():
         while not message:
             try:
                 # Get the latest message from namespace zero.
-                message = client.namespaces[0].messages.first()
+                message = client.messages.first()
                 if not message:  # A new account takes a little time to sync
                     print "No messages yet. Checking again in 2 seconds."
                     time.sleep(2)
