@@ -1,20 +1,27 @@
+# -*- coding: utf-8 -*-
 import json
 import re
 import pytest
 import time
 import datetime
+import sys
 from nylas import APIClient
 from nylas.client.restful_models import Label, Folder
 from nylas.client.errors import *
-from credentials import LOCAL_ACCESS_TOKEN
+from credentials import APP_ID, APP_SECRET, AUTH_TOKEN
 
-client = APIClient(None, None, access_token=LOCAL_ACCESS_TOKEN, api_server='http://localhost:5555')
+client = APIClient(APP_ID, APP_SECRET, AUTH_TOKEN)
 
 count = 0
 
 print "Listing accounts"
 for account in client.accounts:
     print (account.email_address, account.provider)
+
+print 'Marking the first thread as unread'
+th = client.threads.where(in_='Boîte de réception').first()
+print th.subject
+th.mark_as_unread()
 
 print "Displaying 10 thread subjects"
 for thread in client.threads.items():

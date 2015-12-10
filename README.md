@@ -117,16 +117,18 @@ for participant in thread.participants:
     print participant["email"]
 
 # Mark as read
-thread.unread = False
-thread.save()
+thread.mark_as_read()
 
-# Add or remove tags (DEPRECATED -- you should use the new labels and folders API)
-tagsToAdd = ['inbox', 'cfa1233ef123acd12']
-tagsToRemove = []
-thread.update_tags(tagsToAdd, tagsToRemove)
+# Mark as unread
+thread.mark_as_unread()
+
+# Star a thread
+thread.star()
+
+# Unstar it
+thread.unstar()
 
 # Add a new label to a message or thread (Gmail)
-
 important_id = 'aw6p0mya6v3r96vyj8kooxa5v'
 message.add_label(important_id)
 

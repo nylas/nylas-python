@@ -28,11 +28,11 @@ draft.attach(myfile)
 draft.send()
 
 x = 0
-th = client.threads.where({'tag': 'sent', 'subject': subject}).first()
+th = client.threads.where({'in': 'Sent', 'subject': subject}).first()
 while not th:
     time.sleep(0.5)
     x += 1
-    th = client.threads.where({'tag': 'sent', 'subject': subject}).first()
+    th = client.threads.where({'in': 'Sent', 'subject': subject}).first()
 
 m = th.messages[0]
 

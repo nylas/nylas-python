@@ -44,9 +44,17 @@ class RestfulModelCollection(object):
         return self._range(self.filters['offset'], limit)
 
     def where(self, filter={}, **filters):
-        if 'from_' in filters:
-            filters['from'] = filters.get('from_')
-            del filters['from_']
+        # Some API parameters like "from" and "in" also are
+        # Python reserved keywords. To work around this, we rename
+        # them to "from_" and "in_". The API still needs them in
+        # their correct form though.
+        reserved_keywords = ['from', 'in']
+        for keyword in reserved_keywords:
+            escaped_keyword = '{}_'.format(keyword)
+            if escaped_keyword in filters:
+                filters[keyword] = filters.get(escaped_keyword)
+                del filters[escaped_keyword]
+
         filters.update(filter)
         filters.setdefault('offset', 0)
         collection = copy(self)

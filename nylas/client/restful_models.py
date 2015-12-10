@@ -136,10 +136,18 @@ class Message(NylasAPIObject):
     def remove_label(self, label_id):
         return self.remove_labels([label_id])
 
+    def mark_as_seen(self):
+        self.mark_as_read()
+
     def mark_as_read(self):
         update = {'unread': False}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = False
+
+    def mark_as_unread(self):
+        update = {'unread': True}
+        self.api._update_resource(self.cls, self.id, update)
+        self.unread = True
 
     def star(self):
         update = {'starred': True}
@@ -156,14 +164,6 @@ class Message(NylasAPIObject):
         headers = {"Accept": "message/rfc822"}
         data = self.api._get_resource_data(Message, self.id, headers=headers)
         return data
-
-
-class Tag(NylasAPIObject):
-    attrs = ["id", "name", "account_id", "object"]
-    collection_name = 'tags'
-
-    def __init__(self, api):
-        NylasAPIObject.__init__(self, Tag, api)
 
 
 class Folder(NylasAPIObject):
@@ -200,7 +200,7 @@ class Label(NylasAPIObject):
 
 class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "account_id", "object",
-             "participants", "snippet", "subject", "subject_date", "tags",
+             "participants", "snippet", "subject", "subject_date",
              "last_message_timestamp", "first_message_timestamp",
              "unread", "starred", "version", "_folders", "_labels",
              "received_recent_date"]
@@ -265,38 +265,18 @@ class Thread(NylasAPIObject):
     def remove_label(self, label_id):
         return self.remove_labels([label_id])
 
-    def update_tags(self, add=[], remove=[]):
-        # DEPRECATED
-        update = {'add_tags': add, 'remove_tags': remove}
-        self.api._update_resource(self.cls, self.id, update)
-
-    def remove_tags(self, tags):
-        # DEPRECATED
-        self.update_tags(remove=tags)
-
-    def add_tags(self, tags):
-        # DEPRECATED
-        self.update_tags(add=tags)
+    def mark_as_seen(self):
+        self.mark_as_read()
 
     def mark_as_read(self):
         update = {'unread': False}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = False
 
-    def mark_as_seen(self):
-        self.mark_as_read()
-
-    def archive(self):
-        # DEPRECATED
-        self.update_tags(['archive'], ['inbox'])
-
-    def unarchive(self):
-        # DEPRECATED
-        self.update_tags(['inbox'], ['archive'])
-
-    def trash(self):
-        # DEPRECATED
-        self.add_tags(['trash'])
+    def mark_as_unread(self):
+        update = {'unread': True}
+        self.api._update_resource(self.cls, self.id, update)
+        self.unread = True
 
     def star(self):
         update = {'starred': True}
@@ -313,7 +293,6 @@ class Thread(NylasAPIObject):
         d.thread_id = self.id
         d.subject = self.subject
         return d
-
 
 # This is a dummy class that allows us to use the create_resource function
 # and pass in a 'Send' object that will translate into a 'send' endpoint.

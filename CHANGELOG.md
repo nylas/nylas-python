@@ -1,6 +1,14 @@
 nylas-python Changelog
 ======================
 
+v1.2.0
+------
+
+Released December 7, 2015:
+
+- Deprecate tags and tag-related functions.
+
+
 v1.1.0
 ------
 
