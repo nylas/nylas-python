@@ -306,6 +306,8 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, data=data, headers=headers)
 
         result = _validate(response).json()
+        if cls.collection_name == 'send':
+            return result
         return cls.create(self, **result)
 
     @nylas_excepted

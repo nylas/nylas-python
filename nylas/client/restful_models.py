@@ -333,7 +333,9 @@ class Draft(Message):
             if hasattr(self, 'version'):
                 data['version'] = self.version
 
-        self.api._create_resource(Send, data)
+        msg = self.api._create_resource(Send, data)
+        if msg:
+            return msg
 
 
 class File(NylasAPIObject):

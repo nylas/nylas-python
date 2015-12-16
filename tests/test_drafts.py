@@ -139,7 +139,8 @@ def test_save_send_draft(api_client, mock_draft_saved_response,
     draft.save(random_query='true', param2='param')
     assert draft.subject == 'Update #2'
 
-    draft.send()
+    msg = draft.send()
+    assert msg['thread_id'] == 'clm33kapdxkposgltof845v9s'
 
     # Second time should throw an error
     raised = False
