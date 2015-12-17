@@ -4,10 +4,11 @@ nylas-python Changelog
 v1.2.0
 ------
 
-Released December 7, 2015:
+Released December 17, 2015:
 
 - Deprecate tags and tag-related functions.
-
+- Return message object when sending a draft
+- Support passing parameters and request bodies on delete
 
 v1.1.0
 ------

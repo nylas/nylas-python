@@ -64,11 +64,11 @@ class RestfulModelCollection(object):
     def find(self, id):
         return self._get_model(id)
 
-    def create(self, **args):
-        return self.model_class.create(self.api, **args)
+    def create(self, **kwargs):
+        return self.model_class.create(self.api, **kwargs)
 
-    def delete(self, id):
-        return self.api._delete_resource(self.model_class, id)
+    def delete(self, id, data=None, **kwargs):
+        return self.api._delete_resource(self.model_class, id, data=data, **kwargs)
 
     def __getitem__(self, key):
         if isinstance(key, slice):

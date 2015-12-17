@@ -249,9 +249,18 @@ except nylas.client.errors.MessageRejectedError as e:
     print e.server_error
 ```
 
+# Delete a draft
+draft = client.drafts.create()
+draft.subject = "Delete me"
+draft.save()
+draft.body = "I really mean it."
+draft.delete()
+# or:
+# client.drafts.delete(draft.id, {'version': draft.version})
+
 ### Working with Events
 
-The following example shows how to create, update and delete an event.
+The following example shows how to create and update an event.
 
 ```python
 # Get a calendar that's not read only
@@ -268,9 +277,13 @@ ev.save()
 # Update it
 ev.location = "The Waldorf-Astoria"
 ev.save()
+```
 
+The following example shows how to delete an event. We will pass the parameter notify_participants to the DELETE request to send the cancellation to the event invitees. See the [Deleting Events](https://www.nylas.com/docs/platform?node#deleting_events) API documentation for more details.
+
+```
 # Delete it
-client.events.delete(ev.id)
+client.events.delete(ev.id, notify_participants='true')
 ```
 
 ### Working with Messages, Contacts, Calendars, etc.

@@ -337,6 +337,10 @@ class Draft(Message):
         if msg:
             return msg
 
+    def delete(self):
+        if self.id and self.version:
+            data = {'version': self.version}
+            self.api._delete_resource(self.cls, self.id, data=data)
 
 class File(NylasAPIObject):
     attrs = ["content_type", "filename", "id", "content_id",

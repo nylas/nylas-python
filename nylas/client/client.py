@@ -327,15 +327,17 @@ class APIClient(json.JSONEncoder):
         return list(map(lambda x: cls.create(self, **x), results))
 
     @nylas_excepted
-    def _delete_resource(self, cls, id, **kwargs):
+    def _delete_resource(self, cls, id, data=None, **kwargs):
         name = cls.collection_name
         url = "{}/{}/{}".format(self.api_server, name, id)
 
         if len(kwargs.keys()) > 0:
             url = "{}?{}".format(url, urlencode(kwargs))
         session = self._get_http_session(cls.api_root)
-
-        _validate(session.delete(url, params=kwargs))
+        if data:
+            _validate(session.delete(url, json=data))
+        else:
+            _validate(session.delete(url))
 
     @nylas_excepted
     def _update_resource(self, cls, id, data, **kwargs):
@@ -347,7 +349,7 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
-        response = session.put(url, data=json.dumps(data))
+        response = session.put(url, json=data)
 
         result = _validate(response).json()
         return cls.create(self, **result)
@@ -366,6 +368,6 @@ class APIClient(json.JSONEncoder):
 
 
         session = self._get_http_session(cls.api_root)
-        response = session.post(url, data=json.dumps(data))
+        response = session.post(url, json=data)
 
         return _validate(response).json()

@@ -47,7 +47,7 @@ def main():
         packages=find_packages(),
 
         install_requires=[
-            "requests>=2.3.0",
+            "requests>=2.4.2",
             "six>=1.4.1",
             "bumpversion>=0.5.0",
             # needed for SNI support, required by api.nylas.com
