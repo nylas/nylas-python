@@ -247,7 +247,6 @@ except nylas.client.errors.MessageRejectedError as e:
     # returned by the server. Display it since it can be
     # helpful to know exactly why our message got rejected:
     print e.server_error
-```
 
 # Delete a draft
 draft = client.drafts.create()
@@ -257,6 +256,7 @@ draft.body = "I really mean it."
 draft.delete()
 # or:
 # client.drafts.delete(draft.id, {'version': draft.version})
+```
 
 ### Working with Events
 
