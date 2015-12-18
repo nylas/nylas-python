@@ -8,7 +8,7 @@ This library is available on pypi. You can install it by running `pip install ny
 
 ##Requirements
 
-- requests (>= 2.3.0)
+- requests (>= 2.4.2)
 
 ## Examples
 
