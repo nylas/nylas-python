@@ -145,16 +145,6 @@ message.update_labels(label_ids)
 trash_id = 'ds36ik7o55gdqlvpbrjbg9ovn'
 message.update_folder(trash_id)
 
-# Star a message
-
-message.starred = True
-message.save()
-
-# Star a thread
-
-thread.starred = True
-thread.save()
-
 # List messages
 for message in thread.messages.items():
     print message.subject
