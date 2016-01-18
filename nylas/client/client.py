@@ -245,6 +245,9 @@ class APIClient(json.JSONEncoder):
             url = "{}/a/{}/{}".format(self.api_server, self.app_id,
                                       cls.collection_name)
 
+        if 'q' in filters:
+            url = url + "/search/?q=" + filters.get('q', '')
+
         url = url_concat(url, filters)
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()

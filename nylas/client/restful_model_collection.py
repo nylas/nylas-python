@@ -70,6 +70,10 @@ class RestfulModelCollection(object):
     def delete(self, id, data=None, **kwargs):
         return self.api._delete_resource(self.model_class, id, data=data, **kwargs)
 
+    def search(self, q="", **kwargs):
+        kwargs.update({'q': q})
+        return self.api._get_resources(self.model_class, **kwargs)
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             if key.step is not None:

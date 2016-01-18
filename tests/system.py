@@ -14,6 +14,14 @@ client = APIClient(APP_ID, APP_SECRET, AUTH_TOKEN)
 
 count = 0
 
+print "Searching threads"
+thread_search = client.threads.search("q")
+print thread_search
+
+print "Searching messages"
+message_search = client.messages.search("q")
+print message_search
+
 print "Listing accounts"
 for account in client.accounts:
     print (account.email_address, account.provider)
