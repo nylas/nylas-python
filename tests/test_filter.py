@@ -1,5 +1,6 @@
 import json
 import pytest
+import random
 import responses
 import httpretty
 from httpretty import Response
@@ -59,3 +60,45 @@ def test_two_filters(api_client):
     assert qs['param1'][0] == 'a'
     assert qs['param2'][0] == 'b'
     httpretty.disable()
+
+def test_no_offset(api_client):
+    httpretty.enable()
+
+    values = [Response(status=200, body='[]')]
+    httpretty.register_uri(httpretty.GET, API_URL + '/events?in=Nylas', responses=values)
+    events = api_client.events.where({'in': 'Nylas'}).items()
+    for event in events:
+      pass
+    qs = httpretty.last_request().querystring
+    assert qs['in'][0] == 'Nylas'
+    assert qs['offset'][0] == '0'
+    httpretty.disable()
+
+def test_zero_offset(api_client):
+    httpretty.enable()
+
+    values = [Response(status=200, body='[]')]
+    httpretty.register_uri(httpretty.GET, API_URL + '/events?in=Nylas&offset=0', responses=values)
+    events = api_client.events.where({'in': 'Nylas', 'offset': 0}).items()
+    for event in events:
+      pass
+    qs = httpretty.last_request().querystring
+    assert qs['in'][0] == 'Nylas'
+    assert qs['offset'][0] == '0'
+    httpretty.disable()
+
+def test_non_zero_offset(api_client):
+    httpretty.enable()
+
+    offset = random.randint(1,1000)
+    values = [Response(status=200, body='[]')]
+    httpretty.register_uri(httpretty.GET, API_URL + '/events?in=Nylas&offset=' +
+                           str(offset), responses=values)
+    events = api_client.events.where({'in': 'Nylas', 'offset': offset}).items()
+    for event in events:
+      pass
+    qs = httpretty.last_request().querystring
+    assert qs['in'][0] == 'Nylas'
+    assert qs['offset'][0] == str(offset)
+    httpretty.disable()
+
