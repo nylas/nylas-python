@@ -20,7 +20,7 @@ class RestfulModelCollection(object):
         return self.items()
 
     def items(self):
-        offset = 0
+        offset = self.filters['offset']
         while True:
             items = self._get_model_collection(offset, CHUNK_SIZE)
             if not items:
