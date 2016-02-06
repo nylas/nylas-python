@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v1.2.1
+------
+
+Released February 5, 2016:
+- Fixes a bug that prevented the offset parameter from being used in queries
+
 v1.2.0
 ------
 
