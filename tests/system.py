@@ -19,7 +19,7 @@ for account in client.accounts:
     print (account.email_address, account.provider)
 
 print 'Marking the first thread as unread'
-th = client.threads.where(in_='Boîte de réception').first()
+th = client.threads.where({'in': 'inbox'}).first()
 print th.subject
 th.mark_as_unread()
 

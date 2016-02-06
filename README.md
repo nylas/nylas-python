@@ -340,8 +340,8 @@ We have a three-step process for releasing a new version of the Python SDK. Reme
    Run the tests:
    
    ```shell
-   PYTHONPATH=/your-sdk-path py.test tests/oauth.py
-   PYTHONPATH=/your-sdk-path py.test tests/system.py
+   PYTHONPATH=/your-sdk-path python tests/oauth.py
+   PYTHONPATH=/your-sdk-path python tests/system.py
    ```
    
 3. Finally, you can create a new release by doing:
