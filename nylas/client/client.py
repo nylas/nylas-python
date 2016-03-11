@@ -116,15 +116,8 @@ class APIClient(json.JSONEncoder):
         self.admin_session = requests.Session()
 
         if app_secret is not None:
-            # In Python 3 b64encode only accepts bytes, so we need to ensure
-            # we are not passing in a string for app_secret
-            if isinstance(app_secret, str):
-                app_secret_bytes = self.app_secret.encode()
-            else:
-                app_secret_bytes = self.app_secret
-            app_secret_b64 = b64encode(app_secret_bytes + b':').decode()
-            self.admin_session.headers = {'Authorization': 'Basic ' +
-                                          app_secret_b64,
+            self.admin_session.headers = {'Authorization': 'Bearer ' +
+                                          app_secret,
                                           'X-Nylas-API-Wrapper': 'python',
                                           'User-Agent': version_header}
 
@@ -135,14 +128,12 @@ class APIClient(json.JSONEncoder):
     @access_token.setter
     def access_token(self, value):
         self._access_token = value
-        # In Python 3 b64encode only accepts bytes, so we need to ensure we
-        # are not passing in a string for value
         if value:
-            if isinstance(value, str):
-                value = value.encode()
-            value_b64 = b64encode(value + b':').decode()
-            self.session.headers.update({'Authorization': 'Basic ' +
-                                         value_b64})
+            self.session.headers.update({'Authorization': 'Bearer ' +
+                                         value})
+        else:
+            if 'Authorization' in self.session.headers:
+                del self.session.headers['Authorization']
 
     def authentication_url(self, redirect_uri, login_hint=''):
         args = {'redirect_uri': redirect_uri,
