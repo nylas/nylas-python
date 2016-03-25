@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v1.2.2
+------
+
+Released March 25, 2016:
+- API client now uses Bearer Token Authorization headers instead of Basic Auth
+
 v1.2.1
 ------
 
