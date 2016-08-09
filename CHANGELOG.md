@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v1.2.3
+------
+
+Release August 9, 2016:
+- Adds full-text search support for Messages and Threads
+
 v1.2.2
 ------
 
