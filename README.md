@@ -108,6 +108,18 @@ for thread in client.threads.where(any_email='ben@nylas.com').items():
     print thread.subject
 ```
 
+### Searching Messages and Threads
+
+You can perform a full-text search to find Messages and Threads that contain
+your search query. The search is proxied to the mail-provider.
+
+```python
+# Find all threads with the word "nylas"
+threads = client.threads.search("nylas")
+
+# Find all messages with the word "nylas"
+messages = client.messages.search("nylas")
+```
 
 ### Working with Threads and Messages
 
