@@ -227,14 +227,15 @@ class APIClient(json.JSONEncoder):
             return self.session
 
     @nylas_excepted
-    def _get_resources(self, cls, **filters):
+    def _get_resources(self, cls, extra=None, **filters):
         # FIXME @karim: remove this interim code when we've got rid
         # of the old accounts API.
+        postfix = "/{}".format(extra) if extra else ''
         if cls.api_root != 'a':
-            url = "{}/{}".format(self.api_server, cls.collection_name)
+            url = "{}/{}{}".format(self.api_server, cls.collection_name, postfix)
         else:
-            url = "{}/a/{}/{}".format(self.api_server, self.app_id,
-                                      cls.collection_name)
+            url = "{}/a/{}/{}{}".format(self.api_server, self.app_id,
+                                      cls.collection_name, postfix)
 
         url = url_concat(url, filters)
         response = self._get_http_session(cls.api_root).get(url)
