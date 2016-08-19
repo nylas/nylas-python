@@ -15,6 +15,13 @@ learn more about Google OAuth
 
 ## Dependencies
 
+### Google Application
+
+You'll need to have a Nylas [developer account](https://developer.nylas.com), a
+Google Application, and the respective `client_id` and `client_secret`s.
+Learn about how to setup the Google App
+[here](https://support.nylas.com/hc/en-us/articles/222176307-Google-OAuth-Setup-Guide).
+
 ### ngrok
 
 [ngrok](https://ngrok.com/) makes it really easy to test callback urls that are
