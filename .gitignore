@@ -56,3 +56,6 @@ include/
 lib/
 local/
 .eggs/
+
+pip-selfcheck.json
+tests/output
