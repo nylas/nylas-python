@@ -10,6 +10,7 @@ import subprocess
 
 from nylas import APIClient
 
+# Sets the logging format
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -24,7 +25,8 @@ except ImportError:
 app = flask.Flask(__name__)
 
 # These are the permissions your app will ask the user to approve for access
-SCOPE = ' '.join(['https://mail.google.com/',
+# https://developers.google.com/identity/protocols/OAuth2WebServer#scope
+GOOGLE_SCOPES = ' '.join(['https://mail.google.com/',
                   'https://www.googleapis.com/auth/calendar',
                   'https://www.googleapis.com/auth/userinfo.email',
                   'https://www.googleapis.com/auth/userinfo.profile',
@@ -72,7 +74,7 @@ def oauth2callback():
                   'access_type':   'offline',
                   'client_id': GOOGLE_CLIENT_ID,
                   'redirect_uri':  REDIRECT_URI,
-                  'scope':         SCOPE,
+                  'scope':         GOOGLE_SCOPES,
                   # Note: this is only for testing to ensure a refresh token is
                   # passed everytime, but requires the user to approve offline
                   # access every time. You should remove this if you don't want
@@ -153,10 +155,6 @@ def nylas_token(data):
         return resp['access_token']
 
     raise Exception("Error getting access token from Nylas", err=resp)
-
-
-def info(string):
-    print '\033[92m{}\033[0m'.format(string)
 
 
 # Setup ngrok and google developer settings to ensure everything works locally 
