@@ -284,7 +284,7 @@ class APIClient(json.JSONEncoder):
     def _create_resource(self, cls, data, **kwargs):
         url = "{}/{}/".format(self.api_server, cls.collection_name)
 
-        if len(kwargs.keys()) > 0:
+        if kwargs:
             url = "{}?{}".format(url, urlencode(kwargs))
 
         session = self._get_http_session(cls.api_root)
@@ -323,7 +323,7 @@ class APIClient(json.JSONEncoder):
         name = cls.collection_name
         url = "{}/{}/{}".format(self.api_server, name, id)
 
-        if len(kwargs.keys()) > 0:
+        if kwargs:
             url = "{}?{}".format(url, urlencode(kwargs))
         session = self._get_http_session(cls.api_root)
         if data:
@@ -336,7 +336,7 @@ class APIClient(json.JSONEncoder):
         name = cls.collection_name
         url = "{}/{}/{}".format(self.api_server, name, id)
 
-        if len(kwargs.keys()) > 0:
+        if kwargs:
             url = "{}?{}".format(url, urlencode(kwargs))
 
         session = self._get_http_session(cls.api_root)
