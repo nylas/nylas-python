@@ -1,10 +1,6 @@
 import sys
 import requests
 import json
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
 from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
