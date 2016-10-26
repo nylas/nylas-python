@@ -35,7 +35,7 @@ Here's how it works:
 3. She is redirected to a callback URL of your own, along with an access code
 4. You use this access code to get an authorization token to the API
 
-For more information about authenticating with Nylas, visit the [Developer Documentation](https://www.nylas.com/docs/gettingstarted-hosted#authenticating).
+For more information about authenticating with Nylas, visit the [Developer Documentation](https://www.nylas.com/cloud/docs#authentication).
 
 In practice, the Nylas REST API client simplifies this down to two steps.
 
