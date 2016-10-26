@@ -408,9 +408,13 @@ class Event(NylasAPIObject):
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
         # Filter some parameters we got from the API
-        if 'when' in dct:
-            if 'object' in dct['when']:
-                del dct['when']['object']
+        if dct.get('when'):
+            # Currently, the event (self) and the dict (dct) share the same
+            # reference to the `'when'` dict.  We need to clone the dict so
+            # that when we remove the object key, the original event's
+            # `'when'` reference is unmodified.
+            dct['when'] = dct['when'].copy()
+            dct['when'].pop('object', None)
 
         return dct
 
