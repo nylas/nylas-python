@@ -399,7 +399,7 @@ class Event(NylasAPIObject):
     attrs = ["id", "account_id", "title", "description", "location",
              "read_only", "when", "busy", "participants", "calendar_id",
              "recurrence", "status", "master_event_id", "owner",
-             "original_start_time", "object"]
+             "original_start_time", "object", "message_id"]
     collection_name = 'events'
 
     def __init__(self, api):
