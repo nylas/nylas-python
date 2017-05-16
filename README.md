@@ -6,7 +6,7 @@ Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
 This library is available on pypi. You can install it by running `pip install nylas`.
 
-##Requirements
+## Requirements
 
 - requests (>= 2.4.2)
 
