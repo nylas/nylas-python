@@ -8,6 +8,8 @@ import urllib
 import logging
 import subprocess
 
+sys.path.append('../../')
+
 from nylas import APIClient
 
 # Sets the logging format
@@ -63,6 +65,17 @@ def index():
 
     # Display the latest email message!
     return client.threads.first().messages.first().body
+
+
+@app.route('/revoke')
+def revoke_token():
+    client = APIClient(NYLAS_CLIENT_ID, NYLAS_CLIENT_SECRET, flask.session['nylas_access_token'])
+    client.revoke_token()
+
+    del flask.session['google_credentials']
+    del flask.session['nylas_access_token']
+
+    return "Token revoked" if client.access_token is None else "Failed token revocation"
 
 
 # This is the url Google will call once a user has approved access to their
@@ -157,17 +170,10 @@ def nylas_token(data):
     raise Exception("Error getting access token from Nylas", err=resp)
 
 
-# Setup ngrok and google developer settings to ensure everything works locally 
+# Setup google developer settings to ensure everything works locally 
 def initialize():
-    # Make sure ngrok is running
-    try:
-        resp = requests.get('http://localhost:4040/api/tunnels').json()
-    except requests.exceptions.ConnectionError:
-        print "It looks like ngrok isn't running! Make sure you've started that first with 'ngrok http 1234'"
-        sys.exit(-1)
-
     global REDIRECT_URI
-    REDIRECT_URI = "{}/oauth2callback".format(resp['tunnels'][0]['public_url'])
+    REDIRECT_URI = "{}/oauth2callback".format("http://lvh.me:1234")
     print REDIRECT_URI
     s = raw_input("Have you added the url above as an authorized callback "
                   "in Google's Developer console? y/n ")
