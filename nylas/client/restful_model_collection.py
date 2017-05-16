@@ -10,7 +10,7 @@ class RestfulModelCollection(object):
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
 
-        filters.setdefault('offset', 0)
+        filters.setdefault('offset', offset)
 
         self.model_class = cls
         self.filters = filters
