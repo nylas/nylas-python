@@ -70,6 +70,16 @@ def login_callback():
 You can take a look at [examples/server.py](examples/server.py) to see a server
 implementing the auth flow.
 
+**Revoke a token**
+
+To revoke an access token and remove it from your APIClient's session you can
+use the `revoke_token` method on APIClient
+
+```python
+  client.revoke_token()
+```
+
+
 ### Connecting to an account
 
 ```python

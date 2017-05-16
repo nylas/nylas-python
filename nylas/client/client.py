@@ -93,6 +93,7 @@ class APIClient(json.JSONEncoder):
         self.api_server = api_server
         self.authorize_url = api_server + '/oauth/authorize'
         self.access_token_url = api_server + '/oauth/token'
+        self.revoke_url = api_server + '/oauth/revoke'
 
         self.app_secret = app_secret
         self.app_id = app_id
@@ -153,14 +154,21 @@ class APIClient(json.JSONEncoder):
         resp = requests.post(self.access_token_url, data=urlencode(args),
                              headers=headers).json()
 
-        self.auth_token = resp[u'access_token']
-        return self.auth_token
+        self.access_token = resp[u'access_token']
+        return self.access_token
 
     def is_opensource_api(self):
         if self.app_id is None and self.app_secret is None:
             return True
 
         return False
+
+    @nylas_excepted
+    def revoke_token(self):
+        resp = self.session.post(self.revoke_url)
+        _validate(resp)
+        self.auth_token = None
+        self.access_token = None
 
     @property
     def account(self):
@@ -344,7 +352,7 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _call_resource_method(self, cls, id, method_name, data):
-        """POST a dictionnary to an API method,
+        """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
         name = cls.collection_name
         if cls.api_root != 'a':
