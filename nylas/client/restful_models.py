@@ -434,8 +434,8 @@ class Namespace(NylasAPIObject):
 class Account(NylasAPIObject):
     api_root = 'a'
 
-    attrs = ["account_id", "trial", "trial_expires", "sync_state",
-             "billing_state", "account_id"]
+    attrs = ['account_id', 'billing_state', 'email', 'id', 'namespace_id',
+             'sync_state', 'trial']
 
     collection_name = 'accounts'
 
@@ -454,12 +454,15 @@ class Account(NylasAPIObject):
         self.api._call_resource_method(self, self.account_id,
                                        'downgrade', None)
 
+    def delete(self):
+        raise NotImplementedError
+
 
 class APIAccount(NylasAPIObject):
-    attrs = ["email_address", "id", "account_id", "object",
-             "provider", "name", "organization_unit"]
+    attrs = ['account_id', 'email_address', 'id', 'name', 'object',
+             'organization_unit', 'provider', 'sync_state']
 
-    collection_name = 'accounts'
+    collection_name = 'account'
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, APIAccount, api)

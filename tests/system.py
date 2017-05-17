@@ -14,9 +14,13 @@ client = APIClient(APP_ID, APP_SECRET, AUTH_TOKEN)
 
 count = 0
 
-print "Listing accounts"
+print "Listing accounts for application"
 for account in client.accounts:
-    print (account.email_address, account.provider)
+    print (account.email, account.id, account.billing_state, account.sync_state)
+
+print "Listing authenticated API account"
+account = client.account
+print (account.email_address, account.provider, account.id)
 
 print 'Marking the first thread as unread'
 th = client.threads.where({'in': 'inbox'}).first()
@@ -32,7 +36,7 @@ for thread in client.threads.items():
 
 print "Sending an email"
 draft = client.drafts.create()
-draft.to = [{'name': 'Python SDK test', 'email': 'karim@nylas.com'}]
+draft.to = [{'name': 'Python SDK test', 'email': 'inboxapptest415@gmail.com'}]
 draft.subject = "Python SDK test"
 draft.body = "Stay polish, stay hungary"
 draft.send()
@@ -47,7 +51,7 @@ d2 = datetime.datetime.now() + datetime.timedelta(days=5,hours=5)
 
 ev.when = {"start_time": time.mktime(d1.timetuple()), "end_time": time.mktime(d2.timetuple())}
 ev.location = "The Old Ritz"
-ev.participants = [{'name': 'Karim Hamidou', 'email': 'karim@nylas.com'}]
+ev.participants = [{'name': 'Nylas Test', 'email': 'inboxapptest415@gmail.com'}]
 ev.calendar_id = calendar.id
 ev.save(notify_participants='true')
 

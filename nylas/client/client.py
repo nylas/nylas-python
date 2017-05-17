@@ -113,8 +113,9 @@ class APIClient(json.JSONEncoder):
         self.admin_session = requests.Session()
 
         if app_secret is not None:
-            self.admin_session.headers = {'Authorization': 'Bearer ' +
-                                          app_secret,
+            b64_app_secret = b64encode(app_secret + ':')
+            self.admin_session.headers = {'Authorization': 'Basic ' +
+                                          b64_app_secret,
                                           'X-Nylas-API-Wrapper': 'python',
                                           'User-Agent': version_header}
 
