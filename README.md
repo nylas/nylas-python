@@ -340,7 +340,7 @@ account_id = client.accounts.first().id
 
 # Display the contents of the first message for the first account
 client = APIClient(None, None, account_id, 'http://localhost:5555/')
-puts client.messages.first().body
+print client.messages.first().body
 ```
 
 
