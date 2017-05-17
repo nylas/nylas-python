@@ -284,7 +284,7 @@ ev.when = {"start_time": 1416423667, "end_time": 1416448867} # These numbers are
 ev.location = "The Old Ritz"
 ev.participants = [{"name": "My Friend", 'email': 'my.friend@example.com'}]
 ev.calendar_id = calendar.id
-ev.save()
+ev.save(notify_participants='true') # notify_participants is sent as a query parameter in the request
 
 # Update it
 ev.location = "The Waldorf-Astoria"
