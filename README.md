@@ -270,6 +270,26 @@ draft.delete()
 # client.drafts.delete(draft.id, {'version': draft.version})
 ```
 
+### Message Tracking Features
+
+If you have webhooks enabled for your developer application you can now access Nylas' [Message Tracking Features](https://www.nylas.com/docs/platform#enabling_tracking) to see when a recipient opens, replies, or clicks links within a message.
+
+```python
+# Send a message with tracking enabled
+draft = client.drafts.create()
+draft.to = [{'name': 'Python SDK open tracking test', 'email': 'inboxapptest415@gmail.com'}]
+draft.subject = "Python SDK open tracking test"
+draft.body = "Stay polish, stay hungary"
+draft.tracking = { 'links': 'false', 'opens': 'true', 'thread_replies': 'true', 'payload':'python sdk open tracking test' }
+draft.send()
+```
+
+It’s important to note that you must wrap links in `<a>` tags for them to be
+tracked. Most email clients automatically “linkify” things that look like links,
+like `10.0.0.1`, `tel:5402502334`, or `apple.com`. For links to be tracked
+properly, you must linkify the content before sending the draft.
+
+
 ### Working with Events
 
 The following example shows how to create and update an event.

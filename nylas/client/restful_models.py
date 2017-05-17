@@ -307,7 +307,7 @@ class Draft(Message):
     attrs = ["bcc", "cc", "body", "date", "files", "from", "id",
              "account_id", "object", "subject", "thread_id", "to",
              "unread", "version", "file_ids", "reply_to_message_id",
-             "reply_to", "starred", "snippet"]
+             "reply_to", "starred", "snippet", "tracking"]
     collection_name = 'drafts'
 
     def __init__(self, api, thread_id=None):

@@ -55,6 +55,15 @@ ev.participants = [{'name': 'Nylas Test', 'email': 'inboxapptest415@gmail.com'}]
 ev.calendar_id = calendar.id
 ev.save(notify_participants='true')
 
+# Send a message with tracking enabled
+print 'Send a message with open tracking enabled'
+draft = client.drafts.create()
+draft.to = [{'name': 'Python SDK open tracking test', 'email': 'inboxapptest415@gmail.com'}]
+draft.subject = "Python SDK open tracking test"
+draft.body = "Stay polish, stay hungary"
+draft.tracking = { 'links': 'false', 'opens': 'true', 'thread_replies': 'true', 'payload':'python sdk open tracking test' }
+draft.send()
+
 print 'Listing folders'
 for label in client.labels:
     print label.display_name
