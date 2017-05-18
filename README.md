@@ -175,6 +175,14 @@ for message in thread.messages.items():
 print message.raw
 ```
 
+To get the [expanded message view](https://www.nylas.com/docs/platform#expanded_message_view) that includes convenient header information, include `view='expanded'` in the where clause
+```
+message = client.messages.where(in_='inbox', view='expanded').first()
+message.headers['Message-Id']
+message.headers['References']
+message.headers['In-Reply-To']
+```
+
 ### Working with Folders and Labels
 
 The Folders and Labels API replaces the now deprecated Tags API. For Gmail accounts, this API allows you to apply labels to whole threads or individual messages. For providers other than Gmail, you can move threads and messages between folders -- a message can only belong to one folder.

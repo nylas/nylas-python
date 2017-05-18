@@ -64,6 +64,10 @@ draft.body = "Stay polish, stay hungary"
 draft.tracking = { 'links': 'false', 'opens': 'true', 'thread_replies': 'true', 'payload':'python sdk open tracking test' }
 draft.send()
 
+print "Get expanded view for message"
+m = client.messages.where(in_='inbox', limit=1, view='expanded').first()
+print m.headers['Message-Id']
+
 print 'Listing folders'
 for label in client.labels:
     print label.display_name
