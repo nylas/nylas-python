@@ -1,6 +1,19 @@
 nylas-python Changelog
 ======================
 
+v2.0.0
+------
+
+Release May 18, 2017:
+- Add support for expanded message view
+- Remove deprecated "Inbox" name
+- Send correct auth headers for account management
+- Respect the offset parameter for restfulmodelcollection
+- Add ability to revoke token
+
+[Full Changelog](https://github.com/nylas/nylas-ruby/compare/v1.2.3...v2.0.0)
+
+
 v1.2.3
 ------
 
