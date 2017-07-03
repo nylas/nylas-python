@@ -1,8 +1,6 @@
-from .restful_model_collection import RestfulModelCollection
-from .errors import FileUploadError
+from nylas.client.restful_model_collection import RestfulModelCollection
+from nylas.client.errors import FileUploadError
 from six import StringIO
-import base64
-import json
 
 
 class NylasAPIObject(dict):

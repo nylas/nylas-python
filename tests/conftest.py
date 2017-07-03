@@ -3,7 +3,6 @@ import json
 import pytest
 import responses
 from nylas import APIClient
-from nylas.client.errors import *
 
 API_URL = 'http://localhost:2222'
 

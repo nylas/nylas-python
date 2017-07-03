@@ -5,16 +5,19 @@ from os import environ
 from base64 import b64encode
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
-from .util import url_concat, generate_id
-from .restful_model_collection import RestfulModelCollection
-from .restful_models import (Calendar, Contact, Event, Message, Thread, File,
-                             Account, APIAccount, SingletonAccount, Folder,
-                             Label, Draft)
-from .errors import (APIClientError, ConnectionError, NotAuthorizedError,
-                     InvalidRequestError, NotFoundError, MethodNotSupportedError,
-                     ServerError, ServiceUnavailableError, ConflictError,
-                     SendingQuotaExceededError, ServerTimeoutError,
-                     MessageRejectedError)
+from nylas.client.util import url_concat, generate_id
+from nylas.client.restful_model_collection import RestfulModelCollection
+from nylas.client.restful_models import (
+    Calendar, Contact, Event, Message, Thread, File,
+    Account, APIAccount, SingletonAccount, Folder,
+    Label, Draft
+)
+from nylas.client.errors import (
+    APIClientError, ConnectionError, NotAuthorizedError,
+    InvalidRequestError, NotFoundError, MethodNotSupportedError,
+    ServerError, ServiceUnavailableError, ConflictError,
+    SendingQuotaExceededError, ServerTimeoutError, MessageRejectedError
+)
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"

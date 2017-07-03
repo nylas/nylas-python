@@ -7,6 +7,7 @@ import requests
 import urllib
 import logging
 import subprocess
+import uuid
 
 sys.path.append('../../')
 
@@ -170,7 +171,7 @@ def nylas_token(data):
     raise Exception("Error getting access token from Nylas", err=resp)
 
 
-# Setup google developer settings to ensure everything works locally 
+# Setup google developer settings to ensure everything works locally
 def initialize():
     global REDIRECT_URI
     REDIRECT_URI = "{}/oauth2callback".format("http://lvh.me:1234")
@@ -185,7 +186,6 @@ def initialize():
 
 if __name__ == '__main__':
   logging.info("Initializing Application")
-  import uuid
   initialize()
   app.secret_key = str(uuid.uuid4())
   app.debug = False
