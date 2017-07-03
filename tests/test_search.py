@@ -1,11 +1,10 @@
 import json
 import pytest
 import responses
-from conftest import API_URL
 from nylas.client.errors import InvalidRequestError
 
 @pytest.fixture
-def mock_thread_search_response():
+def mock_thread_search_response(api_url):
     response_body = json.dumps(
         [
             {
@@ -45,13 +44,13 @@ def mock_thread_search_response():
         ])
 
     responses.add(responses.GET,
-            API_URL + '/threads/search?q=Helena',
+            api_url + '/threads/search?q=Helena',
             body=response_body, status=200,
             content_type='application/json',
             match_querystring=True)
 
 @pytest.fixture
-def mock_message_search_response():
+def mock_message_search_response(api_url):
     response_body = json.dumps(
         [
             {
@@ -125,7 +124,7 @@ def mock_message_search_response():
         ])
 
     responses.add(responses.GET,
-            API_URL + '/messages/search?q=Pinot',
+            api_url + '/messages/search?q=Pinot',
             body=response_body, status=200,
             content_type='application/json',
             match_querystring=True)

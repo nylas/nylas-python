@@ -3,11 +3,9 @@ import pytest
 import responses
 import httpretty
 from httpretty import Response
-from conftest import API_URL
 from nylas.client.errors import InvalidRequestError
 
 
-url = API_URL + '/events/'
 body = {
     "busy": True,
     "calendar_id": "94rssh7bd3rmsxsp19kiocxze",
@@ -31,21 +29,21 @@ body = {
 
 
 @pytest.fixture
-def mock_event_create_response():
+def mock_event_create_response(api_url):
     values = [Response(status=200, body=json.dumps(body)),
               Response(status=400, body='')]
 
-    httpretty.register_uri(httpretty.POST, API_URL + '/events/', responses=values)
+    httpretty.register_uri(httpretty.POST, api_url + '/events/', responses=values)
     put_values = [Response(status=200,
                            body=json.dumps({'title': 'loaded from JSON',
                                             'ignored': 'ignored'}))]
-    httpretty.register_uri(httpretty.PUT, API_URL + '/events/cv4ei7syx10uvsxbs21ccsezf',
+    httpretty.register_uri(httpretty.PUT, api_url + '/events/cv4ei7syx10uvsxbs21ccsezf',
                            responses=put_values)
 
 
 @pytest.fixture
-def mock_event_create_notify_response():
-    httpretty.register_uri(httpretty.POST, API_URL + '/events/?notify_participants=true&other_param=1',
+def mock_event_create_notify_response(api_url):
+    httpretty.register_uri(httpretty.POST, api_url + '/events/?notify_participants=true&other_param=1',
                            body=json.dumps(body), status=200)
 
 
