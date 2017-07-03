@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from __future__ import print_function
 import time
 from nylas import APIClient
 from nylas.util import generate_id
@@ -36,4 +36,4 @@ while not th:
 
 m = th.messages[0]
 
-print m.attachments[0].download()
+print(m.attachments[0].download())

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import json
 import flask
@@ -37,8 +38,8 @@ def index():
             # Print some of the information Nylas sent us. This is where you
             # would normally process the webhook notification and do things like
             # fetch relevant message ids, update your database, etc.
-            print "{} at {} with id {}".format(delta['type'], delta['date'],
-                    delta['object_data']['id'])
+            print("{} at {} with id {}".format(delta['type'], delta['date'],
+                    delta['object_data']['id']))
         # Don't forget to let Nylas know that everything was pretty ok.
         return "Success", 200
 
@@ -62,7 +63,7 @@ def initialize():
     try:
         resp = requests.get('http://localhost:4040/api/tunnels').json()
     except requests.exceptions.ConnectionError:
-        print "It looks like ngrok isn't running! Make sure you've started that first with 'ngrok http 1234'"
+        print("It looks like ngrok isn't running! Make sure you've started that first with 'ngrok http 1234'")
         sys.exit(-1)
 
     global WEBHOOK_URI
@@ -73,5 +74,5 @@ if __name__ == '__main__':
     initialize()
     app.secret_key = str(uuid.uuid4())
     app.debug = False
-    print "{}\nAdd the above url to the webhooks page at https://developer.nylas.com".format(WEBHOOK_URI)
+    print("{}\nAdd the above url to the webhooks page at https://developer.nylas.com".format(WEBHOOK_URI))
     app.run(port=1234)
