@@ -3,11 +3,10 @@ import pytest
 import responses
 import httpretty
 from httpretty import Response
-from conftest import API_URL
 from nylas.client.errors import InvalidRequestError, FileUploadError
 
 
-def test_file_upload(api_client):
+def test_file_upload(api_client, api_url):
     httpretty.enable()
     body = [{
         "content_type": "text/plain",
@@ -19,8 +18,8 @@ def test_file_upload(api_client):
     }]
 
     values = [Response(status=200, body=json.dumps(body))]
-    httpretty.register_uri(httpretty.POST, API_URL + '/files/', responses=values)
-    httpretty.register_uri(httpretty.GET, API_URL + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
+    httpretty.register_uri(httpretty.POST, api_url + '/files/', responses=values)
+    httpretty.register_uri(httpretty.GET, api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
                            body='test body')
 
     myfile = api_client.files.create()

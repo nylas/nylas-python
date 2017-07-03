@@ -1,12 +1,11 @@
 import json
 import pytest
 import responses
-from conftest import API_URL
 from nylas.client.errors import InvalidRequestError
 
 
 @pytest.fixture
-def mock_draft_saved_response():
+def mock_draft_saved_response(api_url):
     response_body = json.dumps(
         {
             "bcc": [],
@@ -36,13 +35,13 @@ def mock_draft_saved_response():
             "version": 0
         })
 
-    responses.add(responses.POST, API_URL + '/drafts/',
+    responses.add(responses.POST, api_url + '/drafts/',
                   content_type='application/json', status=200,
                   body=response_body, match_querystring=True)
 
 
 @pytest.fixture
-def mock_draft_updated_response():
+def mock_draft_updated_response(api_url):
     body = {
             "bcc": [],
             "body": "",
@@ -71,18 +70,18 @@ def mock_draft_updated_response():
             "version": 0
         }
 
-    responses.add(responses.PUT, API_URL + '/drafts/2h111aefv8pzwzfykrn7hercj',
+    responses.add(responses.PUT, api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
                   content_type='application/json', status=200,
                   body=json.dumps(body), match_querystring=True)
 
     body['subject'] = 'Update #2'
-    responses.add(responses.PUT, API_URL + '/drafts/2h111aefv8pzwzfykrn7hercj?random_query=true&param2=param',
+    responses.add(responses.PUT, api_url + '/drafts/2h111aefv8pzwzfykrn7hercj?random_query=true&param2=param',
                   content_type='application/json', status=200,
                   body=json.dumps(body), match_querystring=True)
 
 
 @pytest.fixture
-def mock_draft_sent_response():
+def mock_draft_sent_response(api_url):
     body = {
             "bcc": [],
             "body": "",
@@ -121,7 +120,7 @@ def mock_draft_sent_response():
         return values.pop()
 
     responses.add_callback(
-            responses.POST, API_URL + '/send/',
+            responses.POST, api_url + '/send/',
             callback=callback,
             content_type='application/json')
 
