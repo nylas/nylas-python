@@ -5,6 +5,7 @@ import flask
 import requests
 import hmac
 import hashlib
+import uuid
 
 try:
     from credentials import *
@@ -55,7 +56,7 @@ def verify_request(request):
     return digest == request.headers.get('X-Nylas-Signature')
 
 
-# Setup ngrok settings to ensure everything works locally 
+# Setup ngrok settings to ensure everything works locally
 def initialize():
     # Make sure ngrok is running
     try:
@@ -69,7 +70,6 @@ def initialize():
 
 
 if __name__ == '__main__':
-    import uuid
     initialize()
     app.secret_key = str(uuid.uuid4())
     app.debug = False

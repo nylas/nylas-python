@@ -3,7 +3,9 @@ import re
 import pytest
 import responses
 from nylas import APIClient
-from nylas.client.errors import *
+from nylas.client.errors import (
+    MessageRejectedError, SendingQuotaExceededError, ServiceUnavailableError,
+)
 
 API_URL = 'http://localhost:2222'
 

@@ -2,10 +2,8 @@ import json
 import re
 import pytest
 import responses
-import httpretty
 from nylas import APIClient
 from nylas.client.restful_models import Label, Folder
-from nylas.client.errors import *
 
 API_URL = 'http://localhost:2222'
 
