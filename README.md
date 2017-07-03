@@ -1,4 +1,5 @@
-# Nylas REST API Python bindings ![Travis build status](https://travis-ci.org/nylas/nylas-python.svg?branch=master)
+# Nylas REST API Python bindings ![Travis build status](https://travis-ci.org/nylas/nylas-python.svg?branch=master) [![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/master/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
+
 
 Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
