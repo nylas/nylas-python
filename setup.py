@@ -12,7 +12,7 @@ class PyTest(TestCommand):
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
-        self.pytest_args = '--cov --junitxml ./tests/output tests/'
+        self.pytest_args = ['--cov', '--junitxml', './tests/output', 'tests/']
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
