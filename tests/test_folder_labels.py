@@ -2,22 +2,14 @@ import json
 import re
 import pytest
 import responses
-from nylas import APIClient
 from nylas.client.restful_models import Label, Folder
 
-API_URL = 'http://localhost:2222'
 
 MOCK_ACCOUNT_ID = '4ennivvrcgsqytgybfk912dto'
 
-# pylint: disable=redefined-outer-name
 
 @pytest.fixture
-def api_client():
-    return APIClient(None, None, None, API_URL)
-
-
-@pytest.fixture
-def mock_account():
+def mock_account(api_url):
     response_body = json.dumps(
         {
             "account_id": MOCK_ACCOUNT_ID,
@@ -29,13 +21,18 @@ def mock_account():
             "organization_unit": "label"
         }
     )
-    responses.add(responses.GET, API_URL + '/account',
-                  content_type='application/json', status=200,
-                  body=response_body, match_querystring=True)
+    responses.add(
+        responses.GET,
+        api_url + '/account',
+        content_type='application/json',
+        status=200,
+        body=response_body,
+        match_querystring=True
+    )
 
 
 @pytest.fixture
-def mock_folder_account():
+def mock_folder_account(api_url):
     response_body = json.dumps(
         {
             "email_address": "ben.bitdiddle1861@office365.com",
@@ -47,13 +44,18 @@ def mock_folder_account():
             "organization_unit": "folder"
         }
     )
-    responses.add(responses.GET, API_URL + '/account',
-                  content_type='application/json', status=200,
-                  body=response_body, match_querystring=True)
+    responses.add(
+        responses.GET,
+        api_url + '/account',
+        content_type='application/json',
+        status=200,
+        body=response_body,
+        match_querystring=True
+    )
 
 
 @pytest.fixture
-def mock_labels():
+def mock_labels(api_url):
     response_body = json.dumps([
         {
             "display_name": "Important",
@@ -91,14 +93,18 @@ def mock_labels():
             "object": "label"
         }
     ])
-    endpoint = re.compile(API_URL + '/labels.*')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
+    endpoint = re.compile(api_url + '/labels.*')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body,
+    )
 
 
 @pytest.fixture
-def mock_label():
+def mock_label(api_url):
     response_body = json.dumps(
         {
             "display_name": "Important",
@@ -108,14 +114,18 @@ def mock_label():
             "object": "label"
         }
     )
-    endpoint = re.compile(API_URL + '/labels/anuep8pe5ugmxrucchrzba2o8')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
+    endpoint = re.compile(api_url + '/labels/anuep8pe5ugmxrucchrzba2o8')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body,
+    )
 
 
 @pytest.fixture
-def mock_folder():
+def mock_folder(api_url):
     folder = {
         "display_name": "My Folder",
         "id": "anuep8pe5ug3xrupchwzba2o8",
@@ -124,24 +134,32 @@ def mock_folder():
         "object": "folder"
         }
     response_body = json.dumps(folder)
-    endpoint = re.compile(API_URL + '/folders/anuep8pe5ug3xrupchwzba2o8')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
+    endpoint = re.compile(api_url + '/folders/anuep8pe5ug3xrupchwzba2o8')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body,
+    )
 
     def request_callback(request):
         payload = json.loads(request.body)
         if 'display_name' in payload:
             folder.update(payload)
         return (200, {}, json.dumps(folder))
-    responses.add_callback(responses.PUT, endpoint,
-                           content_type='application/json',
-                           callback=request_callback)
+
+    responses.add_callback(
+        responses.PUT,
+        endpoint,
+        content_type='application/json',
+        callback=request_callback,
+    )
 
 
 
 @pytest.fixture
-def mock_messages():
+def mock_messages(api_url):
     response_body = json.dumps([
         {
             "id": "1234",
@@ -159,14 +177,17 @@ def mock_messages():
             "unread": True
         }
     ])
-    endpoint = re.compile(API_URL + '/messages')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
+    endpoint = re.compile(api_url + '/messages')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body)
 
 
 @pytest.fixture
-def mock_message():
+def mock_message(api_url):
     base_msg = {
         "id": "1234",
         "subject": "Test Message",
@@ -192,17 +213,24 @@ def mock_message():
             base_msg['labels'] = labels
         return (200, {}, json.dumps(base_msg))
 
-    endpoint = re.compile(API_URL + '/messages/1234')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
-    responses.add_callback(responses.PUT, endpoint,
-                           content_type='application/json',
-                           callback=request_callback)
+    endpoint = re.compile(api_url + '/messages/1234')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+    responses.add_callback(
+        responses.PUT,
+        endpoint,
+        content_type='application/json',
+        callback=request_callback
+    )
 
 
 @pytest.fixture
-def mock_threads():
+def mock_threads(api_url):
     response_body = json.dumps([
         {
             "id": "5678",
@@ -218,14 +246,18 @@ def mock_threads():
             "unread": False
         }
     ])
-    endpoint = re.compile(API_URL + '/threads')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
+    endpoint = re.compile(api_url + '/threads')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
 
 
 @pytest.fixture
-def mock_thread():
+def mock_thread(api_url):
     base_thrd = {
         "id": "5678",
         "subject": "Test Thread",
@@ -249,13 +281,20 @@ def mock_thread():
             base_thrd['folders'] = [folder]
         return (200, {}, json.dumps(base_thrd))
 
-    endpoint = re.compile(API_URL + '/threads/5678')
-    responses.add(responses.GET, endpoint,
-                  content_type='application/json', status=200,
-                  body=response_body)
-    responses.add_callback(responses.PUT, endpoint,
-                           content_type='application/json',
-                           callback=request_callback)
+    endpoint = re.compile(api_url + '/threads/5678')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+    responses.add_callback(
+        responses.PUT,
+        endpoint,
+        content_type='application/json',
+        callback=request_callback,
+    )
 
 
 @responses.activate
