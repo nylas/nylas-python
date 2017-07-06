@@ -145,7 +145,8 @@ class APIClient(json.JSONEncoder):
                 'client_id': self.app_id,
                 'response_type': 'code',
                 'scope': 'email',
-                'login_hint': login_hint}
+                'login_hint': login_hint,
+                'state': ''}
 
         return url_concat(self.authorize_url, args)
 
