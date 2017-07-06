@@ -13,16 +13,26 @@ with open('nylas/_client_sdk_version.py', 'r') as fd:
 
 
 class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', "Arguments to pass to pytest")]
+    user_options = [
+        ('pytest-args=', 'a', "Arguments to pass to pytest"),
+        ('lint', None, "Enable linting with pylint"),
+    ]
+
+    boolean_options = ['lint']
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
-        self.pytest_args = ['--cov', '--junitxml', './tests/output', 'tests/']  # pylint: disable=attribute-defined-outside-init
+        # pylint: disable=attribute-defined-outside-init
+        self.pytest_args = ['--cov', '--junitxml', './tests/output', 'tests/']
+        self.lint = False
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
+        # pylint: disable=attribute-defined-outside-init
         self.test_args = []
-        self.test_suite = True  # pylint: disable=attribute-defined-outside-init
+        self.test_suite = True
+        if self.lint:
+            self.pytest_args.append("--pylint")
 
     def run_tests(self):
         # import here, cause outside the eggs aren't loaded
