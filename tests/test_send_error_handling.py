@@ -6,11 +6,9 @@ from nylas.client.errors import (
     MessageRejectedError, SendingQuotaExceededError, ServiceUnavailableError,
 )
 
-API_URL = 'http://localhost:2222'
 
-
-def mock_sending_error(http_code, message, server_error=None):
-    send_endpoint = re.compile(API_URL + '/send')
+def mock_sending_error(http_code, message, api_url, server_error=None):
+    send_endpoint = re.compile(api_url + '/send')
     response_body = {
         "type": "api_error",
         "message": message
@@ -27,10 +25,10 @@ def mock_sending_error(http_code, message, server_error=None):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
-def test_handle_message_rejected(api_client):
+def test_handle_message_rejected(api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'Sending to all recipients failed'
-    mock_sending_error(402, error_message)
+    mock_sending_error(402, error_message, api_url=api_url)
     with pytest.raises(MessageRejectedError) as exc:
         draft.send()
     assert exc.value.message == error_message
@@ -38,10 +36,10 @@ def test_handle_message_rejected(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
-def test_handle_quota_exceeded(api_client):
+def test_handle_quota_exceeded(api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'Daily sending quota exceeded'
-    mock_sending_error(429, error_message)
+    mock_sending_error(429, error_message, api_url=api_url)
     with pytest.raises(SendingQuotaExceededError) as exc:
         draft.send()
     assert exc.value.message == error_message
@@ -49,10 +47,10 @@ def test_handle_quota_exceeded(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
-def test_handle_service_unavailable(api_client):
+def test_handle_service_unavailable(api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
-    mock_sending_error(503, error_message)
+    mock_sending_error(503, error_message, api_url=api_url)
     with pytest.raises(ServiceUnavailableError) as exc:
         draft.send()
     assert exc.value.message == error_message
@@ -60,11 +58,11 @@ def test_handle_service_unavailable(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
-def test_returns_server_error(api_client):
+def test_returns_server_error(api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
     reason = 'Rejected potential SPAM'
-    mock_sending_error(503, error_message,
+    mock_sending_error(503, error_message, api_url=api_url,
                        server_error=reason)
     with pytest.raises(ServiceUnavailableError) as exc:
         draft.send()
@@ -75,10 +73,10 @@ def test_returns_server_error(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
-def test_doesnt_return_server_error_if_not_defined(api_client):
+def test_doesnt_return_server_error_if_not_defined(api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
-    mock_sending_error(503, error_message)
+    mock_sending_error(503, error_message, api_url=api_url)
     with pytest.raises(ServiceUnavailableError) as exc:
         draft.send()
     assert exc.value.message == error_message
