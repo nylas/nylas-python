@@ -10,6 +10,21 @@ with open('nylas/_client_sdk_version.py', 'r') as fd:
     VERSION = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
+run_dependencies = [
+    "requests>=2.4.2",
+    "six>=1.4.1",
+    "bumpversion>=0.5.0",
+    "pyOpenSSL",  # needed for SNI support, required by api.nylas.com
+    "ndg-httpsclient",
+    "pyasn1",
+]
+test_dependencies = [
+    "pytest",
+    "pytest-cov",
+    "pytest-pylint",
+    "responses",
+    "httpretty"
+]
 
 
 class PyTest(TestCommand):
@@ -60,20 +75,10 @@ def main():
         name="nylas",
         version=VERSION,
         packages=find_packages(),
-
-        install_requires=[
-            "requests>=2.4.2",
-            "six>=1.4.1",
-            "bumpversion>=0.5.0",
-            # needed for SNI support, required by api.nylas.com
-            "pyOpenSSL",
-            "ndg-httpsclient",
-            "pyasn1",
-        ],
+        install_requires=run_dependencies,
         dependency_links=[],
-        tests_require=[
-            "pytest", "pytest-cov", "pytest-pylint", "responses", "httpretty"
-        ],
+        tests_require=test_dependencies,
+        extras_require={'test': test_dependencies},
         cmdclass={'test': PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
