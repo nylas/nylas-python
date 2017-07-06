@@ -1,5 +1,6 @@
 import re
 import json
+import copy
 import pytest
 import responses
 import httpretty
@@ -349,6 +350,116 @@ def mock_thread(api_url, account_id):
         endpoint,
         content_type='application/json',
         callback=request_callback,
+    )
+
+
+@pytest.fixture
+def mock_labelled_thread(api_url, account_id):
+    base_thread = {
+        "id": "111",
+        "subject": "Labelled Thread",
+        "account_id": account_id,
+        "object": "thread",
+        "folders": [{
+            "name": "inbox",
+            "display_name": "Inbox",
+            "id": "abcd"
+        }],
+        "starred": True,
+        "unread": False,
+        "labels": [
+            {
+                "display_name": "Important",
+                "id": "anuep8pe5ugmxrucchrzba2o8",
+                "name": "important",
+                "account_id": account_id,
+                "object": "label"
+            }, {
+                "display_name": "Existing",
+                "id": "dfslhgy3rlijfhlsujnchefs3",
+                "name": "existing",
+                "account_id": account_id,
+                "object": "label"
+            }
+        ]
+    }
+    response_body = json.dumps(base_thread)
+
+    def request_callback(request):
+        payload = json.loads(request.body)
+        if 'labels' in payload:
+            existing_labels = {
+                label["id"]: label
+                for label in base_thread["labels"]
+            }
+            new_labels = []
+            for label_id in payload['labels']:
+                if label_id in existing_labels:
+                    new_labels.append(existing_labels[label_id])
+                else:
+                    new_labels.append({
+                        "name": "updated",
+                        "display_name": "Updated",
+                        "id": label_id,
+                        "account_id": account_id,
+                        "object": "label",
+                    })
+            copied = copy.copy(base_thread)
+            copied["labels"] = new_labels
+        return (200, {}, json.dumps(copied))
+
+    endpoint = re.compile(api_url + '/threads/111')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+    responses.add_callback(
+        responses.PUT,
+        endpoint,
+        content_type='application/json',
+        callback=request_callback,
+    )
+
+
+@pytest.fixture
+def mock_drafts(api_url):
+    response_body = json.dumps([{
+        "bcc": [],
+        "body": "Cheers mate!",
+        "cc": [],
+        "date": 1438684486,
+        "events": [],
+        "files": [],
+        "folder": None,
+        "from": [],
+        "id": "2h111aefv8pzwzfykrn7hercj",
+        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+        "object": "draft",
+        "reply_to": [],
+        "reply_to_message_id": None,
+        "snippet": "",
+        "starred": False,
+        "subject": "Here's an attachment",
+        "thread_id": "clm33kapdxkposgltof845v9s",
+        "to": [
+            {
+                "email": "helena@nylas.com",
+                "name": "Helena Handbasket"
+            }
+        ],
+        "unread": False,
+        "version": 0
+    }])
+
+    responses.add(
+        responses.GET,
+        api_url + '/drafts',
+        content_type='application/json',
+        status=200,
+        body=response_body,
     )
 
 
