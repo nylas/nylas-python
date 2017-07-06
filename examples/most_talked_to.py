@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from __future__ import print_function
 from operator import itemgetter
 from nylas import APIClient
 
@@ -18,4 +18,4 @@ for m in client.messages:
 
 most_chatted = sorted(counts.iteritems(), key=itemgetter(1))
 for i in most_chatted:
-    print i
+    print(i)

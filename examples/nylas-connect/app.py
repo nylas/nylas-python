@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import json
 import sys
 import os
@@ -175,12 +176,12 @@ def nylas_token(data):
 def initialize():
     global REDIRECT_URI
     REDIRECT_URI = "{}/oauth2callback".format("http://lvh.me:1234")
-    print REDIRECT_URI
+    print(REDIRECT_URI)
     s = raw_input("Have you added the url above as an authorized callback "
                   "in Google's Developer console? y/n ")
     if s != "y":
-        print "You need to set that up first!"
-        print "See https://support.nylas.com/hc/en-us/articles/222176307-Google-OAuth-Setup-Guide for more information"
+        print("You need to set that up first!")
+        print("See https://support.nylas.com/hc/en-us/articles/222176307-Google-OAuth-Setup-Guide for more information")
         sys.exit(-1)
 
 
@@ -189,5 +190,5 @@ if __name__ == '__main__':
   initialize()
   app.secret_key = str(uuid.uuid4())
   app.debug = False
-  print "Visit http://localhost:1234 in your browser"
+  print("Visit http://localhost:1234 in your browser")
   app.run(port=1234)

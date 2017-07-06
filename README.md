@@ -87,8 +87,8 @@ use the `revoke_token` method on APIClient
 client = APIClient(APP_ID, APP_SECRET, token)
 
 # Print out the email address and provider (Gmail, Exchange)
-print client.account.email_address
-print client.account.provider
+print(client.account.email_address)
+print(client.account.provider)
 ```
 
 
@@ -104,19 +104,19 @@ thread = client.threads.find('ac123acd123ef123')
 # List all threads tagged `inbox`
 # (paginating 50 at a time until no more are returned.)
 for thread in client.threads.items():
-    print thread.subject
+    print(thread.subject)
 
 # List the 5 most recent unread threads
 for thread in client.threads.where(unread=True, limit=5):
-    print thread.subject
+    print(thread.subject)
 
 # List starred threads
 for thread in client.threads.where(starred=True):
-    print thread.subject
+    print(thread.subject)
 
 # List all threads with 'ben@nylas.com'
 for thread in client.threads.where(any_email='ben@nylas.com').items():
-    print thread.subject
+    print(thread.subject)
 ```
 
 ### Searching Messages and Threads
@@ -137,7 +137,7 @@ messages = client.messages.search("nylas")
 ```python
 # List thread participants
 for participant in thread.participants:
-    print participant["email"]
+    print(participant["email"])
 
 # Mark as read
 thread.mark_as_read()
@@ -170,10 +170,10 @@ message.update_folder(trash_id)
 
 # List messages
 for message in thread.messages.items():
-    print message.subject
+    print(message.subject)
 
 # Get the raw contents of a message
-print message.raw
+print(message.raw)
 ```
 
 To get the [expanded message view](https://www.nylas.com/docs/platform#expanded_message_view) that includes convenient header information, include `view='expanded'` in the where clause
@@ -191,7 +191,7 @@ The Folders and Labels API replaces the now deprecated Tags API. For Gmail accou
 ```python
 # List labels
 for label in client.labels:
-    print label.id, label.display_name
+    print(label.id, label.display_name)
 
 # Create a label
 label = client.labels.create()
@@ -219,7 +219,7 @@ Files can be uploaded via two interfaces. One is providing data directly, anothe
 ```python
 # List files
 for file in client.files:
-    print file.filename
+    print(file.filename)
 
 # Create a new file with the stream interface
 f = open('test.py', 'r')
@@ -259,15 +259,15 @@ draft.attach(myfile)
 try:
     draft.send()
 except nylas.client.errors.ConnectionError as e:
-    print "Unable to connect to the SMTP server."
+    print("Unable to connect to the SMTP server.")
 except nylas.client.errors.MessageRejectedError as e:
-    print "Message got rejected by the SMTP server!"
-    print e.message
+    print("Message got rejected by the SMTP server!")
+    print(e.message)
 
     # Sometimes the API gives us the exact error message
     # returned by the server. Display it since it can be
     # helpful to know exactly why our message got rejected:
-    print e.server_error
+    print(e.server_error)
 
 # Delete a draft
 draft = client.drafts.create()
@@ -352,7 +352,7 @@ It's possible to query the status of all the user accounts registered to an app 
 
 ```python
 accounts = client.accounts
-print [(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc in accounts.all()]
+print([(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc in accounts.all()])
 ```
 
 ## Open-Source Sync Engine
@@ -369,7 +369,7 @@ account_id = client.accounts.first().id
 
 # Display the contents of the first message for the first account
 client = APIClient(None, None, account_id, 'http://localhost:5555/')
-print client.messages.first().body
+print(client.messages.first().body)
 ```
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from __future__ import print_function
 import os
 import time
 from nylas import APIClient
@@ -32,4 +32,4 @@ while not th:
     time.sleep(0.5)
     th = client.threads.where({'in': 'Sent', 'subject': subject}).first()
 
-print th.messages[0].attachments[0].download()
+print(th.messages[0].attachments[0].download())

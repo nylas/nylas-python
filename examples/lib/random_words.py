@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import random
 import json
 import sys
@@ -11,8 +12,8 @@ def get_words():
         with open(DICT_FILE, 'r') as f:
             words.extend(f.read().split('\n'))
     except IOError:
-        print json.dumps({'error': "couldn't open dictionary file",
-                          'filename': DICT_FILE})
+        print(json.dumps({'error': "couldn't open dictionary file",
+                          'filename': DICT_FILE}))
         sys.exit(1)
     return words
 
@@ -68,4 +69,4 @@ def random_words(count=int(random.uniform(1,500)), sig='me'):
 
 
 if __name__ == '__main__':
-    print random_words()
+    print(random_words())
