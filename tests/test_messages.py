@@ -34,7 +34,7 @@ def test_message_read(api_client):
     assert message.unread is False
     message.mark_as_unread()
     assert message.unread is True
-    # mark_as_seen() is a synonum for mark_as_read()
+    # mark_as_seen() is a synonym for mark_as_read()
     message.mark_as_seen()
     assert message.unread is False
 
