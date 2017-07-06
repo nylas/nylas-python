@@ -2,7 +2,6 @@ import json
 import re
 import pytest
 import responses
-from nylas import APIClient
 from nylas.client.errors import (
     MessageRejectedError, SendingQuotaExceededError, ServiceUnavailableError,
 )
@@ -27,7 +26,8 @@ def mock_sending_error(http_code, message, server_error=None):
 
 
 @responses.activate
-def test_handle_message_rejected(api_client, mock_account, mock_save_draft):
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_handle_message_rejected(api_client):
     draft = api_client.drafts.create()
     error_message = 'Sending to all recipients failed'
     mock_sending_error(402, error_message)
@@ -37,7 +37,8 @@ def test_handle_message_rejected(api_client, mock_account, mock_save_draft):
 
 
 @responses.activate
-def test_handle_quota_exceeded(api_client, mock_account, mock_save_draft):
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_handle_quota_exceeded(api_client):
     draft = api_client.drafts.create()
     error_message = 'Daily sending quota exceeded'
     mock_sending_error(429, error_message)
@@ -47,8 +48,8 @@ def test_handle_quota_exceeded(api_client, mock_account, mock_save_draft):
 
 
 @responses.activate
-def test_handle_service_unavailable(api_client, mock_account,
-                                    mock_save_draft):
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_handle_service_unavailable(api_client):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
     mock_sending_error(503, error_message)
@@ -58,8 +59,8 @@ def test_handle_service_unavailable(api_client, mock_account,
 
 
 @responses.activate
-def test_returns_server_error(api_client, mock_account,
-                              mock_save_draft):
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_returns_server_error(api_client):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
     reason = 'Rejected potential SPAM'
@@ -73,8 +74,8 @@ def test_returns_server_error(api_client, mock_account,
 
 
 @responses.activate
-def test_doesnt_return_server_error_if_not_defined(api_client, mock_account,
-                                                   mock_save_draft):
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_doesnt_return_server_error_if_not_defined(api_client):
     draft = api_client.drafts.create()
     error_message = 'The server unexpectedly closed the connection'
     mock_sending_error(503, error_message)

@@ -1,6 +1,6 @@
-from six.moves.urllib.parse import urlencode
 from uuid import uuid4
 from struct import unpack
+from six.moves.urllib.parse import urlencode
 
 
 # From tornado.httputil
@@ -33,7 +33,7 @@ def url_concat(url, args, fragments=None):
 
 
 def generate_id():
-    a, b = unpack('>QQ', uuid4().bytes)
+    a, b = unpack('>QQ', uuid4().bytes)  # pylint: disable=invalid-name
     num = a << 64 | b
 
     alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'

@@ -6,6 +6,6 @@ python:
 install:
   - "python setup.py install"
   - "travis_retry pip install codecov"
-script: "python setup.py test"
+script: "python setup.py test -a --pylint"
 after_success:
   - "codecov"

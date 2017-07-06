@@ -1,9 +1,9 @@
 from __future__ import print_function
 import sys
-import requests
 import json
 from os import environ
 from base64 import b64encode
+import requests
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.util import url_concat, generate_id
@@ -73,10 +73,10 @@ def _validate(response):
                              data=data, message="Unknown status code.")
 
 
-def nylas_excepted(f):
+def nylas_excepted(func):
     def caught(*args, **kwargs):
         try:
-            return f(*args, **kwargs)
+            return func(*args, **kwargs)
         except requests.exceptions.ConnectionError:
             server = args[0].api_server
             raise ConnectionError(url=server)
@@ -89,8 +89,7 @@ class APIClient(json.JSONEncoder):
     def __init__(self, app_id=environ.get('NYLAS_APP_ID'),
                  app_secret=environ.get('NYLAS_APP_SECRET'),
                  access_token=environ.get('NYLAS_ACCESS_TOKEN'),
-                 api_server=API_SERVER,
-                 auth_server=None):
+                 api_server=API_SERVER):
         if "://" not in api_server:
             raise Exception("When overriding the Nylas API server address, you"
                             " must include https://")
@@ -110,7 +109,9 @@ class APIClient(json.JSONEncoder):
                                                                  revision)
         self.session.headers = {'X-Nylas-API-Wrapper': 'python',
                                 'User-Agent': version_header}
+        self._access_token = None
         self.access_token = access_token
+        self.auth_token = None
 
         # Requests to the /a/ namespace don't use an auth token but
         # the app_secret. Set up a specific session for this.
@@ -118,10 +119,12 @@ class APIClient(json.JSONEncoder):
 
         if app_secret is not None:
             b64_app_secret = b64encode(app_secret + ':')
-            self.admin_session.headers = {'Authorization': 'Basic ' +
-                                          b64_app_secret,
-                                          'X-Nylas-API-Wrapper': 'python',
-                                          'User-Agent': version_header}
+            self.admin_session.headers = {
+                'Authorization': 'Basic {secret}'.format(secret=b64_app_secret),
+                'X-Nylas-API-Wrapper': 'python',
+                'User-Agent': version_header,
+            }
+        super(APIClient, self).__init__()
 
     @property
     def access_token(self):
@@ -131,8 +134,8 @@ class APIClient(json.JSONEncoder):
     def access_token(self, value):
         self._access_token = value
         if value:
-            self.session.headers.update({'Authorization': 'Bearer ' +
-                                         value})
+            authorization = 'Bearer {token}'.format(token=value)
+            self.session.headers['Authorization'] = authorization
         else:
             if 'Authorization' in self.session.headers:
                 del self.session.headers['Authorization']
@@ -183,8 +186,7 @@ class APIClient(json.JSONEncoder):
     def accounts(self):
         if self.is_opensource_api():
             return RestfulModelCollection(APIAccount, self)
-        else:
-            return RestfulModelCollection(Account, self)
+        return RestfulModelCollection(Account, self)
 
     @property
     def threads(self):
@@ -232,8 +234,7 @@ class APIClient(json.JSONEncoder):
         # instead of the secret_token
         if api_root == 'a':
             return self.admin_session
-        else:
-            return self.session
+        return self.session
 
     @nylas_excepted
     def _get_resources(self, cls, extra=None, **filters):
@@ -241,20 +242,27 @@ class APIClient(json.JSONEncoder):
         # of the old accounts API.
         postfix = "/{}".format(extra) if extra else ''
         if cls.api_root != 'a':
-            url = "{}/{}{}".format(self.api_server, cls.collection_name, postfix)
+            url = "{}/{}{}".format(
+                self.api_server,
+                cls.collection_name,
+                postfix
+            )
         else:
-            url = "{}/a/{}/{}{}".format(self.api_server, self.app_id,
-                                      cls.collection_name, postfix)
+            url = "{}/a/{}/{}{}".format(
+                self.api_server,
+                self.app_id,
+                cls.collection_name,
+                postfix
+            )
 
         url = url_concat(url, filters)
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
-        return list(
-            filter(
-                lambda x: x is not None,
-                map(lambda x: cls.create(self, **x), results)
-                )
-            )
+        return [
+            cls.create(self, **x)
+            for x in results
+            if x is not None
+        ]
 
     @nylas_excepted
     def _get_resource_raw(self, cls, id, extra=None,
@@ -325,7 +333,7 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, data=data, headers=headers)
 
         results = _validate(response).json()
-        return list(map(lambda x: cls.create(self, **x), results))
+        return [cls.create(self, **x) for x in results]
 
     @nylas_excepted
     def _delete_resource(self, cls, id, data=None, **kwargs):
@@ -364,8 +372,13 @@ class APIClient(json.JSONEncoder):
             url = "{}/{}/{}/{}".format(self.api_server, name, id, method_name)
         else:
             # Management method.
-            url = "{}/a/{}/{}/{}/{}".format(self.api_server, self.app_id,
-                                      cls.collection_name, id, method_name)
+            url = "{}/a/{}/{}/{}/{}".format(
+                self.api_server,
+                self.app_id,
+                cls.collection_name,
+                id,
+                method_name,
+            )
 
 
         session = self._get_http_session(cls.api_root)

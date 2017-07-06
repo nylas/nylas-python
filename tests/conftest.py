@@ -4,6 +4,7 @@ import pytest
 import responses
 from nylas import APIClient
 
+# pylint: disable=redefined-outer-name
 
 @pytest.fixture
 def api_url():

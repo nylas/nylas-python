@@ -1,10 +1,15 @@
 import os
 import sys
-sys.path.append('nylas/')
-
+import re
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-from _client_sdk_version import __VERSION__
+
+
+VERSION = ''
+with open('nylas/_client_sdk_version.py', 'r') as fd:
+    VERSION = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
 
 
 class PyTest(TestCommand):
@@ -12,12 +17,12 @@ class PyTest(TestCommand):
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
-        self.pytest_args = ['--cov', '--junitxml', './tests/output', 'tests/']
+        self.pytest_args = ['--cov', '--junitxml', './tests/output', 'tests/']  # pylint: disable=attribute-defined-outside-init
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
         self.test_args = []
-        self.test_suite = True
+        self.test_suite = True  # pylint: disable=attribute-defined-outside-init
 
     def run_tests(self):
         # import here, cause outside the eggs aren't loaded
@@ -38,12 +43,12 @@ def main():
             else:
                 type_ = sys.argv[2]
             os.system('bumpversion --current-version {} {}'
-                      .format(__VERSION__, type_))
+                      .format(VERSION, type_))
             sys.exit()
 
     setup(
         name="nylas",
-        version=__VERSION__,
+        version=VERSION,
         packages=find_packages(),
 
         install_requires=[
@@ -56,7 +61,9 @@ def main():
             "pyasn1",
         ],
         dependency_links=[],
-        tests_require=["pytest", "pytest-cov", "responses", "httpretty"],
+        tests_require=[
+            "pytest", "pytest-cov", "pytest-pylint", "responses", "httpretty"
+        ],
         cmdclass={'test': PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",

@@ -3,9 +3,10 @@ from copy import copy
 CHUNK_SIZE = 50
 
 class RestfulModelCollection(object):
-    def __init__(self, cls, api, filter={}, offset=0,
+    def __init__(self, cls, api, filter=None, offset=0,
                  **filters):
-        filters.update(filter)
+        if filter:
+            filters.update(filter)
         from nylas.client import APIClient
         if not isinstance(api, APIClient):
             raise Exception("Provided api was not an APIClient.")
@@ -36,14 +37,14 @@ class RestfulModelCollection(object):
 
     def first(self):
         results = self._get_model_collection(0, 1)
-        if len(results):
+        if results:
             return results[0]
         return None
 
     def all(self, limit=float('infinity')):
         return self._range(self.filters['offset'], limit)
 
-    def where(self, filter={}, **filters):
+    def where(self, filter=None, **filters):
         # Some API parameters like "from" and "in" also are
         # Python reserved keywords. To work around this, we rename
         # them to "from_" and "in_". The API still needs them in
@@ -55,7 +56,8 @@ class RestfulModelCollection(object):
                 filters[keyword] = filters.get(escaped_keyword)
                 del filters[escaped_keyword]
 
-        filters.update(filter)
+        if filter:
+            filters.update(filter)
         filters.setdefault('offset', 0)
         collection = copy(self)
         collection.filters = filters
@@ -70,10 +72,10 @@ class RestfulModelCollection(object):
     def delete(self, id, data=None, **kwargs):
         return self.api._delete_resource(self.model_class, id, data=data, **kwargs)
 
-    def search(self, q):
-        from .restful_models import (Message, Thread)
+    def search(self, q):  # pylint: disable=invalid-name
+        from nylas.client.restful_models import Message, Thread  # pylint: disable=cyclic-import
         if self.model_class is Thread or self.model_class is Message:
-            kwargs = { 'q': q }
+            kwargs = {'q': q}
             return self.api._get_resources(self.model_class, extra="search", **kwargs)
         else:
             raise Exception("Searching is only allowed on Thread and Message models")

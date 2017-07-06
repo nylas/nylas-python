@@ -2,6 +2,8 @@ from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError
 from six import StringIO
 
+# pylint: disable=attribute-defined-outside-init
+
 
 class NylasAPIObject(dict):
     attrs = []
@@ -15,6 +17,7 @@ class NylasAPIObject(dict):
         self.id = None
         self.cls = cls
         self.api = api
+        super(NylasAPIObject, self).__init__()
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -31,7 +34,7 @@ class NylasAPIObject(dict):
             # We need a special case for accounts because the /accounts API
             # is different between the open source and hosted API.
             return
-        obj = cls(api)
+        obj = cls(api)  # pylint: disable=no-value-for-parameter
         obj.cls = cls
         for attr in cls.attrs:
             # Support attributes we want to override with properties where
@@ -100,8 +103,7 @@ class Message(NylasAPIObject):
         if self._labels:
             return [Label.create(self.api, **l)
                     for l in self._labels]
-        else:
-            return []
+        return []
 
     def update_folder(self, folder_id):
         update = {'folder': folder_id}
@@ -111,7 +113,8 @@ class Message(NylasAPIObject):
                 setattr(self, attr, getattr(new_obj, attr))
         return self.folder
 
-    def update_labels(self, label_ids=[]):
+    def update_labels(self, label_ids=None):
+        label_ids = label_ids or []
         update = {'labels': label_ids}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
@@ -119,7 +122,8 @@ class Message(NylasAPIObject):
                 setattr(self, attr, getattr(new_obj, attr))
         return self.labels
 
-    def add_labels(self, label_ids=[]):
+    def add_labels(self, label_ids=None):
+        label_ids = label_ids or []
         labels = [l.id for l in self.labels]
         labels = list(set(labels).union(set(label_ids)))
         return self.update_labels(labels)
@@ -127,7 +131,8 @@ class Message(NylasAPIObject):
     def add_label(self, label_id):
         return self.add_labels([label_id])
 
-    def remove_labels(self, label_ids=[]):
+    def remove_labels(self, label_ids=None):
+        label_ids = label_ids or []
         labels = [l.id for l in self.labels]
         labels = list(set(labels) - set(label_ids))
         return self.update_labels(labels)
@@ -221,16 +226,14 @@ class Thread(NylasAPIObject):
         if self._folders:
             return [Folder.create(self.api, **f)
                     for f in self._folders]
-        else:
-            return []
+        return []
 
     @property
     def labels(self):
         if self._labels:
             return [Label.create(self.api, **l)
                     for l in self._labels]
-        else:
-            return []
+        return []
 
     def update_folder(self, folder_id):
         update = {'folder': folder_id}
@@ -240,7 +243,8 @@ class Thread(NylasAPIObject):
                 setattr(self, attr, getattr(new_obj, attr))
         return self.folder
 
-    def update_labels(self, label_ids=[]):
+    def update_labels(self, label_ids=None):
+        label_ids = label_ids or []
         update = {'labels': label_ids}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
@@ -248,7 +252,8 @@ class Thread(NylasAPIObject):
                 setattr(self, attr, getattr(new_obj, attr))
         return self.labels
 
-    def add_labels(self, label_ids=[]):
+    def add_labels(self, label_ids=None):
+        label_ids = label_ids or []
         labels = [l.id for l in self.labels]
         labels = list(set(labels).union(set(label_ids)))
         return self.update_labels(labels)
@@ -256,7 +261,8 @@ class Thread(NylasAPIObject):
     def add_label(self, label_id):
         return self.add_labels([label_id])
 
-    def remove_labels(self, label_ids=[]):
+    def remove_labels(self, label_ids=None):
+        label_ids = label_ids or []
         labels = [l.id for l in self.labels]
         labels = list(set(labels) - set(label_ids))
         return self.update_labels(labels)
@@ -288,18 +294,18 @@ class Thread(NylasAPIObject):
         self.starred = False
 
     def create_reply(self):
-        d = self.drafts.create()
-        d.thread_id = self.id
-        d.subject = self.subject
-        return d
+        draft = self.drafts.create()
+        draft.thread_id = self.id
+        draft.subject = self.subject
+        return draft
 
 # This is a dummy class that allows us to use the create_resource function
 # and pass in a 'Send' object that will translate into a 'send' endpoint.
 class Send(Message):
     collection_name = 'send'
 
-    def __init__(self, api):
-        NylasAPIObject.__init__(self, Send, api)
+    def __init__(self, api):  # pylint: disable=super-init-not-called
+        NylasAPIObject.__init__(self, Send, api)  # pylint: disable=non-parent-init-called
 
 
 class Draft(Message):
@@ -309,9 +315,9 @@ class Draft(Message):
              "reply_to", "starred", "snippet", "tracking"]
     collection_name = 'drafts'
 
-    def __init__(self, api, thread_id=None):
+    def __init__(self, api, thread_id=None):  # pylint: disable=unused-argument
         Message.__init__(self, api)
-        NylasAPIObject.__init__(self, Thread, api)
+        NylasAPIObject.__init__(self, Thread, api)  # pylint: disable=non-parent-init-called
         self.file_ids = []
 
     def attach(self, file):
@@ -346,15 +352,17 @@ class File(NylasAPIObject):
              "account_id", "object", "size", "message_ids", ]
     collection_name = 'files'
 
-    def save(self):
+    def save(self):  # pylint: disable=arguments-differ
         if hasattr(self, 'stream') and self.stream is not None:
             data = {self.filename: self.stream}
         elif hasattr(self, 'data') and self.data is not None:
             data = {self.filename: StringIO(self.data)}
         else:
-            raise FileUploadError(message=("File object not properly "
-                                               "formatted, must provide "
-                                               "either a stream or data."))
+            message = (
+                "File object not properly formatted, "
+                "must provide either a stream or data."
+            )
+            raise FileUploadError(message=message)
 
         new_obj = self.api._create_resources(File, data)
         new_obj = new_obj[0]
@@ -364,8 +372,8 @@ class File(NylasAPIObject):
 
     def download(self):
         if not self.id:
-            raise FileUploadError(message=("Can't download a file that "
-                                               "hasn't been uploaded."))
+            message = "Can't download a file that hasn't been uploaded."
+            raise FileUploadError(message=message)
 
         return self.api._get_resource_data(File, self.id,
                                            extra='download')

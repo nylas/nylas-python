@@ -1,12 +1,11 @@
 import json
 import pytest
-import responses
 import httpretty
 from httpretty import Response
 from nylas.client.errors import InvalidRequestError
 
 
-body = {
+BODY = {
     "busy": True,
     "calendar_id": "94rssh7bd3rmsxsp19kiocxze",
     "description": None,
@@ -16,7 +15,7 @@ body = {
     "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
     "object": "event",
     "owner": None,
-    "participants": [ ],
+    "participants": [],
     "read_only": False,
     "status": "confirmed",
     "title": "The rain song",
@@ -30,7 +29,7 @@ body = {
 
 @pytest.fixture
 def mock_event_create_response(api_url):
-    values = [Response(status=200, body=json.dumps(body)),
+    values = [Response(status=200, body=json.dumps(BODY)),
               Response(status=400, body='')]
 
     httpretty.register_uri(httpretty.POST, api_url + '/events/', responses=values)
@@ -43,8 +42,12 @@ def mock_event_create_response(api_url):
 
 @pytest.fixture
 def mock_event_create_notify_response(api_url):
-    httpretty.register_uri(httpretty.POST, api_url + '/events/?notify_participants=true&other_param=1',
-                           body=json.dumps(body), status=200)
+    httpretty.register_uri(
+        httpretty.POST,
+        api_url + '/events/?notify_participants=true&other_param=1',
+        body=json.dumps(BODY),
+        status=200
+    )
 
 
 def blank_event(api_client):
@@ -55,40 +58,37 @@ def blank_event(api_client):
     return event
 
 
-def test_event_crud(api_client, mock_event_create_response):
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_crud(api_client):
     httpretty.enable()
 
-    e1 = blank_event(api_client)
-    e1.save()
-    assert e1.id == 'cv4ei7syx10uvsxbs21ccsezf'
+    event1 = blank_event(api_client)
+    event1.save()
+    assert event1.id == 'cv4ei7syx10uvsxbs21ccsezf'
 
-    e1.title = 'blah'
-    e1.save()
-    assert e1.title == 'loaded from JSON'
-    assert e1.get('ignored') is None
+    event1.title = 'blah'
+    event1.save()
+    assert event1.title == 'loaded from JSON'
+    assert event1.get('ignored') is None
 
     # Third time should fail.
-    e2 = blank_event(api_client)
-    raised = False
-    try:
-        e2.save()
-    except InvalidRequestError:
-        raised = True
-
-    assert raised is True
+    event2 = blank_event(api_client)
+    with pytest.raises(InvalidRequestError):
+        event2.save()
 
     httpretty.disable()
 
 
-def test_event_notify(api_client, mock_event_create_notify_response):
+@pytest.mark.usefixtures("mock_event_create_notify_response")
+def test_event_notify(api_client):
     httpretty.enable()
 
-    e1 = blank_event(api_client)
-    e1.save(notify_participants='true', other_param='1')
-    assert e1.id == 'cv4ei7syx10uvsxbs21ccsezf'
+    event1 = blank_event(api_client)
+    event1.save(notify_participants='true', other_param='1')
+    assert event1.id == 'cv4ei7syx10uvsxbs21ccsezf'
 
-    qs = httpretty.last_request().querystring
-    assert qs['notify_participants'][0] == 'true'
-    assert qs['other_param'][0] == '1'
+    query = httpretty.last_request().querystring
+    assert query['notify_participants'][0] == 'true'
+    assert query['other_param'][0] == '1'
 
     httpretty.disable()

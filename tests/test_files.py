@@ -1,9 +1,8 @@
 import json
 import pytest
-import responses
 import httpretty
 from httpretty import Response
-from nylas.client.errors import InvalidRequestError, FileUploadError
+from nylas.client.errors import FileUploadError
 
 
 def test_file_upload(api_client, api_url):
