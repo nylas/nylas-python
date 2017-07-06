@@ -47,28 +47,6 @@ def api_client(api_url):
 
 
 @pytest.fixture
-def mock_account(api_url):
-    response_body = json.dumps([
-        {
-            "account_id": "4dl0ni6vxomazo73r5ozdo16j",
-            "email_address": "ben.bitdiddle1861@gmail.com",
-            "id": "4dl0ni6vxomazo73r5ozdo16j",
-            "name": "Ben Bitdiddle",
-            "object": "account",
-            "provider": "gmail"
-        }
-    ])
-    responses.add(
-        responses.GET,
-        api_url + '/n?limit=1&offset=0',
-        content_type='application/json',
-        status=200,
-        body=response_body,
-        match_querystring=True
-    )
-
-
-@pytest.fixture
 def mock_save_draft(api_url):
     save_endpoint = re.compile(api_url + '/drafts/')
     response_body = json.dumps({

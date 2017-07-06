@@ -7,8 +7,8 @@ from httpretty import Response
 def test_no_filter(api_client, api_url, message_body):
     httpretty.enable()
 
-    message_body_list_50 = [message_body for i in range(1, 51)]
-    message_body_list_22 = [message_body for i in range(1, 23)]
+    message_body_list_50 = [message_body for _ in range(1, 51)]
+    message_body_list_22 = [message_body for _ in range(1, 23)]
 
     # httpretty kind of sucks and strips & parameters from the URL
     values = [
