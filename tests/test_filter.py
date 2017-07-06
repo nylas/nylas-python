@@ -4,37 +4,17 @@ import httpretty
 from httpretty import Response
 
 
-DEFAULT_BODY = {
-    "busy": True,
-    "calendar_id": "94rssh7bd3rmsxsp19kiocxze",
-    "description": None,
-    "id": "cv4ei7syx10uvsxbs21ccsezf",
-    "location": "1 Infinite loop, Cupertino",
-    "message_id": None,
-    "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-    "object": "event",
-    "owner": None,
-    "participants": [],
-    "read_only": False,
-    "status": "confirmed",
-    "title": "The rain song",
-    "when": {
-        "end_time": 1441056790,
-        "object": "timespan",
-        "start_time": 1441053190
-    }
-}
-
-BODY = [DEFAULT_BODY for i in range(1, 51)]
-BODY2 = [DEFAULT_BODY for i in range(1, 23)]
-
-
-def test_no_filter(api_client, api_url):
+def test_no_filter(api_client, api_url, message_body):
     httpretty.enable()
 
+    message_body_list_50 = [message_body for _ in range(1, 51)]
+    message_body_list_22 = [message_body for _ in range(1, 23)]
+
     # httpretty kind of sucks and strips & parameters from the URL
-    values = [Response(status=200, body=json.dumps(BODY)),
-              Response(status=200, body=json.dumps(BODY2))]
+    values = [
+        Response(status=200, body=json.dumps(message_body_list_50)),
+        Response(status=200, body=json.dumps(message_body_list_22)),
+    ]
     httpretty.register_uri(
         httpretty.GET,
         api_url + '/events',
