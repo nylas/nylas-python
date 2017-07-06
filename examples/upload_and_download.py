@@ -2,14 +2,11 @@
 from __future__ import print_function
 import time
 from nylas import APIClient
-from nylas.util import generate_id
 
 APP_ID = '[YOUR_APP_ID]'
 APP_SECRET = '[YOUR_APP_SECRET]'
 ACCESS_TOKEN = '[YOUR_ACCESS_TOKEN]'
 client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
-
-subject = generate_id()
 
 f = open('test.py', 'r')
 data = f.read()
@@ -22,7 +19,7 @@ myfile.data = data
 # Create a new draft
 draft = client.drafts.create()
 draft.to = [{'name': 'Charles Gruenwald', 'email': 'nylastestempty@gmail.com'}]
-draft.subject = subject
+draft.subject = 'nylas test'
 draft.body = ""
 draft.attach(myfile)
 draft.send()
