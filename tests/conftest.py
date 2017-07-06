@@ -4,16 +4,19 @@ import pytest
 import responses
 from nylas import APIClient
 
-API_URL = 'http://localhost:2222'
+
+@pytest.fixture
+def api_url():
+    return 'http://localhost:2222'
 
 
 @pytest.fixture
-def api_client():
-    return APIClient(None, None, None, API_URL)
+def api_client(api_url):
+    return APIClient(None, None, None, api_url)
 
 
 @pytest.fixture
-def mock_account():
+def mock_account(api_url):
     response_body = json.dumps([
         {
             "account_id": "4dl0ni6vxomazo73r5ozdo16j",
@@ -24,14 +27,14 @@ def mock_account():
             "provider": "gmail"
         }
     ])
-    responses.add(responses.GET, API_URL + '/n?limit=1&offset=0',
+    responses.add(responses.GET, api_url + '/n?limit=1&offset=0',
                   content_type='application/json', status=200,
                   body=response_body, match_querystring=True)
 
 
 @pytest.fixture
-def mock_save_draft():
-    save_endpoint = re.compile(API_URL + '/drafts/')
+def mock_save_draft(api_url):
+    save_endpoint = re.compile(api_url + '/drafts/')
     response_body = json.dumps({
         "id": "4dl0ni6vxomazo73r5oydo16k",
         "version": "4dw0ni6txomazo33r5ozdo16j"
@@ -39,5 +42,3 @@ def mock_save_draft():
     responses.add(responses.POST, save_endpoint,
                   content_type='application/json', status=200,
                   body=response_body, match_querystring=True)
-
-
