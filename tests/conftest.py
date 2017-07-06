@@ -1,5 +1,6 @@
 import re
 import json
+import copy
 import pytest
 import responses
 import httpretty
@@ -337,6 +338,77 @@ def mock_thread(api_url, account_id):
         return (200, {}, json.dumps(base_thrd))
 
     endpoint = re.compile(api_url + '/threads/5678')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+    responses.add_callback(
+        responses.PUT,
+        endpoint,
+        content_type='application/json',
+        callback=request_callback,
+    )
+
+
+@pytest.fixture
+def mock_labelled_thread(api_url, account_id):
+    base_thread = {
+        "id": "111",
+        "subject": "Labelled Thread",
+        "account_id": account_id,
+        "object": "thread",
+        "folders": [{
+            "name": "inbox",
+            "display_name": "Inbox",
+            "id": "abcd"
+        }],
+        "starred": True,
+        "unread": False,
+        "labels": [
+            {
+                "display_name": "Important",
+                "id": "anuep8pe5ugmxrucchrzba2o8",
+                "name": "important",
+                "account_id": account_id,
+                "object": "label"
+            }, {
+                "display_name": "Existing",
+                "id": "dfslhgy3rlijfhlsujnchefs3",
+                "name": "existing",
+                "account_id": account_id,
+                "object": "label"
+            }
+        ]
+    }
+    response_body = json.dumps(base_thread)
+
+    def request_callback(request):
+        payload = json.loads(request.body)
+        if 'labels' in payload:
+            existing_labels = {
+                label["id"]: label
+                for label in base_thread["labels"]
+            }
+            new_labels = []
+            for label_id in payload['labels']:
+                if label_id in existing_labels:
+                    new_labels.append(existing_labels[label_id])
+                else:
+                    new_labels.append({
+                        "name": "updated",
+                        "display_name": "Updated",
+                        "id": label_id,
+                        "account_id": account_id,
+                        "object": "label",
+                    })
+            copied = copy.copy(base_thread)
+            copied["labels"] = new_labels
+        return (200, {}, json.dumps(copied))
+
+    endpoint = re.compile(api_url + '/threads/111')
     responses.add(
         responses.GET,
         endpoint,
