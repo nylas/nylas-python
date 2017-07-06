@@ -9,6 +9,7 @@ API_URL = 'http://localhost:2222'
 
 MOCK_ACCOUNT_ID = '4ennivvrcgsqytgybfk912dto'
 
+# pylint: disable=redefined-outer-name
 
 @pytest.fixture
 def api_client():
@@ -258,7 +259,8 @@ def mock_thread():
 
 
 @responses.activate
-def test_list_labels(api_client, mock_labels):
+@pytest.mark.usefixtures("mock_labels")
+def test_list_labels(api_client):
     labels = api_client.labels
     labels = [l for l in labels]
     assert len(labels) == 5
@@ -266,7 +268,8 @@ def test_list_labels(api_client, mock_labels):
 
 
 @responses.activate
-def test_get_label(api_client, mock_label):
+@pytest.mark.usefixtures("mock_label")
+def test_get_label(api_client):
     label = api_client.labels.find('anuep8pe5ugmxrucchrzba2o8')
     assert label is not None
     assert isinstance(label, Label)
@@ -274,7 +277,8 @@ def test_get_label(api_client, mock_label):
 
 
 @responses.activate
-def test_get_change_folder(api_client, mock_folder):
+@pytest.mark.usefixtures("mock_folder")
+def test_get_change_folder(api_client):
     folder = api_client.folders.find('anuep8pe5ug3xrupchwzba2o8')
     assert folder is not None
     assert isinstance(folder, Folder)
@@ -285,7 +289,8 @@ def test_get_change_folder(api_client, mock_folder):
 
 
 @responses.activate
-def test_messages(api_client, mock_messages):
+@pytest.mark.usefixtures("mock_messages")
+def test_messages(api_client):
     message = api_client.messages.first()
     assert len(message.labels) == 1
     assert message.labels[0].display_name == 'Inbox'
@@ -295,8 +300,8 @@ def test_messages(api_client, mock_messages):
 
 
 @responses.activate
-def test_message_change(api_client, mock_account, mock_messages,
-                        mock_message):
+@pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
+def test_message_change(api_client):
     message = api_client.messages.first()
     message.star()
     assert message.starred is True
@@ -320,9 +325,10 @@ def test_message_change(api_client, mock_account, mock_messages,
 
 
 @responses.activate
-def test_thread_folder(api_client, mock_threads):
+@pytest.mark.usefixtures("mock_threads")
+def test_thread_folder(api_client):
     thread = api_client.threads.first()
-    assert len(thread.labels) == 0
+    assert len(thread.labels) == 0  # pylint: disable=len-as-condition
     assert len(thread.folders) == 1
     assert thread.folders[0].display_name == 'Inbox'
     assert not thread.unread
@@ -330,8 +336,8 @@ def test_thread_folder(api_client, mock_threads):
 
 
 @responses.activate
-def test_thread_change(api_client, mock_folder_account,
-                       mock_threads, mock_thread):
+@pytest.mark.usefixtures("mock_folder_account", "mock_threads", "mock_thread")
+def test_thread_change(api_client):
     thread = api_client.threads.first()
 
     assert thread.starred

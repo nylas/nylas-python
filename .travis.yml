@@ -4,8 +4,9 @@ python:
   - "2.7"
   - "3.6"
 install:
+  - "travis_retry pip install -U pytest"
   - "python setup.py install"
   - "travis_retry pip install codecov"
-script: "python setup.py test"
+script: "python setup.py test --lint"
 after_success:
   - "codecov"

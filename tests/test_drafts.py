@@ -6,109 +6,124 @@ from nylas.client.errors import InvalidRequestError
 
 @pytest.fixture
 def mock_draft_saved_response(api_url):
-    response_body = json.dumps(
-        {
-            "bcc": [],
-            "body": "Cheers mate!",
-            "cc": [],
-            "date": 1438684486,
-            "events": [],
-            "files": [],
-            "folder": None,
-            "from": [],
-            "id": "2h111aefv8pzwzfykrn7hercj",
-            "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-            "object": "draft",
-            "reply_to": [],
-            "reply_to_message_id": None,
-            "snippet": "",
-            "starred": False,
-            "subject": "Here's an attachment",
-            "thread_id": "clm33kapdxkposgltof845v9s",
-            "to": [
-                {
-                    "email": "helena@nylas.com",
-                    "name": "Helena Handbasket"
-                }
-            ],
-            "unread": False,
-            "version": 0
-        })
+    response_body = json.dumps({
+        "bcc": [],
+        "body": "Cheers mate!",
+        "cc": [],
+        "date": 1438684486,
+        "events": [],
+        "files": [],
+        "folder": None,
+        "from": [],
+        "id": "2h111aefv8pzwzfykrn7hercj",
+        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+        "object": "draft",
+        "reply_to": [],
+        "reply_to_message_id": None,
+        "snippet": "",
+        "starred": False,
+        "subject": "Here's an attachment",
+        "thread_id": "clm33kapdxkposgltof845v9s",
+        "to": [
+            {
+                "email": "helena@nylas.com",
+                "name": "Helena Handbasket"
+            }
+        ],
+        "unread": False,
+        "version": 0
+    })
 
-    responses.add(responses.POST, api_url + '/drafts/',
-                  content_type='application/json', status=200,
-                  body=response_body, match_querystring=True)
+    responses.add(
+        responses.POST,
+        api_url + '/drafts/',
+        content_type='application/json',
+        status=200,
+        body=response_body,
+        match_querystring=True
+    )
 
 
 @pytest.fixture
 def mock_draft_updated_response(api_url):
     body = {
-            "bcc": [],
-            "body": "",
-            "cc": [],
-            "date": 1438684486,
-            "events": [],
-            "files": [],
-            "folder": None,
-            "from": [],
-            "id": "2h111aefv8pzwzfykrn7hercj",
-            "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-            "object": "draft",
-            "reply_to": [],
-            "reply_to_message_id": None,
-            "snippet": "",
-            "starred": False,
-            "subject": "Stay polish, stay hungary",
-            "thread_id": "clm33kapdxkposgltof845v9s",
-            "to": [
-                {
-                    "email": "helena@nylas.com",
-                    "name": "Helena Handbasket"
-                }
-            ],
-            "unread": False,
-            "version": 0
-        }
+        "bcc": [],
+        "body": "",
+        "cc": [],
+        "date": 1438684486,
+        "events": [],
+        "files": [],
+        "folder": None,
+        "from": [],
+        "id": "2h111aefv8pzwzfykrn7hercj",
+        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+        "object": "draft",
+        "reply_to": [],
+        "reply_to_message_id": None,
+        "snippet": "",
+        "starred": False,
+        "subject": "Stay polish, stay hungary",
+        "thread_id": "clm33kapdxkposgltof845v9s",
+        "to": [
+            {
+                "email": "helena@nylas.com",
+                "name": "Helena Handbasket"
+            }
+        ],
+        "unread": False,
+        "version": 0
+    }
 
-    responses.add(responses.PUT, api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
-                  content_type='application/json', status=200,
-                  body=json.dumps(body), match_querystring=True)
+    responses.add(
+        responses.PUT,
+        api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
+        content_type='application/json',
+        status=200,
+        body=json.dumps(body),
+        match_querystring=True
+    )
 
     body['subject'] = 'Update #2'
-    responses.add(responses.PUT, api_url + '/drafts/2h111aefv8pzwzfykrn7hercj?random_query=true&param2=param',
-                  content_type='application/json', status=200,
-                  body=json.dumps(body), match_querystring=True)
+    url = api_url + '/drafts/2h111aefv8pzwzfykrn7hercj?random_query=true&param2=param'
+    responses.add(
+        responses.PUT,
+        url,
+        content_type='application/json',
+        status=200,
+        body=json.dumps(body),
+        match_querystring=True
+    )
 
 
 @pytest.fixture
 def mock_draft_sent_response(api_url):
     body = {
-            "bcc": [],
-            "body": "",
-            "cc": [],
-            "date": 1438684486,
-            "events": [],
-            "files": [],
-            "folder": None,
-            "from": [{'email': 'benb@nylas.com'}],
-            "id": "2h111aefv8pzwzfykrn7hercj",
-            "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-            "object": "draft",
-            "reply_to": [],
-            "reply_to_message_id": None,
-            "snippet": "",
-            "starred": False,
-            "subject": "Stay polish, stay hungary",
-            "thread_id": "clm33kapdxkposgltof845v9s",
-            "to": [
-                {
-                    "email": "helena@nylas.com",
-                    "name": "Helena Handbasket"
-                }
-            ],
-            "unread": False,
-            "version": 0
-        }
+        "bcc": [],
+        "body": "",
+        "cc": [],
+        "date": 1438684486,
+        "events": [],
+        "files": [],
+        "folder": None,
+        "from": [{'email': 'benb@nylas.com'}],
+        "id": "2h111aefv8pzwzfykrn7hercj",
+        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+        "object": "draft",
+        "reply_to": [],
+        "reply_to_message_id": None,
+        "snippet": "",
+        "starred": False,
+        "subject": "Stay polish, stay hungary",
+        "thread_id": "clm33kapdxkposgltof845v9s",
+        "to": [
+            {
+                "email": "helena@nylas.com",
+                "name": "Helena Handbasket"
+            }
+        ],
+        "unread": False,
+        "version": 0
+    }
 
     values = [(400, {}, "Couldn't send email"),
               (200, {}, json.dumps(body))]
@@ -120,14 +135,19 @@ def mock_draft_sent_response(api_url):
         return values.pop()
 
     responses.add_callback(
-            responses.POST, api_url + '/send/',
-            callback=callback,
-            content_type='application/json')
+        responses.POST,
+        api_url + '/send/',
+        callback=callback,
+        content_type='application/json'
+    )
 
 
 @responses.activate
-def test_save_send_draft(api_client, mock_draft_saved_response,
-                         mock_draft_updated_response, mock_draft_sent_response):
+@pytest.mark.usefixtures(
+    "mock_draft_saved_response", "mock_draft_updated_response",
+    "mock_draft_sent_response"
+)
+def test_save_send_draft(api_client):
     draft = api_client.drafts.create()
     draft.to = [{'name': 'My Friend', 'email': 'my.friend@example.com'}]
     draft.subject = "Here's an attachment"
