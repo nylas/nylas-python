@@ -41,7 +41,7 @@ def _validate(response):
     status_code = response.status_code
     data = request.body
 
-    if DEBUG:
+    if DEBUG:  # pragma: no cover
         print("{} {} ({}) => {}: {}".format(request.method, url, data,
                                             status_code, response.text))
 
