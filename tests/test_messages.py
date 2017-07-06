@@ -17,15 +17,31 @@ def test_messages(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
-def test_message_change(api_client):
+def test_message_stars(api_client):
     message = api_client.messages.first()
+    assert message.starred is False
     message.star()
     assert message.starred is True
     message.unstar()
     assert message.starred is False
-    message.mark_as_read()
-    assert message
 
+@responses.activate
+@pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
+def test_message_read(api_client):
+    message = api_client.messages.first()
+    assert message.unread is True
+    message.mark_as_read()
+    assert message.unread is False
+    message.mark_as_unread()
+    assert message.unread is True
+    # mark_as_seen() is a synonum for mark_as_read()
+    message.mark_as_seen()
+    assert message.unread is False
+
+@responses.activate
+@pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
+def test_message_labels(api_client):
+    message = api_client.messages.first()
     message.add_label('fghj')
     msg_labels = [l.id for l in message.labels]
     assert 'abcd' in msg_labels
