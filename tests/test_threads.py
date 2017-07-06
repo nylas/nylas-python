@@ -1,5 +1,6 @@
 import pytest
 import responses
+from nylas.client.restful_models import Message, Draft
 
 
 @responses.activate
@@ -25,3 +26,21 @@ def test_thread_change(api_client):
     thread.update_folder('qwer')
     assert len(thread.folders) == 1
     assert thread.folders[0].id == 'qwer'
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_threads", "mock_messages")
+def test_thread_messages(api_client):
+    thread = api_client.threads.first()
+    assert thread.messages
+    assert all(isinstance(message, Message)
+               for message in thread.messages)
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_threads", "mock_drafts")
+def test_thread_drafts(api_client):
+    thread = api_client.threads.first()
+    assert thread.drafts
+    assert all(isinstance(draft, Draft)
+               for draft in thread.drafts)

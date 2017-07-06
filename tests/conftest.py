@@ -353,6 +353,45 @@ def mock_thread(api_url, account_id):
 
 
 @pytest.fixture
+def mock_drafts(api_url):
+    response_body = json.dumps([{
+        "bcc": [],
+        "body": "Cheers mate!",
+        "cc": [],
+        "date": 1438684486,
+        "events": [],
+        "files": [],
+        "folder": None,
+        "from": [],
+        "id": "2h111aefv8pzwzfykrn7hercj",
+        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+        "object": "draft",
+        "reply_to": [],
+        "reply_to_message_id": None,
+        "snippet": "",
+        "starred": False,
+        "subject": "Here's an attachment",
+        "thread_id": "clm33kapdxkposgltof845v9s",
+        "to": [
+            {
+                "email": "helena@nylas.com",
+                "name": "Helena Handbasket"
+            }
+        ],
+        "unread": False,
+        "version": 0
+    }])
+
+    responses.add(
+        responses.GET,
+        api_url + '/drafts',
+        content_type='application/json',
+        status=200,
+        body=response_body,
+    )
+
+
+@pytest.fixture
 def mock_draft_saved_response(api_url):
     response_body = json.dumps({
         "bcc": [],
