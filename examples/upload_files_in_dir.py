@@ -3,14 +3,13 @@ from __future__ import print_function
 import os
 import time
 from nylas import APIClient
-from nylas.util import generate_id
 
 APP_ID = '[YOUR_APP_ID]'
 APP_SECRET = '[YOUR_APP_SECRET]'
 ACCESS_TOKEN = '[YOUR_ACCESS_TOKEN]'
 client = APIClient(APP_ID, APP_SECRET, ACCESS_TOKEN)
 
-subject = generate_id()
+subject = 'nylas test'
 # Create a new draft
 draft = client.drafts.create()
 draft.to = [{'name': 'Nylas PythonSDK', 'email': 'nylastestempty@gmail.com'}]

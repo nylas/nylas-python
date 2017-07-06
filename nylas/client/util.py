@@ -1,5 +1,3 @@
-from uuid import uuid4
-from struct import unpack
 from six.moves.urllib.parse import urlencode
 
 
@@ -30,17 +28,3 @@ def url_concat(url, args, fragments=None):
         args_tail += urlencode(args)
 
     return url + args_tail + fragment_tail
-
-
-def generate_id():
-    a, b = unpack('>QQ', uuid4().bytes)  # pylint: disable=invalid-name
-    num = a << 64 | b
-
-    alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-    base36 = ''
-    while num:
-        num, i = divmod(num, 36)
-        base36 = alphabet[i] + base36
-
-    return base36

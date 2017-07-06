@@ -6,7 +6,7 @@ from base64 import b64encode
 import requests
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
-from nylas.client.util import url_concat, generate_id
+from nylas.client.util import url_concat
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
     Calendar, Contact, Event, Message, Thread, File,
@@ -145,8 +145,7 @@ class APIClient(json.JSONEncoder):
                 'client_id': self.app_id,
                 'response_type': 'code',
                 'scope': 'email',
-                'login_hint': login_hint,
-                'state': generate_id()}
+                'login_hint': login_hint}
 
         return url_concat(self.authorize_url, args)
 
