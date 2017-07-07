@@ -375,7 +375,7 @@ print(client.messages.first().body)
 
 ## Contributing
 
-We'd love your help making Nylas better. We hang out on Slack. [Join the channel here ![Slack Invite Button](http://slack-invite.nylas.com/badge.svg)](http://slack-invite.nylas.com) You can also email [support@nylas.com](mailto:support@nylas.com).
+We'd love your help making Nylas better. We hang out on Slack. [Join the channel here.](http://slack-invite.nylas.com) You can also email [support@nylas.com](mailto:support@nylas.com).
 
 Please sign the [Contributor License Agreement](https://goo.gl/forms/lKbET6S6iWsGoBbz2) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
