@@ -97,3 +97,13 @@ def test_thread_read(api_client):
     assert thread.unread is True
     thread.mark_as_seen()
     assert thread.unread is False
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_threads")
+def test_thread_reply(api_client):
+    thread = api_client.threads.first()
+    draft = thread.create_reply()
+    assert isinstance(draft, Draft)
+    assert draft.thread_id == thread.id
+    assert draft.subject == thread.subject
