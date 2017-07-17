@@ -80,7 +80,7 @@ def mock_account(api_url, account_id):
             "object": "account",
             "provider": "gmail",
             "organization_unit": "label",
-            "billing_state": "trial",
+            "billing_state": "paid",
         }
     )
     responses.add(
@@ -104,7 +104,7 @@ def mock_accounts(api_url, account_id, app_id):
             "object": "account",
             "provider": "gmail",
             "organization_unit": "label",
-            "billing_state": "trial",
+            "billing_state": "paid",
         }
     ])
     url = "{base}/a/{app_id}/accounts".format(base=api_url, app_id=app_id)
@@ -891,7 +891,7 @@ def mock_events(api_url):
 
 
 @pytest.fixture
-def mock_upgrade(api_url, account_id, app_id):
+def mock_account_management(api_url, account_id, app_id):
     account = {
         "account_id": account_id,
         "email_address": "ben.bitdiddle1861@gmail.com",
@@ -900,11 +900,11 @@ def mock_upgrade(api_url, account_id, app_id):
         "object": "account",
         "provider": "gmail",
         "organization_unit": "label",
-        "billing_state": "trial",
+        "billing_state": "paid",
     }
-    trial_response = json.dumps(account)
-    account["billing_state"] = "paid"
     paid_response = json.dumps(account)
+    account["billing_state"] = "cancelled"
+    cancelled_response = json.dumps(account)
 
     upgrade_url = "{base}/a/{app_id}/accounts/{id}/upgrade".format(
         base=api_url, id=account_id, app_id=app_id,
@@ -914,15 +914,15 @@ def mock_upgrade(api_url, account_id, app_id):
     )
     responses.add(
         responses.POST,
-        re.compile(upgrade_url),
+        upgrade_url,
         content_type='application/json',
         status=200,
         body=paid_response,
     )
     responses.add(
         responses.POST,
-        re.compile(downgrade_url),
+        downgrade_url,
         content_type='application/json',
         status=200,
-        body=trial_response,
+        body=cancelled_response,
     )

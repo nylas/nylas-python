@@ -23,15 +23,15 @@ def test_account_json(api_client, monkeypatch):
 
 
 @responses.activate
-@pytest.mark.usefixtures("mock_accounts", "mock_upgrade")
+@pytest.mark.usefixtures("mock_accounts", "mock_account_management")
 def test_account_upgrade(api_client, app_id):
     api_client.app_id = app_id
     account = api_client.accounts.first()
-    assert account.billing_state == "trial"
-    account = account.upgrade()
     assert account.billing_state == "paid"
     account = account.downgrade()
-    assert account.billing_state == "trial"
+    assert account.billing_state == "cancelled"
+    account = account.upgrade()
+    assert account.billing_state == "paid"
 
 
 def test_account_delete(api_client, monkeypatch):
