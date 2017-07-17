@@ -23,10 +23,5 @@ def test_save_send_draft(api_client):
     assert msg['thread_id'] == 'clm33kapdxkposgltof845v9s'
 
     # Second time should throw an error
-    raised = False
-    try:
+    with pytest.raises(InvalidRequestError):
         draft.send()
-    except InvalidRequestError:
-        raised = True
-
-    assert raised is True
