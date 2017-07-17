@@ -213,7 +213,6 @@ def mock_folder(api_url, account_id):
     )
 
 
-
 @pytest.fixture
 def mock_messages(api_url, account_id):
     response_body = json.dumps([
@@ -555,6 +554,17 @@ def mock_draft_updated_response(api_url):
 
 
 @pytest.fixture
+def mock_draft_deleted_response(api_url):
+    responses.add(
+        responses.DELETE,
+        api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
+        content_type='application/json',
+        status=200,
+        body="",
+    )
+
+
+@pytest.fixture
 def mock_draft_sent_response(api_url):
     body = {
         "bcc": [],
@@ -602,7 +612,25 @@ def mock_draft_sent_response(api_url):
 
 
 @pytest.fixture
+def mock_files(api_url):
+    httpretty.enable()
+    body = [{
+        "content_type": "text/plain",
+        "filename": "a.txt",
+        "id": "3qfe4k3siosfjtjpfdnon8zbn",
+        "account_id": "6aakaxzi4j5gn6f7kbb9e0fxs",
+        "object": "file",
+        "size": 762878
+    }]
+
+    values = [httpretty.Response(status=200, body=json.dumps(body))]
+    httpretty.register_uri(httpretty.POST, api_url + '/files/', responses=values)
+    httpretty.register_uri(httpretty.GET, api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
+                           body='test body')
+
+@pytest.fixture
 def mock_event_create_response(api_url, message_body):
+    httpretty.enable()
     values = [
         httpretty.Response(status=200, body=json.dumps(message_body)),
         httpretty.Response(status=400, body=''),
@@ -623,6 +651,7 @@ def mock_event_create_response(api_url, message_body):
 
 @pytest.fixture
 def mock_event_create_notify_response(api_url, message_body):
+    httpretty.enable()
     httpretty.register_uri(
         httpretty.POST,
         api_url + '/events/?notify_participants=true&other_param=1',
@@ -769,4 +798,56 @@ def mock_message_search_response(api_url):
         status=200,
         content_type='application/json',
         match_querystring=True
+    )
+
+
+@pytest.fixture
+def mock_calendars(api_url):
+    response_body = json.dumps([
+        {
+            "id": "8765",
+            "events": [
+                {
+                    "title": "Pool party",
+                    "location": "Local Community Pool",
+                    "participants": [
+                        "Alice",
+                        "Bob",
+                        "Claire",
+                        "Dot",
+                    ]
+                }
+            ],
+        }
+    ])
+    endpoint = re.compile(api_url + '/calendars')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+
+@pytest.fixture
+def mock_events(api_url):
+    response_body = json.dumps([
+        {
+            "title": "Pool party",
+            "location": "Local Community Pool",
+            "participants": [
+                "Alice",
+                "Bob",
+                "Claire",
+                "Dot",
+            ]
+        }
+    ])
+    endpoint = re.compile(api_url + '/events')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
     )
