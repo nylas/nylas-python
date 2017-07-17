@@ -145,7 +145,7 @@ class APIClient(json.JSONEncoder):
 
     def authentication_url(self, redirect_uri, login_hint=''):
         args = {'redirect_uri': redirect_uri,
-                'client_id': self.app_id or '',
+                'client_id': self.app_id or 'None',  # 'None' for back-compat
                 'response_type': 'code',
                 'scope': 'email',
                 'login_hint': login_hint,

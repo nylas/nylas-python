@@ -60,7 +60,7 @@ def test_client_authentication_url(api_client, api_url):
             ('state', ''),
             ('redirect_uri', '/redirect'),
             ('response_type', 'code'),
-            ('client_id', ''),
+            ('client_id', 'None'),
             ('scope', 'email'),
         ])
     )
