@@ -471,7 +471,7 @@ class APIAccount(NylasAPIObject):
     attrs = ['account_id', 'email_address', 'id', 'name', 'object',
              'organization_unit', 'provider', 'sync_state']
 
-    collection_name = 'account'
+    collection_name = 'accounts'
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, APIAccount, api)

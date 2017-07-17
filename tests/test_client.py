@@ -5,6 +5,7 @@ import pytest
 from urlobject import URLObject
 import responses
 from nylas.client import APIClient
+from nylas.client.errors import APIClientError
 from nylas.client.restful_models import Contact
 
 
@@ -29,6 +30,15 @@ def test_custom_client():
         "When overriding the Nylas API server address, "
         "you must include https://"
     )
+
+
+def test_client_error():
+    err1 = APIClientError(message="this is a message")
+    assert err1.args[0] == "this is a message"
+    assert str(err1) == '{"message": "this is a message"}'
+    err2 = APIClientError(something="this is unusual")
+    assert err2.args[0] == ""
+    assert str(err2) == '{"something": "this is unusual"}'
 
 
 def test_client_access_token():

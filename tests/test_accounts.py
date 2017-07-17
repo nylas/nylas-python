@@ -1,6 +1,6 @@
 import pytest
 import responses
-from nylas.client.restful_models import Account, APIAccount
+from nylas.client.restful_models import Account, APIAccount, SingletonAccount
 
 
 def test_create_account(api_client, monkeypatch):
@@ -39,3 +39,15 @@ def test_account_delete(api_client, monkeypatch):
     account = api_client.accounts.create()
     with pytest.raises(NotImplementedError):
         account.delete()
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_accounts", "mock_account")
+def test_account_access(api_client):
+    account1 = api_client.account
+    assert isinstance(account1, SingletonAccount)
+    account2 = api_client.accounts[0]
+    assert isinstance(account2, APIAccount)
+    account3 = api_client.accounts.first()
+    assert isinstance(account3, APIAccount)
+    assert account1.as_json() == account2.as_json() == account3.as_json()
