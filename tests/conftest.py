@@ -85,11 +85,10 @@ def mock_account(api_url, account_id):
     )
     responses.add(
         responses.GET,
-        api_url + '/account',
+        re.compile(api_url + '/account/?'),
         content_type='application/json',
         status=200,
         body=response_body,
-        match_querystring=True
     )
 
 
@@ -107,10 +106,10 @@ def mock_accounts(api_url, account_id, app_id):
             "billing_state": "paid",
         }
     ])
-    url = "{base}/a/{app_id}/accounts".format(base=api_url, app_id=app_id)
+    url_re = "{base}(/a/{app_id})?/accounts/?".format(base=api_url, app_id=app_id)
     responses.add(
         responses.GET,
-        url,
+        re.compile(url_re),
         content_type='application/json',
         status=200,
         body=response_body,
