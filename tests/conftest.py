@@ -259,6 +259,34 @@ def mock_messages(api_url, account_id):
             ],
             "starred": False,
             "unread": True
+        }, {
+            "id": "1238",
+            "subject": "Test Message 2",
+            "account_id": account_id,
+            "object": "message",
+            "labels": [
+                {
+                    "name": "inbox",
+                    "display_name": "Inbox",
+                    "id": "abcd"
+                }
+            ],
+            "starred": False,
+            "unread": True
+        }, {
+            "id": "12",
+            "subject": "Test Message 3",
+            "account_id": account_id,
+            "object": "message",
+            "labels": [
+                {
+                    "name": "archive",
+                    "display_name": "Archive",
+                    "id": "gone"
+                }
+            ],
+            "starred": False,
+            "unread": False
         }
     ])
     endpoint = re.compile(api_url + '/messages')

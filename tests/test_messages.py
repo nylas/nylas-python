@@ -3,6 +3,7 @@ import six
 import pytest
 import responses
 from urlobject import URLObject
+from nylas.client.restful_models import Message
 
 
 @responses.activate
@@ -25,6 +26,7 @@ def test_message_stars(api_client):
     assert message.starred is True
     message.unstar()
     assert message.starred is False
+
 
 @responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
@@ -58,12 +60,12 @@ def test_message_labels(api_client):
 
 
 @responses.activate
-@pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
+@pytest.mark.usefixtures("mock_account", "mock_message", "mock_messages")
 def test_message_raw(api_client, account_id):
     message = api_client.messages.first()
     assert isinstance(message.raw, six.binary_type)
     parsed = json.loads(message.raw)
-    assert parsed == [{
+    assert parsed == {
         "object": "message",
         "account_id": account_id,
         "labels": [{
@@ -75,7 +77,7 @@ def test_message_raw(api_client, account_id):
         "unread": True,
         "id": "1234",
         "subject": "Test Message"
-    }]
+    }
 
 
 @responses.activate
@@ -86,3 +88,11 @@ def test_message_delete_by_id(api_client):
     request = responses.calls[0].request
     url = URLObject(request.url)
     assert url.query_dict["forceful"] == "True"
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_messages")
+def test_slice_messages(api_client):
+    messages = api_client.messages[0:2]
+    assert len(messages) == 3
+    assert all(isinstance(message, Message) for message in messages)
