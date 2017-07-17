@@ -602,7 +602,25 @@ def mock_draft_sent_response(api_url):
 
 
 @pytest.fixture
+def mock_files(api_url):
+    httpretty.enable()
+    body = [{
+        "content_type": "text/plain",
+        "filename": "a.txt",
+        "id": "3qfe4k3siosfjtjpfdnon8zbn",
+        "account_id": "6aakaxzi4j5gn6f7kbb9e0fxs",
+        "object": "file",
+        "size": 762878
+    }]
+
+    values = [httpretty.Response(status=200, body=json.dumps(body))]
+    httpretty.register_uri(httpretty.POST, api_url + '/files/', responses=values)
+    httpretty.register_uri(httpretty.GET, api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
+                           body='test body')
+
+@pytest.fixture
 def mock_event_create_response(api_url, message_body):
+    httpretty.enable()
     values = [
         httpretty.Response(status=200, body=json.dumps(message_body)),
         httpretty.Response(status=400, body=''),
@@ -623,6 +641,7 @@ def mock_event_create_response(api_url, message_body):
 
 @pytest.fixture
 def mock_event_create_notify_response(api_url, message_body):
+    httpretty.enable()
     httpretty.register_uri(
         httpretty.POST,
         api_url + '/events/?notify_participants=true&other_param=1',

@@ -25,3 +25,27 @@ def test_save_send_draft(api_client):
     # Second time should throw an error
     with pytest.raises(InvalidRequestError):
         draft.send()
+
+
+@pytest.mark.usefixtures("mock_files")
+def test_draft_attachment(api_client):
+    draft = api_client.drafts.create()
+    attachment = api_client.files.create()
+    attachment.filename = "dummy"
+    attachment.data = "data"
+
+    assert len(draft.file_ids) == 0
+    draft.attach(attachment)
+    assert len(draft.file_ids) == 1
+    assert attachment.id in draft.file_ids
+
+    unattached = api_client.files.create()
+    unattached.filename = "unattached"
+    unattached.data = "foo"
+    draft.detach(unattached)
+    assert len(draft.file_ids) == 1
+    assert attachment.id in draft.file_ids
+    assert unattached.id not in draft.file_ids
+
+    draft.detach(attachment)
+    assert len(draft.file_ids) == 0

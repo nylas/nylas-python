@@ -5,22 +5,8 @@ from httpretty import Response
 from nylas.client.errors import FileUploadError
 
 
-def test_file_upload(api_client, api_url):
-    httpretty.enable()
-    body = [{
-        "content_type": "text/plain",
-        "filename": "a.txt",
-        "id": "3qfe4k3siosfjtjpfdnon8zbn",
-        "account_id": "6aakaxzi4j5gn6f7kbb9e0fxs",
-        "object": "file",
-        "size": 762878
-    }]
-
-    values = [Response(status=200, body=json.dumps(body))]
-    httpretty.register_uri(httpretty.POST, api_url + '/files/', responses=values)
-    httpretty.register_uri(httpretty.GET, api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
-                           body='test body')
-
+@pytest.mark.usefixtures("mock_files")
+def test_file_upload(api_client):
     myfile = api_client.files.create()
     myfile.filename = 'test.txt'
     myfile.data = "Hello World."

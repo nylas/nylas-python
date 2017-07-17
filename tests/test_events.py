@@ -13,8 +13,6 @@ def blank_event(api_client):
 
 @pytest.mark.usefixtures("mock_event_create_response")
 def test_event_crud(api_client):
-    httpretty.enable()
-
     event1 = blank_event(api_client)
     event1.save()
     assert event1.id == 'cv4ei7syx10uvsxbs21ccsezf'
@@ -34,8 +32,6 @@ def test_event_crud(api_client):
 
 @pytest.mark.usefixtures("mock_event_create_notify_response")
 def test_event_notify(api_client):
-    httpretty.enable()
-
     event1 = blank_event(api_client)
     event1.save(notify_participants='true', other_param='1')
     assert event1.id == 'cv4ei7syx10uvsxbs21ccsezf'
