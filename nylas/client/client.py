@@ -383,8 +383,8 @@ class APIClient(json.JSONEncoder):
                 method_name,
             )
 
-
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=data)
 
-        return _validate(response).json()
+        result = _validate(response).json()
+        return cls.create(self, **result)

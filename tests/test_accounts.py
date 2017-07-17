@@ -1,4 +1,5 @@
 import pytest
+import responses
 from nylas.client.restful_models import Account, APIAccount
 
 
@@ -21,15 +22,16 @@ def test_account_json(api_client, monkeypatch):
     assert isinstance(result, dict)
 
 
-@pytest.mark.xfail
-def test_account_upgrade(api_client, monkeypatch):
-    monkeypatch.setattr(api_client, "is_opensource_api", lambda: False)
-    account = api_client.accounts.create()
-    assert account.billing_state is False  # what should this be?
-    account.upgrade()
-    assert account.billing_state is True
-    account.downgrade()
-    assert account.billing_state is False
+@responses.activate
+@pytest.mark.usefixtures("mock_accounts", "mock_upgrade")
+def test_account_upgrade(api_client, app_id):
+    api_client.app_id = app_id
+    account = api_client.accounts.first()
+    assert account.billing_state == "trial"
+    account = account.upgrade()
+    assert account.billing_state == "paid"
+    account = account.downgrade()
+    assert account.billing_state == "trial"
 
 
 def test_account_delete(api_client, monkeypatch):
