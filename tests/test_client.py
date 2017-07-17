@@ -5,6 +5,7 @@ import pytest
 from urlobject import URLObject
 import responses
 from nylas.client import APIClient
+from nylas.client.restful_models import Contact
 
 
 def urls_equal(url1, url2):
@@ -118,4 +119,35 @@ def test_client_revoke_token(api_client, api_url):
     api_client.revoke_token()
     assert api_client.auth_token is None
     assert api_client.access_token is None
+    assert len(responses.calls) == 1
+
+
+@responses.activate
+def test_create_resources(api_client, api_url):
+    contacts_data = [
+        {
+            "id": 1,
+            "name": "first",
+            "email": "first@example.com",
+        }, {
+            "id": 2,
+            "name": "second",
+            "email": "second@example.com",
+        }
+    ]
+    responses.add(
+        responses.POST,
+        api_url + "/contacts/",
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contacts_data),
+    )
+
+    post_data = contacts_data.copy()
+    for contact in post_data:
+        del contact["id"]
+
+    contacts = api_client._create_resources(Contact, post_data)
+    assert len(contacts) == 2
+    assert all(isinstance(contact, Contact) for contact in contacts)
     assert len(responses.calls) == 1
