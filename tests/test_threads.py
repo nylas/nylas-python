@@ -48,6 +48,23 @@ def test_thread_drafts(api_client):
 
 @responses.activate
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
+def test_thread_label(api_client):
+    thread = api_client.threads.find(111)
+    assert len(thread.labels) == 2
+    assert all(isinstance(label, Label)
+               for label in thread.labels)
+
+    returned = thread.add_label("fake1")
+    assert len(thread.labels) == 3
+    assert thread.labels == returned
+
+    returned = thread.remove_label("fake1")
+    assert len(thread.labels) == 2  # pylint: disable=len-as-condition
+    assert thread.labels == returned
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_labels(api_client):
     thread = api_client.threads.find(111)
     assert len(thread.labels) == 2
