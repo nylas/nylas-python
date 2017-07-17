@@ -62,8 +62,7 @@ def test_delete_draft(api_client):
     # Unsaved draft shouldn't throw an error on .delete(), but won't actually
     # delete anything.
     draft.delete()
-    # Now save the draft, and update the version so it's truthy
+    # Now save the draft...
     draft.save()
-    draft.version = 1
-    # Delete it for real.
+    # ... and delete it for real.
     draft.delete()

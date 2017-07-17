@@ -343,7 +343,7 @@ class Draft(Message):
             return msg
 
     def delete(self):
-        if self.id and self.version:
+        if self.id and self.version is not None:
             data = {'version': self.version}
             self.api._delete_resource(self.cls, self.id, data=data)
 
