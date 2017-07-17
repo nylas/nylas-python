@@ -213,7 +213,6 @@ def mock_folder(api_url, account_id):
     )
 
 
-
 @pytest.fixture
 def mock_messages(api_url, account_id):
     response_body = json.dumps([
@@ -799,4 +798,56 @@ def mock_message_search_response(api_url):
         status=200,
         content_type='application/json',
         match_querystring=True
+    )
+
+
+@pytest.fixture
+def mock_calendars(api_url):
+    response_body = json.dumps([
+        {
+            "id": "8765",
+            "events": [
+                {
+                    "title": "Pool party",
+                    "location": "Local Community Pool",
+                    "participants": [
+                        "Alice",
+                        "Bob",
+                        "Claire",
+                        "Dot",
+                    ]
+                }
+            ],
+        }
+    ])
+    endpoint = re.compile(api_url + '/calendars')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
+    )
+
+@pytest.fixture
+def mock_events(api_url):
+    response_body = json.dumps([
+        {
+            "title": "Pool party",
+            "location": "Local Community Pool",
+            "participants": [
+                "Alice",
+                "Bob",
+                "Claire",
+                "Dot",
+            ]
+        }
+    ])
+    endpoint = re.compile(api_url + '/events')
+    responses.add(
+        responses.GET,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body=response_body
     )
