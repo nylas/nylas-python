@@ -24,7 +24,7 @@ def test_custom_client():
     # Must be a valid URL
     with pytest.raises(Exception) as exc:
         APIClient(api_server="invalid")
-    assert exc.value.message == (
+    assert exc.value.args[0] == (
         "When overriding the Nylas API server address, "
         "you must include https://"
     )
