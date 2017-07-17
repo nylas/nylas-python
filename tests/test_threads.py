@@ -22,6 +22,8 @@ def test_thread_change(api_client):
     assert thread.starred
     thread.unstar()
     assert not thread.starred
+    thread.star()
+    assert thread.starred
 
     thread.update_folder('qwer')
     assert len(thread.folders) == 1
