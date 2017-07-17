@@ -2,6 +2,8 @@ import pytest
 import responses
 from nylas.client.errors import InvalidRequestError
 
+# pylint: disable=len-as-condition
+
 
 @responses.activate
 @pytest.mark.usefixtures(

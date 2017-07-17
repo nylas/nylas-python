@@ -10,7 +10,7 @@ with open('nylas/_client_sdk_version.py', 'r') as fd:
     VERSION = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
-run_dependencies = [
+RUN_DEPENDENCIES = [
     "requests>=2.4.2",
     "six>=1.4.1",
     "bumpversion>=0.5.0",
@@ -18,7 +18,7 @@ run_dependencies = [
     "ndg-httpsclient",
     "pyasn1",
 ]
-test_dependencies = [
+TEST_DEPENDENCIES = [
     "pytest",
     "pytest-cov",
     "pytest-pylint",
@@ -75,10 +75,10 @@ def main():
         name="nylas",
         version=VERSION,
         packages=find_packages(),
-        install_requires=run_dependencies,
+        install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
-        tests_require=test_dependencies,
-        extras_require={'test': test_dependencies},
+        tests_require=TEST_DEPENDENCIES,
+        extras_require={'test': TEST_DEPENDENCIES},
         cmdclass={'test': PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",

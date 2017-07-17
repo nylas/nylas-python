@@ -1,7 +1,4 @@
-import json
 import pytest
-import httpretty
-from httpretty import Response
 from nylas.client.errors import FileUploadError
 
 

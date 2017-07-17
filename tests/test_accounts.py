@@ -1,4 +1,3 @@
-import pytest
 from nylas.client.restful_models import Account, APIAccount
 
 
