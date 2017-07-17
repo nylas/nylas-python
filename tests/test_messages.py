@@ -2,6 +2,7 @@ import json
 import six
 import pytest
 import responses
+from urlobject import URLObject
 
 
 @responses.activate
@@ -75,3 +76,13 @@ def test_message_raw(api_client, account_id):
         "id": "1234",
         "subject": "Test Message"
     }]
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_message")
+def test_message_delete_by_id(api_client):
+    api_client.messages.delete(1234, forceful=True)
+    assert len(responses.calls) == 1
+    request = responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["forceful"] == "True"

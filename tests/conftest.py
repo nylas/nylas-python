@@ -282,6 +282,13 @@ def mock_message(api_url, account_id):
         content_type='application/json',
         callback=request_callback
     )
+    responses.add(
+        responses.DELETE,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body="",
+    )
 
 
 @pytest.fixture
