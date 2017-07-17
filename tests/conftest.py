@@ -43,6 +43,11 @@ def account_id():
 
 
 @pytest.fixture
+def app_id():
+    return 'fake-app-id'
+
+
+@pytest.fixture
 def api_client(api_url):
     return APIClient(None, None, None, api_url)
 
@@ -74,7 +79,8 @@ def mock_account(api_url, account_id):
             "name": "Ben Bitdiddle",
             "object": "account",
             "provider": "gmail",
-            "organization_unit": "label"
+            "organization_unit": "label",
+            "billing_state": "paid",
         }
     )
     responses.add(
@@ -84,6 +90,30 @@ def mock_account(api_url, account_id):
         status=200,
         body=response_body,
         match_querystring=True
+    )
+
+
+@pytest.fixture
+def mock_accounts(api_url, account_id, app_id):
+    response_body = json.dumps([
+        {
+            "account_id": account_id,
+            "email_address": "ben.bitdiddle1861@gmail.com",
+            "id": account_id,
+            "name": "Ben Bitdiddle",
+            "object": "account",
+            "provider": "gmail",
+            "organization_unit": "label",
+            "billing_state": "paid",
+        }
+    ])
+    url = "{base}/a/{app_id}/accounts".format(base=api_url, app_id=app_id)
+    responses.add(
+        responses.GET,
+        url,
+        content_type='application/json',
+        status=200,
+        body=response_body,
     )
 
 
@@ -281,6 +311,13 @@ def mock_message(api_url, account_id):
         endpoint,
         content_type='application/json',
         callback=request_callback
+    )
+    responses.add(
+        responses.DELETE,
+        endpoint,
+        content_type='application/json',
+        status=200,
+        body="",
     )
 
 
@@ -850,4 +887,42 @@ def mock_events(api_url):
         content_type='application/json',
         status=200,
         body=response_body
+    )
+
+
+@pytest.fixture
+def mock_account_management(api_url, account_id, app_id):
+    account = {
+        "account_id": account_id,
+        "email_address": "ben.bitdiddle1861@gmail.com",
+        "id": account_id,
+        "name": "Ben Bitdiddle",
+        "object": "account",
+        "provider": "gmail",
+        "organization_unit": "label",
+        "billing_state": "paid",
+    }
+    paid_response = json.dumps(account)
+    account["billing_state"] = "cancelled"
+    cancelled_response = json.dumps(account)
+
+    upgrade_url = "{base}/a/{app_id}/accounts/{id}/upgrade".format(
+        base=api_url, id=account_id, app_id=app_id,
+    )
+    downgrade_url = "{base}/a/{app_id}/accounts/{id}/downgrade".format(
+        base=api_url, id=account_id, app_id=app_id,
+    )
+    responses.add(
+        responses.POST,
+        upgrade_url,
+        content_type='application/json',
+        status=200,
+        body=paid_response,
+    )
+    responses.add(
+        responses.POST,
+        downgrade_url,
+        content_type='application/json',
+        status=200,
+        body=cancelled_response,
     )

@@ -118,9 +118,12 @@ class APIClient(json.JSONEncoder):
         self.admin_session = requests.Session()
 
         if app_secret is not None:
-            b64_app_secret = b64encode(app_secret + ':')
+            b64_app_secret = b64encode((app_secret + ':').encode('utf8'))
+            authorization = 'Basic {secret}'.format(
+                secret=b64_app_secret.decode('utf8')
+            )
             self.admin_session.headers = {
-                'Authorization': 'Basic {secret}'.format(secret=b64_app_secret),
+                'Authorization': authorization,
                 'X-Nylas-API-Wrapper': 'python',
                 'User-Agent': version_header,
             }
@@ -380,8 +383,8 @@ class APIClient(json.JSONEncoder):
                 method_name,
             )
 
-
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=data)
 
-        return _validate(response).json()
+        result = _validate(response).json()
+        return cls.create(self, **result)

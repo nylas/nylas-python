@@ -454,12 +454,14 @@ class Account(NylasAPIObject):
         return dct
 
     def upgrade(self):
-        self.api._call_resource_method(self, self.account_id,
-                                       'upgrade', None)
+        return self.api._call_resource_method(
+            self, self.account_id, 'upgrade', None
+        )
 
     def downgrade(self):
-        self.api._call_resource_method(self, self.account_id,
-                                       'downgrade', None)
+        return self.api._call_resource_method(
+            self, self.account_id, 'downgrade', None
+        )
 
     def delete(self):
         raise NotImplementedError
