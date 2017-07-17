@@ -17,6 +17,7 @@ RUN_DEPENDENCIES = [
     "pyOpenSSL",  # needed for SNI support, required by api.nylas.com
     "ndg-httpsclient",
     "pyasn1",
+    "urlobject",
 ]
 TEST_DEPENDENCIES = [
     "pytest",
@@ -24,7 +25,6 @@ TEST_DEPENDENCIES = [
     "pytest-pylint",
     "responses",
     "httpretty",
-    "urlobject",
 ]
 
 

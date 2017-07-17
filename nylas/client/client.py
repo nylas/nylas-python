@@ -4,9 +4,9 @@ import json
 from os import environ
 from base64 import b64encode
 import requests
+from urlobject import URLObject
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
-from nylas.client.util import url_concat
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
     Calendar, Contact, Event, Message, Thread, File,
@@ -145,13 +145,14 @@ class APIClient(json.JSONEncoder):
 
     def authentication_url(self, redirect_uri, login_hint=''):
         args = {'redirect_uri': redirect_uri,
-                'client_id': self.app_id,
+                'client_id': self.app_id or '',
                 'response_type': 'code',
                 'scope': 'email',
                 'login_hint': login_hint,
                 'state': ''}
 
-        return url_concat(self.authorize_url, args)
+        url = URLObject(self.authorize_url).add_query_params(args.items())
+        return str(url)
 
     def token_for_code(self, code):
         args = {'client_id': self.app_id,
@@ -258,7 +259,7 @@ class APIClient(json.JSONEncoder):
                 postfix
             )
 
-        url = url_concat(url, filters)
+        url = str(URLObject(url).add_query_params(filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
         return [
@@ -282,7 +283,7 @@ class APIClient(json.JSONEncoder):
             url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
                                            cls.collection_name, id, postfix)
 
-        url = url_concat(url, filters)
+        url = str(URLObject(url).add_query_params(filters.items()))
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
         return _validate(response)
