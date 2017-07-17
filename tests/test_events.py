@@ -27,8 +27,6 @@ def test_event_crud(api_client):
     with pytest.raises(InvalidRequestError):
         event2.save()
 
-    httpretty.disable()
-
 
 @pytest.mark.usefixtures("mock_event_create_notify_response")
 def test_event_notify(api_client):
@@ -39,5 +37,3 @@ def test_event_notify(api_client):
     query = httpretty.last_request().querystring
     assert query['notify_participants'][0] == 'true'
     assert query['other_param'][0] == '1'
-
-    httpretty.disable()
