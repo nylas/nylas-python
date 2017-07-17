@@ -555,6 +555,17 @@ def mock_draft_updated_response(api_url):
 
 
 @pytest.fixture
+def mock_draft_deleted_response(api_url):
+    responses.add(
+        responses.DELETE,
+        api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
+        content_type='application/json',
+        status=200,
+        body="",
+    )
+
+
+@pytest.fixture
 def mock_draft_sent_response(api_url):
     body = {
         "bcc": [],

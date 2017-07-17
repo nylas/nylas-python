@@ -49,3 +49,19 @@ def test_draft_attachment(api_client):
 
     draft.detach(attachment)
     assert len(draft.file_ids) == 0
+
+
+@responses.activate
+@pytest.mark.usefixtures(
+    "mock_draft_saved_response", "mock_draft_deleted_response"
+)
+def test_delete_draft(api_client):
+    draft = api_client.drafts.create()
+    # Unsaved draft shouldn't throw an error on .delete(), but won't actually
+    # delete anything.
+    draft.delete()
+    # Now save the draft, and update the version so it's truthy
+    draft.save()
+    draft.version = 1
+    # Delete it for real.
+    draft.delete()
