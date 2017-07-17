@@ -143,7 +143,7 @@ def test_create_resources(api_client, api_url):
         body=json.dumps(contacts_data),
     )
 
-    post_data = contacts_data.copy()
+    post_data = list(contacts_data) # make a copy
     for contact in post_data:
         del contact["id"]
 
