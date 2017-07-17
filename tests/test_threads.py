@@ -62,3 +62,19 @@ def test_thread_labels(api_client):
     returned = thread.remove_labels(label_ids)
     assert len(thread.labels) == 0  # pylint: disable=len-as-condition
     assert thread.labels == returned
+
+
+@responses.activate
+@pytest.mark.usefixtures("mock_threads", "mock_thread")
+def test_thread_read(api_client):
+    thread = api_client.threads.first()
+    assert thread.unread is False
+    thread.mark_as_unread()
+    assert thread.unread is True
+    thread.mark_as_read()
+    assert thread.unread is False
+    # mark_as_seen() is a synonym for mark_as_read()
+    thread.mark_as_unread()
+    assert thread.unread is True
+    thread.mark_as_seen()
+    assert thread.unread is False
