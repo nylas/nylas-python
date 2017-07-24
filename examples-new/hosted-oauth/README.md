@@ -1,12 +1,12 @@
 # Example: Hosted OAuth
 
 This is an example project that demonstrates how to connect to Nylas via
-OAuth. [OAuth](https://oauth.net/) is a standard protocol to allow two
-websites to securely communicate with each other.
+OAuth, using [Nylas' hosted OAuth flow](https://docs.nylas.com/reference#oauth).
 
 This example uses the [Flask](http://flask.pocoo.org/) web framework to make
 a small website, and uses the [Flask-Dance](http://flask-dance.rtfd.org/)
-extension to handle the tricky bits of implementing the OAuth protocol.
+extension to handle the tricky bits of implementing the
+[OAuth protocol](https://oauth.net/).
 Once the OAuth communication is in place, this example website will contact
 the Nylas API to learn some basic information about the current user,
 such as the user's name and email address. It will display that information
