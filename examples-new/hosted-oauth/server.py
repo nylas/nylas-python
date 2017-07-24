@@ -65,10 +65,12 @@ def index():
     # If the user has already connected to Nylas via OAuth,
     # `nylas.authorized` will be True. Otherwise, it will be False.
     if not nylas.authorized:
-        # OAuth requires HTTPS. Check for insecure HTTP, so the template
-        # can display a handy warning if necessary.
-        oauth_ok = request.is_secure or os.environ.get("OAUTHLIB_INSECURE_TRANSPORT")
-        return render_template("before_authorized.html", oauth_ok=oauth_ok)
+        # OAuth requires HTTPS. The template will display a handy warning,
+        # unless we've overridden the check.
+        return render_template(
+            "before_authorized.html",
+            insecure_override=os.environ.get("OAUTHLIB_INSECURE_TRANSPORT"),
+        )
 
     # If we've gotten to this point, then the user has already connected
     # to Nylas via OAuth. Let's set up the SDK client with the OAuth token:
