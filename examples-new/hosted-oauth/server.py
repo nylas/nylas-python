@@ -7,6 +7,7 @@ import textwrap
 # Imports from third-party modules that this project depends on
 try:
     from flask import Flask, request, render_template
+    from werkzeug.contrib.fixers import ProxyFix
     from flask_dance.contrib.nylas import make_nylas_blueprint, nylas
 except ImportError:
     message = textwrap.dedent("""
@@ -58,6 +59,9 @@ if cfg_needs_replacing:
 # For more information, check out the documentation: http://flask-dance.rtfd.org
 nylas_bp = make_nylas_blueprint()
 app.register_blueprint(nylas_bp, url_prefix="/login")
+
+# Teach Flask how to find out that it's behind an ngrok proxy
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 # Define what Flask should do when someone visits the root URL of this website.
 @app.route("/")
