@@ -91,7 +91,7 @@ def index():
         # The user has already connected to Google via OAuth,
         # but hasn't yet passed those credentials to Nylas.
         # We'll redirect the user to the right place to make that happen.
-        return redirect(url_for("connect_to_nylas"))
+        return redirect(url_for("pass_creds_to_nylas"))
 
     # If we've gotten to this point, then the user has already connected
     # to both Google and Nylas.
