@@ -1,0 +1,3 @@
+Flask>=0.11
+Flask-Dance>=0.11.0
+requests
