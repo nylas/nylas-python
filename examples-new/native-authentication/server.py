@@ -68,6 +68,13 @@ google_bp = make_google_blueprint(
     ],
     offline=True,  # this allows you to get a refresh token from Google
     redirect_to="after_google",
+    # If you get a "missing Google refresh token" error, uncomment this line:
+    # reprompt_consent=True,
+
+    # That `reprompt_consent` argument will force Google to re-ask the user
+    # every single time if they want to connect with your application.
+    # Google will only send the refresh token if the user has explicitly
+    # given consent.
 )
 app.register_blueprint(google_bp, url_prefix="/login")
 
@@ -91,7 +98,7 @@ def index():
         # The user has already connected to Google via OAuth,
         # but hasn't yet passed those credentials to Nylas.
         # We'll redirect the user to the right place to make that happen.
-        return redirect(url_for("pass_creds_to_nylas"))
+        return redirect(url_for("after_google"))
 
     # If we've gotten to this point, then the user has already connected
     # to both Google and Nylas.
@@ -127,6 +134,14 @@ def pass_creds_to_nylas():
     # If you haven't already connected with Google, this won't work.
     if not google.authorized:
         return "Error: not yet connected with Google!", 400
+
+    if "refresh_token" not in google.token:
+        # We're missing the refresh token from Google, and the only way to get
+        # a new one is to force reauthentication. That's annoying.
+        return (
+            "Error: missing Google refresh token. "
+            "Uncomment the `reprompt_consent` line in the code to fix this."
+        ), 500
 
     # Look up the user's name and email address from Google.
     google_resp = google.get("/oauth2/v2/userinfo?fields=name,email")
