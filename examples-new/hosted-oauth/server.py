@@ -6,7 +6,7 @@ import textwrap
 
 # Imports from third-party modules that this project depends on
 try:
-    from flask import Flask, request, render_template
+    from flask import Flask, render_template
     from werkzeug.contrib.fixers import ProxyFix
     from flask_dance.contrib.nylas import make_nylas_blueprint, nylas
 except ImportError:
