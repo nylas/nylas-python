@@ -42,7 +42,7 @@ app.config.from_json('config.json')
 # If you are building your own application based on this example,
 # you can remove this check from your code.
 cfg_needs_replacing = [
-    key  for key, value in app.config.items()
+    key for key, value in app.config.items()
     if isinstance(value, str) and value.startswith("replace me")
 ]
 if cfg_needs_replacing:
