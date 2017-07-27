@@ -7,8 +7,7 @@ from nylas.client.errors import InvalidRequestError
 
 @responses.activate
 @pytest.mark.usefixtures(
-    "mock_draft_saved_response", "mock_draft_updated_response",
-    "mock_draft_sent_response"
+    "mock_draft_saved_response", "mock_draft_sent_response"
 )
 def test_save_send_draft(api_client):
     draft = api_client.drafts.create()
@@ -18,8 +17,8 @@ def test_save_send_draft(api_client):
     draft.save()
 
     draft.subject = "Stay polish, stay hungary"
-    draft.save(random_query='true', param2='param')
-    assert draft.subject == 'Update #2'
+    draft.save()
+    assert draft.subject == "Stay polish, stay hungary"
 
     msg = draft.send()
     assert msg['thread_id'] == 'clm33kapdxkposgltof845v9s'

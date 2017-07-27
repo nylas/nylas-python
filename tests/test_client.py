@@ -161,3 +161,25 @@ def test_create_resources(api_client, api_url):
     assert len(contacts) == 2
     assert all(isinstance(contact, Contact) for contact in contacts)
     assert len(responses.calls) == 1
+
+
+@responses.activate
+def test_call_resource_method(api_client, api_url):
+    contact_data = {
+        "id": 1,
+        "name": "first",
+        "email": "first@example.com",
+    }
+    responses.add(
+        responses.POST,
+        api_url + "/contacts/1/remove_duplicates",
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contact_data),
+    )
+
+    contact = api_client._call_resource_method(
+        Contact, 1, "remove_duplicates", {}
+    )
+    assert isinstance(contact, Contact)
+    assert len(responses.calls) == 1

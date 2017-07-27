@@ -528,7 +528,7 @@ def mock_drafts(api_url):
 
 @pytest.fixture
 def mock_draft_saved_response(api_url):
-    response_body = json.dumps({
+    draft_json = {
         "bcc": [],
         "body": "Cheers mate!",
         "cc": [],
@@ -554,66 +554,33 @@ def mock_draft_saved_response(api_url):
         ],
         "unread": False,
         "version": 0
-    })
+    }
 
-    responses.add(
+    def request_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return (200, {}, json.dumps(draft_json))
+
+        stripped_payload = {
+            key: value for key, value in payload.items() if value
+        }
+        updated_draft_json = copy.copy(draft_json)
+        updated_draft_json.update(stripped_payload)
+        return (200, {}, json.dumps(updated_draft_json))
+
+    responses.add_callback(
         responses.POST,
         api_url + '/drafts/',
         content_type='application/json',
-        status=200,
-        body=response_body,
-        match_querystring=True
+        callback=request_callback,
     )
 
-
-@pytest.fixture
-def mock_draft_updated_response(api_url):
-    body = {
-        "bcc": [],
-        "body": "",
-        "cc": [],
-        "date": 1438684486,
-        "events": [],
-        "files": [],
-        "folder": None,
-        "from": [],
-        "id": "2h111aefv8pzwzfykrn7hercj",
-        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-        "object": "draft",
-        "reply_to": [],
-        "reply_to_message_id": None,
-        "snippet": "",
-        "starred": False,
-        "subject": "Stay polish, stay hungary",
-        "thread_id": "clm33kapdxkposgltof845v9s",
-        "to": [
-            {
-                "email": "helena@nylas.com",
-                "name": "Helena Handbasket"
-            }
-        ],
-        "unread": False,
-        "version": 0
-    }
-
-    responses.add(
+    responses.add_callback(
         responses.PUT,
         api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
         content_type='application/json',
-        status=200,
-        body=json.dumps(body),
-        match_querystring=True
-    )
-
-    body['subject'] = 'Update #2'
-    url = api_url + '/drafts/2h111aefv8pzwzfykrn7hercj?random_query=true&param2=param'
-    responses.add(
-        responses.PUT,
-        url,
-        content_type='application/json',
-        status=200,
-        body=json.dumps(body),
-        match_querystring=True
+        callback=request_callback,
     )
 
 
@@ -655,7 +622,7 @@ def mock_draft_sent_response(api_url):
             }
         ],
         "unread": False,
-        "version": 0
+        "version": 0,
     }
 
     values = [(400, {}, "Couldn't send email"),
