@@ -97,8 +97,9 @@ def ngrok_url():
     to figure out what URL it has assigned, and suggest that to the user.
     https://ngrok.com/docs#list-tunnels
     """
-    ngrok_resp = requests.get("http://localhost:4040/api/tunnels")
-    if not ngrok_resp.ok:
+    try:
+        ngrok_resp = requests.get("http://localhost:4040/api/tunnels")
+    except requests.ConnectionError:
         # I guess ngrok isn't running.
         return None
     ngrok_data = ngrok_resp.json()
