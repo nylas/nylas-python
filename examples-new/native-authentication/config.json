@@ -1,0 +1,7 @@
+{
+  "SECRET_KEY": "replace me with a random string",
+  "NYLAS_OAUTH_API_ID": "replace me with the API ID from Nylas",
+  "NYLAS_OAUTH_API_SECRET": "replace me with the API Secret from Nylas",
+  "GOOGLE_OAUTH_CLIENT_ID": "replace me with the client ID from Google",
+  "GOOGLE_OAUTH_CLIENT_SECRET": "replace me with the client secret from Google"
+}

@@ -6,7 +6,8 @@ import textwrap
 
 # Imports from third-party modules that this project depends on
 try:
-    from flask import Flask, request, render_template
+    import requests
+    from flask import Flask, render_template
     from werkzeug.contrib.fixers import ProxyFix
     from flask_dance.contrib.nylas import make_nylas_blueprint, nylas
 except ImportError:
@@ -41,7 +42,7 @@ app.config.from_json('config.json')
 # If you are building your own application based on this example,
 # you can remove this check from your code.
 cfg_needs_replacing = [
-    key  for key, value in app.config.items()
+    key for key, value in app.config.items()
     if isinstance(value, str) and value.startswith("replace me")
 ]
 if cfg_needs_replacing:
@@ -89,6 +90,29 @@ def index():
     account = client.account
     return render_template("after_authorized.html", account=account)
 
+
+def ngrok_url():
+    """
+    If ngrok is running, it exposes an API on port 4040. We can use that
+    to figure out what URL it has assigned, and suggest that to the user.
+    https://ngrok.com/docs#list-tunnels
+    """
+    ngrok_resp = requests.get("http://localhost:4040/api/tunnels")
+    if not ngrok_resp.ok:
+        # I guess ngrok isn't running.
+        return None
+    ngrok_data = ngrok_resp.json()
+    secure_urls = [
+        tunnel['public_url'] for tunnel in ngrok_data['tunnels']
+        if tunnel['proto'] == 'https'
+    ]
+    return secure_urls[0]
+
+
 # When this file is executed, run the Flask web server.
 if __name__ == "__main__":
+    url = ngrok_url()
+    if url:
+        print(" * Visit {url} to view this Nylas example".format(url=url))
+
     app.run()
