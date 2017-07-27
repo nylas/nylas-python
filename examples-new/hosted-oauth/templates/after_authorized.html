@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>Nylas Hosted OAuth Example</h1>
 <p>You've successfully connected to Nylas via hosted OAuth! Here's some
    information that I got from the Nylas API, to prove it:</p>
 
-<table>
+<table class="table table-bordered">
   {% for key, value in account.items() %}
   <tr>
     <th>{{ key }}</th>

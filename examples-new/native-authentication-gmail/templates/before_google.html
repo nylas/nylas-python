@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>Nylas Native Authentication Example</h1>
-
 {% if not insecure_override %}
-<div class="warning hide">
+<div class="well hidden">
   <h2>Warning</h2>
   <p>OAuth requires HTTPS, and this page is loaded via insecure HTTP.
     If you try to connect to Google like this, it will fail.
@@ -24,13 +22,13 @@
    where the first step is connecting with the native email provider.
    This example is set up to work with Google, so it will only work if you
    have a Gmail account.</p>
-<p>First, please click this link to connect with Google.</p>
-<a href="{{ url_for("google.login") }}">Connect with Google</a>
+<p>First, please click this button to connect with Google.</p>
+<a href="{{ url_for("google.login") }}" class="btn btn-primary">Connect with Google</a>
 
 <script type="text/javascript">
   if (location.protocol === "http:") {
-    var el = document.querySelector(".warning.hide");
-    el.className = "warning";
+    var el = document.querySelector(".well.hidden");
+    el.className = "well";
   }
 </script>
 {% endblock %}

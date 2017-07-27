@@ -85,8 +85,10 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 @app.route("/")
 def index():
     # If the user has already connected to Google via OAuth,
-    # `google.authorized` will be True. Otherwise, it will be False.
-    if not google.authorized:
+    # `google.authorized` will be True. We also need to be sure that
+    # we have a refresh token from Google. If we don't have both of those,
+    # that indicates that we haven't correctly connected with Google.
+    if not (google.authorized and "refresh_token" in google.token):
         # Google requires HTTPS. The template will display a handy warning,
         # unless we've overridden the check.
         return render_template(
@@ -199,8 +201,9 @@ def ngrok_url():
     to figure out what URL it has assigned, and suggest that to the user.
     https://ngrok.com/docs#list-tunnels
     """
-    ngrok_resp = requests.get("http://localhost:4040/api/tunnels")
-    if not ngrok_resp.ok:
+    try:
+        ngrok_resp = requests.get("http://localhost:4040/api/tunnels")
+    except requests.ConnectionError:
         # I guess ngrok isn't running.
         return None
     ngrok_data = ngrok_resp.json()

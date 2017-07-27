@@ -3,7 +3,7 @@
 <h1>Nylas Hosted OAuth Example</h1>
 
 {% if not insecure_override %}
-<div class="warning hide">
+<div class="well hidden">
   <h2>Warning</h2>
   <p>OAuth requires HTTPS, and this page is loaded via insecure HTTP.
     If you try to connect to Nylas like this, it will fail.
@@ -18,14 +18,14 @@
 </div>
 {% endif %}
 
-<p>Thanks for giving Nylas a try! Next, you need to click this link
+<p>Thanks for giving Nylas a try! Next, you need to click this button
    to connect to Nylas via hosted OAuth.</p>
-<a href="{{ url_for("nylas.login") }}">Connect to Nylas</a>
+<a href="{{ url_for("nylas.login") }}" class="btn btn-primary">Connect to Nylas</a>
 
 <script type="text/javascript">
   if (location.protocol === "http:") {
-    var el = document.querySelector(".warning.hide");
-    el.className = "warning";
+    var el = document.querySelector(".well.hidden");
+    el.className = "well";
   }
 </script>
 {% endblock %}
