@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>Nylas Native Authentication Example</h1>
 <h2>Step 2: Pass Credentials to Nylas</h2>
 
 <p>Great, you've succesfully connected with Google! The next step is to
    hand those authentication credentials over to Nylas, so that Nylas
    can connect with Google on your behalf.
    Please click this link to do that.</p>
-<a href="{{ url_for("pass_creds_to_nylas") }}">Pass Credentials to Nylas</a>
+<a href="{{ url_for("pass_creds_to_nylas") }}" class="btn btn-primary">Pass Credentials to Nylas</a>
 
 {% endblock %}
