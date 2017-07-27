@@ -1,4 +1,4 @@
-# Example: Native Authentication
+# Example: Native Authentication (Gmail)
 
 This is an example project that demonstrates how to connect to Nylas using the
 [Native Authentication](https://docs.nylas.com/reference#native-authentication-1)
