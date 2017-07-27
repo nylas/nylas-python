@@ -303,10 +303,11 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _create_resource(self, cls, data, **kwargs):
-        url = "{}/{}/".format(self.api_server, cls.collection_name)
-
-        if kwargs:
-            url = "{}?{}".format(url, urlencode(kwargs))
+        url = (
+            URLObject(self.api_server)
+            .with_path("/{name}/".format(name=cls.collection_name))
+            .set_query_params(**kwargs)
+        )
 
         session = self._get_http_session(cls.api_root)
 
@@ -325,7 +326,10 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _create_resources(self, cls, data):
-        url = "{}/{}/".format(self.api_server, cls.collection_name)
+        url = (
+            URLObject(self.api_server)
+            .with_path("/{name}/".format(name=cls.collection_name))
+        )
         session = self._get_http_session(cls.api_root)
 
         if cls == File:
@@ -341,11 +345,11 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _delete_resource(self, cls, id, data=None, **kwargs):
-        name = cls.collection_name
-        url = "{}/{}/{}".format(self.api_server, name, id)
-
-        if kwargs:
-            url = "{}?{}".format(url, urlencode(kwargs))
+        url = (
+            URLObject(self.api_server)
+            .with_path("/{name}/{id}".format(name=cls.collection_name, id=id))
+            .set_query_params(**kwargs)
+        )
         session = self._get_http_session(cls.api_root)
         if data:
             _validate(session.delete(url, json=data))
@@ -354,11 +358,11 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _update_resource(self, cls, id, data, **kwargs):
-        name = cls.collection_name
-        url = "{}/{}/{}".format(self.api_server, name, id)
-
-        if kwargs:
-            url = "{}?{}".format(url, urlencode(kwargs))
+        url = (
+            URLObject(self.api_server)
+            .with_path("/{name}/{id}".format(name=cls.collection_name, id=id))
+            .set_query_params(**kwargs)
+        )
 
         session = self._get_http_session(cls.api_root)
 
@@ -371,18 +375,24 @@ class APIClient(json.JSONEncoder):
     def _call_resource_method(self, cls, id, method_name, data):
         """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
-        name = cls.collection_name
+
         if cls.api_root != 'a':
-            url = "{}/{}/{}/{}".format(self.api_server, name, id, method_name)
+            url_path =  "/{name}/{id}/{method}".format(
+                name=cls.collection_name, id=id, method=method_name
+            )
         else:
             # Management method.
-            url = "{}/a/{}/{}/{}/{}".format(
-                self.api_server,
-                self.app_id,
-                cls.collection_name,
-                id,
-                method_name,
+            url_path = "/a/{app_id}/{name}/{id}/{method}".format(
+                app_id=self.app_id,
+                name=cls.collection_name,
+                id=id,
+                method=method_name,
             )
+
+        url = (
+            URLObject(self.api_server)
+            .with_path(url_path)
+        )
 
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=data)
