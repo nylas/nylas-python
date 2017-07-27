@@ -2,6 +2,7 @@ import json
 import re
 import pytest
 import responses
+import six
 from nylas.client.errors import (
     MessageRejectedError, SendingQuotaExceededError, ServiceUnavailableError,
 )
@@ -13,6 +14,10 @@ def mock_sending_error(http_code, message, api_url, server_error=None):
         "type": "api_error",
         "message": message
     }
+
+    if six.PY2 and http_code == 429:
+        # Python 2 `httplib` doesn't know about status code 429
+        six.moves.http_client.responses[429] = "Too Many Requests"
 
     if server_error is not None:
         response_body['server_error'] = server_error
