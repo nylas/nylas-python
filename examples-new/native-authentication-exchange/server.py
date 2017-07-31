@@ -63,7 +63,9 @@ class ExchangeCredentialsForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = EmailField('Email Address', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    server_host = StringField('Server Host', validators=[DataRequired()])
+    server_host = StringField(
+        'Server Host', render_kw={"placeholder": "(optional)"}
+    )
 
 
 class APIError(Exception):
@@ -88,7 +90,7 @@ def index():
     return render_template("index.html", form=form, api_error=api_error)
 
 
-def pass_creds_to_nylas(name, email, password, server_host):
+def pass_creds_to_nylas(name, email, password, server_host=None):
     """
     Passes Exchange credentials to Nylas, to set up native authentication.
     """
@@ -102,9 +104,11 @@ def pass_creds_to_nylas(name, email, password, server_host):
         "settings": {
             "username": email,
             "password": password,
-            "eas_server_host": server_host,
         }
     }
+    if server_host:
+        nylas_authorize_data["settings"]["eas_server_host"] = server_host
+
     nylas_authorize_resp = requests.post(
         "https://api.nylas.com/connect/authorize",
         json=nylas_authorize_data,
@@ -146,7 +150,7 @@ def pass_creds_to_nylas(name, email, password, server_host):
 
 @app.route("/success")
 def success():
-    if "nylas_account_token" not in session:
+    if "nylas_access_token" not in session:
         return render_template("missing_token.html")
 
     client = APIClient(
