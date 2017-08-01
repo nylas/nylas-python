@@ -106,8 +106,8 @@ def index():
     # to both Google and Nylas.
     # Let's set up the SDK client with the OAuth token:
     client = APIClient(
-        app_id=app.config["NYLAS_OAUTH_API_ID"],
-        app_secret=app.config["NYLAS_OAUTH_API_SECRET"],
+        app_id=app.config["NYLAS_OAUTH_CLIENT_ID"],
+        app_secret=app.config["NYLAS_OAUTH_CLIENT_SECRET"],
         access_token=session["nylas_access_token"],
     )
 
@@ -153,7 +153,7 @@ def pass_creds_to_nylas():
     # Start the connection process by looking up all the information that
     # Nylas needs in order to connect, and sending it to the authorize API.
     nylas_authorize_data = {
-        "client_id": app.config["NYLAS_OAUTH_API_ID"],
+        "client_id": app.config["NYLAS_OAUTH_CLIENT_ID"],
         "name": google_userinfo["name"],
         "email_address": google_userinfo["email"],
         "provider": "gmail",
@@ -173,8 +173,8 @@ def pass_creds_to_nylas():
     # Now that we've got the `code` from the authorize response,
     # pass it to the token response to complete the connection.
     nylas_token_data = {
-        "client_id": app.config["NYLAS_OAUTH_API_ID"],
-        "client_secret": app.config["NYLAS_OAUTH_API_SECRET"],
+        "client_id": app.config["NYLAS_OAUTH_CLIENT_ID"],
+        "client_secret": app.config["NYLAS_OAUTH_CLIENT_SECRET"],
         "code": nylas_code,
     }
     nylas_token_resp = requests.post(

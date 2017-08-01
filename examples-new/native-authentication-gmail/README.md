@@ -16,13 +16,14 @@ on the page, just to prove that it can fetch it correctly.
 
 In order to successfully run this example, you need to do the following things:
 
-## Get an API ID & API Secret from Nylas
+## Get a client ID & client secret from Nylas
 
 To do this, make a [Nylas Developer](https://developer.nylas.com/) account.
-You should see your API ID and API Secret on the dashboard, once you've logged
-in on the [Nylas Developer](https://developer.nylas.com/) website.
+You should see your client ID and client secret on the dashboard,
+once you've logged in on the
+[Nylas Developer](https://developer.nylas.com/) website.
 
-## Get a Client ID & Client Secret from Google
+## Get a client ID & client secret from Google
 
 To do this, go to the
 [Google Developers Console](https://console.developers.google.com)
@@ -39,8 +40,8 @@ on the Nylas support website, for more information.
 ## Update the `config.json` File
 
 Open the `config.json` file in this directory, and replace the example
-values with the real values. You'll need the API ID and API Secret from Nylas,
-and the client ID and client secret from Google.
+values with the real values. You'll need the client ID and client secret
+from Nylas, and the client ID and client secret from Google.
 
 You'll also need to replace the example secret key with
 any random string of letters and numbers: a keyboard mash will do.
