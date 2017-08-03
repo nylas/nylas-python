@@ -1,5 +1,4 @@
 import pytest
-import responses
 from nylas.client.restful_models import Message, Draft, Label
 
 

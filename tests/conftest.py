@@ -676,7 +676,7 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
     values = [(400, {}, ""),
               (200, {}, json.dumps(message_body))]
 
-    def callback(request):
+    def callback(_request):
         return values.pop()
 
     mocked_responses.add_callback(

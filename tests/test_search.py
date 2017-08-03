@@ -1,5 +1,4 @@
 import pytest
-import responses
 
 
 @pytest.mark.usefixtures("mock_thread_search_response")

@@ -1,5 +1,4 @@
 import pytest
-import responses
 from urlobject import URLObject
 from nylas.client.errors import InvalidRequestError
 from nylas.client.restful_models import Event

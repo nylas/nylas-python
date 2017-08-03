@@ -13,7 +13,7 @@ def test_no_filter(mocked_responses, api_client, api_url, message_body):
         (200, {}, json.dumps(message_body_list_50)),
     ]
 
-    def callback(request):
+    def callback(_request):
         return values.pop()
 
     mocked_responses.add_callback(
