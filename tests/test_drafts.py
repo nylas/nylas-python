@@ -5,7 +5,6 @@ from nylas.client.errors import InvalidRequestError
 # pylint: disable=len-as-condition
 
 
-@responses.activate
 @pytest.mark.usefixtures(
     "mock_draft_saved_response", "mock_draft_sent_response"
 )
@@ -52,7 +51,6 @@ def test_draft_attachment(api_client):
     assert len(draft.file_ids) == 0
 
 
-@responses.activate
 @pytest.mark.usefixtures(
     "mock_draft_saved_response", "mock_draft_deleted_response"
 )

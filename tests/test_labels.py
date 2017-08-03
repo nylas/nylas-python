@@ -3,7 +3,6 @@ import responses
 from nylas.client.restful_models import Label, Thread, Message
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_labels")
 def test_list_labels(api_client):
     labels = api_client.labels
@@ -12,7 +11,6 @@ def test_list_labels(api_client):
     assert all(isinstance(x, Label) for x in labels)
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_label")
 def test_get_label(api_client):
     label = api_client.labels.find('anuep8pe5ugmxrucchrzba2o8')

@@ -2,14 +2,13 @@ import pytest
 import responses
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_thread_search_response")
 def test_search_threads(api_client):
     threads = api_client.threads.search("Helena")
     assert len(threads) == 1
     assert "Helena" in threads[0].snippet
 
-@responses.activate
+
 @pytest.mark.usefixtures("mock_message_search_response")
 def test_search_messages(api_client):
     messages = api_client.messages.search("Pinot")
@@ -17,7 +16,7 @@ def test_search_messages(api_client):
     assert "Pinot" in messages[0].snippet
     assert "Pinot" in messages[1].snippet
 
-@responses.activate
+
 @pytest.mark.usefixtures("mock_message_search_response")
 def test_search_drafts(api_client):
     with pytest.raises(Exception):

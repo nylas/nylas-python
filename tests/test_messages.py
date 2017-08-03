@@ -1,12 +1,10 @@
 import json
 import six
 import pytest
-import responses
 from urlobject import URLObject
 from nylas.client.restful_models import Message
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_messages")
 def test_messages(api_client):
     message = api_client.messages.first()
@@ -17,7 +15,6 @@ def test_messages(api_client):
     assert not message.starred
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
 def test_message_stars(api_client):
     message = api_client.messages.first()
@@ -28,7 +25,6 @@ def test_message_stars(api_client):
     assert message.starred is False
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
 def test_message_read(api_client):
     message = api_client.messages.first()
@@ -41,7 +37,7 @@ def test_message_read(api_client):
     message.mark_as_seen()
     assert message.unread is False
 
-@responses.activate
+
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
 def test_message_labels(api_client):
     message = api_client.messages.first()
@@ -59,7 +55,6 @@ def test_message_labels(api_client):
     assert message.folder is None
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_account", "mock_message", "mock_messages")
 def test_message_raw(api_client, account_id):
     message = api_client.messages.first()
@@ -80,17 +75,15 @@ def test_message_raw(api_client, account_id):
     }
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_message")
-def test_message_delete_by_id(api_client):
+def test_message_delete_by_id(mocked_responses, api_client):
     api_client.messages.delete(1234, forceful=True)
-    assert len(responses.calls) == 1
-    request = responses.calls[0].request
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
     url = URLObject(request.url)
     assert url.query_dict["forceful"] == "True"
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_messages")
 def test_slice_messages(api_client):
     messages = api_client.messages[0:2]

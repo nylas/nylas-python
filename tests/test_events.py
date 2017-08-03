@@ -41,7 +41,6 @@ def test_event_notify(api_client):
     assert query['other_param'][0] == '1'
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_calendars", "mock_events")
 def test_calendar_events(api_client):
     calendar = api_client.calendars.first()

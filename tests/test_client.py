@@ -90,11 +90,10 @@ def test_client_authentication_url(api_client, api_url):
     assert urls_equal(expected3, actual3)
 
 
-@responses.activate
-def test_client_token_for_code(api_client, api_url):
+def test_client_token_for_code(mocked_responses, api_client, api_url):
     endpoint = re.compile(api_url + '/oauth/token')
     response_body = json.dumps({"access_token": "hooray"})
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         endpoint,
         content_type='application/json',
@@ -103,8 +102,8 @@ def test_client_token_for_code(api_client, api_url):
     )
 
     assert api_client.token_for_code("foo") == "hooray"
-    assert len(responses.calls) == 1
-    request = responses.calls[0].request
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
     body = parse_qs(request.body)
     assert body["grant_type"] == ["authorization_code"]
     assert body["code"] == ["foo"]
@@ -120,10 +119,9 @@ def test_client_opensource_api(api_client):
     assert api_client.is_opensource_api() == True
 
 
-@responses.activate
-def test_client_revoke_token(api_client, api_url):
+def test_client_revoke_token(mocked_responses, api_client, api_url):
     endpoint = re.compile(api_url + '/oauth/revoke')
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         endpoint,
         status=200,
@@ -135,11 +133,10 @@ def test_client_revoke_token(api_client, api_url):
     api_client.revoke_token()
     assert api_client.auth_token is None
     assert api_client.access_token is None
-    assert len(responses.calls) == 1
+    assert len(mocked_responses.calls) == 1
 
 
-@responses.activate
-def test_create_resources(api_client, api_url):
+def test_create_resources(mocked_responses, api_client, api_url):
     contacts_data = [
         {
             "id": 1,
@@ -151,7 +148,7 @@ def test_create_resources(api_client, api_url):
             "email": "second@example.com",
         }
     ]
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         api_url + "/contacts/",
         content_type='application/json',
@@ -166,17 +163,16 @@ def test_create_resources(api_client, api_url):
     contacts = api_client._create_resources(Contact, post_data)
     assert len(contacts) == 2
     assert all(isinstance(contact, Contact) for contact in contacts)
-    assert len(responses.calls) == 1
+    assert len(mocked_responses.calls) == 1
 
 
-@responses.activate
-def test_call_resource_method(api_client, api_url):
+def test_call_resource_method(mocked_responses, api_client, api_url):
     contact_data = {
         "id": 1,
         "name": "first",
         "email": "first@example.com",
     }
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         api_url + "/contacts/1/remove_duplicates",
         content_type='application/json',
@@ -188,4 +184,4 @@ def test_call_resource_method(api_client, api_url):
         Contact, 1, "remove_duplicates", {}
     )
     assert isinstance(contact, Contact)
-    assert len(responses.calls) == 1
+    assert len(mocked_responses.calls) == 1

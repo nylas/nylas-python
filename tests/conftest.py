@@ -53,13 +53,20 @@ def api_client(api_url):
 
 
 @pytest.fixture
-def mock_save_draft(api_url):
+def mocked_responses():
+    rmock = responses.RequestsMock(assert_all_requests_are_fired=False)
+    with rmock:
+        yield rmock
+
+
+@pytest.fixture
+def mock_save_draft(mocked_responses, api_url):
     save_endpoint = re.compile(api_url + '/drafts/')
     response_body = json.dumps({
         "id": "4dl0ni6vxomazo73r5oydo16k",
         "version": "4dw0ni6txomazo33r5ozdo16j"
     })
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         save_endpoint,
         content_type='application/json',
@@ -70,7 +77,7 @@ def mock_save_draft(api_url):
 
 
 @pytest.fixture
-def mock_account(api_url, account_id):
+def mock_account(mocked_responses, api_url, account_id):
     response_body = json.dumps(
         {
             "account_id": account_id,
@@ -83,7 +90,7 @@ def mock_account(api_url, account_id):
             "billing_state": "paid",
         }
     )
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         re.compile(api_url + '/account/?'),
         content_type='application/json',
@@ -93,7 +100,7 @@ def mock_account(api_url, account_id):
 
 
 @pytest.fixture
-def mock_accounts(api_url, account_id, app_id):
+def mock_accounts(mocked_responses, api_url, account_id, app_id):
     response_body = json.dumps([
         {
             "account_id": account_id,
@@ -107,7 +114,7 @@ def mock_accounts(api_url, account_id, app_id):
         }
     ])
     url_re = "{base}(/a/{app_id})?/accounts/?".format(base=api_url, app_id=app_id)
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         re.compile(url_re),
         content_type='application/json',
@@ -117,7 +124,7 @@ def mock_accounts(api_url, account_id, app_id):
 
 
 @pytest.fixture
-def mock_folder_account(api_url, account_id):
+def mock_folder_account(mocked_responses, api_url, account_id):
     response_body = json.dumps(
         {
             "email_address": "ben.bitdiddle1861@office365.com",
@@ -129,7 +136,7 @@ def mock_folder_account(api_url, account_id):
             "organization_unit": "folder"
         }
     )
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         api_url + '/account',
         content_type='application/json',
@@ -140,7 +147,7 @@ def mock_folder_account(api_url, account_id):
 
 
 @pytest.fixture
-def mock_labels(api_url, account_id):
+def mock_labels(mocked_responses, api_url, account_id):
     response_body = json.dumps([
         {
             "display_name": "Important",
@@ -179,7 +186,7 @@ def mock_labels(api_url, account_id):
         }
     ])
     endpoint = re.compile(api_url + '/labels.*')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
@@ -189,7 +196,7 @@ def mock_labels(api_url, account_id):
 
 
 @pytest.fixture
-def mock_label(api_url, account_id):
+def mock_label(mocked_responses, api_url, account_id):
     response_body = json.dumps(
         {
             "display_name": "Important",
@@ -199,8 +206,8 @@ def mock_label(api_url, account_id):
             "object": "label"
         }
     )
-    url = api_url + '/labels/anuep8pe5ugmxrucchrzba2o8'
-    responses.add(
+    url = api_url + '/labels/anuep8pe5ugmxrucchrzba2o8')
+    mocked_responses.add(
         responses.GET,
         url,
         content_type='application/json',
@@ -210,7 +217,7 @@ def mock_label(api_url, account_id):
 
 
 @pytest.fixture
-def mock_folder(api_url, account_id):
+def mock_folder(mocked_responses, api_url, account_id):
     folder = {
         "display_name": "My Folder",
         "id": "anuep8pe5ug3xrupchwzba2o8",
@@ -220,7 +227,7 @@ def mock_folder(api_url, account_id):
         }
     response_body = json.dumps(folder)
     url = api_url + '/folders/anuep8pe5ug3xrupchwzba2o8'
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         url,
         content_type='application/json',
@@ -234,7 +241,7 @@ def mock_folder(api_url, account_id):
             folder.update(payload)
         return (200, {}, json.dumps(folder))
 
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.PUT,
         url,
         content_type='application/json',
@@ -243,7 +250,7 @@ def mock_folder(api_url, account_id):
 
 
 @pytest.fixture
-def mock_messages(api_url, account_id):
+def mock_messages(mocked_responses, api_url, account_id):
     response_body = json.dumps([
         {
             "id": "1234",
@@ -290,16 +297,17 @@ def mock_messages(api_url, account_id):
         }
     ])
     endpoint = re.compile(api_url + '/messages')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
         status=200,
-        body=response_body)
+        body=response_body
+    )
 
 
 @pytest.fixture
-def mock_message(api_url, account_id):
+def mock_message(mocked_responses, api_url, account_id):
     base_msg = {
         "id": "1234",
         "subject": "Test Message",
@@ -326,20 +334,20 @@ def mock_message(api_url, account_id):
         return (200, {}, json.dumps(base_msg))
 
     endpoint = re.compile(api_url + '/messages/1234')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
         status=200,
         body=response_body
     )
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.PUT,
         endpoint,
         content_type='application/json',
         callback=request_callback
     )
-    responses.add(
+    mocked_responses.add(
         responses.DELETE,
         endpoint,
         content_type='application/json',
@@ -349,7 +357,7 @@ def mock_message(api_url, account_id):
 
 
 @pytest.fixture
-def mock_threads(api_url, account_id):
+def mock_threads(mocked_responses, api_url, account_id):
     response_body = json.dumps([
         {
             "id": "5678",
@@ -366,7 +374,7 @@ def mock_threads(api_url, account_id):
         }
     ])
     endpoint = re.compile(api_url + '/threads')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
@@ -376,7 +384,7 @@ def mock_threads(api_url, account_id):
 
 
 @pytest.fixture
-def mock_thread(api_url, account_id):
+def mock_thread(mocked_responses, api_url, account_id):
     base_thrd = {
         "id": "5678",
         "subject": "Test Thread",
@@ -401,14 +409,14 @@ def mock_thread(api_url, account_id):
         return (200, {}, json.dumps(base_thrd))
 
     endpoint = re.compile(api_url + '/threads/5678')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
         status=200,
         body=response_body
     )
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.PUT,
         endpoint,
         content_type='application/json',
@@ -417,7 +425,7 @@ def mock_thread(api_url, account_id):
 
 
 @pytest.fixture
-def mock_labelled_thread(api_url, account_id):
+def mock_labelled_thread(mocked_responses, api_url, account_id):
     base_thread = {
         "id": "111",
         "subject": "Labelled Thread",
@@ -472,14 +480,14 @@ def mock_labelled_thread(api_url, account_id):
         return (200, {}, json.dumps(copied))
 
     endpoint = re.compile(api_url + '/threads/111')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
         status=200,
         body=response_body
     )
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.PUT,
         endpoint,
         content_type='application/json',
@@ -488,7 +496,7 @@ def mock_labelled_thread(api_url, account_id):
 
 
 @pytest.fixture
-def mock_drafts(api_url):
+def mock_drafts(mocked_responses, api_url):
     response_body = json.dumps([{
         "bcc": [],
         "body": "Cheers mate!",
@@ -517,7 +525,7 @@ def mock_drafts(api_url):
         "version": 0
     }])
 
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         api_url + '/drafts',
         content_type='application/json',
@@ -527,7 +535,7 @@ def mock_drafts(api_url):
 
 
 @pytest.fixture
-def mock_draft_saved_response(api_url):
+def mock_draft_saved_response(mocked_responses, api_url):
     draft_json = {
         "bcc": [],
         "body": "Cheers mate!",
@@ -569,14 +577,14 @@ def mock_draft_saved_response(api_url):
         updated_draft_json.update(stripped_payload)
         return (200, {}, json.dumps(updated_draft_json))
 
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.POST,
         api_url + '/drafts/',
         content_type='application/json',
         callback=request_callback,
     )
 
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.PUT,
         api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
         content_type='application/json',
@@ -585,8 +593,8 @@ def mock_draft_saved_response(api_url):
 
 
 @pytest.fixture
-def mock_draft_deleted_response(api_url):
-    responses.add(
+def mock_draft_deleted_response(mocked_responses, api_url):
+    mocked_responses.add(
         responses.DELETE,
         api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
         content_type='application/json',
@@ -596,7 +604,7 @@ def mock_draft_deleted_response(api_url):
 
 
 @pytest.fixture
-def mock_draft_sent_response(api_url):
+def mock_draft_sent_response(mocked_responses, api_url):
     body = {
         "bcc": [],
         "body": "",
@@ -634,7 +642,7 @@ def mock_draft_sent_response(api_url):
         assert payload['version'] == 0
         return values.pop()
 
-    responses.add_callback(
+    mocked_responses.add_callback(
         responses.POST,
         api_url + '/send/',
         callback=callback,
@@ -693,7 +701,7 @@ def mock_event_create_notify_response(api_url, message_body):
 
 
 @pytest.fixture
-def mock_thread_search_response(api_url):
+def mock_thread_search_response(mocked_responses, api_url):
     snippet = (
         "Hey Helena, Looking forward to getting together for dinner on Friday. "
         "What can I bring? I have a couple bottles of wine or could put together"
@@ -735,7 +743,7 @@ def mock_thread_search_response(api_url):
         }
     ])
 
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         api_url + '/threads/search?q=Helena',
         body=response_body,
@@ -745,7 +753,7 @@ def mock_thread_search_response(api_url):
     )
 
 @pytest.fixture
-def mock_message_search_response(api_url):
+def mock_message_search_response(mocked_responses, api_url):
     snippet = (
         "Sounds good--that bottle of Pinot should go well with the meal. "
         "I'll also bring a surprise for dessert. :) "
@@ -822,7 +830,7 @@ def mock_message_search_response(api_url):
         }
     ])
 
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         api_url + '/messages/search?q=Pinot',
         body=response_body,
@@ -833,7 +841,7 @@ def mock_message_search_response(api_url):
 
 
 @pytest.fixture
-def mock_calendars(api_url):
+def mock_calendars(mocked_responses, api_url):
     response_body = json.dumps([
         {
             "id": "8765",
@@ -852,7 +860,7 @@ def mock_calendars(api_url):
         }
     ])
     endpoint = re.compile(api_url + '/calendars')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
@@ -861,7 +869,7 @@ def mock_calendars(api_url):
     )
 
 @pytest.fixture
-def mock_events(api_url):
+def mock_events(mocked_responses, api_url):
     response_body = json.dumps([
         {
             "title": "Pool party",
@@ -875,7 +883,7 @@ def mock_events(api_url):
         }
     ])
     endpoint = re.compile(api_url + '/events')
-    responses.add(
+    mocked_responses.add(
         responses.GET,
         endpoint,
         content_type='application/json',
@@ -885,7 +893,7 @@ def mock_events(api_url):
 
 
 @pytest.fixture
-def mock_account_management(api_url, account_id, app_id):
+def mock_account_management(mocked_responses, api_url, account_id, app_id):
     account = {
         "account_id": account_id,
         "email_address": "ben.bitdiddle1861@gmail.com",
@@ -906,14 +914,14 @@ def mock_account_management(api_url, account_id, app_id):
     downgrade_url = "{base}/a/{app_id}/accounts/{id}/downgrade".format(
         base=api_url, id=account_id, app_id=app_id,
     )
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         upgrade_url,
         content_type='application/json',
         status=200,
         body=paid_response,
     )
-    responses.add(
+    mocked_responses.add(
         responses.POST,
         downgrade_url,
         content_type='application/json',

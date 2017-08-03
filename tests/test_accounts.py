@@ -22,7 +22,6 @@ def test_account_json(api_client, monkeypatch):
     assert isinstance(result, dict)
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_accounts", "mock_account_management")
 def test_account_upgrade(api_client, app_id):
     api_client.app_id = app_id
@@ -41,9 +40,8 @@ def test_account_delete(api_client, monkeypatch):
         account.delete()
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_accounts", "mock_account")
-def test_account_access(api_client):
+def test_account_access(api_client, mocked_responses):
     account1 = api_client.account
     assert isinstance(account1, SingletonAccount)
     account2 = api_client.accounts[0]
