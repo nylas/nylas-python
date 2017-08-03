@@ -143,13 +143,13 @@ class APIClient(json.JSONEncoder):
             if 'Authorization' in self.session.headers:
                 del self.session.headers['Authorization']
 
-    def authentication_url(self, redirect_uri, login_hint=''):
+    def authentication_url(self, redirect_uri, login_hint='', state=''):
         args = {'redirect_uri': redirect_uri,
                 'client_id': self.app_id or 'None',  # 'None' for back-compat
                 'response_type': 'code',
                 'scope': 'email',
                 'login_hint': login_hint,
-                'state': ''}
+                'state': state}
 
         url = URLObject(self.authorize_url).add_query_params(args.items())
         return str(url)

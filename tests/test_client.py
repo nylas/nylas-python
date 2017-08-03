@@ -83,6 +83,12 @@ def test_client_authentication_url(api_client, api_url):
     expected2 = expected.set_query_param("login_hint", "hint")
     assert urls_equal(expected2, actual2)
 
+    actual3 = URLObject(
+        api_client.authentication_url("/redirect", state="confusion")
+    )
+    expected3 = expected.set_query_param("state", "confusion")
+    assert urls_equal(expected3, actual3)
+
 
 @responses.activate
 def test_client_token_for_code(api_client, api_url):
