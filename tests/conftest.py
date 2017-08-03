@@ -199,10 +199,10 @@ def mock_label(api_url, account_id):
             "object": "label"
         }
     )
-    endpoint = re.compile(api_url + '/labels/anuep8pe5ugmxrucchrzba2o8')
+    url = api_url + '/labels/anuep8pe5ugmxrucchrzba2o8'
     responses.add(
         responses.GET,
-        endpoint,
+        url,
         content_type='application/json',
         status=200,
         body=response_body,
@@ -219,10 +219,10 @@ def mock_folder(api_url, account_id):
         "object": "folder"
         }
     response_body = json.dumps(folder)
-    endpoint = re.compile(api_url + '/folders/anuep8pe5ug3xrupchwzba2o8')
+    url = api_url + '/folders/anuep8pe5ug3xrupchwzba2o8'
     responses.add(
         responses.GET,
-        endpoint,
+        url,
         content_type='application/json',
         status=200,
         body=response_body,
@@ -236,7 +236,7 @@ def mock_folder(api_url, account_id):
 
     responses.add_callback(
         responses.PUT,
-        endpoint,
+        url,
         content_type='application/json',
         callback=request_callback,
     )
