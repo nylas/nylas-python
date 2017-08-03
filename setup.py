@@ -24,7 +24,6 @@ TEST_DEPENDENCIES = [
     "pytest-cov",
     "pytest-pylint",
     "responses",
-    "httpretty",
 ]
 
 

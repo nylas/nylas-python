@@ -3,7 +3,6 @@ import json
 import copy
 import pytest
 import responses
-import httpretty
 from nylas import APIClient
 
 # pylint: disable=redefined-outer-name
@@ -651,8 +650,7 @@ def mock_draft_sent_response(mocked_responses, api_url):
 
 
 @pytest.fixture
-def mock_files(api_url):
-    httpretty.enable()
+def mock_files(mocked_responses, api_url):
     body = [{
         "content_type": "text/plain",
         "filename": "a.txt",
@@ -661,41 +659,46 @@ def mock_files(api_url):
         "object": "file",
         "size": 762878
     }]
-
-    values = [httpretty.Response(status=200, body=json.dumps(body))]
-    httpretty.register_uri(httpretty.POST, api_url + '/files/', responses=values)
-    httpretty.register_uri(httpretty.GET, api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
-                           body='test body')
-
-@pytest.fixture
-def mock_event_create_response(api_url, message_body):
-    httpretty.enable()
-    values = [
-        httpretty.Response(status=200, body=json.dumps(message_body)),
-        httpretty.Response(status=400, body=''),
-    ]
-
-    httpretty.register_uri(httpretty.POST, api_url + '/events/', responses=values)
-
-    body = json.dumps({'title': 'loaded from JSON', 'ignored': 'ignored'})
-    put_values = [
-        httpretty.Response(status=200, body=body)
-    ]
-    httpretty.register_uri(
-        httpretty.PUT,
-        api_url + '/events/cv4ei7syx10uvsxbs21ccsezf',
-        responses=put_values,
+    mocked_responses.add(
+        responses.POST,
+        api_url + '/files/',
+        body=json.dumps(body),
+    )
+    mocked_responses.add(
+        responses.GET,
+        api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
+        body='test body',
     )
 
 
 @pytest.fixture
-def mock_event_create_notify_response(api_url, message_body):
-    httpretty.enable()
-    httpretty.register_uri(
-        httpretty.POST,
+def mock_event_create_response(mocked_responses, api_url, message_body):
+    values = [(400, {}, ""),
+              (200, {}, json.dumps(message_body))]
+
+    def callback(request):
+        return values.pop()
+
+    mocked_responses.add_callback(
+        responses.POST,
+        api_url + '/events/',
+        callback=callback,
+    )
+
+    put_body = {'title': 'loaded from JSON', 'ignored': 'ignored'}
+    mocked_responses.add(
+        responses.PUT,
+        api_url + '/events/cv4ei7syx10uvsxbs21ccsezf',
+        body=json.dumps(put_body)
+    )
+
+
+@pytest.fixture
+def mock_event_create_notify_response(mocked_responses, api_url, message_body):
+    mocked_responses.add(
+        responses.POST,
         api_url + '/events/?notify_participants=true&other_param=1',
         body=json.dumps(message_body),
-        status=200
     )
 
 
