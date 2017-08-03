@@ -574,6 +574,7 @@ def mock_draft_saved_response(mocked_responses, api_url):
         }
         updated_draft_json = copy.copy(draft_json)
         updated_draft_json.update(stripped_payload)
+        updated_draft_json["version"] += 1
         return (200, {}, json.dumps(updated_draft_json))
 
     mocked_responses.add_callback(
@@ -638,7 +639,6 @@ def mock_draft_sent_response(mocked_responses, api_url):
     def callback(request):
         payload = json.loads(request.body)
         assert payload['draft_id'] == '2h111aefv8pzwzfykrn7hercj'
-        assert payload['version'] == 0
         return values.pop()
 
     mocked_responses.add_callback(

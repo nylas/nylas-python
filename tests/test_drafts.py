@@ -62,3 +62,15 @@ def test_delete_draft(api_client):
     draft.save()
     # ... and delete it for real.
     draft.delete()
+
+
+@pytest.mark.usefixtures("mock_draft_saved_response")
+def test_draft_version(api_client):
+    draft = api_client.drafts.create()
+    assert 'version' not in draft
+    draft.save()
+    assert draft['version'] == 1
+    draft.save()
+    assert draft['version'] == 2
+    draft.save()
+    assert draft['version'] == 3
