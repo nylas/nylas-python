@@ -90,7 +90,7 @@ class APIClient(json.JSONEncoder):
                  app_secret=environ.get('NYLAS_APP_SECRET'),
                  access_token=environ.get('NYLAS_ACCESS_TOKEN'),
                  api_server=API_SERVER):
-        if "://" not in api_server:
+        if not api_server.startswith("https://"):
             raise Exception("When overriding the Nylas API server address, you"
                             " must include https://")
         self.api_server = api_server

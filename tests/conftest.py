@@ -33,7 +33,7 @@ def message_body():
 
 @pytest.fixture
 def api_url():
-    return 'http://localhost:2222'
+    return 'https://localhost:2222'
 
 
 @pytest.fixture
