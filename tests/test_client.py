@@ -184,4 +184,28 @@ def test_call_resource_method(mocked_responses, api_client, api_url):
         Contact, 1, "remove_duplicates", {}
     )
     assert isinstance(contact, Contact)
+<<<<<<< HEAD
     assert len(mocked_responses.calls) == 1
+=======
+    assert len(responses.calls) == 1
+
+
+@responses.activate
+def test_201_response(api_client, api_url):
+    contact_data = {
+        "id": 1,
+        "name": "first",
+        "email": "first@example.com",
+    }
+    responses.add(
+        responses.POST,
+        api_url + "/contacts/",
+        content_type='application/json',
+        status=201,  # This HTTP status still indicates success,
+                     # even though it's not 200.
+        body=json.dumps(contact_data),
+    )
+    contact = api_client.contacts.create()
+    contact.save()
+    assert len(responses.calls) == 1
+>>>>>>> Refactor how client validates responses

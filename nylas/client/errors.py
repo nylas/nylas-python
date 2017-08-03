@@ -68,3 +68,18 @@ class ServerTimeoutError(APIClientError):
 
 class FileUploadError(APIClientError):
     pass
+
+
+STATUS_MAP = {
+    400: InvalidRequestError,
+    401: NotAuthorizedError,
+    402: MessageRejectedError,
+    403: NotAuthorizedError,
+    404: NotFoundError,
+    405: MethodNotSupportedError,
+    409: ConflictError,
+    429: SendingQuotaExceededError,
+    500: ServerError,
+    503: ServiceUnavailableError,
+    504: ServerTimeoutError,
+}
