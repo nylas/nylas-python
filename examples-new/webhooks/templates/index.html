@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<p>This example doesn't have anything to see in the browser. Set up your
+   webhook on the
+   <a href="https://developer.nylas.com">Nylas Developer console</a>,
+   and then watch your terminal to see the webhook notifications come in.
+</p>
+
+<p>Your webhook URL is:
+  <code>{{ ngrok_url }}{{ url_for("webhook") }}</code>
+</p>
+{% endblock %}
