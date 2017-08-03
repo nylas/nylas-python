@@ -14,6 +14,10 @@ from nylas.client.restful_models import (
     Label, Draft
 )
 from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
+try:
+    from json import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
@@ -40,7 +44,7 @@ def _validate(response):
     try:
         data = response.json()
         json_content = True
-    except json.JSONDecodeError:
+    except JSONDecodeError:
         data = response.content
         json_content = False
 
