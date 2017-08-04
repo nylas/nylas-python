@@ -21,8 +21,8 @@ def urls_equal(url1, url2):
 
 def test_custom_client():
     # Can specify API server
-    custom = APIClient(api_server="http://example.com")
-    assert custom.api_server == "http://example.com"
+    custom = APIClient(api_server="https://example.com")
+    assert custom.api_server == "https://example.com"
     # Must be a valid URL
     with pytest.raises(Exception) as exc:
         APIClient(api_server="invalid")
