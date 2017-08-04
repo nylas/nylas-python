@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Imports from the Python standard library
 from __future__ import print_function
 import os
@@ -12,6 +14,7 @@ try:
     import requests
     from flask import Flask, request, render_template
     from werkzeug.contrib.fixers import ProxyFix
+    from celery import Celery
 except ImportError:
     message = textwrap.dedent("""
         You need to install the dependencies for this project.
@@ -49,6 +52,12 @@ if cfg_needs_replacing:
 # Teach Flask how to find out that it's behind an ngrok proxy
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
+# This example also uses Celery, a task queue framework written in Python.
+# For more information, check out the documentation: http://docs.celeryproject.org
+# Create a Celery instance, and load its configuration from Flask.
+celery = Celery(app.import_name)
+celery.config_from_object(app.config, namespace='CELERY')
+
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
@@ -81,24 +90,17 @@ def webhook():
     # Let's find out what it says...
     data = request.get_json()
     for delta in data["deltas"]:
-        # This is the part of the code where you would process the information
-        # from the webhook notification. Each delta is one change that happened,
-        # and might require fetching message IDs, updating your database,
-        # and so on.
-        #
-        # However, because this is just an example project, we'll just print
-        # out information about the notification, so you can see what
-        # information is being sent.
-        kwargs = {
-            "type": delta["type"],
-            "date": datetime.datetime.fromtimestamp(delta["date"]),
-            "object_id": delta["object_data"]["id"],
-        }
-        print(" * {type} at {date} with ID {object_id}".format(**kwargs))
+        # Processing the data might take awhile, or it might fail.
+        # As a result, instead of processing it right now, we'll push a task
+        # onto the Celery task queue, to handle it later. That way,
+        # we've got the data saved, and we can return a response to the
+        # Nylas webhook notification right now.
+        process_delta.delay(delta)
 
-    # Finally, we have to return a 200 Success response to Nylas, to let them
-    # know that we processed the webhook successfully.
-    return "Success", 200
+    # Now that all the `process_delta` tasks have been queued, we can
+    # return an HTTP response to Nylas, to let them know that we processed
+    # the webhook notification successfully.
+    return "Deltas have been queued", 200
 
 
 def verify_signature(message, key, signature):
@@ -111,6 +113,26 @@ def verify_signature(message, key, signature):
     """
     digest = hmac.new(key, msg=message, digestmod=hashlib.sha256).hexdigest()
     return digest == signature
+
+
+@celery.task
+def process_delta(delta):
+    """
+    This is the part of the code where you would process the information
+    from the webhook notification. Each delta is one change that happened,
+    and might require fetching message IDs, updating your database,
+    and so on.
+
+    However, because this is just an example project, we'll just print
+    out information about the notification, so you can see what
+    information is being sent.
+    """
+    kwargs = {
+        "type": delta["type"],
+        "date": datetime.datetime.fromtimestamp(delta["date"]),
+        "object_id": delta["object_data"]["id"],
+    }
+    print(" * {type} at {date} with ID {object_id}".format(**kwargs))
 
 
 @app.route("/")
@@ -141,8 +163,14 @@ def ngrok_url():
     return secure_urls[0]
 
 
-# When this file is executed, run the Flask web server.
+# When this file is executed, this block of code will run.
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--worker":
+        # Run the celery worker, *instead* of running the Flask web server.
+        celery.worker_main(sys.argv[1:])
+        sys.exit()
+
+    # If we get here, we're going to try to run the Flask web server.
     url = ngrok_url()
     if not url:
         print(
@@ -154,4 +182,14 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(" * Webhook URL: {url}/webhook".format(url=url))
+
+    if app.config.get("CELERY_TASK_ALWAYS_EAGER"):
+        print(" * Celery tasks will be run synchronously. No worker needed.")
+    elif len(celery.control.inspect().stats().keys()) < 2:
+        print(
+            " * You need to run at least one Celery worker, otherwise "
+            "the webhook notifications will never be processed.\n"
+            "   To do so, run `{arg0} --worker` in a different "
+            "terminal window.".format(arg0=sys.argv[0])
+        )
     app.run()
