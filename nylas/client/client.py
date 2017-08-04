@@ -377,7 +377,7 @@ class APIClient(json.JSONEncoder):
         for example /a/.../accounts/id/upgrade"""
 
         if cls.api_root != 'a':
-            url_path =  "/{name}/{id}/{method}".format(
+            url_path = "/{name}/{id}/{method}".format(
                 name=cls.collection_name, id=id, method=method_name
             )
         else:

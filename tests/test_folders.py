@@ -1,9 +1,7 @@
 import pytest
-import responses
 from nylas.client.restful_models import Folder, Thread, Message
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_folder")
 def test_get_change_folder(api_client):
     folder = api_client.folders.find('anuep8pe5ug3xrupchwzba2o8')
@@ -15,7 +13,6 @@ def test_get_change_folder(api_client):
     assert folder.display_name == 'My New Folder'
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_folder", "mock_threads")
 def test_folder_threads(api_client):
     folder = api_client.folders.find('anuep8pe5ug3xrupchwzba2o8')
@@ -24,7 +21,6 @@ def test_folder_threads(api_client):
                for thread in folder.threads)
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_folder", "mock_messages")
 def test_folder_messages(api_client):
     folder = api_client.folders.find('anuep8pe5ug3xrupchwzba2o8')

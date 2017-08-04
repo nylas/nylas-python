@@ -1,6 +1,5 @@
 import pytest
-import httpretty
-import responses
+from urlobject import URLObject
 from nylas.client.errors import InvalidRequestError
 from nylas.client.restful_models import Event
 
@@ -31,17 +30,17 @@ def test_event_crud(api_client):
 
 
 @pytest.mark.usefixtures("mock_event_create_notify_response")
-def test_event_notify(api_client):
+def test_event_notify(mocked_responses, api_client):
     event1 = blank_event(api_client)
     event1.save(notify_participants='true', other_param='1')
     assert event1.id == 'cv4ei7syx10uvsxbs21ccsezf'
 
-    query = httpretty.last_request().querystring
-    assert query['notify_participants'][0] == 'true'
-    assert query['other_param'][0] == '1'
+    url = mocked_responses.calls[-1].request.url
+    query = URLObject(url).query_dict
+    assert query['notify_participants'] == 'true'
+    assert query['other_param'] == '1'
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_calendars", "mock_events")
 def test_calendar_events(api_client):
     calendar = api_client.calendars.first()

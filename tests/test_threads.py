@@ -1,9 +1,7 @@
 import pytest
-import responses
 from nylas.client.restful_models import Message, Draft, Label
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_threads")
 def test_thread_folder(api_client):
     thread = api_client.threads.first()
@@ -14,7 +12,6 @@ def test_thread_folder(api_client):
     assert thread.starred
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_folder_account", "mock_threads", "mock_thread")
 def test_thread_change(api_client):
     thread = api_client.threads.first()
@@ -30,7 +27,6 @@ def test_thread_change(api_client):
     assert thread.folders[0].id == 'qwer'
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_threads", "mock_messages")
 def test_thread_messages(api_client):
     thread = api_client.threads.first()
@@ -39,7 +35,6 @@ def test_thread_messages(api_client):
                for message in thread.messages)
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_threads", "mock_drafts")
 def test_thread_drafts(api_client):
     thread = api_client.threads.first()
@@ -48,7 +43,6 @@ def test_thread_drafts(api_client):
                for draft in thread.drafts)
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_label(api_client):
     thread = api_client.threads.find(111)
@@ -65,7 +59,6 @@ def test_thread_label(api_client):
     assert thread.labels == returned
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_labels(api_client):
     thread = api_client.threads.find(111)
@@ -83,7 +76,6 @@ def test_thread_labels(api_client):
     assert thread.labels == returned
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_threads", "mock_thread")
 def test_thread_read(api_client):
     thread = api_client.threads.first()
@@ -99,7 +91,6 @@ def test_thread_read(api_client):
     assert thread.unread is False
 
 
-@responses.activate
 @pytest.mark.usefixtures("mock_threads")
 def test_thread_reply(api_client):
     thread = api_client.threads.first()
