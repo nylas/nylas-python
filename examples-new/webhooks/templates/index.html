@@ -9,4 +9,11 @@
 <p>Your webhook URL is:
   <code>{{ ngrok_url }}{{ url_for("webhook") }}</code>
 </p>
+
+<p>Once you've received at least one webhook notification from Nylas,
+   you might want to check out the
+   <a href="http://localhost:4040/">ngrok web interface</a>.
+   That will allow you to see more information about the webhook notification,
+   and replay it for testing purposes if you want.
+</p>
 {% endblock %}
