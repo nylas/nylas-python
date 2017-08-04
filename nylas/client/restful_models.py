@@ -179,11 +179,11 @@ class Folder(NylasAPIObject):
 
     @property
     def threads(self):
-        return self.child_collection({'in': self.id})
+        return self.child_collection(Thread, folder_id=self.id)
 
     @property
     def messages(self):
-        return self.child_collection({'in': self.id})
+        return self.child_collection(Message, folder_id=self.id)
 
 
 class Label(NylasAPIObject):
@@ -195,11 +195,11 @@ class Label(NylasAPIObject):
 
     @property
     def threads(self):
-        return self.child_collection({'in': self.id})
+        return self.child_collection(Thread, label_id=self.id)
 
     @property
     def messages(self):
-        return self.child_collection({'in': self.id})
+        return self.child_collection(Message, label_id=self.id)
 
 
 class Thread(NylasAPIObject):
