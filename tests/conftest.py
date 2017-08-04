@@ -205,7 +205,7 @@ def mock_label(mocked_responses, api_url, account_id):
             "object": "label"
         }
     )
-    url = api_url + '/labels/anuep8pe5ugmxrucchrzba2o8')
+    url = api_url + '/labels/anuep8pe5ugmxrucchrzba2o8'
     mocked_responses.add(
         responses.GET,
         url,
