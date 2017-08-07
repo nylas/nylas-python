@@ -136,6 +136,16 @@ def test_client_revoke_token(mocked_responses, api_client, api_url):
     assert len(mocked_responses.calls) == 1
 
 
+def test_delete_account(mocker, api_client):
+    mocker.patch.object(api_client, "revoke_token")
+    type(api_client).account = mocker.PropertyMock()
+
+    api_client.delete_account()
+
+    api_client.account.downgrade.assert_called_once_with()
+    api_client.revoke_token.assert_called_once_with()
+
+
 def test_create_resources(mocked_responses, api_client, api_url):
     contacts_data = [
         {

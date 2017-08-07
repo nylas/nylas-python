@@ -463,9 +463,6 @@ class Account(NylasAPIObject):
             self, self.account_id, 'downgrade', None
         )
 
-    def delete(self):
-        raise NotImplementedError
-
 
 class APIAccount(NylasAPIObject):
     attrs = ['account_id', 'email_address', 'id', 'name', 'object',

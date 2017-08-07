@@ -179,6 +179,10 @@ class APIClient(json.JSONEncoder):
         self.auth_token = None
         self.access_token = None
 
+    def delete_account(self):
+        self.account.downgrade()
+        self.revoke_token()
+
     @property
     def account(self):
         return self._get_resource(SingletonAccount, '')
