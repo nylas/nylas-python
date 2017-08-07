@@ -28,7 +28,7 @@ def _validate(response):
         print("{method} {url} ({body}) => {status}: {text}".format(
             method=response.request.method,
             url=response.request.url,
-            data=response.request.body,
+            body=response.request.body,
             status=response.status_code,
             text=response.text,
         ))
