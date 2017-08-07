@@ -14,6 +14,7 @@ from nylas.client.restful_models import (
     Label, Draft
 )
 from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
+from nylas.utils import timestamped_data
 try:
     from json import JSONDecodeError
 except ImportError:
@@ -256,7 +257,8 @@ class APIClient(json.JSONEncoder):
                 postfix
             )
 
-        url = str(URLObject(url).add_query_params(filters.items()))
+        ts_filters = timestamped_data(filters, cls.datetime_attrs)
+        url = str(URLObject(url).add_query_params(ts_filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
         return [
@@ -280,7 +282,8 @@ class APIClient(json.JSONEncoder):
             url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
                                            cls.collection_name, id, postfix)
 
-        url = str(URLObject(url).add_query_params(filters.items()))
+        ts_filters = timestamped_data(filters, cls.datetime_attrs)
+        url = str(URLObject(url).add_query_params(ts_filters.items()))
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
         return _validate(response)
@@ -311,10 +314,10 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            data = json.dumps(data)
+            ts_data = timestamped_data(data, cls.datetime_attrs)
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = session.post(url, data=data, headers=headers)
+            response = session.post(url, json=ts_data, headers=headers)
 
         result = _validate(response).json()
         if cls.collection_name == 'send':
@@ -332,10 +335,13 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            data = json.dumps(data)
+            ts_data = [
+                timestamped_data(datum, cls.datetime_attrs)
+                for datum in data
+            ]
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = session.post(url, data=data, headers=headers)
+            response = session.post(url, json=ts_data, headers=headers)
 
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
@@ -363,6 +369,7 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
+        ts_data = timestamped_data(data, cls.datetime_attrs)
         response = session.put(url, json=data)
 
         result = _validate(response).json()
@@ -390,9 +397,10 @@ class APIClient(json.JSONEncoder):
             URLObject(self.api_server)
             .with_path(url_path)
         )
+        ts_data = timestamped_data(data, cls.datetime_attrs)
 
         session = self._get_http_session(cls.api_root)
-        response = session.post(url, json=data)
+        response = session.post(url, json=ts_data)
 
         result = _validate(response).json()
         return cls.create(self, **result)

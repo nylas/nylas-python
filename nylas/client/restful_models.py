@@ -10,6 +10,7 @@ from six import StringIO
 
 class NylasAPIObject(dict):
     attrs = []
+    datetime_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
@@ -47,7 +48,7 @@ class NylasAPIObject(dict):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
-        for dt_attr, ts_attr in getattr(cls, "datetime_attrs", {}).items():
+        for dt_attr, ts_attr in cls.datetime_attrs.items():
             if obj.get(ts_attr):
                 obj[dt_attr] = datetime.utcfromtimestamp(obj[ts_attr])
         if 'id' not in kwargs:
@@ -60,9 +61,9 @@ class NylasAPIObject(dict):
         for attr in self.cls.attrs:
             if hasattr(self, attr):
                 dct[attr] = getattr(self, attr)
-        for dt_attr, ts_attr in getattr(self.cls, "datetime_attrs", {}).items():
+        for dt_attr, ts_attr in self.cls.datetime_attrs.items():
             if self.get(dt_attr):
-                dct[ts_attr] = int(timestamp_from_dt(self[dt_attr]))
+                dct[ts_attr] = timestamp_from_dt(self[dt_attr])
         return dct
 
     def child_collection(self, cls, **filters):
@@ -93,7 +94,10 @@ class Message(NylasAPIObject):
              "thread_id", "to", "unread", "starred", "_folder", "_labels",
              "headers"]
     datetime_attrs = {
-        "received_at": "date"
+        "received_at": "date",
+        # The following are used for filtering:
+        "received_before": "received_before",
+        "received_after": "received_after",
     }
     collection_name = 'messages'
 
@@ -226,6 +230,11 @@ class Thread(NylasAPIObject):
         "last_message_at": "last_message_timestamp",
         "last_message_received_at": "last_message_received_timestamp",
         "last_message_sent_at": "last_message_sent_timestamp",
+        # The following are used for filtering:
+        "last_message_before": "last_message_before",
+        "last_message_after": "last_message_after",
+        "started_before": "started_before",
+        "started_after": "started_after",
     }
     collection_name = 'threads'
 

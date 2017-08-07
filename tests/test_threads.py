@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from urlobject import URLObject
 from nylas.client.restful_models import Message, Draft, Label
 from nylas.utils import timestamp_from_dt
 
@@ -132,3 +133,12 @@ def test_thread_reply(api_client):
     assert isinstance(draft, Draft)
     assert draft.thread_id == thread.id
     assert draft.subject == thread.subject
+
+
+@pytest.mark.usefixtures("mock_threads")
+def test_filter_threads(mocked_responses, api_client):
+    api_client.threads.where(started_before=datetime(2010, 6, 1)).all()
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["started_before"] == "1275350400"

@@ -100,3 +100,12 @@ def test_slice_messages(api_client):
     messages = api_client.messages[0:2]
     assert len(messages) == 3
     assert all(isinstance(message, Message) for message in messages)
+
+
+@pytest.mark.usefixtures("mock_messages")
+def test_filter_messages(mocked_responses, api_client):
+    api_client.messages.where(received_before=datetime(2010, 6, 1)).all()
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["received_before"] == "1275350400"
