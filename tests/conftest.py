@@ -563,7 +563,7 @@ def mock_draft_saved_response(mocked_responses, api_url):
         "version": 0,
     }
 
-    def create_callback(request):
+    def create_callback(_request):
         return (200, {}, json.dumps(draft_json))
 
     def update_callback(request):
