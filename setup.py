@@ -23,6 +23,7 @@ TEST_DEPENDENCIES = [
     "pytest",
     "pytest-cov",
     "pytest-pylint",
+    "pytest-mock",
     "responses",
 ]
 

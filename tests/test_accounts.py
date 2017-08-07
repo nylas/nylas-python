@@ -32,13 +32,6 @@ def test_account_upgrade(api_client, app_id):
     assert account.billing_state == "paid"
 
 
-def test_account_delete(api_client, monkeypatch):
-    monkeypatch.setattr(api_client, "is_opensource_api", lambda: False)
-    account = api_client.accounts.create()
-    with pytest.raises(NotImplementedError):
-        account.delete()
-
-
 @pytest.mark.usefixtures("mock_accounts", "mock_account")
 def test_account_access(api_client):
     account1 = api_client.account
