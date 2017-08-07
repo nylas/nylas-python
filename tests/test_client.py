@@ -185,3 +185,47 @@ def test_call_resource_method(mocked_responses, api_client, api_url):
     )
     assert isinstance(contact, Contact)
     assert len(mocked_responses.calls) == 1
+
+
+def test_201_response(mocked_responses, api_client, api_url):
+    contact_data = {
+        "id": 1,
+        "name": "first",
+        "email": "first@example.com",
+    }
+    mocked_responses.add(
+        responses.POST,
+        api_url + "/contacts/",
+        content_type='application/json',
+        status=201,  # This HTTP status still indicates success,
+                     # even though it's not 200.
+        body=json.dumps(contact_data),
+    )
+    contact = api_client.contacts.create()
+    contact.save()
+    assert len(mocked_responses.calls) == 1
+
+
+def test_301_response(mocked_responses, api_client, api_url):
+    contact_data = {
+        "id": 1,
+        "name": "first",
+        "email": "first@example.com",
+    }
+    mocked_responses.add(
+        responses.GET,
+        api_url + "/contacts/first",
+        status=301,
+        headers={"Location": api_url + "/contacts/1"}
+    )
+    mocked_responses.add(
+        responses.GET,
+        api_url + "/contacts/1",
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contact_data),
+    )
+    contact = api_client.contacts.find("first")
+    assert contact["id"] == 1
+    assert contact["name"] == "first"
+    assert len(mocked_responses.calls) == 2

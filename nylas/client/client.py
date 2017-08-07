@@ -13,64 +13,61 @@ from nylas.client.restful_models import (
     Account, APIAccount, SingletonAccount, Folder,
     Label, Draft
 )
-from nylas.client.errors import (
-    APIClientError, ConnectionError, NotAuthorizedError,
-    InvalidRequestError, NotFoundError, MethodNotSupportedError,
-    ServerError, ServiceUnavailableError, ConflictError,
-    SendingQuotaExceededError, ServerTimeoutError, MessageRejectedError
-)
+from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
+try:
+    from json import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
 
 
 def _validate(response):
-    status_code_to_exc = {400: InvalidRequestError,
-                          401: NotAuthorizedError,
-                          402: MessageRejectedError,
-                          403: NotAuthorizedError,
-                          404: NotFoundError,
-                          405: MethodNotSupportedError,
-                          409: ConflictError,
-                          429: SendingQuotaExceededError,
-                          500: ServerError,
-                          503: ServiceUnavailableError,
-                          504: ServerTimeoutError}
-    request = response.request
-    url = request.url
-    status_code = response.status_code
-    data = request.body
-
     if DEBUG:  # pragma: no cover
-        print("{} {} ({}) => {}: {}".format(request.method, url, data,
-                                            status_code, response.text))
+        print("{method} {url} ({body}) => {status}: {text}".format(
+            method=response.request.method,
+            url=response.request.url,
+            data=response.request.body,
+            status=response.status_code,
+            text=response.text,
+        ))
+
+    if response.ok:
+        return response
+
+    # The rest of this function is logic for raising the correct exception
+    # from the `nylas.client.errors` module. In the future, it may be worth changing
+    # this function to just call `response.raise_for_status()`.
+    # http://docs.python-requests.org/en/master/api/#requests.Response.raise_for_status
 
     try:
-        data = json.loads(data) if data else None
-    except (ValueError, TypeError):
-        pass
+        data = response.json()
+        json_content = True
+    except JSONDecodeError:
+        data = response.content
+        json_content = False
 
-    if status_code == 200:
-        return response
-    elif status_code in status_code_to_exc:
-        cls = status_code_to_exc[status_code]
-        try:
-            response = json.loads(response.text)
-            kwargs = dict(url=url, status_code=status_code,
-                          data=data)
+    kwargs = {
+        "url": response.request.url,
+        "status_code": response.status_code,
+        "data": data,
+    }
 
-            for key in ['message', 'server_error']:
-                if key in response:
-                    kwargs[key] = response[key]
-
+    if response.status_code in STATUS_MAP:
+        cls = STATUS_MAP[response.status_code]
+        if json_content:
+            if "message" in data:
+                kwargs["message"] = data["message"]
+            if "server_error" in data:
+                kwargs["server_error"] = data["server_error"]
             raise cls(**kwargs)
-
-        except (ValueError, TypeError):
-            raise cls(url=url, status_code=status_code,
-                      data=data, message="Malformed")
+        else:
+            kwargs["message"] = "Malformed"
+            raise cls(**kwargs)
     else:
-        raise APIClientError(url=url, status_code=status_code,
-                             data=data, message="Unknown status code.")
+        kwargs["message"] = "Unknown status code."
+        raise APIClientError(**kwargs)
 
 
 def nylas_excepted(func):
