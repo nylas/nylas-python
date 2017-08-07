@@ -7,15 +7,9 @@ Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
 This library is available on pypi. You can install it by running `pip install nylas`.
 
-## Requirements
-
-- requests (>= 2.4.2)
-
 ## Examples
 
-There's an example Flask app in the `examples` directory. You can run the sample app to see how an authentication flow might be implemented.
-
-*Note: you will need to replace the APP_ID and APP_SECRET with your Nylas App ID and secret to use the sample app.*
+There are several example Flask apps in the `examples` directory. You can run them to see how different authentication flows might be implemented.
 
 ## Usage
 
@@ -23,7 +17,8 @@ There's an example Flask app in the `examples` directory. You can run the sample
 
 Before you can interact with the Nylas REST API, you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
 
-Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. That said, in the example project and code snippets below, the values are hardcoded for convenience.
+Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. The example projects use configuration
+files instead, to make it easier to get started.
 
 
 ### Authentication
@@ -68,8 +63,11 @@ def login_callback():
     session['access_token'] = client.token_for_code(code)
 ```
 
-You can take a look at [examples/server.py](examples/server.py) to see a server
-implementing the auth flow.
+You can also use an OAuth library to simplify the authentication flow,
+such as [Python Social Auth](https://python-social-auth.readthedocs.io)
+or [Flask-Dance](https://flask-dance.readthedocs.io). This SDK also includes
+[an example project that shows you one way you can
+implement OAuth](examples/hosted-oauth).
 
 **Revoke a token**
 
