@@ -1,8 +1,13 @@
 from __future__ import print_function
 import sys
-import json
 from os import environ
 from base64 import b64encode
+import json
+try:
+    from json import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
+
 import requests
 from urlobject import URLObject
 from six.moves.urllib.parse import urlencode
@@ -15,10 +20,6 @@ from nylas.client.restful_models import (
 )
 from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
 from nylas.utils import timestamped_data
-try:
-    from json import JSONDecodeError
-except ImportError:
-    JSONDecodeError = ValueError
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
@@ -370,7 +371,7 @@ class APIClient(json.JSONEncoder):
         session = self._get_http_session(cls.api_root)
 
         ts_data = timestamped_data(data, cls.datetime_attrs)
-        response = session.put(url, json=data)
+        response = session.put(url, json=ts_data)
 
         result = _validate(response).json()
         return cls.create(self, **result)

@@ -2,14 +2,14 @@ from __future__ import division
 from datetime import datetime
 
 
-def timestamp_from_dt(dt, epoch=datetime(1970,1,1)):
+def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
     """
     Convert a datetime to a timestamp.
     https://stackoverflow.com/a/8778548/141395
     """
-    td = dt - epoch
-    # return td.total_seconds()
-    return td.seconds + td.days * 86400
+    delta = dt - epoch
+    # return delta.total_seconds()
+    return delta.seconds + delta.days * 86400
 
 
 def timestamped_data(data, datetime_attrs):
