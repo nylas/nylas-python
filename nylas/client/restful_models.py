@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError
+from nylas.utils import timestamp_from_dt
 from six import StringIO
 
 # pylint: disable=attribute-defined-outside-init
@@ -44,6 +47,9 @@ class NylasAPIObject(dict):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
+        for dt_attr, ts_attr in getattr(cls, "datetime_attrs", {}).items():
+            if obj.get(ts_attr):
+                obj[dt_attr] = datetime.utcfromtimestamp(obj[ts_attr])
         if 'id' not in kwargs:
             obj['id'] = None
 
@@ -54,6 +60,9 @@ class NylasAPIObject(dict):
         for attr in self.cls.attrs:
             if hasattr(self, attr):
                 dct[attr] = getattr(self, attr)
+        for dt_attr, ts_attr in getattr(self.cls, "datetime_attrs", {}).items():
+            if self.get(dt_attr):
+                dct[ts_attr] = int(timestamp_from_dt(self[dt_attr]))
         return dct
 
     def child_collection(self, cls, **filters):
@@ -83,6 +92,9 @@ class Message(NylasAPIObject):
              "account_id", "object", "snippet", "starred", "subject",
              "thread_id", "to", "unread", "starred", "_folder", "_labels",
              "headers"]
+    datetime_attrs = {
+        "received_at": "date"
+    }
     collection_name = 'messages'
 
     def __init__(self, api):
@@ -206,8 +218,15 @@ class Thread(NylasAPIObject):
     attrs = ["draft_ids", "id", "message_ids", "account_id", "object",
              "participants", "snippet", "subject", "subject_date",
              "last_message_timestamp", "first_message_timestamp",
+             "last_message_received_timestamp", "last_message_sent_timestamp",
              "unread", "starred", "version", "_folders", "_labels",
              "received_recent_date"]
+    datetime_attrs = {
+        "first_message_at": "first_message_timestamp",
+        "last_message_at": "last_message_timestamp",
+        "last_message_received_at": "last_message_received_timestamp",
+        "last_message_sent_at": "last_message_sent_timestamp",
+    }
     collection_name = 'threads'
 
     def __init__(self, api):
@@ -313,6 +332,9 @@ class Draft(Message):
              "account_id", "object", "subject", "thread_id", "to",
              "unread", "version", "file_ids", "reply_to_message_id",
              "reply_to", "starred", "snippet", "tracking"]
+    datetime_attrs = {
+        "last_modified_at": "date",
+    }
     collection_name = 'drafts'
 
     def __init__(self, api, thread_id=None):  # pylint: disable=unused-argument
@@ -407,6 +429,9 @@ class Event(NylasAPIObject):
              "read_only", "when", "busy", "participants", "calendar_id",
              "recurrence", "status", "master_event_id", "owner",
              "original_start_time", "object", "message_id"]
+    datetime_attrs = {
+        "original_start_at": "original_start_time",
+    }
     collection_name = 'events'
 
     def __init__(self, api):

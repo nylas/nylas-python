@@ -1,8 +1,11 @@
+from datetime import datetime
 import json
+
 import six
 import pytest
 from urlobject import URLObject
 from nylas.client.restful_models import Message
+from nylas.utils import timestamp_from_dt
 
 
 @pytest.mark.usefixtures("mock_messages")
@@ -13,6 +16,14 @@ def test_messages(api_client):
     assert message.folder is None
     assert message.unread
     assert not message.starred
+
+
+@pytest.mark.usefixtures("mock_messages")
+def test_message_attrs(api_client):
+    message = api_client.messages.first()
+    expected_received = datetime(2010, 2, 2, 2, 22, 22)
+    assert message.received_at == expected_received
+    assert message.date == timestamp_from_dt(expected_received)
 
 
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")

@@ -1,7 +1,18 @@
+from datetime import datetime
+
 import pytest
 from nylas.client.errors import InvalidRequestError
+from nylas.utils import timestamp_from_dt
 
 # pylint: disable=len-as-condition
+
+
+@pytest.mark.usefixtures("mock_drafts")
+def test_draft_attrs(api_client):
+    draft = api_client.drafts.first()
+    expected_modified = datetime(2015, 8, 4, 10, 34, 46)
+    assert draft.last_modified_at == expected_modified
+    assert draft.date == timestamp_from_dt(expected_modified)
 
 
 @pytest.mark.usefixtures(

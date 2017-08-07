@@ -1,5 +1,39 @@
+from datetime import datetime
+
 import pytest
 from nylas.client.restful_models import Message, Draft, Label
+from nylas.utils import timestamp_from_dt
+
+
+@pytest.mark.usefixtures("mock_threads")
+def test_thread_attrs(api_client):
+    thread = api_client.threads.first()
+    expected_first = datetime(2016, 1, 2, 3, 4, 5)
+    expected_last = datetime(2017, 1, 2, 3, 4, 5)
+    expected_last_received = datetime(2017, 1, 2, 3, 4, 5)
+    expected_last_sent = datetime(2017, 1, 1, 1, 1, 1)
+
+    assert thread.first_message_timestamp == timestamp_from_dt(expected_first)
+    assert thread.first_message_at == expected_first
+    assert thread.last_message_timestamp == timestamp_from_dt(expected_last)
+    assert thread.last_message_at == expected_last
+    assert thread.last_message_received_timestamp == timestamp_from_dt(expected_last_received)
+    assert thread.last_message_received_at == expected_last_received
+    assert thread.last_message_sent_timestamp == timestamp_from_dt(expected_last_sent)
+    assert thread.last_message_sent_at == expected_last_sent
+
+
+def test_update_thread_attrs(api_client):
+    thread = api_client.threads.create()
+    first = datetime(2017, 2, 3, 10, 0, 0)
+    second = datetime(2016, 10, 5, 14, 30, 0)
+    # timestamps and datetimes are handled totally separately
+    thread.last_message_at = first
+    thread.last_message_timestamp = timestamp_from_dt(second)
+    assert thread.last_message_at == first
+    assert thread.last_message_timestamp == timestamp_from_dt(second)
+    # but datetimes overwrite timestamps when serializing to JSON
+    assert thread.as_json()['last_message_timestamp'] == timestamp_from_dt(first)
 
 
 @pytest.mark.usefixtures("mock_threads")
