@@ -69,8 +69,8 @@ def test_draft_version(api_client):
     draft = api_client.drafts.create()
     assert 'version' not in draft
     draft.save()
+    assert draft['version'] == 0
+    draft.update()
     assert draft['version'] == 1
-    draft.save()
+    draft.update()
     assert draft['version'] == 2
-    draft.save()
-    assert draft['version'] == 3
