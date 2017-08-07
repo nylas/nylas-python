@@ -180,8 +180,8 @@ class APIClient(json.JSONEncoder):
         self.access_token = None
 
     def delete_account(self):
-        self.account.downgrade()
         self.revoke_token()
+        self.account.downgrade()
 
     @property
     def account(self):
