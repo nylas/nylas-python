@@ -560,10 +560,13 @@ def mock_draft_saved_response(mocked_responses, api_url):
             }
         ],
         "unread": False,
-        "version": 0
+        "version": 0,
     }
 
-    def request_callback(request):
+    def create_callback(_request):
+        return (200, {}, json.dumps(draft_json))
+
+    def update_callback(request):
         try:
             payload = json.loads(request.body)
         except ValueError:
@@ -574,20 +577,21 @@ def mock_draft_saved_response(mocked_responses, api_url):
         }
         updated_draft_json = copy.copy(draft_json)
         updated_draft_json.update(stripped_payload)
+        updated_draft_json["version"] += 1
         return (200, {}, json.dumps(updated_draft_json))
 
     mocked_responses.add_callback(
         responses.POST,
         api_url + '/drafts/',
         content_type='application/json',
-        callback=request_callback,
+        callback=create_callback,
     )
 
     mocked_responses.add_callback(
         responses.PUT,
         api_url + '/drafts/2h111aefv8pzwzfykrn7hercj',
         content_type='application/json',
-        callback=request_callback,
+        callback=update_callback,
     )
 
 
@@ -638,7 +642,6 @@ def mock_draft_sent_response(mocked_responses, api_url):
     def callback(request):
         payload = json.loads(request.body)
         assert payload['draft_id'] == '2h111aefv8pzwzfykrn7hercj'
-        assert payload['version'] == 0
         return values.pop()
 
     mocked_responses.add_callback(
