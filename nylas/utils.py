@@ -12,7 +12,7 @@ def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
     return delta.seconds + delta.days * 86400
 
 
-def timestamped_data(data, datetime_attrs):
+def convert_datetimes_to_timestamps(data, datetime_attrs):
     """
     Given a dictionary of data, and a dictionary of datetime attributes,
     return a new dictionary that converts any datetime attributes that may
