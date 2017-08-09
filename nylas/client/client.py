@@ -1,8 +1,13 @@
 from __future__ import print_function
 import sys
-import json
 from os import environ
 from base64 import b64encode
+import json
+try:
+    from json import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
+
 import requests
 from urlobject import URLObject
 from six.moves.urllib.parse import urlencode
@@ -14,10 +19,7 @@ from nylas.client.restful_models import (
     Label, Draft
 )
 from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
-try:
-    from json import JSONDecodeError
-except ImportError:
-    JSONDecodeError = ValueError
+from nylas.utils import convert_datetimes_to_timestamps
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
 API_SERVER = "https://api.nylas.com"
@@ -256,7 +258,10 @@ class APIClient(json.JSONEncoder):
                 postfix
             )
 
-        url = str(URLObject(url).add_query_params(filters.items()))
+        converted_filters = convert_datetimes_to_timestamps(
+            filters, cls.datetime_filter_attrs,
+        )
+        url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
         return [
@@ -280,7 +285,10 @@ class APIClient(json.JSONEncoder):
             url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
                                            cls.collection_name, id, postfix)
 
-        url = str(URLObject(url).add_query_params(filters.items()))
+        converted_filters = convert_datetimes_to_timestamps(
+            filters, cls.datetime_filter_attrs,
+        )
+        url = str(URLObject(url).add_query_params(converted_filters.items()))
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
         return _validate(response)
@@ -311,10 +319,10 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            data = json.dumps(data)
+            converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = session.post(url, data=data, headers=headers)
+            response = session.post(url, json=converted_data, headers=headers)
 
         result = _validate(response).json()
         if cls.collection_name == 'send':
@@ -332,10 +340,13 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            data = json.dumps(data)
+            converted_data = [
+                convert_datetimes_to_timestamps(datum, cls.datetime_attrs)
+                for datum in data
+            ]
             headers = {'Content-Type': 'application/json'}
             headers.update(self.session.headers)
-            response = session.post(url, data=data, headers=headers)
+            response = session.post(url, json=converted_data, headers=headers)
 
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
@@ -363,7 +374,8 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
-        response = session.put(url, json=data)
+        converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
+        response = session.put(url, json=converted_data)
 
         result = _validate(response).json()
         return cls.create(self, **result)
@@ -390,9 +402,10 @@ class APIClient(json.JSONEncoder):
             URLObject(self.api_server)
             .with_path(url_path)
         )
+        converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
 
         session = self._get_http_session(cls.api_root)
-        response = session.post(url, json=data)
+        response = session.post(url, json=converted_data)
 
         result = _validate(response).json()
         return cls.create(self, **result)

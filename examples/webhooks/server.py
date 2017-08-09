@@ -129,7 +129,7 @@ def process_delta(delta):
     """
     kwargs = {
         "type": delta["type"],
-        "date": datetime.datetime.fromtimestamp(delta["date"]),
+        "date": datetime.datetime.utcfromtimestamp(delta["date"]),
         "object_id": delta["object_data"]["id"],
     }
     print(" * {type} at {date} with ID {object_id}".format(**kwargs))

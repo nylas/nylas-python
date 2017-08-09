@@ -264,7 +264,8 @@ def mock_messages(mocked_responses, api_url, account_id):
                 }
             ],
             "starred": False,
-            "unread": True
+            "unread": True,
+            "date": 1265077342,
         }, {
             "id": "1238",
             "subject": "Test Message 2",
@@ -278,7 +279,8 @@ def mock_messages(mocked_responses, api_url, account_id):
                 }
             ],
             "starred": False,
-            "unread": True
+            "unread": True,
+            "date": 1265085342,
         }, {
             "id": "12",
             "subject": "Test Message 3",
@@ -292,7 +294,8 @@ def mock_messages(mocked_responses, api_url, account_id):
                 }
             ],
             "starred": False,
-            "unread": False
+            "unread": False,
+            "date": 1265093842,
         }
     ])
     endpoint = re.compile(api_url + '/messages')
@@ -369,7 +372,11 @@ def mock_threads(mocked_responses, api_url, account_id):
                 "id": "abcd"
             }],
             "starred": True,
-            "unread": False
+            "unread": False,
+            "first_message_timestamp": 1451703845,
+            "last_message_timestamp": 1483326245,
+            "last_message_received_timestamp": 1483326245,
+            "last_message_sent_timestamp": 1483232461,
         }
     ])
     endpoint = re.compile(api_url + '/threads')
@@ -395,7 +402,11 @@ def mock_thread(mocked_responses, api_url, account_id):
             "id": "abcd"
         }],
         "starred": True,
-        "unread": False
+        "unread": False,
+        "first_message_timestamp": 1451703845,
+        "last_message_timestamp": 1483326245,
+        "last_message_received_timestamp": 1483326245,
+        "last_message_sent_timestamp": 1483232461,
     }
     response_body = json.dumps(base_thrd)
 
@@ -451,7 +462,11 @@ def mock_labelled_thread(mocked_responses, api_url, account_id):
                 "account_id": account_id,
                 "object": "label"
             }
-        ]
+        ],
+        "first_message_timestamp": 1451703845,
+        "last_message_timestamp": 1483326245,
+        "last_message_received_timestamp": 1483326245,
+        "last_message_sent_timestamp": 1483232461,
     }
     response_body = json.dumps(base_thread)
 
@@ -881,10 +896,17 @@ def mock_events(mocked_responses, api_url):
             "title": "Pool party",
             "location": "Local Community Pool",
             "participants": [
-                "Alice",
-                "Bob",
-                "Claire",
-                "Dot",
+                {
+                    "comment": None,
+                    "email": "kelly@nylas.com",
+                    "name": "Kelly Nylanaut",
+                    "status": "noreply",
+                }, {
+                    "comment": None,
+                    "email": "sarah@nylas.com",
+                    "name": "Sarah Nylanaut",
+                    "status": "no",
+                },
             ]
         }
     ])

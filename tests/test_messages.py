@@ -1,8 +1,11 @@
+from datetime import datetime
 import json
+
 import six
 import pytest
 from urlobject import URLObject
 from nylas.client.restful_models import Message
+from nylas.utils import timestamp_from_dt
 
 
 @pytest.mark.usefixtures("mock_messages")
@@ -13,6 +16,14 @@ def test_messages(api_client):
     assert message.folder is None
     assert message.unread
     assert not message.starred
+
+
+@pytest.mark.usefixtures("mock_messages")
+def test_message_attrs(api_client):
+    message = api_client.messages.first()
+    expected_received = datetime(2010, 2, 2, 2, 22, 22)
+    assert message.received_at == expected_received
+    assert message.date == timestamp_from_dt(expected_received)
 
 
 @pytest.mark.usefixtures("mock_account", "mock_messages", "mock_message")
@@ -89,3 +100,21 @@ def test_slice_messages(api_client):
     messages = api_client.messages[0:2]
     assert len(messages) == 3
     assert all(isinstance(message, Message) for message in messages)
+
+
+@pytest.mark.usefixtures("mock_messages")
+def test_filter_messages_dt(mocked_responses, api_client):
+    api_client.messages.where(received_before=datetime(2010, 6, 1)).all()
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["received_before"] == "1275350400"
+
+
+@pytest.mark.usefixtures("mock_messages")
+def test_filter_messages_ts(mocked_responses, api_client):
+    api_client.messages.where(received_before=1275350400).all()
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["received_before"] == "1275350400"
