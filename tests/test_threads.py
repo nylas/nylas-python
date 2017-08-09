@@ -136,8 +136,17 @@ def test_thread_reply(api_client):
 
 
 @pytest.mark.usefixtures("mock_threads")
-def test_filter_threads(mocked_responses, api_client):
+def test_filter_threads_dt(mocked_responses, api_client):
     api_client.threads.where(started_before=datetime(2010, 6, 1)).all()
+    assert len(mocked_responses.calls) == 1
+    request = mocked_responses.calls[0].request
+    url = URLObject(request.url)
+    assert url.query_dict["started_before"] == "1275350400"
+
+
+@pytest.mark.usefixtures("mock_threads")
+def test_filter_threads_ts(mocked_responses, api_client):
+    api_client.threads.where(started_before=1275350400).all()
     assert len(mocked_responses.calls) == 1
     request = mocked_responses.calls[0].request
     url = URLObject(request.url)

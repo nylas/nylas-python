@@ -23,7 +23,7 @@ def convert_datetimes_to_timestamps(data, datetime_attrs):
 
     new_data = {}
     for key, value in data.items():
-        if key in datetime_attrs:
+        if key in datetime_attrs and isinstance(value, datetime):
             new_key = datetime_attrs[key]
             new_data[new_key] = timestamp_from_dt(value)
         else:
