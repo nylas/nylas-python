@@ -11,6 +11,7 @@ from six import StringIO
 class NylasAPIObject(dict):
     attrs = []
     datetime_attrs = {}
+    datetime_filter_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
@@ -95,7 +96,8 @@ class Message(NylasAPIObject):
              "headers"]
     datetime_attrs = {
         "received_at": "date",
-        # The following are used for filtering:
+    }
+    datetime_filter_attrs = {
         "received_before": "received_before",
         "received_after": "received_after",
     }
@@ -230,7 +232,8 @@ class Thread(NylasAPIObject):
         "last_message_at": "last_message_timestamp",
         "last_message_received_at": "last_message_received_timestamp",
         "last_message_sent_at": "last_message_sent_timestamp",
-        # The following are used for filtering:
+    }
+    datetime_filter_attrs = {
         "last_message_before": "last_message_before",
         "last_message_after": "last_message_after",
         "started_before": "started_before",

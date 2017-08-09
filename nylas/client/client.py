@@ -258,7 +258,9 @@ class APIClient(json.JSONEncoder):
                 postfix
             )
 
-        converted_filters = convert_datetimes_to_timestamps(filters, cls.datetime_attrs)
+        converted_filters = convert_datetimes_to_timestamps(
+            filters, cls.datetime_filter_attrs,
+        )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
@@ -283,7 +285,9 @@ class APIClient(json.JSONEncoder):
             url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
                                            cls.collection_name, id, postfix)
 
-        converted_filters = convert_datetimes_to_timestamps(filters, cls.datetime_attrs)
+        converted_filters = convert_datetimes_to_timestamps(
+            filters, cls.datetime_filter_attrs,
+        )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
 
         response = self._get_http_session(cls.api_root).get(url, headers=headers)
