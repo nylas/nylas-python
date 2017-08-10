@@ -87,7 +87,7 @@ You can now use datetimes with the following filters:
 * `client.threads.where(started_after=datetime())`
 
 
-[Full Changelog](https://github.com/nylas/nylas-ruby/compare/v2.0.0...v3.0.0)
+[Full Changelog](https://github.com/nylas/nylas-python/compare/v2.0.0...v3.0.0)
 
 
 v2.0.0
@@ -100,7 +100,7 @@ Release May 18, 2017:
 - Respect the offset parameter for restfulmodelcollection
 - Add ability to revoke token
 
-[Full Changelog](https://github.com/nylas/nylas-ruby/compare/v1.2.3...v2.0.0)
+[Full Changelog](https://github.com/nylas/nylas-python/compare/v1.2.3...v2.0.0)
 
 
 v1.2.3
