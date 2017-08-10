@@ -1,6 +1,95 @@
 nylas-python Changelog
 ======================
 
+v3.0.0
+------
+
+## Large changes
+
+* The Nylas Python SDK now fully supports both Python 2.7 and Python 3.3+.
+* The SDK has a new dependency: the
+  [URLObject](https://pypi.python.org/pypi/URLObject) library.
+  This dependency will be automatically installed when you upgrade.
+* The SDK now automatically converts between timestamps and Python datetime
+  objects. These automatic conversions are opt-in: your existing code should
+  continue to work unmodified. See the "Timestamps and Datetimes"
+  section of this document for more information.
+
+## Small changes
+
+* The SDK now has over 95% automated test coverage.
+* Previously, trying to access the following model properties would raise an error:
+  `Folder.threads`, `Folder.messages`, `Label.threads`, `Label.messages`.
+  These properties should now work as expected.
+* The `Thread` model now exposes the `last_message_received_timestamp` and
+  `last_message_sent_timestamp` properties, obtained from the Nylas API.
+* Previously, if you created a `Draft` object, saved it, and then
+  deleted it without modifying it further, the deletion would fail silently.
+  Now, the SDK will actually attempt to delete a newly-saved `Draft` object,
+  and will raise an error if it is unable to do so.
+* Previously, you could initialize an `APIClient` with an `api_server`
+  value set to an `http://` URL. Now, `APIClient` will verify that the
+  `api_server` value starts with `https://`, and will raise an error if it
+  does not.
+* The `APIClient` constructor no longers accepts the `auth_server` argument,
+  as it was never used for anything.
+* The `nylas.client.util.url_concat` and `nylas.client.util.generate_id`
+  functions have been removed. These functions were meant for internal use,
+  and were never documented or expected to be used by others.
+* You can now pass a `state` argument to `APIClient.authentication_url`,
+  as per the OAuth 2.0 spec.
+
+## Timestamps and Datetimes
+
+Some properties in the Nylas API use timestamp integers to represent a specific
+moment in time, such as `Message.date`. The Python SDK now exposes new properties
+that have converted these existing properties from integers to Python datetime
+objects. You can still access the existing properties to get the timestamp
+integer -- these new properties are just a convenient way to access Python
+datetime objects, if you want them.
+
+This table summarizes the new datetime properties, and which existing timestamp
+properties they match up with.
+
+| New Property (datetime)           | Existing Property (timestamp)            |
+| --------------------------------- | ---------------------------------------- |
+| `Message.received_at`             | `Message.date`                           |
+| `Thread.first_message_at`         | `Thread.first_message_timestamp`         |
+| `Thread.last_message_at`          | `Thread.last_message_timestamp`          |
+| `Thread.last_message_received_at` | `Thread.last_message_received_timestamp` |
+| `Thread.last_message_sent_at`     | `Thread.last_message_sent_timestamp`     |
+| `Draft.last_modified_at`          | `Draft.date`                             |
+| `Event.original_start_at`         | `Event.original_start_time`              |
+
+You can also use datetime objects when filtering on models with the `.where()`
+method. For example, if you wanted to find all messages that were received
+before Jan 1, 2015, previously you would run this code:
+
+```python
+client.messages.where(received_before=1420070400).all()
+```
+
+That code will still work, but if you prefer, you can run this code instead:
+
+```python
+from datetime import datetime
+
+client.messages.where(received_before=datetime(2015, 1, 1)).all()
+```
+
+You can now use datetimes with the following filters:
+
+* `client.messages.where(received_before=datetime())`
+* `client.messages.where(received_after=datetime())`
+* `client.threads.where(last_message_before=datetime())`
+* `client.threads.where(last_message_after=datetime())`
+* `client.threads.where(started_before=datetime())`
+* `client.threads.where(started_after=datetime())`
+
+
+[Full Changelog](https://github.com/nylas/nylas-ruby/compare/v2.0.0...v3.0.0)
+
+
 v2.0.0
 ------
 
