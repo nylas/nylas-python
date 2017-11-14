@@ -221,7 +221,7 @@ class Label(NylasAPIObject):
 
 
 class Thread(NylasAPIObject):
-    attrs = ["draft_ids", "id", "message_ids", "account_id", "object",
+    attrs = ["draft_ids", "id", "message_ids", "messages", "account_id", "object",
              "participants", "snippet", "subject", "subject_date",
              "last_message_timestamp", "first_message_timestamp",
              "last_message_received_timestamp", "last_message_sent_timestamp",
