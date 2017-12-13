@@ -61,6 +61,7 @@ class RestfulModelCollection(object):
         if filter:
             filters.update(filter)
         filters.setdefault('offset', 0)
+        filters.setdefault('limit', CHUNK_SIZE)
         collection = copy(self)
         collection.filters = filters
         return collection
