@@ -31,6 +31,7 @@ def test_file_upload_data(api_client, mocked_responses):
 @pytest.mark.usefixtures("mock_files")
 def test_file_upload_stream(api_client, mocked_responses):
     stream = BytesIO(b"Hello, World!")
+    stream.name = "wacky.txt"
 
     myfile = api_client.files.create()
     myfile.filename = 'hello.txt'
