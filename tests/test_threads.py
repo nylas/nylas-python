@@ -80,7 +80,7 @@ def test_thread_drafts(api_client):
 
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_label(api_client):
-    thread = api_client.threads.find(111)
+    thread = api_client.threads.get(111)
     assert len(thread.labels) == 2
     assert all(isinstance(label, Label)
                for label in thread.labels)
@@ -96,7 +96,7 @@ def test_thread_label(api_client):
 
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_labels(api_client):
-    thread = api_client.threads.find(111)
+    thread = api_client.threads.get(111)
     assert len(thread.labels) == 2
     assert all(isinstance(label, Label)
                for label in thread.labels)

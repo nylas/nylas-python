@@ -97,7 +97,7 @@ print(client.account.provider)
 thread = client.threads.first()
 
 # Fetch a specific thread
-thread = client.threads.find('ac123acd123ef123')
+thread = client.threads.get('ac123acd123ef123')
 
 # List all threads tagged `inbox`
 # (paginating 50 at a time until no more are returned.)

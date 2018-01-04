@@ -63,7 +63,7 @@ class RestfulModelCollection(object):
         collection.filters = filters
         return collection
 
-    def find(self, id):
+    def get(self, id):
         return self._get_model(id)
 
     def create(self, **kwargs):
