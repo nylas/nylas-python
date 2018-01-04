@@ -23,7 +23,7 @@ def test_file_upload_data(api_client, mocked_responses):
     upload_lines = upload_body.decode("utf8").splitlines()
 
     content_disposition = upload_lines[1]
-    value, params = cgi.parse_header(content_disposition)
+    _, params = cgi.parse_header(content_disposition)
     assert params["filename"] == "hello.txt"
     assert "Hello, World!" in upload_lines
 
@@ -47,7 +47,7 @@ def test_file_upload_stream(api_client, mocked_responses):
     upload_lines = upload_body.decode("utf8").splitlines()
 
     content_disposition = upload_lines[1]
-    value, params = cgi.parse_header(content_disposition)
+    _, params = cgi.parse_header(content_disposition)
     assert params["filename"] == "hello.txt"
     assert "Hello, World!" in upload_lines
 

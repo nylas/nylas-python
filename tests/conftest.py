@@ -694,7 +694,7 @@ def mock_files(mocked_responses, api_url, account_id):
         api_url + '/files',
         body=json.dumps(list(files_metadata.values())),
     )
-    for file_id in files_content.keys():
+    for file_id in files_content:
         mocked_responses.add(
             responses.POST,
             "{base}/files/{file_id}".format(base=api_url, file_id=file_id),
@@ -709,7 +709,7 @@ def mock_files(mocked_responses, api_url, account_id):
     def create_callback(request):
         uploaded_lines = request.body.decode('utf8').splitlines()
         content_disposition = uploaded_lines[1]
-        value, params = cgi.parse_header(content_disposition)
+        _, params = cgi.parse_header(content_disposition)
         filename = params.get("filename", None)
         content = "".join(uploaded_lines[3:-1])
         size = len(content.encode('utf8'))
