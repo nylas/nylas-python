@@ -18,22 +18,22 @@ class RestfulModelCollection(object):
         self.api = api
 
     def __iter__(self):
-        return self.items()
+        return self.values()
 
-    def items(self):
+    def values(self):
         offset = self.filters['offset']
         while True:
-            items = self._get_model_collection(offset, CHUNK_SIZE)
-            if not items:
+            models = self._get_model_collection(offset, CHUNK_SIZE)
+            if not models:
                 break
 
-            for item in items:
-                yield item
+            for model in models:
+                yield model
 
-            if len(items) < CHUNK_SIZE:
+            if len(models) < CHUNK_SIZE:
                 break
 
-            offset += len(items)
+            offset += len(models)
 
     def first(self):
         results = self._get_model_collection(0, 1)
@@ -118,7 +118,7 @@ class RestfulModelCollection(object):
                                                  to_fetch)
             accumulated.extend(results)
 
-            # done if we run out of items to fetch
+            # done if we run out of data to fetch
             if not results or len(results) < to_fetch:
                 break
 

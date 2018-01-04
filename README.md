@@ -101,7 +101,7 @@ thread = client.threads.find('ac123acd123ef123')
 
 # List all threads tagged `inbox`
 # (paginating 50 at a time until no more are returned.)
-for thread in client.threads.items():
+for thread in client.threads.values():
     print(thread.subject)
 
 # List the 5 most recent unread threads
@@ -113,7 +113,7 @@ for thread in client.threads.where(starred=True):
     print(thread.subject)
 
 # List all threads with 'ben@nylas.com'
-for thread in client.threads.where(any_email='ben@nylas.com').items():
+for thread in client.threads.where(any_email='ben@nylas.com').values():
     print(thread.subject)
 ```
 
@@ -167,7 +167,7 @@ trash_id = 'ds36ik7o55gdqlvpbrjbg9ovn'
 message.update_folder(trash_id)
 
 # List messages
-for message in thread.messages.items():
+for message in thread.messages.values():
     print(message.subject)
 
 # Get the raw contents of a message
