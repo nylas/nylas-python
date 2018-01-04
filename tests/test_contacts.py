@@ -24,7 +24,7 @@ def test_create_contact(api_client, mocked_responses):
     contact = api_client.contacts.create()
     contact.given_name = "Monkey"
     contact.surname = "Business"
-    assert len(mocked_responses.calls) == 0
+    assert not mocked_responses.calls
     contact.save()
     assert len(mocked_responses.calls) == 1
     assert contact.id is not None

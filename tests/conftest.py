@@ -7,7 +7,7 @@ import pytest
 import responses
 from nylas import APIClient
 
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name,too-many-lines
 
 
 def generate_id(size=25, chars=string.ascii_letters + string.digits):
