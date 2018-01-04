@@ -190,8 +190,8 @@ def test_call_resource_method(mocked_responses, api_client, api_url):
 def test_201_response(mocked_responses, api_client, api_url):
     contact_data = {
         "id": 1,
-        "name": "first",
-        "email": "first@example.com",
+        "given_name": "Charlie",
+        "surname": "Bucket",
     }
     mocked_responses.add(
         responses.POST,
@@ -209,8 +209,8 @@ def test_201_response(mocked_responses, api_client, api_url):
 def test_301_response(mocked_responses, api_client, api_url):
     contact_data = {
         "id": 1,
-        "name": "first",
-        "email": "first@example.com",
+        "given_name": "Charlie",
+        "surname": "Bucket",
     }
     mocked_responses.add(
         responses.GET,
@@ -227,5 +227,6 @@ def test_301_response(mocked_responses, api_client, api_url):
     )
     contact = api_client.contacts.find("first")
     assert contact["id"] == 1
-    assert contact["name"] == "first"
+    assert contact["given_name"] == "Charlie"
+    assert contact["surname"] == "Bucket"
     assert len(mocked_responses.calls) == 2

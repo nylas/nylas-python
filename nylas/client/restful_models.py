@@ -417,7 +417,11 @@ class File(NylasAPIObject):
 
 
 class Contact(NylasAPIObject):
-    attrs = ["id", "account_id", "name", "email", "object"]
+    attrs = ["id", "object", "account_id", "given_name", "middle_name",
+             "surname", "birthday", "suffix", "nickname", "company_name",
+             "job_title", "manager_name", "office_location", "notes",
+             "picture_url", "email_addresses", "im_addresses",
+             "physical_addresses", "phone_numbers", "web_pages"]
     collection_name = 'contacts'
 
     def __init__(self, api):

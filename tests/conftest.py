@@ -1,11 +1,17 @@
 import re
 import json
 import copy
+import random
+import string
 import pytest
 import responses
 from nylas import APIClient
 
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name,too-many-lines
+
+
+def generate_id(size=25, chars=string.ascii_letters + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
 @pytest.fixture
@@ -888,6 +894,160 @@ def mock_calendars(mocked_responses, api_url):
         status=200,
         body=response_body
     )
+
+
+
+@pytest.fixture
+def mock_contacts(mocked_responses, account_id, api_url):
+    contact1 = {
+        'id': '5x6b54whvcz1j22ggiyorhk9v',
+        'object': 'contact',
+        'account_id': account_id,
+        'given_name': 'Charlie',
+        'middle_name': None,
+        'surname': 'Bucket',
+        'birthday': {'date': "1964-10-05", 'object': 'date'},
+        'suffix': None,
+        'nickname': None,
+        'company_name': None,
+        'job_title': "Student",
+        'manager_name': None,
+        'office_location': None,
+        'notes': None,
+        'picture_url': None,
+        'email_addresses': [{'email': 'charlie@gmail.com', 'type': None}],
+        'im_addresses': [],
+        'physical_addresses': [],
+        'phone_numbers': [],
+        'web_pages': [],
+    }
+    contact2 = {
+        'id': '4zqkfw8k1d12h0k784ipeh498',
+        'object': 'contact',
+        'account_id': account_id,
+        'given_name': 'William',
+        'middle_name': 'J',
+        'surname': 'Wonka',
+        'birthday': {'date': "1955-02-29", 'object': 'date'},
+        'suffix': None,
+        'nickname': None,
+        'company_name': None,
+        'job_title': "Chocolate Artist",
+        'manager_name': None,
+        'office_location': "Willy Wonka Factory",
+        'notes': None,
+        'picture_url': None,
+        'email_addresses': [{'email': 'scrumptious@wonka.com', 'type': None}],
+        'im_addresses': [],
+        'physical_addresses': [],
+        'phone_numbers': [],
+        'web_pages': [{"type": "work", "url": "http://www.wonka.com"}],
+    }
+    contact3 = {
+        'id': '9fn1aoi2i00qv6h1zpag6b26w',
+        'object': 'contact',
+        'account_id': account_id,
+        'given_name': 'Oompa',
+        'middle_name': None,
+        'surname': 'Loompa',
+        'birthday': {'date': None, 'object': 'date'},
+        'suffix': None,
+        'nickname': None,
+        'company_name': None,
+        'job_title': None,
+        'manager_name': None,
+        'office_location': "Willy Wonka Factory",
+        'notes': None,
+        'picture_url': None,
+        'email_addresses': [],
+        'im_addresses': [],
+        'physical_addresses': [],
+        'phone_numbers': [],
+        'web_pages': [],
+    }
+    contacts = [contact1, contact2, contact3]
+
+    def create_callback(request):
+        payload = json.loads(request.body)
+        payload["id"] = generate_id()
+        return (200, {}, json.dumps(payload))
+
+    mocked_responses.add(
+        responses.GET,
+        re.compile(api_url + '/contacts'),
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contacts)
+    )
+    for contact in contacts:
+        mocked_responses.add(
+            responses.GET,
+            re.compile(api_url + '/contacts/' + contact["id"]),
+            content_type='application/json',
+            status=200,
+            body=json.dumps(contact)
+        )
+    mocked_responses.add_callback(
+        responses.POST,
+        api_url + '/contacts/',
+        content_type='application/json',
+        callback=create_callback,
+    )
+
+
+@pytest.fixture
+def mock_contact(mocked_responses, account_id, api_url):
+    contact = {
+        'id': '5x6b54whvcz1j22ggiyorhk9v',
+        'object': 'contact',
+        'account_id': account_id,
+        'given_name': 'Charlie',
+        'middle_name': None,
+        'surname': 'Bucket',
+        'birthday': {'date': "1964-10-05", 'object': 'date'},
+        'suffix': None,
+        'nickname': None,
+        'company_name': None,
+        'job_title': "Student",
+        'manager_name': None,
+        'office_location': None,
+        'notes': None,
+        'picture_url': None,
+        'email_addresses': [{'email': 'charlie@gmail.com', 'type': None}],
+        'im_addresses': [],
+        'physical_addresses': [],
+        'phone_numbers': [],
+        'web_pages': [],
+    }
+
+    def update_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return (200, {}, json.dumps(contact))
+
+        stripped_payload = {
+            key: value for key, value in payload.items() if value
+        }
+        updated_contact_json = copy.copy(contact)
+        updated_contact_json.update(stripped_payload)
+        return (200, {}, json.dumps(updated_contact_json))
+
+    mocked_responses.add(
+        responses.GET,
+        re.compile(api_url + '/contacts/' + contact["id"]),
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contact)
+    )
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        api_url + '/contacts/' + contact["id"],
+        content_type='application/json',
+        callback=update_callback,
+    )
+
 
 @pytest.fixture
 def mock_events(mocked_responses, api_url):
