@@ -3,7 +3,7 @@ from datetime import datetime
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError
 from nylas.utils import timestamp_from_dt
-from six import StringIO
+from six import StringIO, BytesIO
 
 # pylint: disable=attribute-defined-outside-init
 
@@ -435,6 +435,17 @@ class Contact(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Contact, api)
+
+    @property
+    def picture(self):
+        if not self.get("picture_url", None):
+            return None
+
+        response = self.api._get_resource_raw(
+            Contact, self.id, extra='picture', stream=True,
+        )
+        response.raise_for_status()
+        return response.raw
 
 
 class Calendar(NylasAPIObject):
