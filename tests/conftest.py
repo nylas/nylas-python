@@ -1,3 +1,4 @@
+import os
 import re
 import json
 import copy
@@ -950,7 +951,9 @@ def mock_contacts(mocked_responses, account_id, api_url):
         'manager_name': None,
         'office_location': None,
         'notes': None,
-        'picture_url': None,
+        'picture_url': "{base}/contacts/{id}/picture".format(
+            base=api_url, id='5x6b54whvcz1j22ggiyorhk9v'
+        ),
         'email_addresses': [{'email': 'charlie@gmail.com', 'type': None}],
         'im_addresses': [],
         'physical_addresses': [],
@@ -1008,13 +1011,6 @@ def mock_contacts(mocked_responses, account_id, api_url):
         payload["id"] = generate_id()
         return (200, {}, json.dumps(payload))
 
-    mocked_responses.add(
-        responses.GET,
-        re.compile(api_url + '/contacts'),
-        content_type='application/json',
-        status=200,
-        body=json.dumps(contacts)
-    )
     for contact in contacts:
         mocked_responses.add(
             responses.GET,
@@ -1023,6 +1019,31 @@ def mock_contacts(mocked_responses, account_id, api_url):
             status=200,
             body=json.dumps(contact)
         )
+        if contact.get("picture_url"):
+            mocked_responses.add(
+                responses.GET,
+                contact["picture_url"],
+                content_type='image/jpeg',
+                status=200,
+                body=os.urandom(50),
+                stream=True,
+            )
+        else:
+            mocked_responses.add(
+                responses.GET,
+                "{base}/contacts/{id}/picture".format(
+                    base=api_url, id=contact["id"],
+                ),
+                status=404,
+                body=""
+            )
+    mocked_responses.add(
+        responses.GET,
+        re.compile(api_url + '/contacts'),
+        content_type='application/json',
+        status=200,
+        body=json.dumps(contacts)
+    )
     mocked_responses.add_callback(
         responses.POST,
         api_url + '/contacts/',
@@ -1048,7 +1069,9 @@ def mock_contact(mocked_responses, account_id, api_url):
         'manager_name': None,
         'office_location': None,
         'notes': None,
-        'picture_url': None,
+        'picture_url': "{base}/contacts/{id}/picture".format(
+            base=api_url, id='5x6b54whvcz1j22ggiyorhk9v'
+        ),
         'email_addresses': [{'email': 'charlie@gmail.com', 'type': None}],
         'im_addresses': [],
         'physical_addresses': [],
@@ -1071,15 +1094,27 @@ def mock_contact(mocked_responses, account_id, api_url):
 
     mocked_responses.add(
         responses.GET,
-        re.compile(api_url + '/contacts/' + contact["id"]),
+        "{base}/contacts/{id}".format(
+            base=api_url, id=contact["id"]
+        ),
         content_type='application/json',
         status=200,
         body=json.dumps(contact)
     )
+    mocked_responses.add(
+        responses.GET,
+        contact["picture_url"],
+        content_type='image/jpeg',
+        status=200,
+        body=os.urandom(50),
+        stream=True,
+    )
 
     mocked_responses.add_callback(
         responses.PUT,
-        api_url + '/contacts/' + contact["id"],
+        "{base}/contacts/{id}".format(
+            base=api_url, id=contact["id"]
+        ),
         content_type='application/json',
         callback=update_callback,
     )

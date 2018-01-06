@@ -436,8 +436,7 @@ class Contact(NylasAPIObject):
     def __init__(self, api):
         NylasAPIObject.__init__(self, Contact, api)
 
-    @property
-    def picture(self):
+    def get_picture(self):
         if not self.get("picture_url", None):
             return None
 
