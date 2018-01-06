@@ -5,7 +5,7 @@ from base64 import b64encode
 import json
 try:
     from json import JSONDecodeError
-except ImportError:
+except ImportError:  # pragma: no cover
     JSONDecodeError = ValueError
 
 import requests
