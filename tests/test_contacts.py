@@ -52,12 +52,12 @@ def test_contact_picture(api_client, mocked_responses):
     contact = api_client.contacts.find('5x6b54whvcz1j22ggiyorhk9v')
     assert len(mocked_responses.calls) == 1
     assert contact.picture_url
-    f = contact.get_picture()
+    picture = contact.get_picture()
     assert len(mocked_responses.calls) == 2
     picture_call = mocked_responses.calls[1]
     assert contact.picture_url == picture_call.request.url
-    assert f.headers["Content-Type"] == "image/jpeg"
-    content = f.read()
+    assert picture.headers["Content-Type"] == "image/jpeg"
+    content = picture.read()
     assert isinstance(content, binary_type)
 
 
@@ -66,6 +66,6 @@ def test_contact_no_picture(api_client, mocked_responses):
     contact = api_client.contacts.find('4zqkfw8k1d12h0k784ipeh498')
     assert len(mocked_responses.calls) == 1
     assert not contact.picture_url
-    f = contact.get_picture()
+    picture = contact.get_picture()
     assert len(mocked_responses.calls) == 1
-    assert not f
+    assert not picture
