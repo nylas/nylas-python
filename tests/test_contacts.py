@@ -5,12 +5,9 @@ from six import binary_type
 from nylas.client.restful_models import Contact
 
 try:
-    from multidict import MultiDict
+    from werkzeug.datastructures import MultiDict
 except ImportError:
-    try:
-        from werkzeug.datastructures import MultiDict
-    except ImportError:
-        MultiDict = None
+    MultiDict = None
 
 multidict_required = pytest.mark.skipif(  # pylint: disable=invalid-name
     not MultiDict,

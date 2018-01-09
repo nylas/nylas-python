@@ -5,9 +5,6 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 
-PY2 = sys.version_info[0] == 2
-
-
 VERSION = ''
 with open('nylas/_client_sdk_version.py', 'r') as fd:
     VERSION = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -27,11 +24,8 @@ TEST_DEPENDENCIES = [
     "pytest-cov",
     "pytest-pylint",
     "responses==0.6.1",
+    "werkzeug",  # for MultiDict data structure
 ]
-if PY2:
-    TEST_DEPENDENCIES.append("werkzeug")  # for MultiDict data structure
-else:
-    TEST_DEPENDENCIES.append("multidict")  # multidict module is Python 3 only
 
 
 class PyTest(TestCommand):

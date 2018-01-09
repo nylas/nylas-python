@@ -6,12 +6,9 @@ from nylas.utils import timestamp_from_dt
 from six import StringIO
 
 try:
-    from multidict import MultiDict
+    from werkzeug.datastructures import MultiDict
 except ImportError:
-    try:
-        from werkzeug.datastructures import MultiDict
-    except ImportError:
-        MultiDict = dict
+    MultiDict = dict
 
 # pylint: disable=attribute-defined-outside-init
 
