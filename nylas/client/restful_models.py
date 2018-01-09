@@ -7,7 +7,7 @@ from six import StringIO
 
 try:
     from werkzeug.datastructures import MultiDict
-except ImportError:
+except ImportError:  # pragma: no cover
     MultiDict = dict
 
 # pylint: disable=attribute-defined-outside-init
