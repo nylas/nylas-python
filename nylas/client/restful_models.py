@@ -436,6 +436,16 @@ class Contact(NylasAPIObject):
     def __init__(self, api):
         NylasAPIObject.__init__(self, Contact, api)
 
+    def get_picture(self):
+        if not self.get("picture_url", None):
+            return None
+
+        response = self.api._get_resource_raw(
+            Contact, self.id, extra='picture', stream=True,
+        )
+        response.raise_for_status()
+        return response.raw
+
 
 class Calendar(NylasAPIObject):
     attrs = ["id", "account_id", "name", "description", "read_only", "object"]

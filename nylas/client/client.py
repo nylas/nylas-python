@@ -5,7 +5,7 @@ from base64 import b64encode
 import json
 try:
     from json import JSONDecodeError
-except ImportError:
+except ImportError:  # pragma: no cover
     JSONDecodeError = ValueError
 
 import requests
@@ -272,7 +272,7 @@ class APIClient(json.JSONEncoder):
 
     @nylas_excepted
     def _get_resource_raw(self, cls, id, extra=None,
-                          headers=None, **filters):
+                          headers=None, stream=False, **filters):
         """Get an individual REST resource"""
         headers = headers or {}
         headers.update(self.session.headers)
@@ -290,7 +290,9 @@ class APIClient(json.JSONEncoder):
         )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
 
-        response = self._get_http_session(cls.api_root).get(url, headers=headers)
+        response = self._get_http_session(cls.api_root).get(
+            url, headers=headers, stream=stream,
+        )
         return _validate(response)
 
     def _get_resource(self, cls, id, **filters):
