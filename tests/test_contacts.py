@@ -49,7 +49,7 @@ def test_update_contact(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_picture(api_client, mocked_responses):
-    contact = api_client.contacts.find('5x6b54whvcz1j22ggiyorhk9v')
+    contact = api_client.contacts.get('5x6b54whvcz1j22ggiyorhk9v')
     assert len(mocked_responses.calls) == 1
     assert contact.picture_url
     picture = contact.get_picture()
@@ -63,7 +63,7 @@ def test_contact_picture(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contacts")
 def test_contact_no_picture(api_client, mocked_responses):
-    contact = api_client.contacts.find('4zqkfw8k1d12h0k784ipeh498')
+    contact = api_client.contacts.get('4zqkfw8k1d12h0k784ipeh498')
     assert len(mocked_responses.calls) == 1
     assert not contact.picture_url
     picture = contact.get_picture()
