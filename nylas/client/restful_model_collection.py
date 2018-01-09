@@ -12,6 +12,7 @@ class RestfulModelCollection(object):
             raise Exception("Provided api was not an APIClient.")
 
         filters.setdefault('offset', offset)
+        filters.setdefault('limit', CHUNK_SIZE)
 
         self.model_class = cls
         self.filters = filters
@@ -22,15 +23,16 @@ class RestfulModelCollection(object):
 
     def items(self):
         offset = self.filters['offset']
+        limit = self.filters['limit']
         while True:
-            items = self._get_model_collection(offset, CHUNK_SIZE)
+            items = self._get_model_collection(offset, limit)
             if not items:
                 break
 
             for item in items:
                 yield item
 
-            if len(items) < CHUNK_SIZE:
+            if len(items) < limit:
                 break
 
             offset += len(items)
@@ -59,6 +61,7 @@ class RestfulModelCollection(object):
         if filter:
             filters.update(filter)
         filters.setdefault('offset', 0)
+        filters.setdefault('limit', CHUNK_SIZE)
         collection = copy(self)
         collection.filters = filters
         return collection
