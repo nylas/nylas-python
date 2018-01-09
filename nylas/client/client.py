@@ -35,41 +35,8 @@ def _validate(response):
             text=response.text,
         ))
 
-    if response.ok:
-        return response
-
-    # The rest of this function is logic for raising the correct exception
-    # from the `nylas.client.errors` module. In the future, it may be worth changing
-    # this function to just call `response.raise_for_status()`.
-    # http://docs.python-requests.org/en/master/api/#requests.Response.raise_for_status
-
-    try:
-        data = response.json()
-        json_content = True
-    except JSONDecodeError:
-        data = response.content
-        json_content = False
-
-    kwargs = {
-        "url": response.request.url,
-        "status_code": response.status_code,
-        "data": data,
-    }
-
-    if response.status_code in STATUS_MAP:
-        cls = STATUS_MAP[response.status_code]
-        if json_content:
-            if "message" in data:
-                kwargs["message"] = data["message"]
-            if "server_error" in data:
-                kwargs["server_error"] = data["server_error"]
-            raise cls(**kwargs)
-        else:
-            kwargs["message"] = "Malformed"
-            raise cls(**kwargs)
-    else:
-        kwargs["message"] = "Unknown status code."
-        raise APIClientError(**kwargs)
+    response.raise_for_status()
+    return response
 
 
 def nylas_excepted(func):
