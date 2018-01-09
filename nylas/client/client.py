@@ -3,10 +3,6 @@ import sys
 from os import environ
 from base64 import b64encode
 import json
-try:
-    from json import JSONDecodeError
-except ImportError:  # pragma: no cover
-    JSONDecodeError = ValueError
 
 import requests
 from urlobject import URLObject
@@ -18,7 +14,6 @@ from nylas.client.restful_models import (
     Account, APIAccount, SingletonAccount, Folder,
     Label, Draft
 )
-from nylas.client.errors import APIClientError, ConnectionError, STATUS_MAP
 from nylas.utils import convert_datetimes_to_timestamps
 
 DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
@@ -37,16 +32,6 @@ def _validate(response):
 
     response.raise_for_status()
     return response
-
-
-def nylas_excepted(func):
-    def caught(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except requests.exceptions.ConnectionError:
-            server = args[0].api_server
-            raise ConnectionError(url=server)
-    return caught
 
 
 class APIClient(json.JSONEncoder):
@@ -141,7 +126,6 @@ class APIClient(json.JSONEncoder):
 
         return False
 
-    @nylas_excepted
     def revoke_token(self):
         resp = self.session.post(self.revoke_url)
         _validate(resp)
@@ -206,7 +190,6 @@ class APIClient(json.JSONEncoder):
             return self.admin_session
         return self.session
 
-    @nylas_excepted
     def _get_resources(self, cls, extra=None, **filters):
         # FIXME @karim: remove this interim code when we've got rid
         # of the old accounts API.
@@ -237,7 +220,6 @@ class APIClient(json.JSONEncoder):
             if x is not None
         ]
 
-    @nylas_excepted
     def _get_resource_raw(self, cls, id, extra=None,
                           headers=None, stream=False, **filters):
         """Get an individual REST resource"""
@@ -275,7 +257,6 @@ class APIClient(json.JSONEncoder):
                                           headers=headers, **filters)
         return response.content
 
-    @nylas_excepted
     def _create_resource(self, cls, data, **kwargs):
         url = (
             URLObject(self.api_server)
@@ -298,7 +279,6 @@ class APIClient(json.JSONEncoder):
             return result
         return cls.create(self, **result)
 
-    @nylas_excepted
     def _create_resources(self, cls, data):
         url = (
             URLObject(self.api_server)
@@ -320,7 +300,6 @@ class APIClient(json.JSONEncoder):
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
 
-    @nylas_excepted
     def _delete_resource(self, cls, id, data=None, **kwargs):
         url = (
             URLObject(self.api_server)
@@ -333,7 +312,6 @@ class APIClient(json.JSONEncoder):
         else:
             _validate(session.delete(url))
 
-    @nylas_excepted
     def _update_resource(self, cls, id, data, **kwargs):
         url = (
             URLObject(self.api_server)
@@ -349,7 +327,6 @@ class APIClient(json.JSONEncoder):
         result = _validate(response).json()
         return cls.create(self, **result)
 
-    @nylas_excepted
     def _call_resource_method(self, cls, id, method_name, data):
         """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
