@@ -15,6 +15,20 @@ except ImportError:
 
 # pylint: disable=attribute-defined-outside-init
 
+def detect_attr(value):
+    attr_type = value.get("object", None)
+    if attr_type == "date":
+        date_str = value["date"]
+        if date_str:
+            return datetime.strptime(date_str, "%Y-%m-%d").date()
+    return None
+
+
+def mdict_attr(items, attr_name=None):
+    if attr_name:
+        return MultiDict([(item["type"], item[attr_name]) for item in items])
+    return MultiDict([(item["type"], item) for item in items])
+
 
 class NylasAPIObject(dict):
     attrs = []
@@ -63,28 +77,9 @@ class NylasAPIObject(dict):
             if obj.get(ts_attr):
                 obj[dt_attr] = datetime.utcfromtimestamp(obj[ts_attr])
         for attr in cls.detect_attrs:
-            info = kwargs.get(attr, {})
-            attr_type = info.get("object", None)
-            if attr_type == "date":
-                date_str = info["date"]
-                if date_str:
-                    value = datetime.strptime(date_str, "%Y-%m-%d").date()
-                else:
-                    value = None
-                obj[attr] = value
-            else:
-                obj[attr] = None
-        for attr, value_attr in cls.typed_dict_attrs.items():
-            info = kwargs.get(attr, [])
-            if value_attr:
-                mdict = MultiDict([
-                    (item["type"], item[value_attr]) for item in info
-                ])
-            else:
-                mdict = MultiDict([
-                    (item["type"], item) for item in info
-                ])
-            obj[attr] = mdict
+            obj[attr] = detect_attr(kwargs.get(attr, {}))
+        for attr, value_attr_name in cls.typed_dict_attrs.items():
+            obj[attr] = mdict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
         if 'id' not in kwargs:
             obj['id'] = None

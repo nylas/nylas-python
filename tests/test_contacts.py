@@ -1,6 +1,6 @@
-import pytest
 import json
 from datetime import date
+import pytest
 from six import binary_type
 from nylas.client.restful_models import Contact
 
@@ -12,7 +12,7 @@ except ImportError:
     except ImportError:
         MultiDict = None
 
-multidict_required = pytest.mark.skipif(
+multidict_required = pytest.mark.skipif(  # pylint: disable=invalid-name
     not MultiDict,
     reason="MultiDict implementation required",
 )
@@ -154,7 +154,8 @@ def test_contact_phone_numbers_multidict(api_client):
 def test_contact_web_pages(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.web_pages, dict)
-    assert contact.web_pages["profile"] in ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
+    profiles = ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
+    assert contact.web_pages["profile"] in profiles
     assert contact.web_pages[None] == "http://example.com"
     assert "absent" not in contact.web_pages
 
@@ -163,7 +164,8 @@ def test_contact_web_pages(api_client):
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_web_pages_multidict(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
-    assert contact.web_pages.getlist("profile") == ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
+    profiles = ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
+    assert contact.web_pages.getlist("profile") == profiles
     assert contact.web_pages.getlist(None) == ["http://example.com"]
 
 
@@ -212,4 +214,3 @@ def test_update_contact_special_values(api_client, mocked_responses):
     assert physical_address in req_body["physical_addresses"]
     assert phone_number in req_body["phone_numbers"]
     assert web_page in req_body["web_pages"]
-
