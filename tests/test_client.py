@@ -225,7 +225,7 @@ def test_301_response(mocked_responses, api_client, api_url):
         status=200,
         body=json.dumps(contact_data),
     )
-    contact = api_client.contacts.find("first")
+    contact = api_client.contacts.get("first")
     assert contact["id"] == 1
     assert contact["given_name"] == "Charlie"
     assert contact["surname"] == "Bucket"

@@ -46,7 +46,7 @@ def test_no_offset(mocked_responses, api_client, api_url):
         api_url + '/events?in=Nylas',
         body='[]',
     )
-    list(api_client.events.where({'in': 'Nylas'}).items())
+    list(api_client.events.where({'in': 'Nylas'}).values())
     url = mocked_responses.calls[-1].request.url
     query = URLObject(url).query_dict
     assert query['in'] == 'Nylas'
@@ -58,7 +58,7 @@ def test_zero_offset(mocked_responses, api_client, api_url):
         api_url + '/events?in=Nylas&offset=0',
         body='[]',
     )
-    list(api_client.events.where({'in': 'Nylas', 'offset': 0}).items())
+    list(api_client.events.where({'in': 'Nylas', 'offset': 0}).values())
     url = mocked_responses.calls[-1].request.url
     query = URLObject(url).query_dict
     assert query['in'] == 'Nylas'
@@ -72,7 +72,7 @@ def test_non_zero_offset(mocked_responses, api_client, api_url):
         body='[]',
     )
 
-    list(api_client.events.where({'in': 'Nylas', 'offset': offset}).items())
+    list(api_client.events.where({'in': 'Nylas', 'offset': offset}).values())
     url = mocked_responses.calls[-1].request.url
     query = URLObject(url).query_dict
     assert query['in'] == 'Nylas'

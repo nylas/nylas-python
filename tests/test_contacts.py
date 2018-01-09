@@ -12,7 +12,7 @@ def test_list_contacts(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_get_contact(api_client):
-    contact = api_client.contacts.find('5x6b54whvcz1j22ggiyorhk9v')
+    contact = api_client.contacts.get('5x6b54whvcz1j22ggiyorhk9v')
     assert contact is not None
     assert isinstance(contact, Contact)
     assert contact.given_name == 'Charlie'
@@ -34,7 +34,7 @@ def test_create_contact(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_update_contact(api_client, mocked_responses):
-    contact = api_client.contacts.find('5x6b54whvcz1j22ggiyorhk9v')
+    contact = api_client.contacts.get('5x6b54whvcz1j22ggiyorhk9v')
     assert len(mocked_responses.calls) == 1
     assert contact.job_title == "Student"
     contact.job_title = "Factory Owner"
