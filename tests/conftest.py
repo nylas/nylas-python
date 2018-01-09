@@ -1,6 +1,7 @@
 import re
 import json
 import copy
+import cgi
 import random
 import string
 import pytest
@@ -674,24 +675,59 @@ def mock_draft_sent_response(mocked_responses, api_url):
 
 
 @pytest.fixture
-def mock_files(mocked_responses, api_url):
-    body = [{
-        "content_type": "text/plain",
-        "filename": "a.txt",
-        "id": "3qfe4k3siosfjtjpfdnon8zbn",
-        "account_id": "6aakaxzi4j5gn6f7kbb9e0fxs",
-        "object": "file",
-        "size": 762878
-    }]
-    mocked_responses.add(
-        responses.POST,
-        api_url + '/files/',
-        body=json.dumps(body),
-    )
+def mock_files(mocked_responses, api_url, account_id):
+    files_content = {
+        "3qfe4k3siosfjtjpfdnon8zbn": b"Hello, World!",
+    }
+    files_metadata = {
+        "3qfe4k3siosfjtjpfdnon8zbn": {
+            "id": "3qfe4k3siosfjtjpfdnon8zbn",
+            "content_type": "text/plain",
+            "filename": "hello.txt",
+            "account_id": account_id,
+            "object": "file",
+            "size": len(files_content["3qfe4k3siosfjtjpfdnon8zbn"])
+        }
+    }
     mocked_responses.add(
         responses.GET,
-        api_url + '/files/3qfe4k3siosfjtjpfdnon8zbn/download',
-        body='test body',
+        api_url + '/files',
+        body=json.dumps(list(files_metadata.values())),
+    )
+    for file_id in files_content:
+        mocked_responses.add(
+            responses.POST,
+            "{base}/files/{file_id}".format(base=api_url, file_id=file_id),
+            body=json.dumps(files_metadata[file_id]),
+        )
+        mocked_responses.add(
+            responses.GET,
+            "{base}/files/{file_id}/download".format(base=api_url, file_id=file_id),
+            body=files_content[file_id],
+        )
+
+    def create_callback(request):
+        uploaded_lines = request.body.decode('utf8').splitlines()
+        content_disposition = uploaded_lines[1]
+        _, params = cgi.parse_header(content_disposition)
+        filename = params.get("filename", None)
+        content = "".join(uploaded_lines[3:-1])
+        size = len(content.encode('utf8'))
+
+        body = [{
+            "id": generate_id(),
+            "content_type": "text/plain",
+            "filename": filename,
+            "account_id": account_id,
+            "object": "file",
+            "size": size,
+        }]
+        return (200, {}, json.dumps(body))
+
+    mocked_responses.add_callback(
+        responses.POST,
+        api_url + '/files/',
+        callback=create_callback,
     )
 
 

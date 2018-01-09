@@ -387,18 +387,27 @@ class File(NylasAPIObject):
     collection_name = 'files'
 
     def save(self):  # pylint: disable=arguments-differ
-        if hasattr(self, 'stream') and self.stream is not None:
-            data = {self.filename: self.stream}
-        elif hasattr(self, 'data') and self.data is not None:
-            data = {self.filename: StringIO(self.data)}
-        else:
+        stream = getattr(self, "stream", None)
+        if not stream:
+            data = getattr(self, "data", None)
+            if data:
+                stream = StringIO(data)
+
+        if not stream:
             message = (
                 "File object not properly formatted, "
                 "must provide either a stream or data."
             )
             raise FileUploadError(message=message)
 
-        new_obj = self.api._create_resources(File, data)
+        file_info = (
+            self.filename,
+            stream,
+            self.content_type,
+            {}, # upload headers
+        )
+
+        new_obj = self.api._create_resources(File, {"file": file_info})
         new_obj = new_obj[0]
         for attr in self.attrs:
             if hasattr(new_obj, attr):
