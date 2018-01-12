@@ -20,6 +20,7 @@ def test_get_contact(api_client):
     assert isinstance(contact, Contact)
     assert contact.given_name == 'Given'
     assert contact.surname == 'Sur'
+    assert contact.birthday == date(1964, 10, 5)
 
 
 @pytest.mark.usefixtures("mock_contacts")
@@ -152,7 +153,7 @@ def test_update_contact_special_values(api_client, mocked_responses):
 
     request = mocked_responses.calls[-1].request
     req_body = json.loads(request.body)
-    birthday = {"object": "date", "date": "1999-03-06"}
+    birthday = "1999-03-06"
     email_address = {"type": "absent", "email": "absent@fake.com"}
     im_address = {"type": "absent", "im_address": "absent-im"}
     physical_address = {

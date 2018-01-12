@@ -9,16 +9,6 @@ from six import StringIO
 # pylint: disable=attribute-defined-outside-init
 
 
-
-def detect_attr(value):
-    attr_type = value.get("object", None)
-    if attr_type == "date":
-        date_str = value["date"]
-        if date_str:
-            return datetime.strptime(date_str, "%Y-%m-%d").date()
-    return None
-
-
 def typed_dict_attr(items, attr_name=None):
     if attr_name:
         pairs = [(item["type"], item[attr_name]) for item in items]
@@ -32,9 +22,9 @@ def typed_dict_attr(items, attr_name=None):
 
 class NylasAPIObject(dict):
     attrs = []
+    date_attrs = {}
     datetime_attrs = {}
     datetime_filter_attrs = {}
-    detect_attrs = []
     typed_dict_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
@@ -73,11 +63,12 @@ class NylasAPIObject(dict):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
+        for date_attr, iso_attr in cls.date_attrs.items():
+            if kwargs.get(iso_attr):
+                obj[date_attr] = datetime.strptime(kwargs[iso_attr], "%Y-%m-%d").date()
         for dt_attr, ts_attr in cls.datetime_attrs.items():
-            if obj.get(ts_attr):
-                obj[dt_attr] = datetime.utcfromtimestamp(obj[ts_attr])
-        for attr in cls.detect_attrs:
-            obj[attr] = detect_attr(kwargs.get(attr, {}))
+            if kwargs.get(ts_attr):
+                obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
         for attr, value_attr_name in cls.typed_dict_attrs.items():
             obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
@@ -91,15 +82,12 @@ class NylasAPIObject(dict):
         for attr in self.cls.attrs:
             if hasattr(self, attr):
                 dct[attr] = getattr(self, attr)
+        for date_attr, iso_attr in self.cls.date_attrs.items():
+            if self.get(date_attr):
+                dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
         for dt_attr, ts_attr in self.cls.datetime_attrs.items():
             if self.get(dt_attr):
                 dct[ts_attr] = timestamp_from_dt(self[dt_attr])
-        for attr in self.cls.detect_attrs:
-            value = getattr(self, attr)
-            if isinstance(value, date):
-                dct[attr] = {"object": "date", "date": value.strftime("%Y-%m-%d")}
-            else:
-                dct[attr] = {}
         for attr, value_attr in self.cls.typed_dict_attrs.items():
             typed_dict = getattr(self, attr)
             if value_attr:
@@ -477,7 +465,7 @@ class Contact(NylasAPIObject):
              "surname", "suffix", "nickname", "company_name",
              "job_title", "manager_name", "office_location", "notes",
              "picture_url"]
-    detect_attrs = ["birthday"]
+    date_attrs = {"birthday": "birthday"}
     typed_dict_attrs = {
         "email_addresses": "email",
         "im_addresses": "im_address",
