@@ -36,7 +36,7 @@ def test_handle_message_rejected(mocked_responses, api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'Sending to all recipients failed'
     mock_sending_error(402, error_message, mocked_responses, api_url=api_url)
-    with pytest.raises(MessageRejectedError) as exc:
+    with pytest.raises(MessageRejectedError):
         draft.send()
 
 
