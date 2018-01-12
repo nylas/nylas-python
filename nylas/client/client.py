@@ -8,6 +8,7 @@ import requests
 from urlobject import URLObject
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
+from nylas.client.errors import MessageRejectedError
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
     Calendar, Contact, Event, Message, Thread, File,
@@ -29,6 +30,15 @@ def _validate(response):
             status=response.status_code,
             text=response.text,
         ))
+
+    if response.status_code == 402:
+        # HTTP status code 402 normally means "Payment Required",
+        # but when Nylas uses that status code, it means something different.
+        # Usually it indicates an upstream error on the provider.
+        # We let Requests handle most HTTP errors, but for this one,
+        # we will handle it separate and handle a _different_ exception
+        # so that users don't think they need to pay.
+        raise MessageRejectedError(response)
 
     response.raise_for_status()
     return response

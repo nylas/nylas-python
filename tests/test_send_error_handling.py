@@ -4,6 +4,7 @@ import pytest
 import responses
 import six
 from requests import RequestException
+from nylas.client.errors import MessageRejectedError
 
 
 def mock_sending_error(http_code, message, mocked_responses, api_url, server_error=None):
@@ -35,9 +36,8 @@ def test_handle_message_rejected(mocked_responses, api_client, api_url):
     draft = api_client.drafts.create()
     error_message = 'Sending to all recipients failed'
     mock_sending_error(402, error_message, mocked_responses, api_url=api_url)
-    with pytest.raises(RequestException) as exc:
+    with pytest.raises(MessageRejectedError) as exc:
         draft.send()
-    assert "Payment Required" in str(exc.value)
 
 
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
