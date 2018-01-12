@@ -24,7 +24,6 @@ TEST_DEPENDENCIES = [
     "pytest-cov",
     "pytest-pylint",
     "responses==0.6.1",
-    "werkzeug",  # for MultiDict data structure
 ]
 
 

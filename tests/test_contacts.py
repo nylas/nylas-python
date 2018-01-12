@@ -4,16 +4,6 @@ import pytest
 from six import binary_type
 from nylas.client.restful_models import Contact
 
-try:
-    from werkzeug.datastructures import MultiDict
-except ImportError:
-    MultiDict = None
-
-multidict_required = pytest.mark.skipif(  # pylint: disable=invalid-name
-    not MultiDict,
-    reason="MultiDict implementation required",
-)
-
 
 @pytest.mark.usefixtures("mock_contacts")
 def test_list_contacts(api_client):
@@ -87,43 +77,27 @@ def test_contact_no_picture(api_client, mocked_responses):
 def test_contact_emails(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.email_addresses, dict)
-    assert contact.email_addresses["first"] == "one@example.com"
-    assert contact.email_addresses["second"] == "two@example.com"
-    assert contact.email_addresses["primary"] in ["abc@example.com", "xyz@example.com"]
-    assert contact.email_addresses[None] == "unknown@example.com"
+    assert contact.email_addresses["first"] == ["one@example.com"]
+    assert contact.email_addresses["second"] == ["two@example.com"]
+    assert contact.email_addresses["primary"] == ["abc@example.com", "xyz@example.com"]
+    assert contact.email_addresses[None] == ["unknown@example.com"]
     assert "absent" not in contact.email_addresses
-
-
-@multidict_required
-@pytest.mark.usefixtures("mock_contact")
-def test_contact_emails_multidict(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
-    assert contact.email_addresses.getlist("first") == ["one@example.com"]
-    assert contact.email_addresses.getlist("primary") == ["abc@example.com", "xyz@example.com"]
 
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_im_addresses(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.im_addresses, dict)
-    assert contact.im_addresses["aim"] == "SmarterChild"
-    assert contact.im_addresses["gtalk"] in ["fake@gmail.com", "fake2@gmail.com"]
+    assert contact.im_addresses["aim"] == ["SmarterChild"]
+    assert contact.im_addresses["gtalk"] == ["fake@gmail.com", "fake2@gmail.com"]
     assert "absent" not in contact.im_addresses
-
-
-@multidict_required
-@pytest.mark.usefixtures("mock_contact")
-def test_contact_im_addresses_multidict(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
-    assert contact.im_addresses.getlist("aim") == ["SmarterChild"]
-    assert contact.im_addresses.getlist("gtalk") == ["fake@gmail.com", "fake2@gmail.com"]
 
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_physical_addresses(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.physical_addresses, dict)
-    addr = contact.physical_addresses["home"]
+    addr = contact.physical_addresses["home"][0]
     assert isinstance(addr, dict)
     assert addr["format"] == "structured"
     assert addr["street_address"] == "123 Awesome Street"
@@ -134,17 +108,9 @@ def test_contact_physical_addresses(api_client):
 def test_contact_phone_numbers(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.phone_numbers, dict)
-    assert contact.phone_numbers["home"] == "555-555-5555"
-    assert contact.phone_numbers["mobile"] in ["555-555-5555", "987654321"]
+    assert contact.phone_numbers["home"] == ["555-555-5555"]
+    assert contact.phone_numbers["mobile"] == ["555-555-5555", "987654321"]
     assert "absent" not in contact.phone_numbers
-
-
-@multidict_required
-@pytest.mark.usefixtures("mock_contact")
-def test_contact_phone_numbers_multidict(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
-    assert contact.phone_numbers.getlist("home") == ["555-555-5555"]
-    assert contact.phone_numbers.getlist("mobile") == ["555-555-5555", "987654321"]
 
 
 @pytest.mark.usefixtures("mock_contact")
@@ -152,18 +118,9 @@ def test_contact_web_pages(api_client):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert isinstance(contact.web_pages, dict)
     profiles = ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
-    assert contact.web_pages["profile"] in profiles
-    assert contact.web_pages[None] == "http://example.com"
+    assert contact.web_pages["profile"] == profiles
+    assert contact.web_pages[None] == ["http://example.com"]
     assert "absent" not in contact.web_pages
-
-
-@multidict_required
-@pytest.mark.usefixtures("mock_contact")
-def test_contact_web_pages_multidict(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
-    profiles = ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
-    assert contact.web_pages.getlist("profile") == profiles
-    assert contact.web_pages.getlist(None) == ["http://example.com"]
 
 
 @pytest.mark.usefixtures("mock_contact")
@@ -171,27 +128,27 @@ def test_update_contact_special_values(api_client, mocked_responses):
     contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
     assert len(mocked_responses.calls) == 1
     contact.birthday = date(1999, 3, 6)
-    contact.email_addresses["absent"] = "absent@fake.com"
-    contact.im_addresses["absent"] = "absent-im"
-    contact.physical_addresses["absent"] = {
+    contact.email_addresses["absent"].append("absent@fake.com")
+    contact.im_addresses["absent"].append("absent-im")
+    contact.physical_addresses["absent"].append({
         "type": "absent",
         "format": "structured",
         "street_address": "123 Absent Street",
-    }
-    contact.phone_numbers["absent"] = "222-333-4444"
-    contact.web_pages["absent"] = "http://absent.com/me"
+    })
+    contact.phone_numbers["absent"].append("222-333-4444")
+    contact.web_pages["absent"].append("http://absent.com/me")
     contact.save()
     assert len(mocked_responses.calls) == 2
     assert contact.id == '9hga75n6mdvq4zgcmhcn7hpys'
-    assert contact.email_addresses["absent"] == "absent@fake.com"
-    assert contact.im_addresses["absent"] == "absent-im"
-    assert contact.physical_addresses["absent"] == {
+    assert contact.email_addresses["absent"] == ["absent@fake.com"]
+    assert contact.im_addresses["absent"] == ["absent-im"]
+    assert contact.physical_addresses["absent"] == [{
         "type": "absent",
         "format": "structured",
         "street_address": "123 Absent Street",
-    }
-    assert contact.phone_numbers["absent"] == "222-333-4444"
-    assert contact.web_pages["absent"] == "http://absent.com/me"
+    }]
+    assert contact.phone_numbers["absent"] == ["222-333-4444"]
+    assert contact.web_pages["absent"] == ["http://absent.com/me"]
 
     request = mocked_responses.calls[-1].request
     req_body = json.loads(request.body)

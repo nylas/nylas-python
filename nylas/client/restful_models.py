@@ -1,16 +1,14 @@
 from datetime import datetime, date
+from collections import defaultdict
 
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError
 from nylas.utils import timestamp_from_dt
 from six import StringIO
 
-try:
-    from werkzeug.datastructures import MultiDict
-except ImportError:  # pragma: no cover
-    MultiDict = dict
-
 # pylint: disable=attribute-defined-outside-init
+
+
 
 def detect_attr(value):
     attr_type = value.get("object", None)
@@ -21,10 +19,15 @@ def detect_attr(value):
     return None
 
 
-def mdict_attr(items, attr_name=None):
+def typed_dict_attr(items, attr_name=None):
     if attr_name:
-        return MultiDict([(item["type"], item[attr_name]) for item in items])
-    return MultiDict([(item["type"], item) for item in items])
+        pairs = [(item["type"], item[attr_name]) for item in items]
+    else:
+        pairs = [(item["type"], item) for item in items]
+    dct = defaultdict(list)
+    for key, value in pairs:
+        dct[key].append(value)
+    return dct
 
 
 class NylasAPIObject(dict):
@@ -76,7 +79,7 @@ class NylasAPIObject(dict):
         for attr in cls.detect_attrs:
             obj[attr] = detect_attr(kwargs.get(attr, {}))
         for attr, value_attr_name in cls.typed_dict_attrs.items():
-            obj[attr] = mdict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
+            obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
         if 'id' not in kwargs:
             obj['id'] = None
@@ -98,11 +101,17 @@ class NylasAPIObject(dict):
             else:
                 dct[attr] = {}
         for attr, value_attr in self.cls.typed_dict_attrs.items():
-            mdict = getattr(self, attr)
+            typed_dict = getattr(self, attr)
             if value_attr:
-                dct[attr] = [{"type": key, value_attr: value} for key, value in mdict.items()]
+                dct[attr] = []
+                for key, values in typed_dict.items():
+                    for value in values:
+                        dct[attr].append({"type": key, value_attr: value})
             else:
-                dct[attr] = list(mdict.values())
+                dct[attr] = []
+                for values in typed_dict.values():
+                    for value in values:
+                        dct[attr].append(value)
         return dct
 
     def child_collection(self, cls, **filters):
