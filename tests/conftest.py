@@ -943,7 +943,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         'given_name': 'Charlie',
         'middle_name': None,
         'surname': 'Bucket',
-        'birthday': {'date': "1964-10-05", 'object': 'date'},
+        'birthday': "1964-10-05",
         'suffix': None,
         'nickname': None,
         'company_name': None,
@@ -967,7 +967,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         'given_name': 'William',
         'middle_name': 'J',
         'surname': 'Wonka',
-        'birthday': {'date': "1955-02-29", 'object': 'date'},
+        'birthday': "1955-02-28",
         'suffix': None,
         'nickname': None,
         'company_name': None,
@@ -989,7 +989,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         'given_name': 'Oompa',
         'middle_name': None,
         'surname': 'Loompa',
-        'birthday': {'date': None, 'object': 'date'},
+        'birthday': None,
         'suffix': None,
         'nickname': None,
         'company_name': None,
@@ -1055,28 +1055,55 @@ def mock_contacts(mocked_responses, account_id, api_url):
 @pytest.fixture
 def mock_contact(mocked_responses, account_id, api_url):
     contact = {
-        'id': '5x6b54whvcz1j22ggiyorhk9v',
+        'id': '9hga75n6mdvq4zgcmhcn7hpys',
         'object': 'contact',
         'account_id': account_id,
-        'given_name': 'Charlie',
-        'middle_name': None,
-        'surname': 'Bucket',
-        'birthday': {'date': "1964-10-05", 'object': 'date'},
-        'suffix': None,
-        'nickname': None,
-        'company_name': None,
-        'job_title': "Student",
-        'manager_name': None,
-        'office_location': None,
-        'notes': None,
+        'given_name': 'Given',
+        'middle_name': 'Middle',
+        'surname': 'Sur',
+        'birthday': "1964-10-05",
+        'suffix': 'Jr',
+        'nickname': 'Testy',
+        'company_name': "Test Data Inc",
+        'job_title': "QA Tester",
+        'manager_name': "George",
+        'office_location': "Over the Rainbow",
+        'notes': "This is a note",
         'picture_url': "{base}/contacts/{id}/picture".format(
-            base=api_url, id='5x6b54whvcz1j22ggiyorhk9v'
+            base=api_url, id='9hga75n6mdvq4zgcmhcn7hpys'
         ),
-        'email_addresses': [{'email': 'charlie@gmail.com', 'type': None}],
-        'im_addresses': [],
-        'physical_addresses': [],
-        'phone_numbers': [],
-        'web_pages': [],
+        'email_addresses': [
+            {"type": "first", "email": "one@example.com"},
+            {"type": "second", "email": "two@example.com"},
+            {"type": "primary", "email": "abc@example.com"},
+            {"type": "primary", "email": "xyz@example.com"},
+            {"type": None, "email": "unknown@example.com"},
+        ],
+        'im_addresses': [
+            {"type": "aim", "im_address": "SmarterChild"},
+            {"type": "gtalk", "im_address": "fake@gmail.com"},
+            {"type": "gtalk", "im_address": "fake2@gmail.com"},
+        ],
+        'physical_addresses': [
+            {
+                "type": "home",
+                "format": "structured",
+                "street_address": "123 Awesome Street",
+                "postal_code": "99989",
+                "state": "CA",
+                "country": "America",
+            }
+        ],
+        'phone_numbers': [
+            {"type": "home", "number": "555-555-5555"},
+            {"type": "mobile", "number": "555-555-5555"},
+            {"type": "mobile", "number": "987654321"},
+        ],
+        'web_pages': [
+            {"type": "profile", "url": "http://www.facebook.com/abc"},
+            {"type": "profile", "url": "http://www.twitter.com/abc"},
+            {"type": None, "url": "http://example.com"},
+        ],
     }
 
     def update_callback(request):

@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, date
+from collections import defaultdict
 
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError
@@ -8,10 +9,23 @@ from six import StringIO
 # pylint: disable=attribute-defined-outside-init
 
 
+def typed_dict_attr(items, attr_name=None):
+    if attr_name:
+        pairs = [(item["type"], item[attr_name]) for item in items]
+    else:
+        pairs = [(item["type"], item) for item in items]
+    dct = defaultdict(list)
+    for key, value in pairs:
+        dct[key].append(value)
+    return dct
+
+
 class NylasAPIObject(dict):
     attrs = []
+    date_attrs = {}
     datetime_attrs = {}
     datetime_filter_attrs = {}
+    typed_dict_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
@@ -49,9 +63,15 @@ class NylasAPIObject(dict):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
+        for date_attr, iso_attr in cls.date_attrs.items():
+            if kwargs.get(iso_attr):
+                obj[date_attr] = datetime.strptime(kwargs[iso_attr], "%Y-%m-%d").date()
         for dt_attr, ts_attr in cls.datetime_attrs.items():
-            if obj.get(ts_attr):
-                obj[dt_attr] = datetime.utcfromtimestamp(obj[ts_attr])
+            if kwargs.get(ts_attr):
+                obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
+        for attr, value_attr_name in cls.typed_dict_attrs.items():
+            obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
+
         if 'id' not in kwargs:
             obj['id'] = None
 
@@ -62,9 +82,24 @@ class NylasAPIObject(dict):
         for attr in self.cls.attrs:
             if hasattr(self, attr):
                 dct[attr] = getattr(self, attr)
+        for date_attr, iso_attr in self.cls.date_attrs.items():
+            if self.get(date_attr):
+                dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
         for dt_attr, ts_attr in self.cls.datetime_attrs.items():
             if self.get(dt_attr):
                 dct[ts_attr] = timestamp_from_dt(self[dt_attr])
+        for attr, value_attr in self.cls.typed_dict_attrs.items():
+            typed_dict = getattr(self, attr)
+            if value_attr:
+                dct[attr] = []
+                for key, values in typed_dict.items():
+                    for value in values:
+                        dct[attr].append({"type": key, value_attr: value})
+            else:
+                dct[attr] = []
+                for values in typed_dict.values():
+                    for value in values:
+                        dct[attr].append(value)
         return dct
 
     def child_collection(self, cls, **filters):
@@ -427,10 +462,17 @@ class File(NylasAPIObject):
 
 class Contact(NylasAPIObject):
     attrs = ["id", "object", "account_id", "given_name", "middle_name",
-             "surname", "birthday", "suffix", "nickname", "company_name",
+             "surname", "suffix", "nickname", "company_name",
              "job_title", "manager_name", "office_location", "notes",
-             "picture_url", "email_addresses", "im_addresses",
-             "physical_addresses", "phone_numbers", "web_pages"]
+             "picture_url"]
+    date_attrs = {"birthday": "birthday"}
+    typed_dict_attrs = {
+        "email_addresses": "email",
+        "im_addresses": "im_address",
+        "physical_addresses": None,
+        "phone_numbers": "number",
+        "web_pages": "url",
+    }
     collection_name = 'contacts'
 
     def __init__(self, api):
