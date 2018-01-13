@@ -433,7 +433,7 @@ class File(NylasAPIObject):
                 "File object not properly formatted, "
                 "must provide either a stream or data."
             )
-            raise FileUploadError(message=message)
+            raise FileUploadError(message)
 
         file_info = (
             self.filename,
@@ -451,7 +451,7 @@ class File(NylasAPIObject):
     def download(self):
         if not self.id:
             message = "Can't download a file that hasn't been uploaded."
-            raise FileUploadError(message=message)
+            raise FileUploadError(message)
 
         return self.api._get_resource_data(File, self.id,
                                            extra='download')

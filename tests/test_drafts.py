@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytest
-from nylas.client.errors import InvalidRequestError
+from requests import RequestException
 from nylas.utils import timestamp_from_dt
 
 # pylint: disable=len-as-condition
@@ -33,7 +33,7 @@ def test_save_send_draft(api_client):
     assert msg['thread_id'] == 'clm33kapdxkposgltof845v9s'
 
     # Second time should throw an error
-    with pytest.raises(InvalidRequestError):
+    with pytest.raises(RequestException):
         draft.send()
 
 

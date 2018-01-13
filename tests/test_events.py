@@ -1,6 +1,6 @@
 import pytest
 from urlobject import URLObject
-from nylas.client.errors import InvalidRequestError
+from requests import RequestException
 from nylas.client.restful_models import Event
 
 
@@ -25,7 +25,7 @@ def test_event_crud(api_client):
 
     # Third time should fail.
     event2 = blank_event(api_client)
-    with pytest.raises(InvalidRequestError):
+    with pytest.raises(RequestException):
         event2.save()
 
 

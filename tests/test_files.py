@@ -67,7 +67,7 @@ def test_file_invalid_upload(api_client):
     with pytest.raises(FileUploadError) as exc:
         myfile.save()
 
-    assert exc.value.message == (
+    assert str(exc.value) == (
         "File object not properly formatted, "
         "must provide either a stream or data."
     )
@@ -81,5 +81,5 @@ def test_file_upload_errors(api_client):
     with pytest.raises(FileUploadError) as exc:
         myfile.download()
 
-    assert exc.value.message == ("Can't download a file that "
-                                 "hasn't been uploaded.")
+    assert str(exc.value) == ("Can't download a file that "
+                              "hasn't been uploaded.")
