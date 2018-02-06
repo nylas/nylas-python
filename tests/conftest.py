@@ -95,6 +95,8 @@ def mock_account(mocked_responses, api_url, account_id):
             "provider": "gmail",
             "organization_unit": "label",
             "billing_state": "paid",
+            "linked_at": 1500920299,
+            "sync_state": "running",
         }
     )
     mocked_responses.add(
@@ -118,6 +120,8 @@ def mock_accounts(mocked_responses, api_url, account_id, app_id):
             "provider": "gmail",
             "organization_unit": "label",
             "billing_state": "paid",
+            "linked_at": 1500920299,
+            "sync_state": "running",
         }
     ])
     url_re = "{base}(/a/{app_id})?/accounts/?".format(base=api_url, app_id=app_id)
