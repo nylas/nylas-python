@@ -572,6 +572,9 @@ class Account(NylasAPIObject):
 class APIAccount(NylasAPIObject):
     attrs = ['account_id', 'email_address', 'id', 'name', 'object',
              'organization_unit', 'provider', 'sync_state']
+    datetime_attrs = {
+        "linked_at": "linked_at",
+    }
 
     collection_name = 'accounts'
 

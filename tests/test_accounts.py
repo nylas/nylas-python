@@ -1,3 +1,4 @@
+from datetime import datetime
 import pytest
 from nylas.client.restful_models import Account, APIAccount, SingletonAccount
 
@@ -19,6 +20,12 @@ def test_account_json(api_client, monkeypatch):
     account = api_client.accounts.create()
     result = account.as_json()
     assert isinstance(result, dict)
+
+
+@pytest.mark.usefixtures("mock_account")
+def test_account_datetime(api_client):
+    account = api_client.account
+    assert account.linked_at == datetime(2017, 7, 24, 18, 18, 19)
 
 
 @pytest.mark.usefixtures("mock_accounts", "mock_account_management")
