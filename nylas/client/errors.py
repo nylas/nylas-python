@@ -6,3 +6,6 @@ class MessageRejectedError(NylasError):
 
 class FileUploadError(NylasError):
     pass
+
+class UnSyncedError(NylasError):
+    pass
