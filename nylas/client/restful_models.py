@@ -2,7 +2,7 @@ from datetime import datetime, date
 from collections import defaultdict
 
 from nylas.client.restful_model_collection import RestfulModelCollection
-from nylas.client.errors import FileUploadError
+from nylas.client.errors import FileUploadError, UnSyncedError
 from nylas.utils import timestamp_from_dt
 from six import StringIO
 
@@ -219,8 +219,10 @@ class Message(NylasAPIObject):
     @property
     def raw(self):
         headers = {"Accept": "message/rfc822"}
-        data = self.api._get_resource_data(Message, self.id, headers=headers)
-        return data
+        response = self.api._get_resource_raw(Message, self.id, headers=headers)
+        if response.status_code == 202:
+            raise UnSyncedError(response.content)
+        return response.content
 
 
 class Folder(NylasAPIObject):
