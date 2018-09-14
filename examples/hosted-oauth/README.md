@@ -55,14 +55,15 @@ your app to production, so it's usually a better idea to set up HTTPS properly.
 ## Set the Nylas Callback URL
 
 Once you have a HTTPS URL that points to your computer, you'll need to tell
-Nylas about it. On the [Nylas Developer](https://developer.nylas.com) console,
-click on the "Settings" button, and then select the "Callbacks" tab.
-Paste your HTTPS URL into text field, and add `/login/nylas/authorized`
-after it. For example, if your HTTPS URL is `https://ad172180.ngrok.io`, then
-you would put `https://ad172180.ngrok.io/login/nylas/authorized` into
-the text field in the "Callbacks" tab.
+Nylas about it. On the [Nylas Dashboard](https://dashboard.nylas.com)
+click on the Application Dropdown Menu on the left, then "View all Applications".
+From there, select "Edit" for the app you'd like to use and select the 
+"Application Callbacks" tab. Paste your HTTPS URL into the text field, and add
+`/login/nylas/authorized` after it. For example, if your HTTPS URL is
+`https://ad172180.ngrok.io`, then you would put `https://ad172180.ngrok.io/login/nylas/authorized`
+into the text field in the "Application Callbacks" tab.
 
-Then click the "Done" button to save.
+Then click the "Add Callback" button to save.
 
 ## Install the Dependencies
 
