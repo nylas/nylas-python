@@ -88,7 +88,20 @@ def main():
         description='Python bindings for Nylas, the next-generation email platform.',
         license="MIT",
         keywords="inbox app appserver email nylas",
-        url='https://github.com/nylas/nylas-python'
+        url='https://github.com/nylas/nylas-python',
+        long_description_content_type='text/markdown',
+        long_description='''
+# Nylas REST API Python bindings 
+[![Build Status](https://travis-ci.org/nylas/nylas-python.svg?branch=master)](https://travis-ci.org/nylas/nylas-python) 
+[![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/master/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
+
+Python bindings for the Nylas REST API. https://www.nylas.com/docs
+
+The Nylas APIs power applications with email, calendar, and contacts CRUD and bi-directional sync from any inbox in the world.
+
+Nylas is compatible with 100% of email service providers, so you only have to integrate once.
+No more headaches building unique integrations against archaic and outdated IMAP and SMTP protocols.''',
+
     )
 
 
