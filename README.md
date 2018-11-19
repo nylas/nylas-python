@@ -3,6 +3,11 @@
 
 Python bindings for the Nylas REST API. https://www.nylas.com/docs
 
+The Nylas APIs power applications with email, calendar, and contacts sync from any inbox in the world.
+
+Nylas is compatible with 100% of email service providers, so you only have to integrate once.
+No more headaches building unique integrations against archaic and outdated IMAP and SMTP protocols.
+
 ## Installation
 
 This library is available on pypi. You can install it by running `pip install nylas`.

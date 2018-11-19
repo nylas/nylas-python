@@ -1,6 +1,17 @@
 nylas-python Changelog
 ======================
 
+v4.3.0
+------
+Raise `UnsyncedError` when a message isn't ready to be retrieved yet (HTTP 202) when
+fetching a raw message.
+
+
+v4.2.0
+------
+
+
+
 v3.0.0
 ------
 
