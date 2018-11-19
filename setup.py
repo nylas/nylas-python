@@ -87,7 +87,7 @@ def main():
         author_email="support@nylas.com",
         description='Python bindings for Nylas, the next-generation email platform.',
         license="MIT",
-        keywords="inbox app appserver email nylas",
+        keywords="inbox app appserver email nylas contacts calendar",
         url='https://github.com/nylas/nylas-python',
         long_description_content_type='text/markdown',
         long_description='''
