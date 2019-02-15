@@ -83,6 +83,17 @@ use the `revoke_token` method on APIClient
   client.revoke_token()
 ```
 
+**Revoke all tokens or all but one token**
+
+To revoke an access token and remove it from your APIClient's session you can
+use the `revoke_all_tokens` method on APIClient. Pass in the optional 
+`keep_access_token` parameter if you want to keep an access token.
+
+```python
+  client.revoke_all_tokens()
+  client.revoke_all_tokens(keep_access_token='ac123acd123ef123')
+```
+
 
 ### Connecting to an account
 

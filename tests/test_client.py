@@ -1,6 +1,6 @@
 import re
 import json
-from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.parse import parse_qs  # pylint: disable=relative-import
 import pytest
 from urlobject import URLObject
 import responses
