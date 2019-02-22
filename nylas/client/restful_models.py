@@ -1,10 +1,10 @@
-from datetime import datetime, date
+from datetime import datetime
 from collections import defaultdict
 
+from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError, UnSyncedError
 from nylas.utils import timestamp_from_dt
-from six import StringIO
 
 # pylint: disable=attribute-defined-outside-init
 
