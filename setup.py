@@ -20,9 +20,8 @@ RUN_DEPENDENCIES = [
     "urlobject",
 ]
 TEST_DEPENDENCIES = [
-    # These versions are the latest that still have python 2 support
-    'astroid==1.6.5',
-    'pylint==1.9.3',
+    'astroid',
+    'pylint',
     "pytest",
     "pytest-cov",
     "pytest-pylint",
