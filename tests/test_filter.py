@@ -30,7 +30,7 @@ def test_no_filter(mocked_responses, api_client, api_url, message_body):
 def test_two_filters(mocked_responses, api_client, api_url):
     mocked_responses.add(
         responses.GET,
-        api_url + '/events?param1=a&param2=b',
+        api_url + '/events',
         body='[]',
     )
     events = api_client.events.where(param1='a', param2='b').all()
@@ -43,7 +43,7 @@ def test_two_filters(mocked_responses, api_client, api_url):
 def test_no_offset(mocked_responses, api_client, api_url):
     mocked_responses.add(
         responses.GET,
-        api_url + '/events?in=Nylas',
+        api_url + r'/events',
         body='[]',
     )
     list(api_client.events.where({'in': 'Nylas'}).values())
@@ -55,7 +55,7 @@ def test_no_offset(mocked_responses, api_client, api_url):
 def test_zero_offset(mocked_responses, api_client, api_url):
     mocked_responses.add(
         responses.GET,
-        api_url + '/events?in=Nylas&offset=0',
+        api_url + '/events',
         body='[]',
     )
     list(api_client.events.where({'in': 'Nylas', 'offset': 0}).values())
@@ -68,7 +68,7 @@ def test_non_zero_offset(mocked_responses, api_client, api_url):
     offset = random.randint(1, 1000)
     mocked_responses.add(
         responses.GET,
-        api_url + '/events?in=Nylas&offset=' + str(offset),
+        api_url + '/events',
         body='[]',
     )
 
