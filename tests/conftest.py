@@ -101,7 +101,7 @@ def mock_account(mocked_responses, api_url, account_id):
     )
     mocked_responses.add(
         responses.GET,
-        re.compile(api_url + '/account/?'),
+        re.compile(api_url + '/account(?!s)/?'),
         content_type='application/json',
         status=200,
         body=response_body,

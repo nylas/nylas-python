@@ -69,8 +69,9 @@ def test_message_labels(api_client):
 @pytest.mark.usefixtures("mock_account", "mock_message", "mock_messages")
 def test_message_raw(api_client, account_id):
     message = api_client.messages.first()
-    assert isinstance(message.raw, six.binary_type)
-    parsed = json.loads(message.raw)
+    raw = message.raw
+    assert isinstance(raw, six.binary_type)
+    parsed = json.loads(raw)
     assert parsed == {
         "object": "message",
         "account_id": account_id,
