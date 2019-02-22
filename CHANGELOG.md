@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* You can now pass a list of `scopes` when instantiating your `APIClient` class,
+  in order to enable [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync)
+
 v4.4.0
 ------
 * Add support for `revoke-all` endpoint.
