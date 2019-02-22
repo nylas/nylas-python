@@ -50,7 +50,8 @@ class APIClient(json.JSONEncoder):
     def __init__(self, app_id=environ.get('NYLAS_APP_ID'),
                  app_secret=environ.get('NYLAS_APP_SECRET'),
                  access_token=environ.get('NYLAS_ACCESS_TOKEN'),
-                 api_server=API_SERVER):
+                 api_server=API_SERVER,
+                 scopes=None):
         if not api_server.startswith("https://"):
             raise Exception("When overriding the Nylas API server address, you"
                             " must include https://")
@@ -62,6 +63,8 @@ class APIClient(json.JSONEncoder):
 
         self.app_secret = app_secret
         self.app_id = app_id
+
+        self.scopes = scopes or ['email']
 
         self.session = requests.Session()
         self.version = __VERSION__
@@ -113,7 +116,7 @@ class APIClient(json.JSONEncoder):
         args = {'redirect_uri': redirect_uri,
                 'client_id': self.app_id or 'None',  # 'None' for back-compat
                 'response_type': 'code',
-                'scope': 'email',
+                'scopes': ','.join(self.scopes),
                 'login_hint': login_hint,
                 'state': state}
 

@@ -71,7 +71,7 @@ def test_client_authentication_url(api_client, api_url):
             ('redirect_uri', '/redirect'),
             ('response_type', 'code'),
             ('client_id', 'None'),
-            ('scope', 'email'),
+            ('scopes', 'email'),
         ])
     )
     actual = URLObject(api_client.authentication_url("/redirect"))
@@ -85,6 +85,35 @@ def test_client_authentication_url(api_client, api_url):
 
     actual3 = URLObject(
         api_client.authentication_url("/redirect", state="confusion")
+    )
+    expected3 = expected.set_query_param("state", "confusion")
+    assert urls_equal(expected3, actual3)
+
+
+def test_client_authentication_url_custom_scopes(api_client_scopes, api_url):
+    expected = (
+        URLObject(api_url)
+        .with_path("/oauth/authorize")
+        .set_query_params([
+            ('login_hint', ''),
+            ('state', ''),
+            ('redirect_uri', '/redirect'),
+            ('response_type', 'code'),
+            ('client_id', 'None'),
+            ('scopes', 'email,calendars,contacts'),
+        ])
+    )
+    actual = URLObject(api_client_scopes.authentication_url("/redirect"))
+    assert urls_equal(expected, actual)
+
+    actual2 = URLObject(
+        api_client_scopes.authentication_url("/redirect", login_hint="hint")
+    )
+    expected2 = expected.set_query_param("login_hint", "hint")
+    assert urls_equal(expected2, actual2)
+
+    actual3 = URLObject(
+        api_client_scopes.authentication_url("/redirect", state="confusion")
     )
     expected3 = expected.set_query_param("state", "confusion")
     assert urls_equal(expected3, actual3)

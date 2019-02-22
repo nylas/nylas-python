@@ -77,6 +77,17 @@ def api_client_with_app_id(access_token, api_url, app_id, app_secret):
 
 
 @pytest.fixture
+def api_client_scopes(api_url):
+    return APIClient(
+        None,
+        None,
+        None,
+        api_url,
+        scopes=["email", "calendars", "contacts"],
+    )
+
+
+@pytest.fixture
 def mocked_responses():
     rmock = responses.RequestsMock(assert_all_requests_are_fired=False)
     with rmock:
