@@ -4,7 +4,10 @@ nylas-python Changelog
 Unreleased (dev)
 ----------------
 * You can now pass a list of `scopes` when instantiating your `APIClient` class,
-  in order to enable [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync)
+  in order to enable
+  [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync).
+  Previously, we only set `scope=email` by default; now, the default is to use
+  all scopes.
 
 v4.4.0
 ------

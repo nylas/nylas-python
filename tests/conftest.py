@@ -77,13 +77,13 @@ def api_client_with_app_id(access_token, api_url, app_id, app_secret):
 
 
 @pytest.fixture
-def api_client_scopes(api_url):
+def api_client_email_only(api_url):
     return APIClient(
         None,
         None,
         None,
         api_url,
-        scopes=["email", "calendars", "contacts"],
+        scopes=["email"],
     )
 
 

@@ -64,7 +64,7 @@ class APIClient(json.JSONEncoder):
         self.app_secret = app_secret
         self.app_id = app_id
 
-        self.scopes = scopes or ['email']
+        self.scopes = scopes or ['email', 'calendar', 'contacts']
 
         self.session = requests.Session()
         self.version = __VERSION__
