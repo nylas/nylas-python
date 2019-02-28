@@ -13,10 +13,7 @@ with open('nylas/_client_sdk_version.py', 'r') as fd:
 RUN_DEPENDENCIES = [
     "requests>=2.4.2",
     "six>=1.4.1",
-    "bumpversion>=0.5.0",
     "pyOpenSSL",  # needed for SNI support, required by api.nylas.com
-    "ndg-httpsclient",
-    "pyasn1",
     "urlobject",
 ]
 TEST_DEPENDENCIES = [
