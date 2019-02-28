@@ -7,7 +7,7 @@ install:
   - "travis_retry pip install -U pip pytest pylint"
   - "travis_retry pip install .[test]"
   - "travis_retry pip install codecov"
-script: "python setup.py test --lint"
+script: "python setup.py test"
 after_success:
   - "codecov"
 
