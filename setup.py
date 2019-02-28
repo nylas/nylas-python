@@ -17,24 +17,11 @@ RUN_DEPENDENCIES = [
     "bumpversion>=0.5.0",
     "urlobject",
 ]
-TEST_DEPENDENCIES = [
-    "astroid",
-    "pylint",
-    "pytest",
-    "pytest-cov",
-    "pytest-pylint",
-    "responses==0.10.5",
-    "twine",
-]
+TEST_DEPENDENCIES = ["pytest", "pytest-cov", "responses==0.10.5", "twine"]
 
 
 class PyTest(TestCommand):
-    user_options = [
-        ("pytest-args=", "a", "Arguments to pass to pytest"),
-        ("lint", None, "Enable linting with pylint"),
-    ]
-
-    boolean_options = ["lint"]
+    user_options = [("pytest-args=", "a", "Arguments to pass to pytest")]
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
@@ -47,8 +34,6 @@ class PyTest(TestCommand):
         # pylint: disable=attribute-defined-outside-init
         self.test_args = []
         self.test_suite = True
-        if self.lint:
-            self.pytest_args.append("--pylint")
 
     def run_tests(self):
         # import here, cause outside the eggs aren't loaded
