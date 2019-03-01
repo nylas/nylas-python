@@ -43,11 +43,21 @@ def test_client_access_token():
     assert 'Authorization' not in client.session.headers
 
 
-def test_client_app_secret():
-    client = APIClient(app_secret="foo")
+def test_client_headers():
+    client = APIClient(app_id="whee", app_secret="foo")
+    headers = client.session.headers
+    assert headers['X-Nylas-API-Wrapper'] == "python"
+    assert headers['X-Nylas-Client-Id'] == "whee"
+    assert "Nylas Python SDK" in headers['User-Agent']
+    assert "Authorization" not in headers
+
+
+def test_client_admin_headers():
+    client = APIClient(app_id="bounce", app_secret="foo")
     headers = client.admin_session.headers
     assert headers['Authorization'] == "Basic Zm9vOg=="
     assert headers['X-Nylas-API-Wrapper'] == "python"
+    assert headers['X-Nylas-Client-Id'] == "bounce"
     assert "Nylas Python SDK" in headers['User-Agent']
 
 

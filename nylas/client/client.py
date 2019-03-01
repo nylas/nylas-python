@@ -68,8 +68,11 @@ class APIClient(json.JSONEncoder):
         version_header = 'Nylas Python SDK {} - {}.{}.{}'.format(self.version,
                                                                  major, minor,
                                                                  revision)
-        self.session.headers = {'X-Nylas-API-Wrapper': 'python',
-                                'User-Agent': version_header}
+        self.session.headers = {
+            'X-Nylas-API-Wrapper': 'python',
+            'X-Nylas-Client-Id': self.app_id,
+            'User-Agent': version_header,
+        }
         self._access_token = None
         self.access_token = access_token
         self.auth_token = None
@@ -86,6 +89,7 @@ class APIClient(json.JSONEncoder):
             self.admin_session.headers = {
                 'Authorization': authorization,
                 'X-Nylas-API-Wrapper': 'python',
+                'X-Nylas-Client-Id': self.app_id,
                 'User-Agent': version_header,
             }
         super(APIClient, self).__init__()
