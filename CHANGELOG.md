@@ -1,9 +1,14 @@
 nylas-python Changelog
 ======================
 
+v4.4.0
+------
+* Add support for `revoke-all` endpoint.
+
+
 v4.3.0
 ------
-Raise `UnsyncedError` when a message isn't ready to be retrieved yet (HTTP 202) when
+* Raise `UnsyncedError` when a message isn't ready to be retrieved yet (HTTP 202) when
 fetching a raw message.
 
 

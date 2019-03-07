@@ -58,6 +58,7 @@ class APIClient(json.JSONEncoder):
         self.authorize_url = api_server + '/oauth/authorize'
         self.access_token_url = api_server + '/oauth/token'
         self.revoke_url = api_server + '/oauth/revoke'
+        self.revoke_all_url = api_server + '/a/{client_id}/accounts/{account_id}/revoke-all'
 
         self.app_secret = app_secret
         self.app_id = app_id
@@ -141,6 +142,20 @@ class APIClient(json.JSONEncoder):
         _validate(resp)
         self.auth_token = None
         self.access_token = None
+
+    def revoke_all_tokens(self, keep_access_token=None):
+        revoke_all_url = self.revoke_all_url.format(client_id=self.app_id, account_id=self.account.id)
+        data = {}
+        if keep_access_token is not None:
+            data['keep_access_token'] = keep_access_token
+
+        headers = {'Content-Type': 'application/json'}
+        headers.update(self.admin_session.headers)
+        resp = self.admin_session.post(revoke_all_url, json=data, headers=headers)
+        _validate(resp).json()
+        if keep_access_token != self.access_token:
+            self.auth_token = None
+            self.access_token = None
 
     @property
     def account(self):
@@ -248,7 +263,6 @@ class APIClient(json.JSONEncoder):
             filters, cls.datetime_filter_attrs,
         )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
-
         response = self._get_http_session(cls.api_root).get(
             url, headers=headers, stream=stream,
         )

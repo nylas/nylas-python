@@ -39,9 +39,10 @@ def message_body():
         }
     }
 
+
 @pytest.fixture
-def api_url():
-    return 'https://localhost:2222'
+def access_token():
+    return 'l3m0n_w4ter'
 
 
 @pytest.fixture
@@ -50,13 +51,29 @@ def account_id():
 
 
 @pytest.fixture
+def api_url():
+    return 'https://localhost:2222'
+
+
+@pytest.fixture
 def app_id():
     return 'fake-app-id'
 
 
 @pytest.fixture
+def app_secret():
+    return 'nyl4n4ut'
+
+
+@pytest.fixture
 def api_client(api_url):
-    return APIClient(None, None, None, api_url)
+    return APIClient(app_id=None, app_secret=None, access_token=None, api_server=api_url)
+
+
+@pytest.fixture
+def api_client_with_app_id(access_token, api_url, app_id, app_secret):
+    return APIClient(
+        app_id=app_id, app_secret=app_secret, access_token=access_token, api_server=api_url)
 
 
 @pytest.fixture
@@ -937,7 +954,6 @@ def mock_calendars(mocked_responses, api_url):
     )
 
 
-
 @pytest.fixture
 def mock_contacts(mocked_responses, account_id, api_url):
     contact1 = {
@@ -1217,4 +1233,18 @@ def mock_account_management(mocked_responses, api_url, account_id, app_id):
         content_type='application/json',
         status=200,
         body=cancelled_response,
+    )
+
+
+@pytest.fixture
+def mock_revoke_all_tokens(mocked_responses, api_url, account_id, app_id):
+    revoke_all_url = "{base}/a/{app_id}/accounts/{id}/revoke-all".format(
+        base=api_url, id=account_id, app_id=app_id,
+    )
+    mocked_responses.add(
+        responses.POST,
+        revoke_all_url,
+        content_type='application/json',
+        status=200,
+        body=json.dumps({'success': True}),
     )

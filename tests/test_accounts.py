@@ -46,6 +46,20 @@ def test_account_delete(api_client, monkeypatch):
         account.delete()
 
 
+@pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
+def test_revoke_all_tokens(api_client_with_app_id):
+    assert api_client_with_app_id.access_token is not None
+    api_client_with_app_id.revoke_all_tokens()
+    assert api_client_with_app_id.access_token is None
+
+
+@pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
+def test_revoke_all_tokens_with_keep_access_token(api_client_with_app_id, access_token):
+    assert api_client_with_app_id.access_token == access_token
+    api_client_with_app_id.revoke_all_tokens(keep_access_token=access_token)
+    assert api_client_with_app_id.access_token == access_token
+
+
 @pytest.mark.usefixtures("mock_accounts", "mock_account")
 def test_account_access(api_client):
     account1 = api_client.account
