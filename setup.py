@@ -23,6 +23,7 @@ TEST_DEPENDENCIES = [
     "pytest-cov",
     "pytest-pylint",
     "responses==0.10.5",
+    "twine",
 ]
 
 

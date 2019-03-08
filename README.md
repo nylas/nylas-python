@@ -405,7 +405,8 @@ We have a two-step process for releasing a new version of the Python SDK. Rememb
     ```shell
     python setup.py release <major/minor/patch>
     git log # to verify
-    python setup.py publish
+    twine upload --repository-url https://test.pypi.org/legacy/ dist/* # push to TestPypi
+    twine upload dist/* # push to Pypi
     git push --tags # update the release tags on GitHub.
     ```
 
