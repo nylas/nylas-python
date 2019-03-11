@@ -113,6 +113,23 @@ def test_client_authentication_url_custom_scopes(api_client, api_url):
     assert urls_equal(expected2, actual2)
 
 
+def test_client_authentication_url_scopes_none(api_client, api_url):
+    expected = (
+        URLObject(api_url)
+        .with_path("/oauth/authorize")
+        .set_query_params([
+            ('login_hint', ''),
+            ('state', ''),
+            ('redirect_uri', '/redirect'),
+            ('response_type', 'code'),
+            ('client_id', 'None'),
+            # no scopes parameter
+        ])
+    )
+    actual = URLObject(api_client.authentication_url("/redirect", scopes=None))
+    assert urls_equal(expected, actual)
+
+
 def test_client_token_for_code(mocked_responses, api_client, api_url):
     endpoint = re.compile(api_url + '/oauth/token')
     response_body = json.dumps({"access_token": "hooray"})
