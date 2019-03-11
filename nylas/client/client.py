@@ -124,20 +124,28 @@ class APIClient(json.JSONEncoder):
             authorization = "Bearer {token}".format(token=value)
             self.session.headers["Authorization"] = authorization
         else:
-            if 'Authorization' in self.session.headers:
-                del self.session.headers['Authorization']
+            if "Authorization" in self.session.headers:
+                del self.session.headers["Authorization"]
 
-    def authentication_url(self, redirect_uri, login_hint='', state='', scopes=('email', 'calendar', 'contacts')):
-        args = {'redirect_uri': redirect_uri,
-                'client_id': self.app_id or 'None',  # 'None' for back-compat
-                'response_type': 'code',
-                'login_hint': login_hint,
-                'state': state}
+    def authentication_url(
+        self,
+        redirect_uri,
+        login_hint="",
+        state="",
+        scopes=("email", "calendar", "contacts"),
+    ):
+        args = {
+            "redirect_uri": redirect_uri,
+            "client_id": self.app_id or "None",  # 'None' for back-compat
+            "response_type": "code",
+            "login_hint": login_hint,
+            "state": state,
+        }
 
         if scopes:
             if isinstance(scopes, str):
                 scopes = [scopes]
-            args['scopes'] = ','.join(scopes)
+            args["scopes"] = ",".join(scopes)
 
         url = URLObject(self.authorize_url).add_query_params(args.items())
         return str(url)
