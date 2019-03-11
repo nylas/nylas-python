@@ -11,25 +11,36 @@ from nylas._client_sdk_version import __VERSION__
 from nylas.client.errors import MessageRejectedError
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
-    Calendar, Contact, Event, Message, Thread, File,
-    Account, APIAccount, SingletonAccount, Folder,
-    Label, Draft
+    Calendar,
+    Contact,
+    Event,
+    Message,
+    Thread,
+    File,
+    Account,
+    APIAccount,
+    SingletonAccount,
+    Folder,
+    Label,
+    Draft,
 )
 from nylas.utils import convert_datetimes_to_timestamps
 
-DEBUG = environ.get('NYLAS_CLIENT_DEBUG')
+DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
 
 
 def _validate(response):
     if DEBUG:  # pragma: no cover
-        print("{method} {url} ({body}) => {status}: {text}".format(
-            method=response.request.method,
-            url=response.request.url,
-            body=response.request.body,
-            status=response.status_code,
-            text=response.text,
-        ))
+        print(
+            "{method} {url} ({body}) => {status}: {text}".format(
+                method=response.request.method,
+                url=response.request.url,
+                body=response.request.body,
+                status=response.status_code,
+                text=response.text,
+            )
+        )
 
     if response.status_code == 402:
         # HTTP status code 402 normally means "Payment Required",
@@ -47,18 +58,25 @@ def _validate(response):
 class APIClient(json.JSONEncoder):
     """API client for the Nylas API."""
 
-    def __init__(self, app_id=environ.get('NYLAS_APP_ID'),
-                 app_secret=environ.get('NYLAS_APP_SECRET'),
-                 access_token=environ.get('NYLAS_ACCESS_TOKEN'),
-                 api_server=API_SERVER):
+    def __init__(
+        self,
+        app_id=environ.get("NYLAS_APP_ID"),
+        app_secret=environ.get("NYLAS_APP_SECRET"),
+        access_token=environ.get("NYLAS_ACCESS_TOKEN"),
+        api_server=API_SERVER,
+    ):
         if not api_server.startswith("https://"):
-            raise Exception("When overriding the Nylas API server address, you"
-                            " must include https://")
+            raise Exception(
+                "When overriding the Nylas API server address, you"
+                " must include https://"
+            )
         self.api_server = api_server
-        self.authorize_url = api_server + '/oauth/authorize'
-        self.access_token_url = api_server + '/oauth/token'
-        self.revoke_url = api_server + '/oauth/revoke'
-        self.revoke_all_url = api_server + '/a/{client_id}/accounts/{account_id}/revoke-all'
+        self.authorize_url = api_server + "/oauth/authorize"
+        self.access_token_url = api_server + "/oauth/token"
+        self.revoke_url = api_server + "/oauth/revoke"
+        self.revoke_all_url = (
+            api_server + "/a/{client_id}/accounts/{account_id}/revoke-all"
+        )
 
         self.app_secret = app_secret
         self.app_id = app_id
@@ -66,13 +84,13 @@ class APIClient(json.JSONEncoder):
         self.session = requests.Session()
         self.version = __VERSION__
         major, minor, revision, _, __ = sys.version_info
-        version_header = 'Nylas Python SDK {} - {}.{}.{}'.format(self.version,
-                                                                 major, minor,
-                                                                 revision)
+        version_header = "Nylas Python SDK {} - {}.{}.{}".format(
+            self.version, major, minor, revision
+        )
         self.session.headers = {
-            'X-Nylas-API-Wrapper': 'python',
-            'X-Nylas-Client-Id': self.app_id,
-            'User-Agent': version_header,
+            "X-Nylas-API-Wrapper": "python",
+            "X-Nylas-Client-Id": self.app_id,
+            "User-Agent": version_header,
         }
         self._access_token = None
         self.access_token = access_token
@@ -83,15 +101,15 @@ class APIClient(json.JSONEncoder):
         self.admin_session = requests.Session()
 
         if app_secret is not None:
-            b64_app_secret = b64encode((app_secret + ':').encode('utf8'))
-            authorization = 'Basic {secret}'.format(
-                secret=b64_app_secret.decode('utf8')
+            b64_app_secret = b64encode((app_secret + ":").encode("utf8"))
+            authorization = "Basic {secret}".format(
+                secret=b64_app_secret.decode("utf8")
             )
             self.admin_session.headers = {
-                'Authorization': authorization,
-                'X-Nylas-API-Wrapper': 'python',
-                'X-Nylas-Client-Id': self.app_id,
-                'User-Agent': version_header,
+                "Authorization": authorization,
+                "X-Nylas-API-Wrapper": "python",
+                "X-Nylas-Client-Id": self.app_id,
+                "User-Agent": version_header,
             }
         super(APIClient, self).__init__()
 
@@ -103,8 +121,8 @@ class APIClient(json.JSONEncoder):
     def access_token(self, value):
         self._access_token = value
         if value:
-            authorization = 'Bearer {token}'.format(token=value)
-            self.session.headers['Authorization'] = authorization
+            authorization = "Bearer {token}".format(token=value)
+            self.session.headers["Authorization"] = authorization
         else:
             if 'Authorization' in self.session.headers:
                 del self.session.headers['Authorization']
@@ -125,18 +143,23 @@ class APIClient(json.JSONEncoder):
         return str(url)
 
     def token_for_code(self, code):
-        args = {'client_id': self.app_id,
-                'client_secret': self.app_secret,
-                'grant_type': 'authorization_code',
-                'code': code}
+        args = {
+            "client_id": self.app_id,
+            "client_secret": self.app_secret,
+            "grant_type": "authorization_code",
+            "code": code,
+        }
 
-        headers = {'Content-type': 'application/x-www-form-urlencoded',
-                   'Accept': 'text/plain'}
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded",
+            "Accept": "text/plain",
+        }
 
-        resp = requests.post(self.access_token_url, data=urlencode(args),
-                             headers=headers).json()
+        resp = requests.post(
+            self.access_token_url, data=urlencode(args), headers=headers
+        ).json()
 
-        self.access_token = resp[u'access_token']
+        self.access_token = resp[u"access_token"]
         return self.access_token
 
     def is_opensource_api(self):
@@ -152,12 +175,14 @@ class APIClient(json.JSONEncoder):
         self.access_token = None
 
     def revoke_all_tokens(self, keep_access_token=None):
-        revoke_all_url = self.revoke_all_url.format(client_id=self.app_id, account_id=self.account.id)
+        revoke_all_url = self.revoke_all_url.format(
+            client_id=self.app_id, account_id=self.account.id
+        )
         data = {}
         if keep_access_token is not None:
-            data['keep_access_token'] = keep_access_token
+            data["keep_access_token"] = keep_access_token
 
-        headers = {'Content-Type': 'application/json'}
+        headers = {"Content-Type": "application/json"}
         headers.update(self.admin_session.headers)
         resp = self.admin_session.post(revoke_all_url, json=data, headers=headers)
         _validate(resp).json()
@@ -167,7 +192,7 @@ class APIClient(json.JSONEncoder):
 
     @property
     def account(self):
-        return self._get_resource(SingletonAccount, '')
+        return self._get_resource(SingletonAccount, "")
 
     @property
     def accounts(self):
@@ -219,60 +244,50 @@ class APIClient(json.JSONEncoder):
         # Is this a request for a resource under the accounts/billing/admin
         # namespace (/a)? If the latter, pass the app_secret
         # instead of the secret_token
-        if api_root == 'a':
+        if api_root == "a":
             return self.admin_session
         return self.session
 
     def _get_resources(self, cls, extra=None, **filters):
         # FIXME @karim: remove this interim code when we've got rid
         # of the old accounts API.
-        postfix = "/{}".format(extra) if extra else ''
-        if cls.api_root != 'a':
-            url = "{}/{}{}".format(
-                self.api_server,
-                cls.collection_name,
-                postfix
-            )
+        postfix = "/{}".format(extra) if extra else ""
+        if cls.api_root != "a":
+            url = "{}/{}{}".format(self.api_server, cls.collection_name, postfix)
         else:
             url = "{}/a/{}/{}{}".format(
-                self.api_server,
-                self.app_id,
-                cls.collection_name,
-                postfix
+                self.api_server, self.app_id, cls.collection_name, postfix
             )
 
         converted_filters = convert_datetimes_to_timestamps(
-            filters, cls.datetime_filter_attrs,
+            filters, cls.datetime_filter_attrs
         )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
-        return [
-            cls.create(self, **x)
-            for x in results
-            if x is not None
-        ]
+        return [cls.create(self, **x) for x in results if x is not None]
 
-    def _get_resource_raw(self, cls, id, extra=None,
-                          headers=None, stream=False, **filters):
+    def _get_resource_raw(
+        self, cls, id, extra=None, headers=None, stream=False, **filters
+    ):
         """Get an individual REST resource"""
         headers = headers or {}
         headers.update(self.session.headers)
 
-        postfix = "/{}".format(extra) if extra else ''
-        if cls.api_root != 'a':
-            url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id,
-                                      postfix)
+        postfix = "/{}".format(extra) if extra else ""
+        if cls.api_root != "a":
+            url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id, postfix)
         else:
-            url = "{}/a/{}/{}/{}{}".format(self.api_server, self.app_id,
-                                           cls.collection_name, id, postfix)
+            url = "{}/a/{}/{}/{}{}".format(
+                self.api_server, self.app_id, cls.collection_name, id, postfix
+            )
 
         converted_filters = convert_datetimes_to_timestamps(
-            filters, cls.datetime_filter_attrs,
+            filters, cls.datetime_filter_attrs
         )
         url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(
-            url, headers=headers, stream=stream,
+            url, headers=headers, stream=stream
         )
         return _validate(response)
 
@@ -283,10 +298,10 @@ class APIClient(json.JSONEncoder):
             result = result[0]
         return cls.create(self, **result)
 
-    def _get_resource_data(self, cls, id,
-                           extra=None, headers=None, **filters):
-        response = self._get_resource_raw(cls, id, extra=extra,
-                                          headers=headers, **filters)
+    def _get_resource_data(self, cls, id, extra=None, headers=None, **filters):
+        response = self._get_resource_raw(
+            cls, id, extra=extra, headers=headers, **filters
+        )
         return response.content
 
     def _create_resource(self, cls, data, **kwargs):
@@ -302,19 +317,18 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, files=data)
         else:
             converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
-            headers = {'Content-Type': 'application/json'}
+            headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
             response = session.post(url, json=converted_data, headers=headers)
 
         result = _validate(response).json()
-        if cls.collection_name == 'send':
+        if cls.collection_name == "send":
             return result
         return cls.create(self, **result)
 
     def _create_resources(self, cls, data):
-        url = (
-            URLObject(self.api_server)
-            .with_path("/{name}/".format(name=cls.collection_name))
+        url = URLObject(self.api_server).with_path(
+            "/{name}/".format(name=cls.collection_name)
         )
         session = self._get_http_session(cls.api_root)
 
@@ -325,7 +339,7 @@ class APIClient(json.JSONEncoder):
                 convert_datetimes_to_timestamps(datum, cls.datetime_attrs)
                 for datum in data
             ]
-            headers = {'Content-Type': 'application/json'}
+            headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
             response = session.post(url, json=converted_data, headers=headers)
 
@@ -363,23 +377,17 @@ class APIClient(json.JSONEncoder):
         """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
 
-        if cls.api_root != 'a':
+        if cls.api_root != "a":
             url_path = "/{name}/{id}/{method}".format(
                 name=cls.collection_name, id=id, method=method_name
             )
         else:
             # Management method.
             url_path = "/a/{app_id}/{name}/{id}/{method}".format(
-                app_id=self.app_id,
-                name=cls.collection_name,
-                id=id,
-                method=method_name,
+                app_id=self.app_id, name=cls.collection_name, id=id, method=method_name
             )
 
-        url = (
-            URLObject(self.api_server)
-            .with_path(url_path)
-        )
+        url = URLObject(self.api_server).with_path(url_path)
         converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
 
         session = self._get_http_session(cls.api_root)
