@@ -54,6 +54,12 @@ def index():
 
 ```
 
+You can also pass a `scopes` argument to the `authentication_url` method
+to enable [Selective Sync](https://docs.nylas.com/docs/how-to-use-selective-sync).
+This should be a list of strings. Currectly, the available scopes
+are `email`, `calendar`, and `contacts`. If no scopes are passed,a
+all of them will be requested.
+
 **Step 2: Handle the Authentication Response:**
 
 ```python
