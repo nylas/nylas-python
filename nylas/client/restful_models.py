@@ -30,7 +30,7 @@ class NylasAPIObject(dict):
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
     # us use the same code for both.
-    api_root = 'n'
+    api_root = "n"
 
     def __init__(self, cls, api):
         self.id = None
@@ -44,9 +44,12 @@ class NylasAPIObject(dict):
 
     @classmethod
     def create(cls, api, **kwargs):
-        object_type = kwargs.get('object')
-        if (object_type and object_type != cls.__name__.lower() and
-                object_type != 'account'):
+        object_type = kwargs.get("object")
+        if (
+            object_type
+            and object_type != cls.__name__.lower()
+            and object_type != "account"
+        ):
             # We were given a specific object type and we're trying to
             # instantiate something different; abort. (Relevant for folders
             # and labels API.)
@@ -59,7 +62,7 @@ class NylasAPIObject(dict):
             # Support attributes we want to override with properties where
             # the property names overlap with the JSON names (e.g. folders)
             attr_name = attr
-            if attr_name.startswith('_'):
+            if attr_name.startswith("_"):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
@@ -72,8 +75,8 @@ class NylasAPIObject(dict):
         for attr, value_attr_name in cls.typed_dict_attrs.items():
             obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
-        if 'id' not in kwargs:
-            obj['id'] = None
+        if "id" not in kwargs:
+            obj["id"] = None
 
         return obj
 
@@ -107,36 +110,51 @@ class NylasAPIObject(dict):
 
     def save(self, **kwargs):
         if self.id:
-            new_obj = self.api._update_resource(self.cls, self.id,
-                                                self.as_json(), **kwargs)
+            new_obj = self.api._update_resource(
+                self.cls, self.id, self.as_json(), **kwargs
+            )
         else:
-            new_obj = self.api._create_resource(self.cls,
-                                                self.as_json(), **kwargs)
+            new_obj = self.api._create_resource(self.cls, self.as_json(), **kwargs)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
                 setattr(self, attr, getattr(new_obj, attr))
 
     def update(self):
-        new_obj = self.api._update_resource(self.cls,
-                                            self.id, self.as_json())
+        new_obj = self.api._update_resource(self.cls, self.id, self.as_json())
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
                 setattr(self, attr, getattr(new_obj, attr))
 
 
 class Message(NylasAPIObject):
-    attrs = ["bcc", "body", "cc", "date", "events", "files", "from", "id",
-             "account_id", "object", "snippet", "starred", "subject",
-             "thread_id", "to", "unread", "starred", "_folder", "_labels",
-             "headers"]
-    datetime_attrs = {
-        "received_at": "date",
-    }
+    attrs = [
+        "bcc",
+        "body",
+        "cc",
+        "date",
+        "events",
+        "files",
+        "from",
+        "id",
+        "account_id",
+        "object",
+        "snippet",
+        "starred",
+        "subject",
+        "thread_id",
+        "to",
+        "unread",
+        "starred",
+        "_folder",
+        "_labels",
+        "headers",
+    ]
+    datetime_attrs = {"received_at": "date"}
     datetime_filter_attrs = {
         "received_before": "received_before",
         "received_after": "received_after",
     }
-    collection_name = 'messages'
+    collection_name = "messages"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Message, api)
@@ -154,12 +172,11 @@ class Message(NylasAPIObject):
     @property
     def labels(self):
         if self._labels:
-            return [Label.create(self.api, **l)
-                    for l in self._labels]
+            return [Label.create(self.api, **l) for l in self._labels]
         return []
 
     def update_folder(self, folder_id):
-        update = {'folder': folder_id}
+        update = {"folder": folder_id}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
@@ -168,7 +185,7 @@ class Message(NylasAPIObject):
 
     def update_labels(self, label_ids=None):
         label_ids = label_ids or []
-        update = {'labels': label_ids}
+        update = {"labels": label_ids}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
@@ -197,22 +214,22 @@ class Message(NylasAPIObject):
         self.mark_as_read()
 
     def mark_as_read(self):
-        update = {'unread': False}
+        update = {"unread": False}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = False
 
     def mark_as_unread(self):
-        update = {'unread': True}
+        update = {"unread": True}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = True
 
     def star(self):
-        update = {'starred': True}
+        update = {"starred": True}
         self.api._update_resource(self.cls, self.id, update)
         self.starred = True
 
     def unstar(self):
-        update = {'starred': False}
+        update = {"starred": False}
         self.api._update_resource(self.cls, self.id, update)
         self.starred = False
 
@@ -258,12 +275,27 @@ class Label(NylasAPIObject):
 
 
 class Thread(NylasAPIObject):
-    attrs = ["draft_ids", "id", "message_ids", "account_id", "object",
-             "participants", "snippet", "subject", "subject_date",
-             "last_message_timestamp", "first_message_timestamp",
-             "last_message_received_timestamp", "last_message_sent_timestamp",
-             "unread", "starred", "version", "_folders", "_labels",
-             "received_recent_date"]
+    attrs = [
+        "draft_ids",
+        "id",
+        "message_ids",
+        "account_id",
+        "object",
+        "participants",
+        "snippet",
+        "subject",
+        "subject_date",
+        "last_message_timestamp",
+        "first_message_timestamp",
+        "last_message_received_timestamp",
+        "last_message_sent_timestamp",
+        "unread",
+        "starred",
+        "version",
+        "_folders",
+        "_labels",
+        "received_recent_date",
+    ]
     datetime_attrs = {
         "first_message_at": "first_message_timestamp",
         "last_message_at": "last_message_timestamp",
@@ -276,7 +308,7 @@ class Thread(NylasAPIObject):
         "started_before": "started_before",
         "started_after": "started_after",
     }
-    collection_name = 'threads'
+    collection_name = "threads"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Thread, api)
@@ -292,19 +324,17 @@ class Thread(NylasAPIObject):
     @property
     def folders(self):
         if self._folders:
-            return [Folder.create(self.api, **f)
-                    for f in self._folders]
+            return [Folder.create(self.api, **f) for f in self._folders]
         return []
 
     @property
     def labels(self):
         if self._labels:
-            return [Label.create(self.api, **l)
-                    for l in self._labels]
+            return [Label.create(self.api, **l) for l in self._labels]
         return []
 
     def update_folder(self, folder_id):
-        update = {'folder': folder_id}
+        update = {"folder": folder_id}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
@@ -313,7 +343,7 @@ class Thread(NylasAPIObject):
 
     def update_labels(self, label_ids=None):
         label_ids = label_ids or []
-        update = {'labels': label_ids}
+        update = {"labels": label_ids}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
@@ -342,22 +372,22 @@ class Thread(NylasAPIObject):
         self.mark_as_read()
 
     def mark_as_read(self):
-        update = {'unread': False}
+        update = {"unread": False}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = False
 
     def mark_as_unread(self):
-        update = {'unread': True}
+        update = {"unread": True}
         self.api._update_resource(self.cls, self.id, update)
         self.unread = True
 
     def star(self):
-        update = {'starred': True}
+        update = {"starred": True}
         self.api._update_resource(self.cls, self.id, update)
         self.starred = True
 
     def unstar(self):
-        update = {'starred': False}
+        update = {"starred": False}
         self.api._update_resource(self.cls, self.id, update)
         self.starred = False
 
@@ -367,28 +397,49 @@ class Thread(NylasAPIObject):
         draft.subject = self.subject
         return draft
 
+
 # This is a dummy class that allows us to use the create_resource function
 # and pass in a 'Send' object that will translate into a 'send' endpoint.
 class Send(Message):
-    collection_name = 'send'
+    collection_name = "send"
 
     def __init__(self, api):  # pylint: disable=super-init-not-called
-        NylasAPIObject.__init__(self, Send, api)  # pylint: disable=non-parent-init-called
+        NylasAPIObject.__init__(
+            self, Send, api
+        )  # pylint: disable=non-parent-init-called
 
 
 class Draft(Message):
-    attrs = ["bcc", "cc", "body", "date", "files", "from", "id",
-             "account_id", "object", "subject", "thread_id", "to",
-             "unread", "version", "file_ids", "reply_to_message_id",
-             "reply_to", "starred", "snippet", "tracking"]
-    datetime_attrs = {
-        "last_modified_at": "date",
-    }
-    collection_name = 'drafts'
+    attrs = [
+        "bcc",
+        "cc",
+        "body",
+        "date",
+        "files",
+        "from",
+        "id",
+        "account_id",
+        "object",
+        "subject",
+        "thread_id",
+        "to",
+        "unread",
+        "version",
+        "file_ids",
+        "reply_to_message_id",
+        "reply_to",
+        "starred",
+        "snippet",
+        "tracking",
+    ]
+    datetime_attrs = {"last_modified_at": "date"}
+    collection_name = "drafts"
 
     def __init__(self, api, thread_id=None):  # pylint: disable=unused-argument
         Message.__init__(self, api)
-        NylasAPIObject.__init__(self, Thread, api)  # pylint: disable=non-parent-init-called
+        NylasAPIObject.__init__(
+            self, Thread, api
+        )  # pylint: disable=non-parent-init-called
         self.file_ids = []
 
     def attach(self, file):
@@ -405,9 +456,9 @@ class Draft(Message):
         if not self.id:
             data = self.as_json()
         else:
-            data = {'draft_id': self.id}
-            if hasattr(self, 'version'):
-                data['version'] = self.version
+            data = {"draft_id": self.id}
+            if hasattr(self, "version"):
+                data["version"] = self.version
 
         msg = self.api._create_resource(Send, data)
         if msg:
@@ -415,13 +466,22 @@ class Draft(Message):
 
     def delete(self):
         if self.id and self.version is not None:
-            data = {'version': self.version}
+            data = {"version": self.version}
             self.api._delete_resource(self.cls, self.id, data=data)
 
+
 class File(NylasAPIObject):
-    attrs = ["content_type", "filename", "id", "content_id",
-             "account_id", "object", "size", "message_ids", ]
-    collection_name = 'files'
+    attrs = [
+        "content_type",
+        "filename",
+        "id",
+        "content_id",
+        "account_id",
+        "object",
+        "size",
+        "message_ids",
+    ]
+    collection_name = "files"
 
     def save(self):  # pylint: disable=arguments-differ
         stream = getattr(self, "stream", None)
@@ -437,12 +497,7 @@ class File(NylasAPIObject):
             )
             raise FileUploadError(message)
 
-        file_info = (
-            self.filename,
-            stream,
-            self.content_type,
-            {}, # upload headers
-        )
+        file_info = (self.filename, stream, self.content_type, {})  # upload headers
 
         new_obj = self.api._create_resources(File, {"file": file_info})
         new_obj = new_obj[0]
@@ -455,18 +510,29 @@ class File(NylasAPIObject):
             message = "Can't download a file that hasn't been uploaded."
             raise FileUploadError(message)
 
-        return self.api._get_resource_data(File, self.id,
-                                           extra='download')
+        return self.api._get_resource_data(File, self.id, extra="download")
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, File, api)
 
 
 class Contact(NylasAPIObject):
-    attrs = ["id", "object", "account_id", "given_name", "middle_name",
-             "surname", "suffix", "nickname", "company_name",
-             "job_title", "manager_name", "office_location", "notes",
-             "picture_url"]
+    attrs = [
+        "id",
+        "object",
+        "account_id",
+        "given_name",
+        "middle_name",
+        "surname",
+        "suffix",
+        "nickname",
+        "company_name",
+        "job_title",
+        "manager_name",
+        "office_location",
+        "notes",
+        "picture_url",
+    ]
     date_attrs = {"birthday": "birthday"}
     typed_dict_attrs = {
         "email_addresses": "email",
@@ -475,7 +541,7 @@ class Contact(NylasAPIObject):
         "phone_numbers": "number",
         "web_pages": "url",
     }
-    collection_name = 'contacts'
+    collection_name = "contacts"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Contact, api)
@@ -485,7 +551,7 @@ class Contact(NylasAPIObject):
             return None
 
         response = self.api._get_resource_raw(
-            Contact, self.id, extra='picture', stream=True,
+            Contact, self.id, extra="picture", stream=True
         )
         response.raise_for_status()
         return response.raw
@@ -493,7 +559,7 @@ class Contact(NylasAPIObject):
 
 class Calendar(NylasAPIObject):
     attrs = ["id", "account_id", "name", "description", "read_only", "object"]
-    collection_name = 'calendars'
+    collection_name = "calendars"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Calendar, api)
@@ -504,14 +570,27 @@ class Calendar(NylasAPIObject):
 
 
 class Event(NylasAPIObject):
-    attrs = ["id", "account_id", "title", "description", "location",
-             "read_only", "when", "busy", "participants", "calendar_id",
-             "recurrence", "status", "master_event_id", "owner",
-             "original_start_time", "object", "message_id"]
-    datetime_attrs = {
-        "original_start_at": "original_start_time",
-    }
-    collection_name = 'events'
+    attrs = [
+        "id",
+        "account_id",
+        "title",
+        "description",
+        "location",
+        "read_only",
+        "when",
+        "busy",
+        "participants",
+        "calendar_id",
+        "recurrence",
+        "status",
+        "master_event_id",
+        "owner",
+        "original_start_time",
+        "object",
+        "message_id",
+    ]
+    datetime_attrs = {"original_start_at": "original_start_time"}
+    collection_name = "events"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Event, api)
@@ -519,21 +598,29 @@ class Event(NylasAPIObject):
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
         # Filter some parameters we got from the API
-        if dct.get('when'):
+        if dct.get("when"):
             # Currently, the event (self) and the dict (dct) share the same
             # reference to the `'when'` dict.  We need to clone the dict so
             # that when we remove the object key, the original event's
             # `'when'` reference is unmodified.
-            dct['when'] = dct['when'].copy()
-            dct['when'].pop('object', None)
+            dct["when"] = dct["when"].copy()
+            dct["when"].pop("object", None)
 
         return dct
 
 
 class Namespace(NylasAPIObject):
-    attrs = ["account", "email_address", "id", "account_id", "object",
-             "provider", "name", "organization_unit"]
-    collection_name = 'n'
+    attrs = [
+        "account",
+        "email_address",
+        "id",
+        "account_id",
+        "object",
+        "provider",
+        "name",
+        "organization_unit",
+    ]
+    collection_name = "n"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Namespace, api)
@@ -543,12 +630,19 @@ class Namespace(NylasAPIObject):
 
 
 class Account(NylasAPIObject):
-    api_root = 'a'
+    api_root = "a"
 
-    attrs = ['account_id', 'billing_state', 'email', 'id', 'namespace_id',
-             'sync_state', 'trial']
+    attrs = [
+        "account_id",
+        "billing_state",
+        "email",
+        "id",
+        "namespace_id",
+        "sync_state",
+        "trial",
+    ]
 
-    collection_name = 'accounts'
+    collection_name = "accounts"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Account, api)
@@ -558,27 +652,29 @@ class Account(NylasAPIObject):
         return dct
 
     def upgrade(self):
-        return self.api._call_resource_method(
-            self, self.account_id, 'upgrade', None
-        )
+        return self.api._call_resource_method(self, self.account_id, "upgrade", None)
 
     def downgrade(self):
-        return self.api._call_resource_method(
-            self, self.account_id, 'downgrade', None
-        )
+        return self.api._call_resource_method(self, self.account_id, "downgrade", None)
 
     def delete(self):
         raise NotImplementedError
 
 
 class APIAccount(NylasAPIObject):
-    attrs = ['account_id', 'email_address', 'id', 'name', 'object',
-             'organization_unit', 'provider', 'sync_state']
-    datetime_attrs = {
-        "linked_at": "linked_at",
-    }
+    attrs = [
+        "account_id",
+        "email_address",
+        "id",
+        "name",
+        "object",
+        "organization_unit",
+        "provider",
+        "sync_state",
+    ]
+    datetime_attrs = {"linked_at": "linked_at"}
 
-    collection_name = 'accounts'
+    collection_name = "accounts"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, APIAccount, api)
@@ -590,4 +686,4 @@ class APIAccount(NylasAPIObject):
 
 class SingletonAccount(APIAccount):
     # This is an APIAccount that lives under /account.
-    collection_name = 'account'
+    collection_name = "account"

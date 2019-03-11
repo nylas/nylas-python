@@ -9,14 +9,14 @@ def test_file_upload_data(api_client, mocked_responses):
     data = "Hello, World!"
 
     myfile = api_client.files.create()
-    myfile.filename = 'hello.txt'
+    myfile.filename = "hello.txt"
     myfile.data = data
 
     assert not mocked_responses.calls
     myfile.save()
     assert len(mocked_responses.calls) == 1
 
-    assert myfile.filename == 'hello.txt'
+    assert myfile.filename == "hello.txt"
     assert myfile.size == 13
 
     upload_body = mocked_responses.calls[0].request.body
@@ -34,13 +34,13 @@ def test_file_upload_stream(api_client, mocked_responses):
     stream.name = "wacky.txt"
 
     myfile = api_client.files.create()
-    myfile.filename = 'hello.txt'
+    myfile.filename = "hello.txt"
     myfile.stream = stream
     assert not mocked_responses.calls
     myfile.save()
     assert len(mocked_responses.calls) == 1
 
-    assert myfile.filename == 'hello.txt'
+    assert myfile.filename == "hello.txt"
     assert myfile.size == 13
 
     upload_body = mocked_responses.calls[0].request.body
@@ -68,18 +68,16 @@ def test_file_invalid_upload(api_client):
         myfile.save()
 
     assert str(exc.value) == (
-        "File object not properly formatted, "
-        "must provide either a stream or data."
+        "File object not properly formatted, " "must provide either a stream or data."
     )
 
 
 def test_file_upload_errors(api_client):
     myfile = api_client.files.create()
-    myfile.filename = 'test.txt'
+    myfile.filename = "test.txt"
     myfile.data = "Hello World."
 
     with pytest.raises(FileUploadError) as exc:
         myfile.download()
 
-    assert str(exc.value) == ("Can't download a file that "
-                              "hasn't been uploaded.")
+    assert str(exc.value) == ("Can't download a file that " "hasn't been uploaded.")

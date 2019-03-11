@@ -12,23 +12,21 @@ def test_list_labels(api_client):
 
 @pytest.mark.usefixtures("mock_label")
 def test_get_label(api_client):
-    label = api_client.labels.get('anuep8pe5ugmxrucchrzba2o8')
+    label = api_client.labels.get("anuep8pe5ugmxrucchrzba2o8")
     assert label is not None
     assert isinstance(label, Label)
-    assert label.display_name == 'Important'
+    assert label.display_name == "Important"
 
 
 @pytest.mark.usefixtures("mock_label", "mock_threads")
 def test_label_threads(api_client):
-    label = api_client.labels.get('anuep8pe5ugmxrucchrzba2o8')
+    label = api_client.labels.get("anuep8pe5ugmxrucchrzba2o8")
     assert label.threads
-    assert all(isinstance(thread, Thread)
-               for thread in label.threads)
+    assert all(isinstance(thread, Thread) for thread in label.threads)
 
 
 @pytest.mark.usefixtures("mock_label", "mock_messages")
 def test_label_messages(api_client):
-    label = api_client.labels.get('anuep8pe5ugmxrucchrzba2o8')
+    label = api_client.labels.get("anuep8pe5ugmxrucchrzba2o8")
     assert label.messages
-    assert all(isinstance(message, Message)
-               for message in label.messages)
+    assert all(isinstance(message, Message) for message in label.messages)

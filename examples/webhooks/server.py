@@ -16,12 +16,14 @@ try:
     from werkzeug.contrib.fixers import ProxyFix
     from celery import Celery
 except ImportError:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         You need to install the dependencies for this project.
         To do so, run this command:
 
             pip install -r requirements.txt
-    """)
+    """
+    )
     print(message, file=sys.stderr)
     sys.exit(1)
 
@@ -29,23 +31,26 @@ except ImportError:
 # For more information, check out the documentation: http://flask.pocoo.org
 # Create a Flask app, and load the configuration file.
 app = Flask(__name__)
-app.config.from_json('config.json')
+app.config.from_json("config.json")
 
 # Check for dummy configuration values.
 # If you are building your own application based on this example,
 # you can remove this check from your code.
 cfg_needs_replacing = [
-    key for key, value in app.config.items()
+    key
+    for key, value in app.config.items()
     if isinstance(value, str) and value.startswith("replace me")
 ]
 if cfg_needs_replacing:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         This example will only work if you replace the fake configuration
         values in `config.json` with real configuration values.
         The following config values need to be replaced:
         {keys}
         Consult the README.md file in this directory for more information.
-    """).format(keys=", ".join(cfg_needs_replacing))
+    """
+    ).format(keys=", ".join(cfg_needs_replacing))
     print(message, file=sys.stderr)
     sys.exit(1)
 
@@ -56,10 +61,10 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 # For more information, check out the documentation: http://docs.celeryproject.org
 # Create a Celery instance, and load its configuration from Flask.
 celery = Celery(app.import_name)
-celery.config_from_object(app.config, namespace='CELERY')
+celery.config_from_object(app.config, namespace="CELERY")
 
 
-@app.route('/webhook', methods=['GET', 'POST'])
+@app.route("/webhook", methods=["GET", "POST"])
 def webhook():
     """
     When the Flask server gets a request at the `/webhook` URL, it will run
@@ -80,8 +85,8 @@ def webhook():
     # The question is, is it genuine or fake? Check the signature to find out.
     is_genuine = verify_signature(
         message=request.data,
-        key=app.config["NYLAS_OAUTH_CLIENT_SECRET"].encode('utf8'),
-        signature=request.headers.get('X-Nylas-Signature'),
+        key=app.config["NYLAS_OAUTH_CLIENT_SECRET"].encode("utf8"),
+        signature=request.headers.get("X-Nylas-Signature"),
     )
     if not is_genuine:
         return "Signature verification failed!", 401
@@ -157,8 +162,9 @@ def ngrok_url():
         return None
     ngrok_data = ngrok_resp.json()
     secure_urls = [
-        tunnel['public_url'] for tunnel in ngrok_data['tunnels']
-        if tunnel['proto'] == 'https'
+        tunnel["public_url"]
+        for tunnel in ngrok_data["tunnels"]
+        if tunnel["proto"] == "https"
     ]
     return secure_urls[0]
 

@@ -10,3 +10,11 @@ install:
 script: "python setup.py test --lint"
 after_success:
   - "codecov"
+
+matrix:
+  include:
+  - name: "Black"
+    python: 3.6
+    install: travis_retry pip install black
+    script: black --check .
+    after_success: skip

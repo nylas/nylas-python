@@ -13,24 +13,28 @@ try:
     from wtforms.fields.html5 import EmailField
     from wtforms.validators import DataRequired
 except ImportError:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         You need to install the dependencies for this project.
         To do so, run this command:
 
             pip install -r requirements.txt
-    """)
+    """
+    )
     print(message, file=sys.stderr)
     sys.exit(1)
 
 try:
     from nylas import APIClient
 except ImportError:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         You need to install the Nylas SDK for this project.
         To do so, run this command:
 
             pip install nylas
-    """)
+    """
+    )
     print(message, file=sys.stderr)
     sys.exit(1)
 
@@ -38,34 +42,35 @@ except ImportError:
 # For more information, check out the documentation: http://flask.pocoo.org
 # Create a Flask app, and load the configuration file.
 app = Flask(__name__)
-app.config.from_json('config.json')
+app.config.from_json("config.json")
 
 # Check for dummy configuration values.
 # If you are building your own application based on this example,
 # you can remove this check from your code.
 cfg_needs_replacing = [
-    key for key, value in app.config.items()
+    key
+    for key, value in app.config.items()
     if isinstance(value, str) and value.startswith("replace me")
 ]
 if cfg_needs_replacing:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         This example will only work if you replace the fake configuration
         values in `config.json` with real configuration values.
         The following config values need to be replaced:
         {keys}
         Consult the README.md file in this directory for more information.
-    """).format(keys=", ".join(cfg_needs_replacing))
+    """
+    ).format(keys=", ".join(cfg_needs_replacing))
     print(message, file=sys.stderr)
     sys.exit(1)
 
 
 class ExchangeCredentialsForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    email = EmailField('Email Address', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    server_host = StringField(
-        'Server Host', render_kw={"placeholder": "(optional)"}
-    )
+    name = StringField("Name", validators=[DataRequired()])
+    email = EmailField("Email Address", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    server_host = StringField("Server Host", render_kw={"placeholder": "(optional)"})
 
 
 class APIError(Exception):
@@ -73,7 +78,7 @@ class APIError(Exception):
 
 
 # Define what Flask should do when someone visits the root URL of this website.
-@app.route("/", methods=('GET', 'POST'))
+@app.route("/", methods=("GET", "POST"))
 def index():
     form = ExchangeCredentialsForm()
     api_error = None
@@ -101,17 +106,13 @@ def pass_creds_to_nylas(name, email, password, server_host=None):
         "name": name,
         "email_address": email,
         "provider": "exchange",
-        "settings": {
-            "username": email,
-            "password": password,
-        }
+        "settings": {"username": email, "password": password},
     }
     if server_host:
         nylas_authorize_data["settings"]["eas_server_host"] = server_host
 
     nylas_authorize_resp = requests.post(
-        "https://api.nylas.com/connect/authorize",
-        json=nylas_authorize_data,
+        "https://api.nylas.com/connect/authorize", json=nylas_authorize_data
     )
     if not nylas_authorize_resp.ok:
         message = nylas_authorize_resp.json()["message"]
@@ -127,8 +128,7 @@ def pass_creds_to_nylas(name, email, password, server_host=None):
         "code": nylas_code,
     }
     nylas_token_resp = requests.post(
-        "https://api.nylas.com/connect/token",
-        json=nylas_token_data,
+        "https://api.nylas.com/connect/token", json=nylas_token_data
     )
     if not nylas_token_resp.ok:
         message = nylas_token_resp.json()["message"]

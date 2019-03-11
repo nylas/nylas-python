@@ -11,24 +11,28 @@ try:
     from werkzeug.contrib.fixers import ProxyFix
     from flask_dance.contrib.google import make_google_blueprint, google
 except ImportError:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         You need to install the dependencies for this project.
         To do so, run this command:
 
             pip install -r requirements.txt
-    """)
+    """
+    )
     print(message, file=sys.stderr)
     sys.exit(1)
 
 try:
     from nylas import APIClient
 except ImportError:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         You need to install the Nylas SDK for this project.
         To do so, run this command:
 
             pip install nylas
-    """)
+    """
+    )
     print(message, file=sys.stderr)
     sys.exit(1)
 
@@ -36,23 +40,26 @@ except ImportError:
 # For more information, check out the documentation: http://flask.pocoo.org
 # Create a Flask app, and load the configuration file.
 app = Flask(__name__)
-app.config.from_json('config.json')
+app.config.from_json("config.json")
 
 # Check for dummy configuration values.
 # If you are building your own application based on this example,
 # you can remove this check from your code.
 cfg_needs_replacing = [
-    key for key, value in app.config.items()
+    key
+    for key, value in app.config.items()
     if isinstance(value, str) and value.startswith("replace me")
 ]
 if cfg_needs_replacing:
-    message = textwrap.dedent("""
+    message = textwrap.dedent(
+        """
         This example will only work if you replace the fake configuration
         values in `config.json` with real configuration values.
         The following config values need to be replaced:
         {keys}
         Consult the README.md file in this directory for more information.
-    """).format(keys=", ".join(cfg_needs_replacing))
+    """
+    ).format(keys=", ".join(cfg_needs_replacing))
     print(message, file=sys.stderr)
     sys.exit(1)
 
@@ -70,7 +77,6 @@ google_bp = make_google_blueprint(
     redirect_to="after_google",
     # If you get a "missing Google refresh token" error, uncomment this line:
     # reprompt_consent=True,
-
     # That `reprompt_consent` argument will force Google to re-ask the user
     # every single time if they want to connect with your application.
     # Google will only send the refresh token if the user has explicitly
@@ -141,9 +147,12 @@ def pass_creds_to_nylas():
         # We're missing the refresh token from Google, and the only way to get
         # a new one is to force reauthentication. That's annoying.
         return (
-            "Error: missing Google refresh token. "
-            "Uncomment the `reprompt_consent` line in the code to fix this."
-        ), 500
+            (
+                "Error: missing Google refresh token. "
+                "Uncomment the `reprompt_consent` line in the code to fix this."
+            ),
+            500,
+        )
 
     # Look up the user's name and email address from Google.
     google_resp = google.get("/oauth2/v2/userinfo?fields=name,email")
@@ -161,11 +170,10 @@ def pass_creds_to_nylas():
             "google_client_id": app.config["GOOGLE_OAUTH_CLIENT_ID"],
             "google_client_secret": app.config["GOOGLE_OAUTH_CLIENT_SECRET"],
             "google_refresh_token": google.token["refresh_token"],
-        }
+        },
     }
     nylas_authorize_resp = requests.post(
-        "https://api.nylas.com/connect/authorize",
-        json=nylas_authorize_data,
+        "https://api.nylas.com/connect/authorize", json=nylas_authorize_data
     )
     assert nylas_authorize_resp.ok, "Received failure response from Nylas authorize API"
     nylas_code = nylas_authorize_resp.json()["code"]
@@ -178,8 +186,7 @@ def pass_creds_to_nylas():
         "code": nylas_code,
     }
     nylas_token_resp = requests.post(
-        "https://api.nylas.com/connect/token",
-        json=nylas_token_data,
+        "https://api.nylas.com/connect/token", json=nylas_token_data
     )
     assert nylas_token_resp.ok, "Received failure response from Nylas token API"
     nylas_access_token = nylas_token_resp.json()["access_token"]
@@ -208,8 +215,9 @@ def ngrok_url():
         return None
     ngrok_data = ngrok_resp.json()
     secure_urls = [
-        tunnel['public_url'] for tunnel in ngrok_data['tunnels']
-        if tunnel['proto'] == 'https'
+        tunnel["public_url"]
+        for tunnel in ngrok_data["tunnels"]
+        if tunnel["proto"] == "https"
     ]
     return secure_urls[0]
 
