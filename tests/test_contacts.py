@@ -15,11 +15,11 @@ def test_list_contacts(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_get_contact(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert contact is not None
     assert isinstance(contact, Contact)
-    assert contact.given_name == 'Given'
-    assert contact.surname == 'Sur'
+    assert contact.given_name == "Given"
+    assert contact.surname == "Sur"
     assert contact.birthday == date(1964, 10, 5)
 
 
@@ -38,21 +38,21 @@ def test_create_contact(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_update_contact(api_client, mocked_responses):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert len(mocked_responses.calls) == 1
     assert contact.job_title == "QA Tester"
     contact.job_title = "Factory Owner"
     contact.office_location = "Willy Wonka Factory"
     contact.save()
     assert len(mocked_responses.calls) == 2
-    assert contact.id == '9hga75n6mdvq4zgcmhcn7hpys'
+    assert contact.id == "9hga75n6mdvq4zgcmhcn7hpys"
     assert contact.job_title == "Factory Owner"
     assert contact.office_location == "Willy Wonka Factory"
 
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_picture(api_client, mocked_responses):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert len(mocked_responses.calls) == 1
     assert contact.picture_url
     picture = contact.get_picture()
@@ -66,7 +66,7 @@ def test_contact_picture(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contacts")
 def test_contact_no_picture(api_client, mocked_responses):
-    contact = api_client.contacts.get('4zqkfw8k1d12h0k784ipeh498')
+    contact = api_client.contacts.get("4zqkfw8k1d12h0k784ipeh498")
     assert len(mocked_responses.calls) == 1
     assert not contact.picture_url
     picture = contact.get_picture()
@@ -76,7 +76,7 @@ def test_contact_no_picture(api_client, mocked_responses):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_emails(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert isinstance(contact.email_addresses, dict)
     assert contact.email_addresses["first"] == ["one@example.com"]
     assert contact.email_addresses["second"] == ["two@example.com"]
@@ -87,7 +87,7 @@ def test_contact_emails(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_im_addresses(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert isinstance(contact.im_addresses, dict)
     assert contact.im_addresses["aim"] == ["SmarterChild"]
     assert contact.im_addresses["gtalk"] == ["fake@gmail.com", "fake2@gmail.com"]
@@ -96,7 +96,7 @@ def test_contact_im_addresses(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_physical_addresses(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert isinstance(contact.physical_addresses, dict)
     addr = contact.physical_addresses["home"][0]
     assert isinstance(addr, dict)
@@ -107,7 +107,7 @@ def test_contact_physical_addresses(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_phone_numbers(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert isinstance(contact.phone_numbers, dict)
     assert contact.phone_numbers["home"] == ["555-555-5555"]
     assert contact.phone_numbers["mobile"] == ["555-555-5555", "987654321"]
@@ -116,7 +116,7 @@ def test_contact_phone_numbers(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_web_pages(api_client):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert isinstance(contact.web_pages, dict)
     profiles = ["http://www.facebook.com/abc", "http://www.twitter.com/abc"]
     assert contact.web_pages["profile"] == profiles
@@ -126,28 +126,32 @@ def test_contact_web_pages(api_client):
 
 @pytest.mark.usefixtures("mock_contact")
 def test_update_contact_special_values(api_client, mocked_responses):
-    contact = api_client.contacts.get('9hga75n6mdvq4zgcmhcn7hpys')
+    contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert len(mocked_responses.calls) == 1
     contact.birthday = date(1999, 3, 6)
     contact.email_addresses["absent"].append("absent@fake.com")
     contact.im_addresses["absent"].append("absent-im")
-    contact.physical_addresses["absent"].append({
-        "type": "absent",
-        "format": "structured",
-        "street_address": "123 Absent Street",
-    })
+    contact.physical_addresses["absent"].append(
+        {
+            "type": "absent",
+            "format": "structured",
+            "street_address": "123 Absent Street",
+        }
+    )
     contact.phone_numbers["absent"].append("222-333-4444")
     contact.web_pages["absent"].append("http://absent.com/me")
     contact.save()
     assert len(mocked_responses.calls) == 2
-    assert contact.id == '9hga75n6mdvq4zgcmhcn7hpys'
+    assert contact.id == "9hga75n6mdvq4zgcmhcn7hpys"
     assert contact.email_addresses["absent"] == ["absent@fake.com"]
     assert contact.im_addresses["absent"] == ["absent-im"]
-    assert contact.physical_addresses["absent"] == [{
-        "type": "absent",
-        "format": "structured",
-        "street_address": "123 Absent Street",
-    }]
+    assert contact.physical_addresses["absent"] == [
+        {
+            "type": "absent",
+            "format": "structured",
+            "street_address": "123 Absent Street",
+        }
+    ]
     assert contact.phone_numbers["absent"] == ["222-333-4444"]
     assert contact.web_pages["absent"] == ["http://absent.com/me"]
 

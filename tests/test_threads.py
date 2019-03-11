@@ -18,7 +18,9 @@ def test_thread_attrs(api_client):
     assert thread.first_message_at == expected_first
     assert thread.last_message_timestamp == timestamp_from_dt(expected_last)
     assert thread.last_message_at == expected_last
-    assert thread.last_message_received_timestamp == timestamp_from_dt(expected_last_received)
+    assert thread.last_message_received_timestamp == timestamp_from_dt(
+        expected_last_received
+    )
     assert thread.last_message_received_at == expected_last_received
     assert thread.last_message_sent_timestamp == timestamp_from_dt(expected_last_sent)
     assert thread.last_message_sent_at == expected_last_sent
@@ -34,7 +36,7 @@ def test_update_thread_attrs(api_client):
     assert thread.last_message_at == first
     assert thread.last_message_timestamp == timestamp_from_dt(second)
     # but datetimes overwrite timestamps when serializing to JSON
-    assert thread.as_json()['last_message_timestamp'] == timestamp_from_dt(first)
+    assert thread.as_json()["last_message_timestamp"] == timestamp_from_dt(first)
 
 
 @pytest.mark.usefixtures("mock_threads")
@@ -42,7 +44,7 @@ def test_thread_folder(api_client):
     thread = api_client.threads.first()
     assert len(thread.labels) == 0  # pylint: disable=len-as-condition
     assert len(thread.folders) == 1
-    assert thread.folders[0].display_name == 'Inbox'
+    assert thread.folders[0].display_name == "Inbox"
     assert not thread.unread
     assert thread.starred
 
@@ -57,33 +59,30 @@ def test_thread_change(api_client):
     thread.star()
     assert thread.starred
 
-    thread.update_folder('qwer')
+    thread.update_folder("qwer")
     assert len(thread.folders) == 1
-    assert thread.folders[0].id == 'qwer'
+    assert thread.folders[0].id == "qwer"
 
 
 @pytest.mark.usefixtures("mock_threads", "mock_messages")
 def test_thread_messages(api_client):
     thread = api_client.threads.first()
     assert thread.messages
-    assert all(isinstance(message, Message)
-               for message in thread.messages)
+    assert all(isinstance(message, Message) for message in thread.messages)
 
 
 @pytest.mark.usefixtures("mock_threads", "mock_drafts")
 def test_thread_drafts(api_client):
     thread = api_client.threads.first()
     assert thread.drafts
-    assert all(isinstance(draft, Draft)
-               for draft in thread.drafts)
+    assert all(isinstance(draft, Draft) for draft in thread.drafts)
 
 
 @pytest.mark.usefixtures("mock_labelled_thread", "mock_labels")
 def test_thread_label(api_client):
     thread = api_client.threads.get(111)
     assert len(thread.labels) == 2
-    assert all(isinstance(label, Label)
-               for label in thread.labels)
+    assert all(isinstance(label, Label) for label in thread.labels)
 
     returned = thread.add_label("fake1")
     assert len(thread.labels) == 3
@@ -98,8 +97,7 @@ def test_thread_label(api_client):
 def test_thread_labels(api_client):
     thread = api_client.threads.get(111)
     assert len(thread.labels) == 2
-    assert all(isinstance(label, Label)
-               for label in thread.labels)
+    assert all(isinstance(label, Label) for label in thread.labels)
 
     returned = thread.add_labels(["fake1", "fake2"])
     assert len(thread.labels) == 4
