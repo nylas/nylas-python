@@ -148,6 +148,7 @@ class Message(NylasAPIObject):
         "_folder",
         "_labels",
         "headers",
+        "reply_to",
     ]
     datetime_attrs = {"received_at": "date"}
     datetime_filter_attrs = {

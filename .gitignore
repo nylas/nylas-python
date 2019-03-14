@@ -61,3 +61,4 @@ local/
 
 pip-selfcheck.json
 tests/output
+.idea
