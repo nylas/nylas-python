@@ -8,6 +8,7 @@ Unreleased (dev)
   [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync).
   Previously, we only set `scope=email` by default; now, the default is to use
   all scopes.
+* Add X-Nylas-Client-Id header for HTTP requests
 
 v4.4.0
 ------
