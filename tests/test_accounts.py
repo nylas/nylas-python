@@ -22,6 +22,14 @@ def test_account_json(api_client, monkeypatch):
     assert isinstance(result, dict)
 
 
+@pytest.mark.usefixtures("mock_ip_addresses")
+def test_ip_addresses(api_client_with_app_id):
+    result = api_client_with_app_id.ip_addresses()
+    assert isinstance(result, dict)
+    assert "updated_at" in result
+    assert "ip_addresses" in result
+
+
 @pytest.mark.usefixtures("mock_account")
 def test_account_datetime(api_client):
     account = api_client.account

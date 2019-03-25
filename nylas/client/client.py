@@ -77,6 +77,7 @@ class APIClient(json.JSONEncoder):
         self.revoke_all_url = (
             api_server + "/a/{client_id}/accounts/{account_id}/revoke-all"
         )
+        self.ip_addresses_url = api_server + "/a/{client_id}/ip_addresses"
 
         self.app_secret = app_secret
         self.app_id = app_id
@@ -197,6 +198,12 @@ class APIClient(json.JSONEncoder):
         if keep_access_token != self.access_token:
             self.auth_token = None
             self.access_token = None
+
+    def ip_addresses(self):
+        ip_addresses_url = self.ip_addresses_url.format(client_id=self.app_id)
+        resp = self.admin_session.get(ip_addresses_url)
+        _validate(resp).json()
+        return resp.json()
 
     @property
     def account(self):
