@@ -118,27 +118,25 @@ class APIClient(json.JSONEncoder):
 
     @property
     def app_id(self):
-        warn(DeprecationWarning('"app_id" naming convention will be deprecated Sept 2019. '
-                                'Use "client_id" instead.'))
+        warn('"app_id" will be deprecated in version 5.0.0. Use "client_id" instead.', PendingDeprecationWarning)
         return self.client_id
 
     @app_id.setter
     def app_id(self, value):
         self.client_id = value
-        warn(DeprecationWarning('"app_id" naming convention will be deprecated Sept 2019. '
-                                'Use "client_id" instead.'))
+        warn('"app_id" will be deprecated in version 5.0.0. Use "client_id" instead.', PendingDeprecationWarning)
 
     @property
     def app_secret(self):
-        warn(DeprecationWarning('"app_secret" naming convention will be deprecated Sept 2019. '
-                                'Use "client_secret" instead.'))
+        warn('"app_secret" will be deprecated in version 5.0.0. Use "client_secret" instead.',
+             PendingDeprecationWarning)
         return self.client_secret
 
     @app_secret.setter
     def app_secret(self, value):
         self.client_secret = value
-        warn(DeprecationWarning('"app_secret" naming convention will be deprecated Sept 2019. '
-                                'Use "client_secret" instead.'))
+        warn('"app_secret" will be deprecated in version 5.0.0. Use "client_secret" instead.',
+             PendingDeprecationWarning)
 
     @property
     def access_token(self):
@@ -226,7 +224,7 @@ class APIClient(json.JSONEncoder):
             self.access_token = None
 
     def ip_addresses(self):
-        ip_addresses_url = self.ip_addresses_url.format(client_id=self.app_id)
+        ip_addresses_url = self.ip_addresses_url.format(client_id=self.client_id)
         resp = self.admin_session.get(ip_addresses_url)
         _validate(resp).json()
         return resp.json()

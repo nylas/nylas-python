@@ -245,3 +245,11 @@ def test_301_response(mocked_responses, api_client, api_url):
     assert contact["given_name"] == "Charlie"
     assert contact["surname"] == "Bucket"
     assert len(mocked_responses.calls) == 2
+
+
+def test_client_naming_backwards_compatible():
+    client = APIClient(app_id="foo", app_secret="bar")
+    assert client.app_id == "foo"
+    assert client.app_secret == "bar"
+    assert client.client_id == "foo"
+    assert client.client_secret == "bar"

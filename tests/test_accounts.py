@@ -23,8 +23,8 @@ def test_account_json(api_client, monkeypatch):
 
 
 @pytest.mark.usefixtures("mock_ip_addresses")
-def test_ip_addresses(api_client_with_app_id):
-    result = api_client_with_app_id.ip_addresses()
+def test_ip_addresses(api_client_with_client_id):
+    result = api_client_with_client_id.ip_addresses()
     assert isinstance(result, dict)
     assert "updated_at" in result
     assert "ip_addresses" in result

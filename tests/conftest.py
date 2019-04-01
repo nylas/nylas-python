@@ -1178,9 +1178,9 @@ def mock_revoke_all_tokens(mocked_responses, api_url, account_id, client_id):
 
 
 @pytest.fixture
-def mock_ip_addresses(mocked_responses, api_url, app_id):
-    ip_addresses_url = "{base}/a/{app_id}/ip_addresses".format(
-        base=api_url, app_id=app_id
+def mock_ip_addresses(mocked_responses, api_url, client_id):
+    ip_addresses_url = "{base}/a/{client_id}/ip_addresses".format(
+        base=api_url, client_id=client_id
     )
     mocked_responses.add(
         responses.GET,
