@@ -7,6 +7,10 @@ nothing yet
 
 v4.6.0
 ------
+* Add support for `/ip_addresses` endpoint.
+
+v4.6.0
+------
 * You can now pass a list of `scopes` when calling `APIClient.authentication_url()`
   in order to enable
   [selective sync](https://docs.nylas.com/docs/how-to-use-selective-sync).
