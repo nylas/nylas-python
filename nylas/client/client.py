@@ -3,6 +3,7 @@ import sys
 from os import environ
 from base64 import b64encode
 import json
+from warnings import warn
 
 import requests
 from urlobject import URLObject
@@ -57,11 +58,12 @@ def _validate(response):
 
 class APIClient(json.JSONEncoder):
     """API client for the Nylas API."""
-
     def __init__(
         self,
         app_id=environ.get("NYLAS_APP_ID"),
         app_secret=environ.get("NYLAS_APP_SECRET"),
+        client_id=environ.get("NYLAS_CLIENT_ID"),
+        client_secret=environ.get("NYLAS_CLIENT_SECRET"),
         access_token=environ.get("NYLAS_ACCESS_TOKEN"),
         api_server=API_SERVER,
     ):
@@ -79,8 +81,8 @@ class APIClient(json.JSONEncoder):
         )
         self.ip_addresses_url = api_server + "/a/{client_id}/ip_addresses"
 
-        self.app_secret = app_secret
-        self.app_id = app_id
+        self.client_id = client_id or app_id
+        self.client_secret = client_secret or app_secret
 
         self.session = requests.Session()
         self.version = __VERSION__
@@ -90,7 +92,7 @@ class APIClient(json.JSONEncoder):
         )
         self.session.headers = {
             "X-Nylas-API-Wrapper": "python",
-            "X-Nylas-Client-Id": self.app_id,
+            "X-Nylas-Client-Id": self.client_id,
             "User-Agent": version_header,
         }
         self._access_token = None
@@ -98,21 +100,45 @@ class APIClient(json.JSONEncoder):
         self.auth_token = None
 
         # Requests to the /a/ namespace don't use an auth token but
-        # the app_secret. Set up a specific session for this.
+        # the client_secret. Set up a specific session for this.
         self.admin_session = requests.Session()
 
-        if app_secret is not None:
-            b64_app_secret = b64encode((app_secret + ":").encode("utf8"))
+        if self.client_secret is not None:
+            b64_client_secret = b64encode((self.client_secret + ":").encode("utf8"))
             authorization = "Basic {secret}".format(
-                secret=b64_app_secret.decode("utf8")
+                secret=b64_client_secret.decode("utf8")
             )
             self.admin_session.headers = {
                 "Authorization": authorization,
                 "X-Nylas-API-Wrapper": "python",
-                "X-Nylas-Client-Id": self.app_id,
+                "X-Nylas-Client-Id": self.client_id,
                 "User-Agent": version_header,
             }
         super(APIClient, self).__init__()
+
+    @property
+    def app_id(self):
+        warn(DeprecationWarning('"app_id" naming convention will be deprecated Sept 2019. '
+                                'Use "client_id" instead.'))
+        return self.client_id
+
+    @app_id.setter
+    def app_id(self, value):
+        self.client_id = value
+        warn(DeprecationWarning('"app_id" naming convention will be deprecated Sept 2019. '
+                                'Use "client_id" instead.'))
+
+    @property
+    def app_secret(self):
+        warn(DeprecationWarning('"app_secret" naming convention will be deprecated Sept 2019. '
+                                'Use "client_secret" instead.'))
+        return self.client_secret
+
+    @app_secret.setter
+    def app_secret(self, value):
+        self.client_secret = value
+        warn(DeprecationWarning('"app_secret" naming convention will be deprecated Sept 2019. '
+                                'Use "client_secret" instead.'))
 
     @property
     def access_token(self):
@@ -137,7 +163,7 @@ class APIClient(json.JSONEncoder):
     ):
         args = {
             "redirect_uri": redirect_uri,
-            "client_id": self.app_id or "None",  # 'None' for back-compat
+            "client_id": self.client_id or "None",  # 'None' for back-compat
             "response_type": "code",
             "login_hint": login_hint,
             "state": state,
@@ -153,8 +179,8 @@ class APIClient(json.JSONEncoder):
 
     def token_for_code(self, code):
         args = {
-            "client_id": self.app_id,
-            "client_secret": self.app_secret,
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
             "grant_type": "authorization_code",
             "code": code,
         }
@@ -172,7 +198,7 @@ class APIClient(json.JSONEncoder):
         return self.access_token
 
     def is_opensource_api(self):
-        if self.app_id is None and self.app_secret is None:
+        if self.client_id is None and self.client_secret is None:
             return True
 
         return False
@@ -185,7 +211,7 @@ class APIClient(json.JSONEncoder):
 
     def revoke_all_tokens(self, keep_access_token=None):
         revoke_all_url = self.revoke_all_url.format(
-            client_id=self.app_id, account_id=self.account.id
+            client_id=self.client_id, account_id=self.account.id
         )
         data = {}
         if keep_access_token is not None:
@@ -257,7 +283,7 @@ class APIClient(json.JSONEncoder):
 
     def _get_http_session(self, api_root):
         # Is this a request for a resource under the accounts/billing/admin
-        # namespace (/a)? If the latter, pass the app_secret
+        # namespace (/a)? If the latter, pass the client_secret
         # instead of the secret_token
         if api_root == "a":
             return self.admin_session
@@ -271,7 +297,7 @@ class APIClient(json.JSONEncoder):
             url = "{}/{}{}".format(self.api_server, cls.collection_name, postfix)
         else:
             url = "{}/a/{}/{}{}".format(
-                self.api_server, self.app_id, cls.collection_name, postfix
+                self.api_server, self.client_id, cls.collection_name, postfix
             )
 
         converted_filters = convert_datetimes_to_timestamps(
@@ -294,7 +320,7 @@ class APIClient(json.JSONEncoder):
             url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id, postfix)
         else:
             url = "{}/a/{}/{}/{}{}".format(
-                self.api_server, self.app_id, cls.collection_name, id, postfix
+                self.api_server, self.client_id, cls.collection_name, id, postfix
             )
 
         converted_filters = convert_datetimes_to_timestamps(
@@ -398,8 +424,8 @@ class APIClient(json.JSONEncoder):
             )
         else:
             # Management method.
-            url_path = "/a/{app_id}/{name}/{id}/{method}".format(
-                app_id=self.app_id, name=cls.collection_name, id=id, method=method_name
+            url_path = "/a/{client_id}/{name}/{id}/{method}".format(
+                client_id=self.client_id, name=cls.collection_name, id=id, method=method_name
             )
 
         url = URLObject(self.api_server).with_path(url_path)

@@ -18,11 +18,11 @@ There are several example Flask apps in the `examples` directory. You can run th
 
 ## Usage
 
-### App ID and Secret
+### Client ID and Secret
 
-Before you can interact with the Nylas REST API, you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an App ID / Secret pair.
+Before you can interact with the Nylas REST API, you need to create a Nylas developer account at [https://www.nylas.com/](https://www.nylas.com/). After you've created a developer account, you can create a new application to generate an Client ID / Secret pair.
 
-Generally, you should store your App ID and Secret into environment variables to avoid adding them to source control. The example projects use configuration
+Generally, you should store your Client ID and Secret into environment variables to avoid adding them to source control. The example projects use configuration
 files instead, to make it easier to get started.
 
 
@@ -31,7 +31,7 @@ files instead, to make it easier to get started.
 The Nylas REST API uses server-side (three-legged) OAuth, and this library provides convenience methods to simplify the OAuth process.
 Here's how it works:
 
-1. You redirect the user to our login page, along with your App Id and Secret
+1. You redirect the user to our login page, along with your Client ID and Secret
 2. Your user logs in
 3. She is redirected to a callback URL of your own, along with an access code
 4. You use this access code to get an authorization token to the API
@@ -49,7 +49,7 @@ from nylas import APIClient
 @app.route('/')
 def index():
     redirect_url = "http://0.0.0.0:8888/login_callback"
-    client = APIClient(APP_ID, APP_SECRET)
+    client = APIClient(CLIENT_ID, CLIENT_SECRET)
     return redirect(client.authentication_url(redirect_url))
 
 ```
@@ -69,7 +69,7 @@ def login_callback():
         return "Login error: {0}".format(request.args['error'])
 
     # Exchange the authorization code for an access token
-    client = APIClient(APP_ID, APP_SECRET)
+    client = APIClient(CLIENT_ID, CLIENT_SECRET)
     code = request.args.get('code')
     session['access_token'] = client.token_for_code(code)
 ```
@@ -104,7 +104,7 @@ use the `revoke_all_tokens` method on APIClient. Pass in the optional
 ### Connecting to an account
 
 ```python
-client = APIClient(APP_ID, APP_SECRET, token)
+client = APIClient(CLIENT_ID, CLIENT_SECRET, token)
 
 # Print out the email address and provider (Gmail, Exchange)
 print(client.account.email_address)
@@ -377,7 +377,7 @@ print([(acc.sync_status, acc.account_id, acc.trial, acc.trial_expires) for acc i
 
 ## Open-Source Sync Engine
 
-The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the Python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Nylas object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
+The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the Python library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Nylas object, provide null for the Client ID, Client Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
 
 ```python
 from nylas import APIClient

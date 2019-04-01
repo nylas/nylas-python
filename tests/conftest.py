@@ -56,27 +56,27 @@ def api_url():
 
 
 @pytest.fixture
-def app_id():
+def client_id():
     return "fake-app-id"
 
 
 @pytest.fixture
-def app_secret():
+def client_secret():
     return "nyl4n4ut"
 
 
 @pytest.fixture
 def api_client(api_url):
     return APIClient(
-        app_id=None, app_secret=None, access_token=None, api_server=api_url
+        client_id=None, client_secret=None, access_token=None, api_server=api_url
     )
 
 
 @pytest.fixture
-def api_client_with_app_id(access_token, api_url, app_id, app_secret):
+def api_client_with_client_id(access_token, api_url, client_id, client_secret):
     return APIClient(
-        app_id=app_id,
-        app_secret=app_secret,
+        client_id=client_id,
+        client_secret=client_secret,
         access_token=access_token,
         api_server=api_url,
     )
@@ -131,7 +131,7 @@ def mock_account(mocked_responses, api_url, account_id):
 
 
 @pytest.fixture
-def mock_accounts(mocked_responses, api_url, account_id, app_id):
+def mock_accounts(mocked_responses, api_url, account_id, client_id):
     response_body = json.dumps(
         [
             {
@@ -148,7 +148,7 @@ def mock_accounts(mocked_responses, api_url, account_id, app_id):
             }
         ]
     )
-    url_re = "{base}(/a/{app_id})?/accounts/?".format(base=api_url, app_id=app_id)
+    url_re = "{base}(/a/{client_id})?/accounts/?".format(base=api_url, client_id=client_id)
     mocked_responses.add(
         responses.GET,
         re.compile(url_re),
@@ -1126,7 +1126,7 @@ def mock_events(mocked_responses, api_url):
 
 
 @pytest.fixture
-def mock_account_management(mocked_responses, api_url, account_id, app_id):
+def mock_account_management(mocked_responses, api_url, account_id, client_id):
     account = {
         "account_id": account_id,
         "email_address": "ben.bitdiddle1861@gmail.com",
@@ -1141,11 +1141,11 @@ def mock_account_management(mocked_responses, api_url, account_id, app_id):
     account["billing_state"] = "cancelled"
     cancelled_response = json.dumps(account)
 
-    upgrade_url = "{base}/a/{app_id}/accounts/{id}/upgrade".format(
-        base=api_url, id=account_id, app_id=app_id
+    upgrade_url = "{base}/a/{client_id}/accounts/{id}/upgrade".format(
+        base=api_url, id=account_id, client_id=client_id
     )
-    downgrade_url = "{base}/a/{app_id}/accounts/{id}/downgrade".format(
-        base=api_url, id=account_id, app_id=app_id
+    downgrade_url = "{base}/a/{client_id}/accounts/{id}/downgrade".format(
+        base=api_url, id=account_id, client_id=client_id
     )
     mocked_responses.add(
         responses.POST,
@@ -1164,9 +1164,9 @@ def mock_account_management(mocked_responses, api_url, account_id, app_id):
 
 
 @pytest.fixture
-def mock_revoke_all_tokens(mocked_responses, api_url, account_id, app_id):
-    revoke_all_url = "{base}/a/{app_id}/accounts/{id}/revoke-all".format(
-        base=api_url, id=account_id, app_id=app_id
+def mock_revoke_all_tokens(mocked_responses, api_url, account_id, client_id):
+    revoke_all_url = "{base}/a/{client_id}/accounts/{id}/revoke-all".format(
+        base=api_url, id=account_id, client_id=client_id
     )
     mocked_responses.add(
         responses.POST,

@@ -37,8 +37,8 @@ def test_account_datetime(api_client):
 
 
 @pytest.mark.usefixtures("mock_accounts", "mock_account_management")
-def test_account_upgrade(api_client, app_id):
-    api_client.app_id = app_id
+def test_account_upgrade(api_client, client_id):
+    api_client.client_id = client_id
     account = api_client.accounts.first()
     assert account.billing_state == "paid"
     account = account.downgrade()
@@ -55,17 +55,17 @@ def test_account_delete(api_client, monkeypatch):
 
 
 @pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
-def test_revoke_all_tokens(api_client_with_app_id):
-    assert api_client_with_app_id.access_token is not None
-    api_client_with_app_id.revoke_all_tokens()
-    assert api_client_with_app_id.access_token is None
+def test_revoke_all_tokens(api_client_with_client_id):
+    assert api_client_with_client_id.access_token is not None
+    api_client_with_client_id.revoke_all_tokens()
+    assert api_client_with_client_id.access_token is None
 
 
 @pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
-def test_revoke_all_tokens_with_keep_access_token(api_client_with_app_id, access_token):
-    assert api_client_with_app_id.access_token == access_token
-    api_client_with_app_id.revoke_all_tokens(keep_access_token=access_token)
-    assert api_client_with_app_id.access_token == access_token
+def test_revoke_all_tokens_with_keep_access_token(api_client_with_client_id, access_token):
+    assert api_client_with_client_id.access_token == access_token
+    api_client_with_client_id.revoke_all_tokens(keep_access_token=access_token)
+    assert api_client_with_client_id.access_token == access_token
 
 
 @pytest.mark.usefixtures("mock_accounts", "mock_account")
