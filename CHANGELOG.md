@@ -5,6 +5,10 @@ Unreleased (dev)
 ----------------
 nothing yet
 
+v4.7.0
+------
+* Add support for `/ip_addresses` endpoint.
+
 v4.6.0
 ------
 * You can now pass a list of `scopes` when calling `APIClient.authentication_url()`

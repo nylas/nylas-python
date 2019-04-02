@@ -99,6 +99,15 @@ use the `revoke_all_tokens` method on APIClient. Pass in the optional
   client.revoke_all_tokens()
   client.revoke_all_tokens(keep_access_token='ac123acd123ef123')
 ```
+**Get IP Addresses to Whitelist**
+
+To obtain a dynamic list of IP addresses that Nylas might use to connect use the
+`ip_addresses` method on APIClient. The JSON response object will contain an array 
+of IP addresses and a timestamp of the last time it was updated.
+
+```python
+  client.ip_addresses()
+```
 
 
 ### Connecting to an account
