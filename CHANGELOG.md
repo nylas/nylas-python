@@ -5,7 +5,7 @@ Unreleased (dev)
 ----------------
 nothing yet
 
-v4.6.0
+v4.7.0
 ------
 * Add support for `/ip_addresses` endpoint.
 
