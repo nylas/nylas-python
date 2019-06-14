@@ -50,15 +50,11 @@ from nylas import APIClient
 def index():
     redirect_url = "http://0.0.0.0:8888/login_callback"
     client = APIClient(APP_ID, APP_SECRET)
-    return redirect(client.authentication_url(redirect_url))
+    return redirect(client.authentication_url(redirect_url, scopes='email.read_only,email.send'))
 
 ```
 
-You can also pass a `scopes` argument to the `authentication_url` method
-to enable [Selective Sync](https://docs.nylas.com/docs/how-to-use-selective-sync).
-This should be a list of strings. Currectly, the available scopes
-are `email`, `calendar`, and `contacts`. If no scopes are passed,a
-all of them will be requested.
+The Nylas API provides granular authentication scopes that empower users with control over what level of access your application has to their data. This should be a list of strings. See supported [Authentication Scopes](https://docs.nylas.com/docs/authentication-scopes) for a full list of scopes and details behind the scopes.
 
 **Step 2: Handle the Authentication Response:**
 
