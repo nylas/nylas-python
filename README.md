@@ -54,7 +54,7 @@ def index():
 
 ```
 
-The Nylas API provides granular authentication scopes that empower users with control over what level of access your application has to their data. This should be a list of strings. See supported [Authentication Scopes](https://docs.nylas.com/docs/authentication-scopes) for a full list of scopes and details behind the scopes.
+The Nylas API provides granular authentication scopes that empower users with control over the level of access your application has to their data.  Pass a comma-separated string of scopes to the scopes argument for the `authentication_url` method. See supported [Authentication Scopes](https://docs.nylas.com/docs/authentication-scopes) for a full list of scopes and details behind the scopes.
 
 **Step 2: Handle the Authentication Response:**
 
