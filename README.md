@@ -63,6 +63,7 @@ print(client.account.provider)
 
 A quick start tutorial on how to get up and running with the SDK is available [here](https://docs.nylas.com/docs/python-quick-start).
 
+
 # Open-Source Sync Engine
 
 The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open source, and you can also use the Python library with the open source API. Since the open source API provides no authentication or security, connecting to it is simple. When you instantiate the Nylas object, set the App ID, App Secret, and API Token to `null`, and pass the fully-qualified address of your copy of the sync engine:
