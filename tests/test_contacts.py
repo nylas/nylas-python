@@ -77,12 +77,12 @@ def test_contact_no_picture(api_client, mocked_responses):
 @pytest.mark.usefixtures("mock_contact")
 def test_contact_emails(api_client):
     contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
-    assert isinstance(contact.email_addresses, dict)
-    assert contact.email_addresses["first"] == ["one@example.com"]
-    assert contact.email_addresses["second"] == ["two@example.com"]
-    assert contact.email_addresses["primary"] == ["abc@example.com", "xyz@example.com"]
-    assert contact.email_addresses[None] == ["unknown@example.com"]
-    assert "absent" not in contact.email_addresses
+    assert isinstance(contact.emails, dict)
+    assert contact.emails["first"] == ["one@example.com"]
+    assert contact.emails["second"] == ["two@example.com"]
+    assert contact.emails["primary"] == ["abc@example.com", "xyz@example.com"]
+    assert contact.emails[None] == ["unknown@example.com"]
+    assert "absent" not in contact.emails
 
 
 @pytest.mark.usefixtures("mock_contact")
@@ -129,7 +129,7 @@ def test_update_contact_special_values(api_client, mocked_responses):
     contact = api_client.contacts.get("9hga75n6mdvq4zgcmhcn7hpys")
     assert len(mocked_responses.calls) == 1
     contact.birthday = date(1999, 3, 6)
-    contact.email_addresses["absent"].append("absent@fake.com")
+    contact.emails["absent"].append("absent@fake.com")
     contact.im_addresses["absent"].append("absent-im")
     contact.physical_addresses["absent"].append(
         {
@@ -143,7 +143,7 @@ def test_update_contact_special_values(api_client, mocked_responses):
     contact.save()
     assert len(mocked_responses.calls) == 2
     assert contact.id == "9hga75n6mdvq4zgcmhcn7hpys"
-    assert contact.email_addresses["absent"] == ["absent@fake.com"]
+    assert contact.emails["absent"] == ["absent@fake.com"]
     assert contact.im_addresses["absent"] == ["absent-im"]
     assert contact.physical_addresses["absent"] == [
         {
@@ -168,7 +168,7 @@ def test_update_contact_special_values(api_client, mocked_responses):
     phone_number = {"type": "absent", "number": "222-333-4444"}
     web_page = {"type": "absent", "url": "http://absent.com/me"}
     assert req_body["birthday"] == birthday
-    assert email_address in req_body["email_addresses"]
+    assert email_address in req_body["emails"]
     assert im_address in req_body["im_addresses"]
     assert physical_address in req_body["physical_addresses"]
     assert phone_number in req_body["phone_numbers"]

@@ -906,7 +906,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         "picture_url": "{base}/contacts/{id}/picture".format(
             base=api_url, id="5x6b54whvcz1j22ggiyorhk9v"
         ),
-        "email_addresses": [{"email": "charlie@gmail.com", "type": None}],
+        "emails": [{"email": "charlie@gmail.com", "type": None}],
         "im_addresses": [],
         "physical_addresses": [],
         "phone_numbers": [],
@@ -928,7 +928,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         "office_location": "Willy Wonka Factory",
         "notes": None,
         "picture_url": None,
-        "email_addresses": [{"email": "scrumptious@wonka.com", "type": None}],
+        "emails": [{"email": "scrumptious@wonka.com", "type": None}],
         "im_addresses": [],
         "physical_addresses": [],
         "phone_numbers": [],
@@ -950,7 +950,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
         "office_location": "Willy Wonka Factory",
         "notes": None,
         "picture_url": None,
-        "email_addresses": [],
+        "emails": [],
         "im_addresses": [],
         "physical_addresses": [],
         "phone_numbers": [],
@@ -1022,7 +1022,7 @@ def mock_contact(mocked_responses, account_id, api_url):
         "picture_url": "{base}/contacts/{id}/picture".format(
             base=api_url, id="9hga75n6mdvq4zgcmhcn7hpys"
         ),
-        "email_addresses": [
+        "emails": [
             {"type": "first", "email": "one@example.com"},
             {"type": "second", "email": "two@example.com"},
             {"type": "primary", "email": "abc@example.com"},
