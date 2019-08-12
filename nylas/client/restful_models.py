@@ -535,7 +535,7 @@ class Contact(NylasAPIObject):
     ]
     date_attrs = {"birthday": "birthday"}
     typed_dict_attrs = {
-        "email_addresses": "email",
+        "emails": "email",
         "im_addresses": "im_address",
         "physical_addresses": None,
         "phone_numbers": "number",
