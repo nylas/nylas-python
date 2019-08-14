@@ -1199,3 +1199,24 @@ def mock_ip_addresses(mocked_responses, api_url, app_id):
             }
         ),
     )
+
+
+@pytest.fixture
+def mock_token_info(mocked_responses, api_url, account_id, app_id):
+    token_info_url = "{base}/a/{app_id}/accounts/{id}/token_info".format(
+        base=api_url, id=account_id, app_id=app_id
+    )
+    mocked_responses.add(
+        responses.GET,
+        token_info_url,
+        content_type="application/json",
+        status=200,
+        body=json.dumps(
+            {
+                "created_at": 1563496685,
+                "scopes": "calendar,email,contacts",
+                "state": "valid",
+                "updated_at": 1563496685,
+            }
+        ),
+    )

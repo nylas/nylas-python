@@ -3,7 +3,8 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
-nothing yet
+* Add support for `/token_info` endpoint, which allows you to query the
+  available scopes and validity of a given access token for an account.
 
 v4.7.0
 ------

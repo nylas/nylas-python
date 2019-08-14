@@ -30,6 +30,14 @@ def test_ip_addresses(api_client_with_app_id):
     assert "ip_addresses" in result
 
 
+@pytest.mark.usefixtures("mock_token_info", "mock_account")
+def test_token_info(api_client_with_app_id):
+    result = api_client_with_app_id.token_info()
+    assert isinstance(result, dict)
+    assert "updated_at" in result
+    assert "scopes" in result
+
+
 @pytest.mark.usefixtures("mock_account")
 def test_account_datetime(api_client):
     account = api_client.account
