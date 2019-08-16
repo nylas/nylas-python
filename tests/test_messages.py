@@ -74,6 +74,8 @@ def test_message_raw(api_client, account_id):
     parsed = json.loads(raw)
     assert parsed == {
         "object": "message",
+        "to": [{"email": "foo@yahoo.com", "name": "Foo"}],
+        "from": [{"email": "bar@gmail.com", "name": "Bar"}],
         "account_id": account_id,
         "labels": [{"display_name": "Inbox", "name": "inbox", "id": "abcd"}],
         "starred": False,
@@ -90,6 +92,21 @@ def test_message_delete_by_id(mocked_responses, api_client):
     request = mocked_responses.calls[0].request
     url = URLObject(request.url)
     assert url.query_dict["forceful"] == "True"
+
+
+@pytest.mark.usefixtures("mock_message")
+def test_message_resolution(mocked_responses, api_client, account_id):
+    message = api_client.messages.get(1234)
+    assert message.object == "message"
+    assert message.to == [{"email": "foo@yahoo.com", "name": "Foo"}]
+    assert message.from_ == [{"email": "bar@gmail.com", "name": "Bar"}]
+    assert message["from"] == [{"email": "bar@gmail.com", "name": "Bar"}]
+    assert message.account_id == account_id
+    assert message._labels == [{"display_name": "Inbox", "name": "inbox", "id": "abcd"}]
+    assert message.id == "1234"
+    assert message.subject == "Test Message"
+    assert message.starred is False
+    assert message.unread is True
 
 
 @pytest.mark.usefixtures("mock_messages")

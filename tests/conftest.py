@@ -289,6 +289,8 @@ def mock_messages(mocked_responses, api_url, account_id):
         [
             {
                 "id": "1234",
+                "to": [{"email": "foo@yahoo.com", "name": "Foo"}],
+                "from": [{"email": "bar@gmail.com", "name": "Bar"}],
                 "subject": "Test Message",
                 "account_id": account_id,
                 "object": "message",
@@ -299,6 +301,8 @@ def mock_messages(mocked_responses, api_url, account_id):
             },
             {
                 "id": "1238",
+                "to": [{"email": "foo2@yahoo.com", "name": "Foo Two"}],
+                "from": [{"email": "bar2@gmail.com", "name": "Bar Two"}],
                 "subject": "Test Message 2",
                 "account_id": account_id,
                 "object": "message",
@@ -309,6 +313,8 @@ def mock_messages(mocked_responses, api_url, account_id):
             },
             {
                 "id": "12",
+                "to": [{"email": "foo3@yahoo.com", "name": "Foo Three"}],
+                "from": [{"email": "bar3@gmail.com", "name": "Bar Three"}],
                 "subject": "Test Message 3",
                 "account_id": account_id,
                 "object": "message",
@@ -335,6 +341,8 @@ def mock_messages(mocked_responses, api_url, account_id):
 def mock_message(mocked_responses, api_url, account_id):
     base_msg = {
         "id": "1234",
+        "to": [{"email": "foo@yahoo.com", "name": "Foo"}],
+        "from": [{"email": "bar@gmail.com", "name": "Bar"}],
         "subject": "Test Message",
         "account_id": account_id,
         "object": "message",

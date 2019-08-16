@@ -66,6 +66,8 @@ class NylasAPIObject(dict):
                 attr = attr_name[1:]
             if attr in kwargs:
                 obj[attr_name] = kwargs[attr]
+                if attr_name == "from":
+                    obj["from_"] = kwargs[attr]
         for date_attr, iso_attr in cls.date_attrs.items():
             if kwargs.get(iso_attr):
                 obj[date_attr] = datetime.strptime(kwargs[iso_attr], "%Y-%m-%d").date()
