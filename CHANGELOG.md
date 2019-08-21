@@ -3,10 +3,11 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+* Bugfix: `/token-info` endpoint
 
 v4.8.0
 ------
-* Add support for `/token_info` endpoint, which allows you to query the
+* Add support for `/token-info` endpoint, which allows you to query the
   available scopes and validity of a given access token for an account.
 * Add message.from_ alias
 * Bugfix: contact.email_addresses renamed to contact.emails
