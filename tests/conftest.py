@@ -1211,11 +1211,11 @@ def mock_ip_addresses(mocked_responses, api_url, app_id):
 
 @pytest.fixture
 def mock_token_info(mocked_responses, api_url, account_id, app_id):
-    token_info_url = "{base}/a/{app_id}/accounts/{id}/token_info".format(
+    token_info_url = "{base}/a/{app_id}/accounts/{id}/token-info".format(
         base=api_url, id=account_id, app_id=app_id
     )
     mocked_responses.add(
-        responses.GET,
+        responses.POST,
         token_info_url,
         content_type="application/json",
         status=200,

@@ -79,7 +79,7 @@ class APIClient(json.JSONEncoder):
         )
         self.ip_addresses_url = api_server + "/a/{client_id}/ip_addresses"
         self.token_info_url = (
-            api_server + "/a/{client_id}/accounts/{account_id}/token_info"
+            api_server + "/a/{client_id}/accounts/{account_id}/token-info"
         )
 
         self.app_secret = app_secret
@@ -212,7 +212,10 @@ class APIClient(json.JSONEncoder):
         token_info_url = self.token_info_url.format(
             client_id=self.app_id, account_id=self.account.id
         )
-        resp = self.admin_session.get(token_info_url)
+        self.admin_session.headers["Content-Type"] = "application/json"
+        resp = self.admin_session.post(
+            token_info_url, json={"access_token": self.access_token}
+        )
         _validate(resp).json()
         return resp.json()
 
