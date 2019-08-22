@@ -3,6 +3,10 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+
+
+v4.8.1
+------
 * Bugfix: `/token-info` endpoint
 
 v4.8.0
