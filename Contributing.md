@@ -20,6 +20,6 @@ While writing your code contribution, make sure you follow the testing conventio
 
 ## Creating a Pull Request
 
-Before you submit any code, we need you to sign our [Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLSdCnXWsaTkw5jhJ8DMtMu5TUI9Q-El_rCuGzkdBvnNJr8oDWQ/viewform); this ensures we can continue to protect your contributions under an open source license well into the future.
-
 Please follow [best practices](https://github.com/trein/dev-best-practices/wiki/Git-Commit-Best-Practices) for creating git commits. When your code is ready to be submitted, you can [submit a pull request](https://help.github.com/articles/creating-a-pull-request/) to begin the code review process.
+
+All PRs from contributors that aren't employed by Nylas must contain the following text in the PR description: "I confirm that this contribution is made under the terms of the MIT license and that I have the authority necessary to make this contribution on behalf of its copyright owner."
