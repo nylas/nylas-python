@@ -117,7 +117,7 @@ def verify_signature(message, key, signature):
     is your OAuth client secret, which only you and Nylas know.
     """
     digest = hmac.new(key, msg=message, digestmod=hashlib.sha256).hexdigest()
-    return digest == signature
+    return hmac.compare_digest(digest, signature)
 
 
 @celery.task
