@@ -121,7 +121,7 @@ def index():
     # We'll use the Nylas client to fetch information from Nylas
     # about the current user, and pass that to the template.
     account = client.account
-    return render_template("after_connected.html", account=account)
+    return render_template("after_connected.html", account=account, client=client)
 
 
 @app.route("/google/success")
