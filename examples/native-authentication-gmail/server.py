@@ -67,11 +67,12 @@ if cfg_needs_replacing:
 # For more information, check out the documentation: http://flask-dance.rtfd.org
 google_bp = make_google_blueprint(
     scope=[
+        "openid",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
         "https://mail.google.com/",
-        "https://www.google.com/m8/feeds",
         "https://www.googleapis.com/auth/calendar",
+        "https://www.googleapis.com/auth/contacts",
     ],
     offline=True,  # this allows you to get a refresh token from Google
     redirect_to="after_google",
@@ -120,7 +121,7 @@ def index():
     # We'll use the Nylas client to fetch information from Nylas
     # about the current user, and pass that to the template.
     account = client.account
-    return render_template("after_connected.html", account=account)
+    return render_template("after_connected.html", account=account, client=client)
 
 
 @app.route("/google/success")
