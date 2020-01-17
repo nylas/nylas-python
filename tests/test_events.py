@@ -1,3 +1,4 @@
+import json
 import pytest
 from urlobject import URLObject
 from requests import RequestException
@@ -46,3 +47,36 @@ def test_calendar_events(api_client):
     calendar = api_client.calendars.first()
     assert calendar.events
     assert all(isinstance(event, Event) for event in calendar.events)
+
+
+@pytest.mark.usefixtures("mock_events", "mock_send_rsvp")
+def test_event(mocked_responses, api_client):
+    event = api_client.events.first()
+    event.rsvp("yes")
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/send-rsvp"
+    data = json.loads(request.body)
+    assert data["event_id"] == event.id
+    assert data["status"] == "yes"
+    assert data["comment"] == None
+
+
+@pytest.mark.usefixtures("mock_events", "mock_send_rsvp")
+def test_event_rsvp_with_comment(mocked_responses, api_client):
+    event = api_client.events.first()
+    event.rsvp("no", "I have a conflict")
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/send-rsvp"
+    data = json.loads(request.body)
+    assert data["event_id"] == event.id
+    assert data["status"] == "no"
+    assert data["comment"] == "I have a conflict"
+
+
+@pytest.mark.usefixtures("mock_events")
+def test_event_rsvp_invalid(mocked_responses, api_client):
+    event = api_client.events.first()
+    with pytest.raises(ValueError):
+        event.rsvp("purple")

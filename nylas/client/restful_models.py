@@ -610,6 +610,21 @@ class Event(NylasAPIObject):
 
         return dct
 
+    def rsvp(self, status, comment=None):
+        if status not in {"yes", "no", "maybe"}:
+            raise ValueError("invalid status: {status}".format(status=status))
+
+        url = "{api_server}/send-rsvp".format(api_server=self.api.api_server)
+        data = {
+            "event_id": self.id,
+            "status": status,
+            "comment": comment,
+        }
+        response = self.api.session.post(url, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return Event.create(self, **result)
+
 
 class Namespace(NylasAPIObject):
     attrs = [

@@ -749,6 +749,15 @@ def mock_event_create_notify_response(mocked_responses, api_url, message_body):
 
 
 @pytest.fixture
+def mock_send_rsvp(mocked_responses, api_url, message_body):
+    mocked_responses.add(
+        responses.POST,
+        re.compile(api_url + "/send-rsvp"),
+        body=json.dumps(message_body),
+    )
+
+
+@pytest.fixture
 def mock_thread_search_response(mocked_responses, api_url):
     snippet = (
         "Hey Helena, Looking forward to getting together for dinner on Friday. "
@@ -1104,6 +1113,7 @@ def mock_events(mocked_responses, api_url):
     response_body = json.dumps(
         [
             {
+                "id": "1234abcd5678",
                 "title": "Pool party",
                 "location": "Local Community Pool",
                 "participants": [
