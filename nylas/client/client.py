@@ -24,7 +24,7 @@ from nylas.client.restful_models import (
     Label,
     Draft,
 )
-from nylas.utils import convert_datetimes_to_timestamps
+from nylas.utils import convert_data, convert_datetimes_to_timestamps
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
@@ -345,7 +345,7 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
+            converted_data = convert_data(data, cls)
             headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
             response = session.post(url, json=converted_data, headers=headers)
@@ -364,10 +364,7 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            converted_data = [
-                convert_datetimes_to_timestamps(datum, cls.datetime_attrs)
-                for datum in data
-            ]
+            converted_data = [convert_data(datum, cls) for datum in data]
             headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
             response = session.post(url, json=converted_data, headers=headers)
@@ -396,7 +393,7 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
-        converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
+        converted_data = convert_data(data, cls)
         response = session.put(url, json=converted_data)
 
         result = _validate(response).json()
@@ -417,7 +414,7 @@ class APIClient(json.JSONEncoder):
             )
 
         url = URLObject(self.api_server).with_path(url_path)
-        converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
+        converted_data = convert_data(data, cls)
 
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=converted_data)

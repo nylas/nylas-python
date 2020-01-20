@@ -1,8 +1,17 @@
 import json
 import pytest
+import json
+from datetime import datetime
 from urlobject import URLObject
 from requests import RequestException
 from nylas.client.restful_models import Event
+
+try:
+    import dateutil
+except ImportError:
+    dateutil = None
+
+requires_dateutil = pytest.mark.skipif(not dateutil, reason="dateutil is required")
 
 
 def blank_event(api_client):
@@ -80,3 +89,24 @@ def test_event_rsvp_invalid(mocked_responses, api_client):
     event = api_client.events.first()
     with pytest.raises(ValueError):
         event.rsvp("purple")
+
+
+@requires_dateutil
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_recurring_event(api_client, mocked_responses):
+    event = blank_event(api_client)
+    start_date = datetime(2014, 12, 31)
+    rrule = dateutil.rrule.rrule(
+        freq=dateutil.rrule.MONTHLY, count=4, dtstart=start_date
+    )
+    event.recurrence = rrule
+    event.save()
+
+    body = mocked_responses.calls[-1].request.body
+    data = json.loads(body)
+    recurrence = data.get("recurrence")
+    assert recurrence
+    rrule_list = recurrence.get("rrule")
+    assert rrule_list == ["DTSTART:20141231T000000\nRRULE:FREQ=MONTHLY;COUNT=4"]
+    assert "timezone" in recurrence
+    assert recurrence["timezone"] is None

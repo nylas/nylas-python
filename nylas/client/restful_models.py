@@ -1,6 +1,12 @@
 from datetime import datetime
 from collections import defaultdict
 
+try:
+    from dateutil.rrule import rruleset, rrulestr
+except ImportError:
+    rruleset = None
+    rrulestr = lambda s: s
+
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError, UnSyncedError
@@ -26,6 +32,7 @@ class NylasAPIObject(dict):
     datetime_attrs = {}
     datetime_filter_attrs = {}
     typed_dict_attrs = {}
+    rrule_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
@@ -76,6 +83,10 @@ class NylasAPIObject(dict):
                 obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
         for attr, value_attr_name in cls.typed_dict_attrs.items():
             obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
+        for rrule_attr, rrule_str_attr in cls.rrule_attrs.items():
+            rrule_str = kwargs.get(rrule_str_attr)
+            if rrule_str:
+                obj[rrule_attr] = rrulestr(rrule_str)
 
         if "id" not in kwargs:
             obj["id"] = None
@@ -105,6 +116,22 @@ class NylasAPIObject(dict):
                 for values in typed_dict.values():
                     for value in values:
                         dct[attr].append(value)
+        if rruleset:
+            for rrule_attr, rrule_str_attr in self.cls.rrule_attrs.items():
+                rrule_val = self.get(rrule_attr)
+                if isinstance(rrule_val, rruleset):
+                    rrule_strs = [str(rrule) for rrule in rrule_val]
+                else:
+                    rrule_strs = [str(rrule_val)]
+                tzinfo = getattr(rrule_val, "_tzinfo", None)
+                if tzinfo:
+                    tzname = tzinfo.tzname()
+                else:
+                    tzname = None
+                dct[rrule_attr] = {
+                    "rrule": rrule_strs,
+                    "timezone": tzname,
+                }
         return dct
 
     def child_collection(self, cls, **filters):
@@ -592,6 +619,7 @@ class Event(NylasAPIObject):
         "message_id",
     ]
     datetime_attrs = {"original_start_at": "original_start_time"}
+    rrule_attrs = {"recurrence": "recurrence"}
     collection_name = "events"
 
     def __init__(self, api):
