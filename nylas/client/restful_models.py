@@ -640,6 +640,7 @@ class Account(NylasAPIObject):
         "email",
         "id",
         "namespace_id",
+        "provider",
         "sync_state",
         "trial",
     ]

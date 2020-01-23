@@ -3,7 +3,7 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
-
+* Add `provider` to Account model
 
 v4.8.1
 ------
