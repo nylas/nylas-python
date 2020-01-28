@@ -1,6 +1,6 @@
 import json
 import pytest
-import json
+import six
 from datetime import datetime
 from urlobject import URLObject
 from requests import RequestException
@@ -12,6 +12,7 @@ except ImportError:
     dateutil = None
 
 requires_dateutil = pytest.mark.skipif(not dateutil, reason="dateutil is required")
+forbids_dateutil = pytest.mark.skipif(dateutil, reason="dateutil is forbidden")
 
 
 def blank_event(api_client):
@@ -110,3 +111,19 @@ def test_recurring_event(api_client, mocked_responses):
     assert rrule_list == ["DTSTART:20141231T000000\nRRULE:FREQ=MONTHLY;COUNT=4"]
     assert "timezone" in recurrence
     assert recurrence["timezone"] is None
+
+
+@requires_dateutil
+@pytest.mark.usefixtures("mock_events")
+def test_get_recurring_event(api_client, mocked_responses):
+    event = api_client.events.first()
+    assert event.recurrence
+    assert isinstance(event.recurrence, dateutil.rrule.rrule)
+
+
+@forbids_dateutil
+@pytest.mark.usefixtures("mock_events")
+def test_get_recurring_event_no_dateutil(api_client, mocked_responses):
+    event = api_client.events.first()
+    assert event.recurrence
+    assert isinstance(event.recurrence, six.text_type)

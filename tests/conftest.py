@@ -1130,6 +1130,7 @@ def mock_events(mocked_responses, api_url):
                         "status": "no",
                     },
                 ],
+                "recurrence": "DTSTART:20141231T000000\nRRULE:FREQ=MONTHLY;COUNT=4",
             }
         ]
     )
