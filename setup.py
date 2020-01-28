@@ -16,6 +16,7 @@ RUN_DEPENDENCIES = [
     "six>=1.4.1",
     "bumpversion>=0.5.0",
     "urlobject",
+    "python-dateutil",
 ]
 TEST_DEPENDENCIES = ["pytest", "pytest-cov", "responses==0.10.5", "twine"]
 

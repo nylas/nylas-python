@@ -3,14 +3,10 @@ language: python
 python:
   - "2.7"
   - "3.6"
-env:
-  - DATEUTIL=1
-  - DATEUTIL=0
 install:
   - "travis_retry pip install -U pip pytest pylint"
   - "travis_retry pip install .[test]"
   - "travis_retry pip install codecov"
-  - "if [[ $DATEUTIL == 1 ]]; then travis_retry pip install python-dateutil; fi"
 script: "python setup.py test"
 after_success:
   - "codecov"

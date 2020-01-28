@@ -1,10 +1,7 @@
 from __future__ import division
 from datetime import datetime
 
-try:
-    from dateutil.rrule import rrulebase, rruleset
-except ImportError:
-    rrulebase = rruleset = None
+from dateutil.rrule import rrulebase, rruleset
 
 
 def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
@@ -37,35 +34,27 @@ def convert_datetimes_to_timestamps(data, datetime_attrs):
     return new_data
 
 
-if rrulebase:
-
-    def convert_rrules_to_strings(data, rrule_attrs):
-        """
-        Given a dictionary of data, and a dict of rrule attributes,
-        return a new dictionary that converts any rrule attributes that may
-        be present to their string equivalent.
-        """
-        if not data:
-            return data
-
-        new_data = {}
-        for key, value in data.items():
-            if key in rrule_attrs and isinstance(value, rrulebase):
-                new_key = rrule_attrs[key]
-                if isinstance(value, rruleset):
-                    new_data[new_key] = [str(rrule) for rrule in value]
-                else:
-                    new_data[new_key] = [str(value)]
-            else:
-                new_data[key] = value
-
-        return new_data
-
-
-else:
-    # can't import dateutil, so this is a no-op
-    def convert_rrules_to_strings(data, rrule_attrs):
+def convert_rrules_to_strings(data, rrule_attrs):
+    """
+    Given a dictionary of data, and a dict of rrule attributes,
+    return a new dictionary that converts any rrule attributes that may
+    be present to their string equivalent.
+    """
+    if not data:
         return data
+
+    new_data = {}
+    for key, value in data.items():
+        if key in rrule_attrs and isinstance(value, rrulebase):
+            new_key = rrule_attrs[key]
+            if isinstance(value, rruleset):
+                new_data[new_key] = [str(rrule) for rrule in value]
+            else:
+                new_data[new_key] = [str(value)]
+        else:
+            new_data[key] = value
+
+    return new_data
 
 
 def convert_data(data, cls):

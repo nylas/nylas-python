@@ -1,12 +1,7 @@
 from datetime import datetime
 from collections import defaultdict
 
-try:
-    from dateutil.rrule import rruleset, rrulestr
-except ImportError:
-    rruleset = None
-    rrulestr = lambda s: s
-
+from dateutil.rrule import rruleset, rrulestr
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError, UnSyncedError
@@ -116,22 +111,21 @@ class NylasAPIObject(dict):
                 for values in typed_dict.values():
                     for value in values:
                         dct[attr].append(value)
-        if rruleset:
-            for rrule_attr, rrule_str_attr in self.cls.rrule_attrs.items():
-                rrule_val = self.get(rrule_attr)
-                if isinstance(rrule_val, rruleset):
-                    rrule_strs = [str(rrule) for rrule in rrule_val]
-                else:
-                    rrule_strs = [str(rrule_val)]
-                tzinfo = getattr(rrule_val, "_tzinfo", None)
-                if tzinfo:
-                    tzname = tzinfo.tzname()
-                else:
-                    tzname = None
-                dct[rrule_attr] = {
-                    "rrule": rrule_strs,
-                    "timezone": tzname,
-                }
+        for rrule_attr, rrule_str_attr in self.cls.rrule_attrs.items():
+            rrule_val = self.get(rrule_attr)
+            if isinstance(rrule_val, rruleset):
+                rrule_strs = [str(rrule) for rrule in rrule_val]
+            else:
+                rrule_strs = [str(rrule_val)]
+            tzinfo = getattr(rrule_val, "_tzinfo", None)
+            if tzinfo:
+                tzname = tzinfo.tzname()
+            else:
+                tzname = None
+            dct[rrule_attr] = {
+                "rrule": rrule_strs,
+                "timezone": tzname,
+            }
         return dct
 
     def child_collection(self, cls, **filters):
