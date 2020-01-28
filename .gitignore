@@ -53,6 +53,7 @@ docs/_build/
 # Editors
 *.swp
 .vscode/
+.idea/
 
 include/
 lib/
