@@ -611,6 +611,10 @@ class Event(NylasAPIObject):
         return dct
 
     def rsvp(self, status, comment=None):
+        if not self.message_id:
+            raise ValueError(
+                "This event was not imported from an iCalendar invite, and so it is not possible to RSVP via Nylas"
+            )
         if status not in {"yes", "no", "maybe"}:
             raise ValueError("invalid status: {status}".format(status=status))
 

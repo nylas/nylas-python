@@ -80,3 +80,11 @@ def test_event_rsvp_invalid(mocked_responses, api_client):
     event = api_client.events.first()
     with pytest.raises(ValueError):
         event.rsvp("purple")
+
+
+@pytest.mark.usefixtures("mock_events")
+def test_event_rsvp_no_message(mocked_responses, api_client):
+    event = api_client.events.all()[1]
+    with pytest.raises(ValueError) as excinfo:
+        event.rsvp("yes")
+    assert "This event was not imported from an iCalendar invite" in str(excinfo)
