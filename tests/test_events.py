@@ -101,8 +101,7 @@ def test_recurring_event(api_client, mocked_responses):
     assert recurrence
     rrule_list = recurrence.get("rrule")
     assert rrule_list == ["DTSTART:20141231T000000\nRRULE:FREQ=MONTHLY;COUNT=4"]
-    assert "timezone" in recurrence
-    assert recurrence["timezone"] is None
+    assert recurrence["timezone"] == "UTC"
 
 
 @pytest.mark.usefixtures("mock_events")

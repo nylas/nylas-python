@@ -2,7 +2,7 @@ from datetime import datetime
 from collections import defaultdict
 
 from dateutil.rrule import rruleset, rrulestr
-from six import StringIO
+from six import StringIO, string_types
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError, UnSyncedError
 from nylas.utils import timestamp_from_dt
@@ -81,7 +81,11 @@ class NylasAPIObject(dict):
         for rrule_attr, rrule_str_attr in cls.rrule_attrs.items():
             rrule_str = kwargs.get(rrule_str_attr)
             if rrule_str:
-                obj[rrule_attr] = rrulestr(rrule_str)
+                if isinstance(rrule_str, string_types):
+                    rrule = rrulestr(rrule_str)
+                else:
+                    rrule = rrule_str
+                obj[rrule_attr] = rrule
 
         if "id" not in kwargs:
             obj["id"] = None
@@ -121,7 +125,7 @@ class NylasAPIObject(dict):
             if tzinfo:
                 tzname = tzinfo.tzname()
             else:
-                tzname = None
+                tzname = "UTC"
             dct[rrule_attr] = {
                 "rrule": rrule_strs,
                 "timezone": tzname,
