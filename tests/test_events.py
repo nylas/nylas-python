@@ -78,8 +78,9 @@ def test_event_rsvp_with_comment(mocked_responses, api_client):
 @pytest.mark.usefixtures("mock_events")
 def test_event_rsvp_invalid(api_client):
     event = api_client.events.first()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         event.rsvp("purple")
+    assert "invalid status" in str(excinfo)
 
 
 @pytest.mark.usefixtures("mock_events")
