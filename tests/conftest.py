@@ -1114,6 +1114,7 @@ def mock_events(mocked_responses, api_url):
         [
             {
                 "id": "1234abcd5678",
+                "message_id": "evh5uy0shhpm5d0le89goor17",
                 "title": "Pool party",
                 "location": "Local Community Pool",
                 "participants": [
@@ -1130,7 +1131,13 @@ def mock_events(mocked_responses, api_url):
                         "status": "no",
                     },
                 ],
-            }
+            },
+            {
+                "id": "9876543cba",
+                "message_id": None,
+                "title": "Event Without Message",
+                "description": "This event does not have a corresponding message ID.",
+            },
         ]
     )
     endpoint = re.compile(api_url + "/events")
