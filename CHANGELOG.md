@@ -3,6 +3,10 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+nothing yet
+
+v4.9.0
+------
 * Add `provider` to Account model
 * Add `reply_to` to Message model
 * Add `Event.rsvp()` method
