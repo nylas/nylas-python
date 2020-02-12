@@ -3,7 +3,7 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
-nothing yet
+* Add `ical_uid` to Event model, only available on API version 2.1 or above. See https://headwayapp.co/nylas-changelog/icaluid-support-132816
 
 v4.9.0
 ------

@@ -1115,6 +1115,7 @@ def mock_events(mocked_responses, api_url):
             {
                 "id": "1234abcd5678",
                 "message_id": "evh5uy0shhpm5d0le89goor17",
+                "ical_uid": "19960401T080045Z-4000F192713-0052@example.com",
                 "title": "Pool party",
                 "location": "Local Community Pool",
                 "participants": [
@@ -1135,6 +1136,7 @@ def mock_events(mocked_responses, api_url):
             {
                 "id": "9876543cba",
                 "message_id": None,
+                "ical_uid": None,
                 "title": "Event Without Message",
                 "description": "This event does not have a corresponding message ID.",
             },
