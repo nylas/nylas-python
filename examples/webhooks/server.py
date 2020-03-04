@@ -13,7 +13,7 @@ import hashlib
 try:
     import requests
     from flask import Flask, request, render_template
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
     from celery import Celery
 except ImportError:
     message = textwrap.dedent(

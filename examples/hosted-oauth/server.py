@@ -8,7 +8,7 @@ import textwrap
 try:
     import requests
     from flask import Flask, render_template
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
     from flask_dance.contrib.nylas import make_nylas_blueprint, nylas
 except ImportError:
     message = textwrap.dedent(

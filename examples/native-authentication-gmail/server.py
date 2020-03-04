@@ -8,7 +8,7 @@ import textwrap
 try:
     import requests
     from flask import Flask, render_template, session, redirect, url_for
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
     from flask_dance.contrib.google import make_google_blueprint, google
 except ImportError:
     message = textwrap.dedent(
