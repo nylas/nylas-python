@@ -14,6 +14,7 @@ from nylas.client.restful_models import (
     Calendar,
     Contact,
     Event,
+    RoomResource,
     Message,
     Thread,
     File,
@@ -260,6 +261,10 @@ class APIClient(json.JSONEncoder):
     @property
     def events(self):
         return RestfulModelCollection(Event, self)
+
+    @property
+    def room_resources(self):
+        return RestfulModelCollection(RoomResource, self)
 
     @property
     def calendars(self):
