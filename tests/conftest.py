@@ -1153,6 +1153,32 @@ def mock_events(mocked_responses, api_url):
 
 
 @pytest.fixture
+def mock_resources(mocked_responses, api_url):
+    response_body = json.dumps(
+        [
+            {
+                "object": "room_resource",
+                "email": "training-room-1A@google.com",  # Google's resourceEmail
+                "name": "Training Room 1A",  # Google's resourceName
+            },
+            {
+                "object": "room_resource",
+                "email": "training-room-2B@google.com",  # Google's resourceEmail
+                "name": "Training Room 2B",  # Google's resourceName
+            },
+        ]
+    )
+    endpoint = re.compile(api_url + "/resources")
+    mocked_responses.add(
+        responses.GET,
+        endpoint,
+        content_type="application/json",
+        status=200,
+        body=response_body,
+    )
+
+
+@pytest.fixture
 def mock_account_management(mocked_responses, api_url, account_id, app_id):
     account = {
         "account_id": account_id,

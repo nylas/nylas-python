@@ -45,11 +45,8 @@ class NylasAPIObject(dict):
     @classmethod
     def create(cls, api, **kwargs):
         object_type = kwargs.get("object")
-        if (
-            object_type
-            and object_type != cls.__name__.lower()
-            and object_type != "account"
-        ):
+        cls_object_type = getattr(cls, "object_type", cls.__name__.lower())
+        if object_type and object_type != cls_object_type and object_type != "account":
             # We were given a specific object type and we're trying to
             # instantiate something different; abort. (Relevant for folders
             # and labels API.)
@@ -630,6 +627,19 @@ class Event(NylasAPIObject):
         response.raise_for_status()
         result = response.json()
         return Event.create(self, **result)
+
+
+class RoomResource(NylasAPIObject):
+    attrs = [
+        "object",
+        "email",
+        "name",
+    ]
+    object_type = "room_resource"
+    collection_name = "resources"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, RoomResource, api)
 
 
 class Namespace(NylasAPIObject):
