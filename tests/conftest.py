@@ -1273,3 +1273,40 @@ def mock_token_info(mocked_responses, api_url, account_id, app_id):
             }
         ),
     )
+
+
+@pytest.fixture
+def mock_free_busy(mocked_responses, api_url):
+    free_busy_url = "{base}/calendars/free-busy".format(base=api_url)
+
+    def free_busy_callback(request):
+        payload = json.loads(request.body)
+        email = payload["emails"][0]
+        resp_data = [
+            {
+                "object": "free_busy",
+                "email": email,
+                "time_slots": [
+                    {
+                        "object": "time_slot",
+                        "status": "busy",
+                        "start_time": 1409594400,
+                        "end_time": 1409598000,
+                    },
+                    {
+                        "object": "time_slot",
+                        "status": "busy",
+                        "start_time": 1409598000,
+                        "end_time": 1409599000,
+                    },
+                ],
+            }
+        ]
+        return 200, {}, json.dumps(resp_data)
+
+    mocked_responses.add_callback(
+        responses.POST,
+        free_busy_url,
+        content_type="application/json",
+        callback=free_busy_callback,
+    )

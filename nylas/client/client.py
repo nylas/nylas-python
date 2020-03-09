@@ -3,9 +3,11 @@ import sys
 from os import environ
 from base64 import b64encode
 import json
+from datetime import datetime
 
 import requests
 from urlobject import URLObject
+import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.errors import MessageRejectedError
@@ -25,7 +27,7 @@ from nylas.client.restful_models import (
     Label,
     Draft,
 )
-from nylas.utils import convert_datetimes_to_timestamps
+from nylas.utils import convert_datetimes_to_timestamps, timestamp_from_dt
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
@@ -218,6 +220,27 @@ class APIClient(json.JSONEncoder):
             token_info_url, json={"access_token": self.access_token}
         )
         _validate(resp).json()
+        return resp.json()
+
+    def free_busy(self, emails, start_at, end_at):
+        if isinstance(emails, six.string_types):
+            emails = [emails]
+        if isinstance(start_at, datetime):
+            start_time = timestamp_from_dt(start_at)
+        else:
+            start_time = start_at
+        if isinstance(end_at, datetime):
+            end_time = timestamp_from_dt(end_at)
+        else:
+            end_time = end_at
+        url = "{api_server}/calendars/free-busy".format(api_server=self.api_server)
+        data = {
+            "emails": emails,
+            "start_time": start_time,
+            "end_time": end_time,
+        }
+        resp = self.session.post(url, json=data)
+        _validate(resp)
         return resp.json()
 
     @property
