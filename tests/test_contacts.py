@@ -7,8 +7,7 @@ from nylas.client.restful_models import Contact
 
 @pytest.mark.usefixtures("mock_contacts")
 def test_list_contacts(api_client):
-    contacts = api_client.contacts
-    contacts = [c for c in contacts]
+    contacts = list(api_client.contacts)
     assert len(contacts) == 3
     assert all(isinstance(x, Contact) for x in contacts)
 

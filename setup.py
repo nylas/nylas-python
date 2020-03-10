@@ -17,7 +17,13 @@ RUN_DEPENDENCIES = [
     "bumpversion>=0.5.0",
     "urlobject",
 ]
-TEST_DEPENDENCIES = ["pytest", "pytest-cov", "responses==0.10.5", "twine"]
+TEST_DEPENDENCIES = [
+    "pytest",
+    "pytest-cov",
+    "pytest-timeout",
+    "responses==0.10.5",
+    "twine",
+]
 
 
 class PyTest(TestCommand):

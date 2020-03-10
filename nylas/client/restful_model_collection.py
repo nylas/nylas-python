@@ -22,19 +22,26 @@ class RestfulModelCollection(object):
         return self.values()
 
     def values(self):
+        limit = self.filters.get("limit")
         offset = self.filters["offset"]
+        fetched = 0
         while True:
-            models = self._get_model_collection(offset, CHUNK_SIZE)
+            if limit:
+                if fetched >= limit:
+                    break
+
+                req_limit = min(CHUNK_SIZE, limit - fetched)
+            else:
+                req_limit = CHUNK_SIZE
+
+            models = self._get_model_collection(offset + fetched, req_limit)
             if not models:
                 break
 
             for model in models:
                 yield model
 
-            if len(models) < CHUNK_SIZE:
-                break
-
-            offset += len(models)
+            fetched += len(models)
 
     def first(self):
         results = self._get_model_collection(0, 1)

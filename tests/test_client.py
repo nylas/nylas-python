@@ -245,3 +245,22 @@ def test_301_response(mocked_responses, api_client, api_url):
     assert contact["given_name"] == "Charlie"
     assert contact["surname"] == "Bucket"
     assert len(mocked_responses.calls) == 2
+
+
+def test_pagination(mocked_responses, api_client, api_url):
+    def callback(request):
+        url = URLObject(request.url)
+        limit = int(url.query_dict.get("limit") or 50)
+        offset = int(url.query_dict.get("offset") or 0)
+        fake_data = [{"id": i} for i in range(offset, limit + offset)]
+        return (200, {}, json.dumps(fake_data))
+
+    mocked_responses.add_callback(
+        responses.GET,
+        "{base}/contacts".format(base=api_url),
+        content_type="application/json",
+        callback=callback,
+    )
+
+    contacts = list(api_client.contacts.where(limit=75))
+    assert len(contacts) == 75

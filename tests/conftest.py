@@ -7,6 +7,7 @@ import random
 import string
 import pytest
 import responses
+from urlobject import URLObject
 from nylas import APIClient
 
 # pylint: disable=redefined-outer-name,too-many-lines
@@ -132,29 +133,34 @@ def mock_account(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_accounts(mocked_responses, api_url, account_id, app_id):
-    response_body = json.dumps(
-        [
-            {
-                "account_id": account_id,
-                "email_address": "ben.bitdiddle1861@gmail.com",
-                "id": account_id,
-                "name": "Ben Bitdiddle",
-                "object": "account",
-                "provider": "gmail",
-                "organization_unit": "label",
-                "billing_state": "paid",
-                "linked_at": 1500920299,
-                "sync_state": "running",
-            }
-        ]
-    )
+    accounts = [
+        {
+            "account_id": account_id,
+            "email_address": "ben.bitdiddle1861@gmail.com",
+            "id": account_id,
+            "name": "Ben Bitdiddle",
+            "object": "account",
+            "provider": "gmail",
+            "organization_unit": "label",
+            "billing_state": "paid",
+            "linked_at": 1500920299,
+            "sync_state": "running",
+        }
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(accounts))
+
     url_re = "{base}(/a/{app_id})?/accounts/?".format(base=api_url, app_id=app_id)
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         re.compile(url_re),
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
@@ -183,52 +189,57 @@ def mock_folder_account(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_labels(mocked_responses, api_url, account_id):
-    response_body = json.dumps(
-        [
-            {
-                "display_name": "Important",
-                "id": "anuep8pe5ugmxrucchrzba2o8",
-                "name": "important",
-                "account_id": account_id,
-                "object": "label",
-            },
-            {
-                "display_name": "Trash",
-                "id": "f1xgowbgcehk235xiy3c3ek42",
-                "name": "trash",
-                "account_id": account_id,
-                "object": "label",
-            },
-            {
-                "display_name": "Sent Mail",
-                "id": "ah14wp5fvypvjjnplh7nxgb4h",
-                "name": "sent",
-                "account_id": account_id,
-                "object": "label",
-            },
-            {
-                "display_name": "All Mail",
-                "id": "ah14wp5fvypvjjnplh7nxgb4h",
-                "name": "all",
-                "account_id": account_id,
-                "object": "label",
-            },
-            {
-                "display_name": "Inbox",
-                "id": "dc11kl3s9lj4760g6zb36spms",
-                "name": "inbox",
-                "account_id": account_id,
-                "object": "label",
-            },
-        ]
-    )
+    labels = [
+        {
+            "display_name": "Important",
+            "id": "anuep8pe5ugmxrucchrzba2o8",
+            "name": "important",
+            "account_id": account_id,
+            "object": "label",
+        },
+        {
+            "display_name": "Trash",
+            "id": "f1xgowbgcehk235xiy3c3ek42",
+            "name": "trash",
+            "account_id": account_id,
+            "object": "label",
+        },
+        {
+            "display_name": "Sent Mail",
+            "id": "ah14wp5fvypvjjnplh7nxgb4h",
+            "name": "sent",
+            "account_id": account_id,
+            "object": "label",
+        },
+        {
+            "display_name": "All Mail",
+            "id": "ah14wp5fvypvjjnplh7nxgb4h",
+            "name": "all",
+            "account_id": account_id,
+            "object": "label",
+        },
+        {
+            "display_name": "Inbox",
+            "id": "dc11kl3s9lj4760g6zb36spms",
+            "name": "inbox",
+            "account_id": account_id,
+            "object": "label",
+        },
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(labels))
+
     endpoint = re.compile(api_url + "/labels.*")
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         endpoint,
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
@@ -285,55 +296,55 @@ def mock_folder(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_messages(mocked_responses, api_url, account_id):
-    response_body = json.dumps(
-        [
-            {
-                "id": "1234",
-                "to": [{"email": "foo@yahoo.com", "name": "Foo"}],
-                "from": [{"email": "bar@gmail.com", "name": "Bar"}],
-                "subject": "Test Message",
-                "account_id": account_id,
-                "object": "message",
-                "labels": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
-                "starred": False,
-                "unread": True,
-                "date": 1265077342,
-            },
-            {
-                "id": "1238",
-                "to": [{"email": "foo2@yahoo.com", "name": "Foo Two"}],
-                "from": [{"email": "bar2@gmail.com", "name": "Bar Two"}],
-                "subject": "Test Message 2",
-                "account_id": account_id,
-                "object": "message",
-                "labels": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
-                "starred": False,
-                "unread": True,
-                "date": 1265085342,
-            },
-            {
-                "id": "12",
-                "to": [{"email": "foo3@yahoo.com", "name": "Foo Three"}],
-                "from": [{"email": "bar3@gmail.com", "name": "Bar Three"}],
-                "subject": "Test Message 3",
-                "account_id": account_id,
-                "object": "message",
-                "labels": [
-                    {"name": "archive", "display_name": "Archive", "id": "gone"}
-                ],
-                "starred": False,
-                "unread": False,
-                "date": 1265093842,
-            },
-        ]
-    )
+    messages = [
+        {
+            "id": "1234",
+            "to": [{"email": "foo@yahoo.com", "name": "Foo"}],
+            "from": [{"email": "bar@gmail.com", "name": "Bar"}],
+            "subject": "Test Message",
+            "account_id": account_id,
+            "object": "message",
+            "labels": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
+            "starred": False,
+            "unread": True,
+            "date": 1265077342,
+        },
+        {
+            "id": "1238",
+            "to": [{"email": "foo2@yahoo.com", "name": "Foo Two"}],
+            "from": [{"email": "bar2@gmail.com", "name": "Bar Two"}],
+            "subject": "Test Message 2",
+            "account_id": account_id,
+            "object": "message",
+            "labels": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
+            "starred": False,
+            "unread": True,
+            "date": 1265085342,
+        },
+        {
+            "id": "12",
+            "to": [{"email": "foo3@yahoo.com", "name": "Foo Three"}],
+            "from": [{"email": "bar3@gmail.com", "name": "Bar Three"}],
+            "subject": "Test Message 3",
+            "account_id": account_id,
+            "object": "message",
+            "labels": [{"name": "archive", "display_name": "Archive", "id": "gone"}],
+            "starred": False,
+            "unread": False,
+            "date": 1265093842,
+        },
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(messages))
+
     endpoint = re.compile(api_url + "/messages")
-    mocked_responses.add(
-        responses.GET,
-        endpoint,
-        content_type="application/json",
-        status=200,
-        body=response_body,
+    mocked_responses.add_callback(
+        responses.GET, endpoint, content_type="application/json", callback=list_callback
     )
 
 
@@ -383,30 +394,35 @@ def mock_message(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_threads(mocked_responses, api_url, account_id):
-    response_body = json.dumps(
-        [
-            {
-                "id": "5678",
-                "subject": "Test Thread",
-                "account_id": account_id,
-                "object": "thread",
-                "folders": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
-                "starred": True,
-                "unread": False,
-                "first_message_timestamp": 1451703845,
-                "last_message_timestamp": 1483326245,
-                "last_message_received_timestamp": 1483326245,
-                "last_message_sent_timestamp": 1483232461,
-            }
-        ]
-    )
+    threads = [
+        {
+            "id": "5678",
+            "subject": "Test Thread",
+            "account_id": account_id,
+            "object": "thread",
+            "folders": [{"name": "inbox", "display_name": "Inbox", "id": "abcd"}],
+            "starred": True,
+            "unread": False,
+            "first_message_timestamp": 1451703845,
+            "last_message_timestamp": 1483326245,
+            "last_message_received_timestamp": 1483326245,
+            "last_message_sent_timestamp": 1483232461,
+        }
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(threads))
+
     endpoint = re.compile(api_url + "/threads")
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         endpoint,
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
@@ -523,39 +539,43 @@ def mock_labelled_thread(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_drafts(mocked_responses, api_url):
-    response_body = json.dumps(
-        [
-            {
-                "bcc": [],
-                "body": "Cheers mate!",
-                "cc": [],
-                "date": 1438684486,
-                "events": [],
-                "files": [],
-                "folder": None,
-                "from": [],
-                "id": "2h111aefv8pzwzfykrn7hercj",
-                "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-                "object": "draft",
-                "reply_to": [],
-                "reply_to_message_id": None,
-                "snippet": "",
-                "starred": False,
-                "subject": "Here's an attachment",
-                "thread_id": "clm33kapdxkposgltof845v9s",
-                "to": [{"email": "helena@nylas.com", "name": "Helena Handbasket"}],
-                "unread": False,
-                "version": 0,
-            }
-        ]
-    )
+    drafts = [
+        {
+            "bcc": [],
+            "body": "Cheers mate!",
+            "cc": [],
+            "date": 1438684486,
+            "events": [],
+            "files": [],
+            "folder": None,
+            "from": [],
+            "id": "2h111aefv8pzwzfykrn7hercj",
+            "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
+            "object": "draft",
+            "reply_to": [],
+            "reply_to_message_id": None,
+            "snippet": "",
+            "starred": False,
+            "subject": "Here's an attachment",
+            "thread_id": "clm33kapdxkposgltof845v9s",
+            "to": [{"email": "helena@nylas.com", "name": "Helena Handbasket"}],
+            "unread": False,
+            "version": 0,
+        }
+    ]
 
-    mocked_responses.add(
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(drafts))
+
+    mocked_responses.add_callback(
         responses.GET,
         api_url + "/drafts",
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
@@ -879,27 +899,32 @@ def mock_message_search_response(mocked_responses, api_url):
 
 @pytest.fixture
 def mock_calendars(mocked_responses, api_url):
-    response_body = json.dumps(
-        [
-            {
-                "id": "8765",
-                "events": [
-                    {
-                        "title": "Pool party",
-                        "location": "Local Community Pool",
-                        "participants": ["Alice", "Bob", "Claire", "Dot"],
-                    }
-                ],
-            }
-        ]
-    )
+    calendars = [
+        {
+            "id": "8765",
+            "events": [
+                {
+                    "title": "Pool party",
+                    "location": "Local Community Pool",
+                    "participants": ["Alice", "Bob", "Claire", "Dot"],
+                }
+            ],
+        }
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(calendars))
+
     endpoint = re.compile(api_url + "/calendars")
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         endpoint,
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
@@ -975,6 +1000,13 @@ def mock_contacts(mocked_responses, account_id, api_url):
     }
     contacts = [contact1, contact2, contact3]
 
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(contacts))
+
     def create_callback(request):
         payload = json.loads(request.body)
         payload["id"] = generate_id()
@@ -1004,12 +1036,11 @@ def mock_contacts(mocked_responses, account_id, api_url):
                 status=404,
                 body="",
             )
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         re.compile(api_url + "/contacts"),
         content_type="application/json",
-        status=200,
-        body=json.dumps(contacts),
+        callback=list_callback,
     )
     mocked_responses.add_callback(
         responses.POST,
@@ -1110,71 +1141,78 @@ def mock_contact(mocked_responses, account_id, api_url):
 
 @pytest.fixture
 def mock_events(mocked_responses, api_url):
-    response_body = json.dumps(
-        [
-            {
-                "id": "1234abcd5678",
-                "message_id": "evh5uy0shhpm5d0le89goor17",
-                "ical_uid": "19960401T080045Z-4000F192713-0052@example.com",
-                "title": "Pool party",
-                "location": "Local Community Pool",
-                "participants": [
-                    {
-                        "comment": None,
-                        "email": "kelly@nylas.com",
-                        "name": "Kelly Nylanaut",
-                        "status": "noreply",
-                    },
-                    {
-                        "comment": None,
-                        "email": "sarah@nylas.com",
-                        "name": "Sarah Nylanaut",
-                        "status": "no",
-                    },
-                ],
-            },
-            {
-                "id": "9876543cba",
-                "message_id": None,
-                "ical_uid": None,
-                "title": "Event Without Message",
-                "description": "This event does not have a corresponding message ID.",
-            },
-        ]
-    )
+    events = [
+        {
+            "id": "1234abcd5678",
+            "message_id": "evh5uy0shhpm5d0le89goor17",
+            "ical_uid": "19960401T080045Z-4000F192713-0052@example.com",
+            "title": "Pool party",
+            "location": "Local Community Pool",
+            "participants": [
+                {
+                    "comment": None,
+                    "email": "kelly@nylas.com",
+                    "name": "Kelly Nylanaut",
+                    "status": "noreply",
+                },
+                {
+                    "comment": None,
+                    "email": "sarah@nylas.com",
+                    "name": "Sarah Nylanaut",
+                    "status": "no",
+                },
+            ],
+        },
+        {
+            "id": "9876543cba",
+            "message_id": None,
+            "ical_uid": None,
+            "title": "Event Without Message",
+            "description": "This event does not have a corresponding message ID.",
+        },
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(events))
+
     endpoint = re.compile(api_url + "/events")
-    mocked_responses.add(
-        responses.GET,
-        endpoint,
-        content_type="application/json",
-        status=200,
-        body=response_body,
+    mocked_responses.add_callback(
+        responses.GET, endpoint, content_type="application/json", callback=list_callback
     )
 
 
 @pytest.fixture
 def mock_resources(mocked_responses, api_url):
-    response_body = json.dumps(
-        [
-            {
-                "object": "room_resource",
-                "email": "training-room-1A@google.com",  # Google's resourceEmail
-                "name": "Training Room 1A",  # Google's resourceName
-            },
-            {
-                "object": "room_resource",
-                "email": "training-room-2B@google.com",  # Google's resourceEmail
-                "name": "Training Room 2B",  # Google's resourceName
-            },
-        ]
-    )
+    resources = [
+        {
+            "object": "room_resource",
+            "email": "training-room-1A@google.com",  # Google's resourceEmail
+            "name": "Training Room 1A",  # Google's resourceName
+        },
+        {
+            "object": "room_resource",
+            "email": "training-room-2B@google.com",  # Google's resourceEmail
+            "name": "Training Room 2B",  # Google's resourceName
+        },
+    ]
+
+    def list_callback(request):
+        url = URLObject(request.url)
+        offset = int(url.query_dict.get("offset") or 0)
+        if offset:
+            return (200, {}, json.dumps([]))
+        return (200, {}, json.dumps(resources))
+
     endpoint = re.compile(api_url + "/resources")
-    mocked_responses.add(
+    mocked_responses.add_callback(
         responses.GET,
         endpoint,
         content_type="application/json",
-        status=200,
-        body=response_body,
+        callback=list_callback,
     )
 
 
