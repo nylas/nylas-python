@@ -12,6 +12,24 @@ from nylas import APIClient
 
 # pylint: disable=redefined-outer-name,too-many-lines
 
+#### HANDLING PAGINATION ####
+# Currently, the Nylas API handles pagination poorly: API responses do not expose
+# any information about pagination, so the client does not know whether there is
+# another page of data or not. For example, if the client sends an API request
+# without a limit specified, and the response contains 100 items, how can it tell
+# if there are 100 items in total, or if there more items to fetch on the next page?
+# It can't! The only way to know is to ask for the next page (by repeating the API
+# request with `offset=100`), and see if you get more items or not.
+# If it does not receive more items, it can assume that it has retrieved all the data.
+#
+# This file contains mocks for several API endpoints, including "list" endpoints
+# like `/messages` and `/events`. The mocks for these list endpoints must be smart
+# enough to check for an `offset` query param, and return an empty list if the
+# client requests more data than the first page. If the mock does not
+# check for this `offset` query param, and returns the same mock data over and over,
+# any SDK method that tries to fetch *all* of a certain type of data
+# (like `client.messages.all()`) will never complete.
+
 
 def generate_id(size=25, chars=string.ascii_letters + string.digits):
     return "".join(random.choice(chars) for _ in range(size))
