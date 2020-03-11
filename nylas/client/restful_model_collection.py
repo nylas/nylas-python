@@ -22,19 +22,34 @@ class RestfulModelCollection(object):
         return self.values()
 
     def values(self):
+        limit = self.filters.get("limit")
         offset = self.filters["offset"]
+        fetched = 0
+        # Currently, the Nylas API handles pagination poorly: API responses do not expose
+        # any information about pagination, so the client does not know whether there is
+        # another page of data or not. For example, if the client sends an API request
+        # without a limit specified, and the response contains 100 items, how can it tell
+        # if there are 100 items in total, or if there more items to fetch on the next page?
+        # It can't! The only way to know is to ask for the next page (by repeating the API
+        # request with `offset=100`), and see if you get more items or not.
+        # If it does not receive more items, it can assume that it has retrieved all the data.
         while True:
-            models = self._get_model_collection(offset, CHUNK_SIZE)
+            if limit:
+                if fetched >= limit:
+                    break
+
+                req_limit = min(CHUNK_SIZE, limit - fetched)
+            else:
+                req_limit = CHUNK_SIZE
+
+            models = self._get_model_collection(offset + fetched, req_limit)
             if not models:
                 break
 
             for model in models:
                 yield model
 
-            if len(models) < CHUNK_SIZE:
-                break
-
-            offset += len(models)
+            fetched += len(models)
 
     def first(self):
         results = self._get_model_collection(0, 1)
