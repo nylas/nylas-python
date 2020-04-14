@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased (dev)
 ----------------
 * Bugfix: Previously, if you specified a limit of 50 or more for any resource, you would receive ALL the resources available on the server. The SDK now properly respects the limit provided.
+* Add `has_attachments` to Thread model
 
 v4.10.0
 -------

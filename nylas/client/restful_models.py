@@ -295,6 +295,7 @@ class Thread(NylasAPIObject):
         "_folders",
         "_labels",
         "received_recent_date",
+        "has_attachments",
     ]
     datetime_attrs = {
         "first_message_at": "first_message_timestamp",
