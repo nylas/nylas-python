@@ -32,7 +32,13 @@ class PyTest(TestCommand):
     def initialize_options(self):
         TestCommand.initialize_options(self)
         # pylint: disable=attribute-defined-outside-init
-        self.pytest_args = ["--cov", "--junitxml", "./tests/output", "tests/"]
+        self.pytest_args = [
+            "--cov",
+            "--cov-report=xml",
+            "--junitxml",
+            "./tests/output",
+            "tests/",
+        ]
         self.lint = False
 
     def finalize_options(self):
