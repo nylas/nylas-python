@@ -3,7 +3,7 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
-nothing yet
+* Add calendar availability information, available at `/calendars/availability` API endpoint
 
 v4.11.0
 -------
