@@ -16,7 +16,7 @@ If you encounter any bugs while using this software, or want to request a new fe
 
 Pull requests are welcome for bug fixes. If you want to implement something new, [please request a feature](https://github.com/nylas/nylas-python/issues) first so we can discuss it.
 
-While writing your code contribution, make sure you follow the testing conventions found in the [tests directory](https://github.com/nylas/nylas-python/tree/master/tests) for any components that you add. We use [codecov](https://codecov.io/gh/nylas/nylas-python) to test coverage, please ensure that your contributions don’t cause a decrease to test coverage.
+While writing your code contribution, make sure you follow the testing conventions found in the [tests directory](https://github.com/nylas/nylas-python/tree/main/tests) for any components that you add. We use [codecov](https://codecov.io/gh/nylas/nylas-python) to test coverage, please ensure that your contributions don’t cause a decrease to test coverage.
 
 ## Creating a Pull Request
 

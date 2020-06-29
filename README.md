@@ -1,5 +1,4 @@
-# Nylas Python SDK [![Build Status](https://travis-ci.org/nylas/nylas-python.svg?branch=master)](https://travis-ci.org/nylas/nylas-python) [![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/master/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
-
+# Nylas Python SDK ![Build Status](https://github.com/nylas/nylas-python/workflows/Test/badge.svg) [![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
 
 This is the GitHub repository for the Nylas Python SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Python to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Python SDK Quickstart Guide](https://docs.nylas.com/docs/quickstart-python).
 
@@ -35,7 +34,7 @@ Next, in your python script, import the `APIClient` class from the `nylas` packa
 
 
     from nylas import APIClient
-    
+
     nylas = APIClient(
         CLIENT_ID,
         CLIENT_SECRET,
@@ -56,4 +55,4 @@ Please refer to [Contributing](Contributing.md) for information about how to mak
 
 # License
 
-This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms. 
+This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms.
