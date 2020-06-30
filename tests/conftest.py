@@ -1366,3 +1366,37 @@ def mock_free_busy(mocked_responses, api_url):
         content_type="application/json",
         callback=free_busy_callback,
     )
+
+
+@pytest.fixture
+def mock_availability(mocked_responses, api_url):
+    availability_url = "{base}/calendars/availability".format(base=api_url)
+
+    def availability_callback(request):
+        payload = json.loads(request.body)
+        resp_data = {
+            "object": "availability",
+            "time_slots": [
+                {
+                    "object": "time_slot",
+                    "status": "free",
+                    "start_time": 1409594400,
+                    "end_time": 1409598000,
+                },
+                {
+                    "object": "time_slot",
+                    "status": "free",
+                    "start_time": 1409598000,
+                    "end_time": 1409599000,
+                },
+            ],
+        }
+
+        return 200, {}, json.dumps(resp_data)
+
+    mocked_responses.add_callback(
+        responses.POST,
+        availability_url,
+        content_type="application/json",
+        callback=availability_callback,
+    )

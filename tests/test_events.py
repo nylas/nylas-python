@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytest
 from urlobject import URLObject
 from requests import RequestException
@@ -150,3 +150,117 @@ def test_free_busy_single_email(mocked_responses, api_client):
     assert data["emails"] == [email]
     assert data["start_time"] == 946684800
     assert data["end_time"] == 951868800
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_datetime(mocked_responses, api_client):
+    emails = ["one@example.com", "two@example.com", "three@example.com"]
+    duration = timedelta(minutes=30)
+    interval = timedelta(hours=1, minutes=30)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    availability = api_client.availability(emails, duration, interval, start_at, end_at)
+
+    assert isinstance(availability, dict)
+    assert "time_slots" in availability
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 30
+    assert data["interval_minutes"] == 90
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert data["free_busy"] == []
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_timestamp(mocked_responses, api_client):
+    emails = ["one@example.com", "two@example.com", "three@example.com"]
+    duration = 30
+    interval = 60
+    start_time = 1580511600
+    end_time = 1580598000
+    availability = api_client.availability(
+        emails, duration, interval, start_time, end_time
+    )
+
+    assert isinstance(availability, dict)
+    assert "time_slots" in availability
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 30
+    assert data["interval_minutes"] == 60
+    assert data["start_time"] == 1580511600
+    assert data["end_time"] == 1580598000
+    assert data["free_busy"] == []
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_single_email(mocked_responses, api_client):
+    email = "ben@bitdiddle.com"
+    duration = timedelta(minutes=60)
+    interval = 5
+    start_at = datetime(2000, 1, 1)
+    end_at = datetime(2000, 3, 1)
+    availability = api_client.availability(email, duration, interval, start_at, end_at)
+
+    assert isinstance(availability, dict)
+    assert "time_slots" in availability
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability"
+    data = json.loads(request.body)
+    assert data["emails"] == [email]
+    assert data["duration_minutes"] == 60
+    assert data["interval_minutes"] == 5
+    assert data["start_time"] == 946684800
+    assert data["end_time"] == 951868800
+    assert data["free_busy"] == []
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_with_free_busy(mocked_responses, api_client):
+    emails = [
+        "one@example.com",
+        "two@example.com",
+        "three@example.com",
+        "visitor@external.net",
+    ]
+    duration = 48
+    interval = timedelta(minutes=18)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    free_busy = [
+        {
+            "email": "visitor@external.net",
+            "time_slots": [
+                {
+                    "object": "time_slot",
+                    "status": "busy",
+                    "start_time": 1584377898,
+                    "end_time": 1584379800,
+                }
+            ],
+        }
+    ]
+    availability = api_client.availability(
+        emails, duration, interval, start_at, end_at, free_busy=free_busy
+    )
+
+    assert isinstance(availability, dict)
+    assert "time_slots" in availability
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 48
+    assert data["interval_minutes"] == 18
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert data["free_busy"] == free_busy

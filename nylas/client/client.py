@@ -3,7 +3,7 @@ import sys
 from os import environ
 from base64 import b64encode
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from urlobject import URLObject
@@ -238,6 +238,40 @@ class APIClient(json.JSONEncoder):
             "emails": emails,
             "start_time": start_time,
             "end_time": end_time,
+        }
+        resp = self.session.post(url, json=data)
+        _validate(resp)
+        return resp.json()
+
+    def availability(
+        self, emails, duration, interval, start_at, end_at, free_busy=None
+    ):
+        if isinstance(emails, six.string_types):
+            emails = [emails]
+        if isinstance(duration, timedelta):
+            duration_minutes = duration.total_seconds() // 60
+        else:
+            duration_minutes = int(duration)
+        if isinstance(interval, timedelta):
+            interval_minutes = interval.total_seconds() // 60
+        else:
+            interval_minutes = int(interval)
+        if isinstance(start_at, datetime):
+            start_time = timestamp_from_dt(start_at)
+        else:
+            start_time = start_at
+        if isinstance(end_at, datetime):
+            end_time = timestamp_from_dt(end_at)
+        else:
+            end_time = end_at
+        url = "{api_server}/calendars/availability".format(api_server=self.api_server)
+        data = {
+            "emails": emails,
+            "duration_minutes": duration_minutes,
+            "interval_minutes": interval_minutes,
+            "start_time": start_time,
+            "end_time": end_time,
+            "free_busy": free_busy or [],
         }
         resp = self.session.post(url, json=data)
         _validate(resp)
