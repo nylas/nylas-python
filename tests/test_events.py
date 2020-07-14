@@ -169,7 +169,9 @@ def test_availability_datetime(mocked_responses, api_client):
     data = json.loads(request.body)
     assert data["emails"] == emails
     assert data["duration_minutes"] == 30
+    assert isinstance(data["duration_minutes"], int)
     assert data["interval_minutes"] == 90
+    assert isinstance(data["interval_minutes"], int)
     assert data["start_time"] == 1577836800
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == []
@@ -194,7 +196,9 @@ def test_availability_timestamp(mocked_responses, api_client):
     data = json.loads(request.body)
     assert data["emails"] == emails
     assert data["duration_minutes"] == 30
+    assert isinstance(data["duration_minutes"], int)
     assert data["interval_minutes"] == 60
+    assert isinstance(data["interval_minutes"], int)
     assert data["start_time"] == 1580511600
     assert data["end_time"] == 1580598000
     assert data["free_busy"] == []
@@ -217,7 +221,9 @@ def test_availability_single_email(mocked_responses, api_client):
     data = json.loads(request.body)
     assert data["emails"] == [email]
     assert data["duration_minutes"] == 60
+    assert isinstance(data["duration_minutes"], int)
     assert data["interval_minutes"] == 5
+    assert isinstance(data["interval_minutes"], int)
     assert data["start_time"] == 946684800
     assert data["end_time"] == 951868800
     assert data["free_busy"] == []
@@ -260,7 +266,9 @@ def test_availability_with_free_busy(mocked_responses, api_client):
     data = json.loads(request.body)
     assert data["emails"] == emails
     assert data["duration_minutes"] == 48
+    assert isinstance(data["duration_minutes"], int)
     assert data["interval_minutes"] == 18
+    assert isinstance(data["interval_minutes"], int)
     assert data["start_time"] == 1577836800
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == free_busy
