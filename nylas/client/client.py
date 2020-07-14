@@ -249,11 +249,11 @@ class APIClient(json.JSONEncoder):
         if isinstance(emails, six.string_types):
             emails = [emails]
         if isinstance(duration, timedelta):
-            duration_minutes = duration.total_seconds() // 60
+            duration_minutes = int(duration.total_seconds() // 60)
         else:
             duration_minutes = int(duration)
         if isinstance(interval, timedelta):
-            interval_minutes = interval.total_seconds() // 60
+            interval_minutes = int(interval.total_seconds() // 60)
         else:
             interval_minutes = int(interval)
         if isinstance(start_at, datetime):
