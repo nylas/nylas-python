@@ -3,6 +3,10 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+nothing yet
+
+v4.12.1
+-------
 * Bugfix: Previously, if you passed a timedelta to the calendar availability
   API endpoint, it was converted to a float. Now, it is coerced to an int.
 
