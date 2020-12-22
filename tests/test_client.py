@@ -262,5 +262,15 @@ def test_pagination(mocked_responses, api_client, api_url):
         callback=callback,
     )
 
-    contacts = list(api_client.contacts.where(limit=75))
-    assert len(contacts) == 75
+    c_49 = list(api_client.contacts.where(limit=49))
+    assert len(c_49) == 49
+
+    c_49_all = list(api_client.contacts.where(limit=49).all())
+    assert len(c_49_all) == 49
+
+    c_75 = list(api_client.contacts.where(limit=75))
+    assert len(c_75) == 75
+
+    # this keeps going forever
+    c_75_all = list(api_client.contacts.where(limit=75).all())
+    assert len(c_75_all) == 75
