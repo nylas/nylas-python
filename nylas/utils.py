@@ -42,6 +42,6 @@ def convert_metadata_pairs_to_array(data):
 
     metadata_pair = []
     for key, value in data.items():
-        metadata_pair.append(key + ':' + value)
+        metadata_pair.append(key + ":" + value)
 
     return metadata_pair

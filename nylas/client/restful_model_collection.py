@@ -77,9 +77,9 @@ class RestfulModelCollection(object):
             filters.update(filter)
         filters.setdefault("offset", 0)
 
-        if 'metadata_pair' in filters:
-            pairs = convert_metadata_pairs_to_array(filters['metadata_pair'])
-            filters['metadata_pair'] = pairs
+        if "metadata_pair" in filters:
+            pairs = convert_metadata_pairs_to_array(filters["metadata_pair"])
+            filters["metadata_pair"] = pairs
 
         collection = copy(self)
         collection.filters = filters
