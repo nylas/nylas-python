@@ -1196,10 +1196,7 @@ def mock_events(mocked_responses, api_url):
             "ical_uid": None,
             "title": "Event With Metadata",
             "description": "This event uses metadata to store custom values.",
-            "metadata": {
-                "platform": "python",
-                "event_type": "meeting"
-            },
+            "metadata": {"platform": "python", "event_type": "meeting"},
         },
     ]
 
@@ -1215,13 +1212,20 @@ def mock_events(mocked_responses, api_url):
         if metadata_key or metadata_value or metadata_pair:
             results = []
             for event in events:
-                if (metadata_key and set(metadata_key) & set(event["metadata"]) or
-                        metadata_value and set(metadata_value) & set(event["metadata"].values())):
+                if (
+                    metadata_key
+                    and set(metadata_key) & set(event["metadata"])
+                    or metadata_value
+                    and set(metadata_value) & set(event["metadata"].values())
+                ):
                     results.append(event)
                 elif metadata_pair:
                     for pair in metadata_pair:
                         key_value = pair.split(":")
-                        if key_value[0] in event["metadata"] and event["metadata"][key_value[0]] == key_value[1]:
+                        if (
+                            key_value[0] in event["metadata"]
+                            and event["metadata"][key_value[0]] == key_value[1]
+                        ):
                             results.append(event)
             return (200, {}, json.dumps(results))
         return (200, {}, json.dumps(events))

@@ -273,6 +273,7 @@ def test_availability_with_free_busy(mocked_responses, api_client):
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == free_busy
 
+
 @pytest.mark.usefixtures("mock_events")
 def test_metadata_filtering(api_client):
     events_filtered_by_key = api_client.events.where(metadata_key="platform")
@@ -280,12 +281,16 @@ def test_metadata_filtering(api_client):
     for event in events_filtered_by_key:
         assert "platform" in event["metadata"]
 
-    events_filtered_by_value = api_client.events.where(metadata_value=["meeting", "java"])
+    events_filtered_by_value = api_client.events.where(
+        metadata_value=["meeting", "java"]
+    )
     assert len(events_filtered_by_value.all()) > 0
     for event in events_filtered_by_value:
         assert event["metadata"]["event_type"] == "meeting"
 
-    events_filtered_by_pair = api_client.events.where(metadata_pair={"platform": "python", "bla": "blablabla"})
+    events_filtered_by_pair = api_client.events.where(
+        metadata_pair={"platform": "python", "bla": "blablabla"}
+    )
     assert len(events_filtered_by_pair.all()) > 0
     for event in events_filtered_by_pair:
         assert "platform" in event["metadata"]
