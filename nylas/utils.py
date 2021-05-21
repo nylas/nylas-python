@@ -30,3 +30,18 @@ def convert_datetimes_to_timestamps(data, datetime_attrs):
             new_data[key] = value
 
     return new_data
+
+
+def convert_metadata_pairs_to_array(data):
+    """
+    Given a dictionary of metadata pairs, convert it to key-value pairs
+    in the format the Nylas API expects: "events?metadata_pair=<key>:<value>"
+    """
+    if not data:
+        return data
+
+    metadata_pair = []
+    for key, value in data.items():
+        metadata_pair.append(key + ":" + value)
+
+    return metadata_pair

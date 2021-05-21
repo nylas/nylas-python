@@ -1,4 +1,5 @@
 from copy import copy
+from nylas.utils import convert_metadata_pairs_to_array
 
 CHUNK_SIZE = 50
 
@@ -75,6 +76,11 @@ class RestfulModelCollection(object):
         if filter:
             filters.update(filter)
         filters.setdefault("offset", 0)
+
+        if "metadata_pair" in filters:
+            pairs = convert_metadata_pairs_to_array(filters["metadata_pair"])
+            filters["metadata_pair"] = pairs
+
         collection = copy(self)
         collection.filters = filters
         return collection

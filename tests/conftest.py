@@ -1180,6 +1180,7 @@ def mock_events(mocked_responses, api_url):
                     "status": "no",
                 },
             ],
+            "metadata": {},
         },
         {
             "id": "9876543cba",
@@ -1187,14 +1188,46 @@ def mock_events(mocked_responses, api_url):
             "ical_uid": None,
             "title": "Event Without Message",
             "description": "This event does not have a corresponding message ID.",
+            "metadata": {},
+        },
+        {
+            "id": "1231241zxc",
+            "message_id": None,
+            "ical_uid": None,
+            "title": "Event With Metadata",
+            "description": "This event uses metadata to store custom values.",
+            "metadata": {"platform": "python", "event_type": "meeting"},
         },
     ]
 
     def list_callback(request):
         url = URLObject(request.url)
         offset = int(url.query_dict.get("offset") or 0)
+        metadata_key = url.query_multi_dict.get("metadata_key")
+        metadata_value = url.query_multi_dict.get("metadata_value")
+        metadata_pair = url.query_multi_dict.get("metadata_pair")
+
         if offset:
             return (200, {}, json.dumps([]))
+        if metadata_key or metadata_value or metadata_pair:
+            results = []
+            for event in events:
+                if (
+                    metadata_key
+                    and set(metadata_key) & set(event["metadata"])
+                    or metadata_value
+                    and set(metadata_value) & set(event["metadata"].values())
+                ):
+                    results.append(event)
+                elif metadata_pair:
+                    for pair in metadata_pair:
+                        key_value = pair.split(":")
+                        if (
+                            key_value[0] in event["metadata"]
+                            and event["metadata"][key_value[0]] == key_value[1]
+                        ):
+                            results.append(event)
+            return (200, {}, json.dumps(results))
         return (200, {}, json.dumps(events))
 
     endpoint = re.compile(api_url + "/events")

@@ -3,7 +3,8 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
-nothing yet
+* Add `metadata` field in the Event model to support new event metadata feature
+* Add filtering support for `metadata_pair`
 
 v4.12.1
 -------
