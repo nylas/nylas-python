@@ -23,6 +23,7 @@ TEST_DEPENDENCIES = [
     "pytest-timeout",
     "responses==0.10.5",
     "twine",
+    "pytz"
 ]
 
 

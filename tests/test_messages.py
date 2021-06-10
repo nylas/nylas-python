@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 
 import six
@@ -6,6 +6,7 @@ import pytest
 from urlobject import URLObject
 from nylas.client.restful_models import Message
 from nylas.utils import timestamp_from_dt
+import pytz
 
 
 @pytest.mark.usefixtures("mock_messages")
@@ -21,7 +22,7 @@ def test_messages(api_client):
 @pytest.mark.usefixtures("mock_messages")
 def test_message_attrs(api_client):
     message = api_client.messages.first()
-    expected_received = datetime.datetime(2010, 2, 2, 2, 22, 22)
+    expected_received = datetime(2010, 2, 2, 2, 22, 22)
     assert message.received_at == expected_received
     assert message.date == timestamp_from_dt(expected_received)
 
@@ -118,7 +119,7 @@ def test_slice_messages(api_client):
 
 @pytest.mark.usefixtures("mock_messages")
 def test_filter_messages_dt(mocked_responses, api_client):
-    api_client.messages.where(received_before=datetime.datetime(2010, 6, 1)).all()
+    api_client.messages.where(received_before=datetime(2010, 6, 1)).all()
     assert len(mocked_responses.calls) == 1
     request = mocked_responses.calls[0].request
     url = URLObject(request.url)
@@ -128,7 +129,7 @@ def test_filter_messages_dt(mocked_responses, api_client):
 @pytest.mark.usefixtures("mock_messages")
 def test_filter_messages_dt_with_timezone(mocked_responses, api_client):
     api_client.messages.where(
-        received_before=datetime.datetime(2010, 6, 1, tzinfo=datetime.timezone.utc)
+        received_before=datetime(2010, 6, 1, tzinfo=pytz.utc)
     ).all()
     assert len(mocked_responses.calls) == 1
     request = mocked_responses.calls[0].request
