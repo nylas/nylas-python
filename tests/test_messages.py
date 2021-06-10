@@ -127,7 +127,9 @@ def test_filter_messages_dt(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_messages")
 def test_filter_messages_dt_with_timezone(mocked_responses, api_client):
-    api_client.messages.where(received_before=datetime.datetime(2010, 6, 1, tzinfo=datetime.timezone.utc)).all()
+    api_client.messages.where(
+        received_before=datetime.datetime(2010, 6, 1, tzinfo=datetime.timezone.utc)
+    ).all()
     assert len(mocked_responses.calls) == 1
     request = mocked_responses.calls[0].request
     url = URLObject(request.url)
