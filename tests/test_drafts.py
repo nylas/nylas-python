@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import pytest
@@ -33,6 +34,43 @@ def test_save_send_draft(api_client):
     # Second time should throw an error
     with pytest.raises(RequestException):
         draft.send()
+
+
+@pytest.mark.usefixtures("mock_draft_saved_response", "mock_draft_sent_response")
+def test_save_send_draft_with_tracking(mocked_responses, api_client):
+    tracking = {
+        "links": "true",
+        "opens": "true",
+        "thread_replies": "true",
+        "payload": "new-payload",
+    }
+    draft = api_client.drafts.create()
+    draft.to = [{"name": "My Friend", "email": "my.friend@example.com"}]
+    draft.subject = "Here's an attachment"
+    draft.body = "Cheers mate!"
+    draft.save()
+
+    draft.tracking = tracking
+    draft.save()
+    assert draft.tracking == tracking
+
+    draft.send()
+    send_payload = json.loads(mocked_responses.calls[-1].request.body)
+    assert send_payload["tracking"] == tracking
+
+
+@pytest.mark.usefixtures("mock_draft_send_unsaved_response")
+def test_send_draft_with_tracking(mocked_responses, api_client):
+    tracking = {"opens": "true", "payload": "payload"}
+    draft = api_client.drafts.create()
+    draft.to = [{"name": "My Friend", "email": "my.friend@example.com"}]
+    draft.subject = "Newsletter"
+    draft.body = "Our latest sale!"
+    draft.tracking = tracking
+    draft.send()
+
+    send_payload = json.loads(mocked_responses.calls[-1].request.body)
+    assert send_payload["tracking"] == tracking
 
 
 @pytest.mark.usefixtures("mock_files")
