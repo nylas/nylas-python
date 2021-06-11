@@ -1,5 +1,5 @@
 from __future__ import division
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
@@ -7,9 +7,13 @@ def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
     Convert a datetime to a timestamp.
     https://stackoverflow.com/a/8778548/141395
     """
+    # For offset-aware datetime objects, convert them first before performing delta
+    if dt.tzinfo is not None and dt.utcoffset() is not None:
+        dt = dt.replace(tzinfo=None) - dt.utcoffset()
+
     delta = dt - epoch
-    # return delta.total_seconds()
-    return delta.seconds + delta.days * 86400
+
+    return int(delta.total_seconds() / timedelta(seconds=1).total_seconds())
 
 
 def convert_datetimes_to_timestamps(data, datetime_attrs):
