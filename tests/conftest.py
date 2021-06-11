@@ -705,35 +705,10 @@ def mock_draft_sent_response(mocked_responses, api_url):
 
 @pytest.fixture
 def mock_draft_send_unsaved_response(mocked_responses, api_url):
-    body = {
-        "id": None,
-        "bcc": [],
-        "body": "Our latest sale!",
-        "cc": [],
-        "date": 1438684486,
-        "events": [],
-        "files": [],
-        "folder": None,
-        "from": [{"email": "benb@nylas.com"}],
-        "namespace_id": "384uhp3aj8l7rpmv9s2y2rukn",
-        "object": "draft",
-        "reply_to": [],
-        "reply_to_message_id": None,
-        "snippet": "",
-        "starred": False,
-        "subject": "Newsletter",
-        "thread_id": None,
-        "to": [{"email": "my.friend@example.com", "name": "My Friend"}],
-        "unread": False,
-        "version": 0,
-    }
-
-    values = [(400, {}, "Couldn't send email"), (200, {}, json.dumps(body))]
-
     def callback(request):
         payload = json.loads(request.body)
         payload["draft_id"] = "2h111aefv8pzwzfykrn7hercj"
-        return values.pop()
+        return 200, {}, json.dumps(payload)
 
     mocked_responses.add_callback(
         responses.POST,
