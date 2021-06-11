@@ -5,6 +5,7 @@ Unreleased (dev)
 ----------------
 * Add `metadata` field in the Event model to support new event metadata feature
 * Add filtering support for `metadata_pair`
+* Fix adding a tracking object to an existing `draft`
 
 v4.12.1
 -------

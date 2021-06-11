@@ -704,6 +704,21 @@ def mock_draft_sent_response(mocked_responses, api_url):
 
 
 @pytest.fixture
+def mock_draft_send_unsaved_response(mocked_responses, api_url):
+    def callback(request):
+        payload = json.loads(request.body)
+        payload["draft_id"] = "2h111aefv8pzwzfykrn7hercj"
+        return 200, {}, json.dumps(payload)
+
+    mocked_responses.add_callback(
+        responses.POST,
+        api_url + "/send/",
+        callback=callback,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
 def mock_files(mocked_responses, api_url, account_id):
     files_content = {"3qfe4k3siosfjtjpfdnon8zbn": b"Hello, World!"}
     files_metadata = {
