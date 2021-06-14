@@ -5,6 +5,8 @@ Unreleased (dev)
 ----------------
 * Add `metadata` field in the Event model to support new event metadata feature
 * Add filtering support for `metadata_pair`
+* Fix adding a tracking object to an existing `draft`
+* Fix issue when converting offset-aware `datetime` objects to `timestamp`
 * Fix `limit` value in filter not being used when making `.all()` call
 
 v4.12.1

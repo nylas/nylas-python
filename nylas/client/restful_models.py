@@ -460,6 +460,8 @@ class Draft(Message):
             data = {"draft_id": self.id}
             if hasattr(self, "version"):
                 data["version"] = self.version
+            if hasattr(self, "tracking") and self.tracking is not None:
+                data["tracking"] = self.tracking
 
         msg = self.api._create_resource(Send, data)
         if msg:
