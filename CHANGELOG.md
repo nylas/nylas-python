@@ -5,6 +5,7 @@ Unreleased (dev)
 ----------------
 * Add `metadata` field in the Event model to support new event metadata feature
 * Add filtering support for `metadata_pair`
+* Added new Room Resource fields  
 * Fix adding a tracking object to an existing `draft`
 * Fix issue when converting offset-aware `datetime` objects to `timestamp`
 
