@@ -47,6 +47,7 @@ def test_client_headers():
     headers = client.session.headers
     assert headers["X-Nylas-API-Wrapper"] == "python"
     assert headers["X-Nylas-Client-Id"] == "whee"
+    assert "Nylas-API-Version" in headers
     assert "Nylas Python SDK" in headers["User-Agent"]
     assert "Authorization" not in headers
 
@@ -57,8 +58,14 @@ def test_client_admin_headers():
     assert headers["Authorization"] == "Basic Zm9vOg=="
     assert headers["X-Nylas-API-Wrapper"] == "python"
     assert headers["X-Nylas-Client-Id"] == "bounce"
+    assert "Nylas-API-Version" in headers
     assert "Nylas Python SDK" in headers["User-Agent"]
 
+
+def test_custom_api_version():
+    # Can specify API server
+    custom = APIClient(api_version="500")
+    assert custom.api_version == "500"
 
 def test_client_authentication_url(api_client, api_url):
     expected = (
