@@ -31,6 +31,7 @@ from nylas.utils import convert_datetimes_to_timestamps, timestamp_from_dt
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
+SUPPORTED_API_VERSION = '2.2'
 
 
 def _validate(response):
@@ -67,6 +68,7 @@ class APIClient(json.JSONEncoder):
         app_secret=environ.get("NYLAS_APP_SECRET"),
         access_token=environ.get("NYLAS_ACCESS_TOKEN"),
         api_server=API_SERVER,
+        api_version=SUPPORTED_API_VERSION,
     ):
         if not api_server.startswith("https://"):
             raise Exception(
@@ -74,6 +76,7 @@ class APIClient(json.JSONEncoder):
                 " must include https://"
             )
         self.api_server = api_server
+        self.api_version = api_version
         self.authorize_url = api_server + "/oauth/authorize"
         self.access_token_url = api_server + "/oauth/token"
         self.revoke_url = api_server + "/oauth/revoke"
@@ -97,6 +100,7 @@ class APIClient(json.JSONEncoder):
         self.session.headers = {
             "X-Nylas-API-Wrapper": "python",
             "X-Nylas-Client-Id": self.app_id,
+            "Nylas-API-Version": self.api_version,
             "User-Agent": version_header,
         }
         self._access_token = None
