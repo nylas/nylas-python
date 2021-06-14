@@ -31,7 +31,7 @@ from nylas.utils import convert_datetimes_to_timestamps, timestamp_from_dt
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
-SUPPORTED_API_VERSION = '2.2'
+SUPPORTED_API_VERSION = "2.2"
 
 
 def _validate(response):
@@ -120,6 +120,7 @@ class APIClient(json.JSONEncoder):
                 "Authorization": authorization,
                 "X-Nylas-API-Wrapper": "python",
                 "X-Nylas-Client-Id": self.app_id,
+                "Nylas-API-Version": self.api_version,
                 "User-Agent": version_header,
             }
         super(APIClient, self).__init__()
