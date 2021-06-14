@@ -641,7 +641,7 @@ class RoomResource(NylasAPIObject):
         "capacity",
         "building",
         "floor_name",
-        "floor_number"
+        "floor_number",
     ]
     object_type = "room_resource"
     collection_name = "resources"
