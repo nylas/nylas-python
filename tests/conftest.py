@@ -778,6 +778,17 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
 
 
 @pytest.fixture
+def mock_event_create_response_with_limits(mocked_responses, api_url, message_body):
+    def callback(request):
+        url = URLObject(request.url)
+        limit = int(url.query_dict.get("limit") or 50)
+        body = [message_body for _ in range(0, limit)]
+        return 200, {}, json.dumps(body)
+
+    mocked_responses.add_callback(responses.GET, api_url + "/events", callback=callback)
+
+
+@pytest.fixture
 def mock_event_create_notify_response(mocked_responses, api_url, message_body):
     mocked_responses.add(
         responses.POST,

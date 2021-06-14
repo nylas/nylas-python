@@ -1,5 +1,7 @@
 import json
 import random
+
+import pytest
 import responses
 from urlobject import URLObject
 
@@ -31,6 +33,15 @@ def test_two_filters(mocked_responses, api_client, api_url):
     query = URLObject(url).query_dict
     assert query["param1"] == "a"
     assert query["param2"] == "b"
+
+
+@pytest.mark.usefixtures("mock_event_create_response_with_limits")
+def test_limit_filter(mocked_responses, api_client, api_url, message_body):
+    events = api_client.events.where(limit=51).all()
+    assert len(events) == 51  # pylint: disable=len-as-condition
+    url = mocked_responses.calls[-1].request.url
+    query = URLObject(url).query_dict
+    assert query["limit"] == "51"
 
 
 def test_no_offset(mocked_responses, api_client, api_url):
