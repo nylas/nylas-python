@@ -14,7 +14,6 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
 RUN_DEPENDENCIES = [
     "requests[security]>=2.4.2",
     "six>=1.4.1",
-    "bumpversion>=0.5.0",
     "urlobject",
 ]
 TEST_DEPENDENCIES = [
@@ -24,6 +23,9 @@ TEST_DEPENDENCIES = [
     "responses==0.10.5",
     "twine",
     "pytz",
+]
+RELEASE_DEPENDENCIES = [
+    "bumpversion>=0.5.0"
 ]
 
 
@@ -77,7 +79,7 @@ def main():
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
         tests_require=TEST_DEPENDENCIES,
-        extras_require={"test": TEST_DEPENDENCIES},
+        extras_require={"test": TEST_DEPENDENCIES, "release": RELEASE_DEPENDENCIES},
         cmdclass={"test": PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
