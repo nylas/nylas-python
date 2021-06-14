@@ -67,6 +67,7 @@ def test_custom_api_version():
     custom = APIClient(api_version="500")
     assert custom.api_version == "500"
 
+
 def test_client_authentication_url(api_client, api_url):
     expected = (
         URLObject(api_url)
