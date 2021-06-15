@@ -638,6 +638,10 @@ class RoomResource(NylasAPIObject):
         "object",
         "email",
         "name",
+        "capacity",
+        "building",
+        "floor_name",
+        "floor_number",
     ]
     object_type = "room_resource"
     collection_name = "resources"
