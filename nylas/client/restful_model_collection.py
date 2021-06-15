@@ -59,6 +59,8 @@ class RestfulModelCollection(object):
         return None
 
     def all(self, limit=float("infinity")):
+        if "limit" in self.filters and self.filters["limit"] is not None:
+            limit = self.filters["limit"]
         return self._range(self.filters["offset"], limit)
 
     def where(self, filter=None, **filters):
