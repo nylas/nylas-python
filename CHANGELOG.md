@@ -6,8 +6,11 @@ Unreleased (dev)
 * Add `metadata` field in the Event model to support new event metadata feature
 * Add filtering support for `metadata_pair`
 * Add new Room Resource fields  
+* Add `Nylas-API-Version` header support
 * Fix adding a tracking object to an existing `draft`
 * Fix issue when converting offset-aware `datetime` objects to `timestamp`
+* Fix `limit` value in filter not being used when making `.all()` call
+* Remove `bumpversion` from a required dependency to an extra dependency
 
 v4.12.1
 -------
