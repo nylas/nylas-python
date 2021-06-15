@@ -58,6 +58,8 @@ class PyTest(TestCommand):
 
 def main():
     # A few handy release helpers.
+    # For publishing you should install the extra 'release' dependencies
+    # by running: pip install nylas['release']
     if len(sys.argv) > 1:
         if sys.argv[1] == "publish":
             subprocess.run("git push --follow-tags && python setup.py sdist upload")
