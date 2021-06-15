@@ -8,6 +8,7 @@ Unreleased (dev)
 * Fix adding a tracking object to an existing `draft`
 * Fix issue when converting offset-aware `datetime` objects to `timestamp`
 * Fix `limit` value in filter not being used when making `.all()` call
+* Remove `bumpversion` from a required dependency to an extra dependency
 
 v4.12.1
 -------
