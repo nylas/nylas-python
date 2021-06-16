@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+* Transitioned from `app_id` and `app_secret` naming to `client_id` and `client_secret`
 * Add `metadata` field in the Event model to support new event metadata feature
 * Add filtering support for `metadata_pair`
 * Fix adding a tracking object to an existing `draft`
