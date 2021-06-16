@@ -43,7 +43,7 @@ def test_client_access_token():
 
 
 def test_client_headers():
-    client = APIClient(app_id="whee", app_secret="foo")
+    client = APIClient(client_id="whee", client_secret="foo")
     headers = client.session.headers
     assert headers["X-Nylas-API-Wrapper"] == "python"
     assert headers["X-Nylas-Client-Id"] == "whee"
@@ -53,7 +53,7 @@ def test_client_headers():
 
 
 def test_client_admin_headers():
-    client = APIClient(app_id="bounce", app_secret="foo")
+    client = APIClient(client_id="bounce", client_secret="foo")
     headers = client.admin_session.headers
     assert headers["Authorization"] == "Basic Zm9vOg=="
     assert headers["X-Nylas-API-Wrapper"] == "python"
@@ -161,10 +161,10 @@ def test_client_token_for_code(mocked_responses, api_client, api_url):
 def test_client_opensource_api(api_client):
     # pylint: disable=singleton-comparison
     assert api_client.is_opensource_api() == True
-    api_client.app_id = "foo"
-    api_client.app_secret = "super-sekrit"
+    api_client.client_id = "foo"
+    api_client.client_secret = "super-sekrit"
     assert api_client.is_opensource_api() == False
-    api_client.app_id = api_client.app_secret = None
+    api_client.client_id = api_client.client_secret = None
     assert api_client.is_opensource_api() == True
 
 

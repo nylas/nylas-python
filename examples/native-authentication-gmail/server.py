@@ -113,8 +113,8 @@ def index():
     # to both Google and Nylas.
     # Let's set up the SDK client with the OAuth token:
     client = APIClient(
-        app_id=app.config["NYLAS_OAUTH_CLIENT_ID"],
-        app_secret=app.config["NYLAS_OAUTH_CLIENT_SECRET"],
+        client_id=app.config["NYLAS_OAUTH_CLIENT_ID"],
+        client_secret=app.config["NYLAS_OAUTH_CLIENT_SECRET"],
         access_token=session["nylas_access_token"],
     )
 
