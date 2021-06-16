@@ -1,6 +1,6 @@
-import os
 import sys
 import re
+import subprocess
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
@@ -14,7 +14,6 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
 RUN_DEPENDENCIES = [
     "requests[security]>=2.4.2",
     "six>=1.4.1",
-    "bumpversion>=0.5.0",
     "urlobject",
 ]
 TEST_DEPENDENCIES = [
@@ -25,6 +24,7 @@ TEST_DEPENDENCIES = [
     "twine",
     "pytz",
 ]
+RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0"]
 
 
 class PyTest(TestCommand):
@@ -58,16 +58,26 @@ class PyTest(TestCommand):
 
 def main():
     # A few handy release helpers.
+    # For publishing you should install the extra 'release' dependencies
+    # by running: pip install nylas['release']
     if len(sys.argv) > 1:
         if sys.argv[1] == "publish":
-            os.system("git push --follow-tags && python setup.py sdist upload")
+            subprocess.run("git push --follow-tags && python setup.py sdist upload")
             sys.exit()
         elif sys.argv[1] == "release":
             if len(sys.argv) < 3:
                 type_ = "patch"
             else:
                 type_ = sys.argv[2]
-            os.system("bumpversion --current-version {} {}".format(VERSION, type_))
+            try:
+                subprocess.check_output(
+                    ["bumpversion", "--current-version", VERSION, type_]
+                )
+            except FileNotFoundError as e:
+                print(
+                    "Error encountered: {}.\n\n".format(e),
+                    "Did you install the extra 'release' dependencies? (pip install nylas['release'])",
+                )
             sys.exit()
 
     setup(
@@ -77,7 +87,7 @@ def main():
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
         tests_require=TEST_DEPENDENCIES,
-        extras_require={"test": TEST_DEPENDENCIES},
+        extras_require={"test": TEST_DEPENDENCIES, "release": RELEASE_DEPENDENCIES},
         cmdclass={"test": PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
