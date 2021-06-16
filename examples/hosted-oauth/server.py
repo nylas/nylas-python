@@ -87,8 +87,8 @@ def index():
     # If we've gotten to this point, then the user has already connected
     # to Nylas via OAuth. Let's set up the SDK client with the OAuth token:
     client = APIClient(
-        app_id=app.config["NYLAS_OAUTH_CLIENT_ID"],
-        app_secret=app.config["NYLAS_OAUTH_CLIENT_SECRET"],
+        client_id=app.config["NYLAS_OAUTH_CLIENT_ID"],
+        client_secret=app.config["NYLAS_OAUTH_CLIENT_SECRET"],
         access_token=nylas.access_token,
     )
 
