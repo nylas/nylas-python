@@ -70,7 +70,9 @@ def test_revoke_all_tokens(api_client_with_client_id):
 
 
 @pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
-def test_revoke_all_tokens_with_keep_access_token(api_client_with_client_id, access_token):
+def test_revoke_all_tokens_with_keep_access_token(
+    api_client_with_client_id, access_token
+):
     assert api_client_with_client_id.access_token == access_token
     api_client_with_client_id.revoke_all_tokens(keep_access_token=access_token)
     assert api_client_with_client_id.access_token == access_token

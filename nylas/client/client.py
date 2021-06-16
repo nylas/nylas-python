@@ -475,7 +475,10 @@ class APIClient(json.JSONEncoder):
         else:
             # Management method.
             url_path = "/a/{client_id}/{name}/{id}/{method}".format(
-                client_id=self.client_id, name=cls.collection_name, id=id, method=method_name
+                client_id=self.client_id,
+                name=cls.collection_name,
+                id=id,
+                method=method_name,
             )
 
         url = URLObject(self.api_server).with_path(url_path)

@@ -173,7 +173,9 @@ def mock_accounts(mocked_responses, api_url, account_id, client_id):
             return (200, {}, json.dumps([]))
         return (200, {}, json.dumps(accounts))
 
-    url_re = "{base}(/a/{client_id})?/accounts/?".format(base=api_url, client_id=client_id)
+    url_re = "{base}(/a/{client_id})?/accounts/?".format(
+        base=api_url, client_id=client_id
+    )
     mocked_responses.add_callback(
         responses.GET,
         re.compile(url_re),
