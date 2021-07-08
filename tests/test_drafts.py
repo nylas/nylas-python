@@ -36,6 +36,19 @@ def test_save_send_draft(api_client):
         draft.send()
 
 
+def test_draft_as_json(api_client):
+    draft = api_client.drafts.create()
+    draft.to = [{"name": "My Friend", "email": "my.friend@example.com"}]
+    draft.subject = "Here's an attachment"
+    draft.body = "Cheers mate!"
+    draft.from_ = [{"name": "Me", "email": "me@example.com"}]
+    msg = draft.as_json()
+    assert msg["to"] == [{"name": "My Friend", "email": "my.friend@example.com"}]
+    assert msg["subject"] == "Here's an attachment"
+    assert msg["body"] == "Cheers mate!"
+    assert msg["from"] == [{"name": "Me", "email": "me@example.com"}]
+
+
 @pytest.mark.usefixtures("mock_draft_saved_response", "mock_draft_sent_response")
 def test_save_send_draft_with_tracking(mocked_responses, api_client):
     tracking = {
