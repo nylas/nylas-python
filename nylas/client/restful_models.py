@@ -81,9 +81,17 @@ class NylasAPIObject(dict):
 
     def as_json(self):
         dct = {}
+        # Some API parameters like "from" and "in" also are
+        # Python reserved keywords. To work around this, we rename
+        # them to "from_" and "in_". The API still needs them in
+        # their correct form though.
+        reserved_keywords = ["from", "in"]
         for attr in self.cls.attrs:
             if hasattr(self, attr):
-                dct[attr] = getattr(self, attr)
+                if attr in reserved_keywords:
+                    dct[attr] = getattr(self, "{}_".format(attr))
+                else:
+                    dct[attr] = getattr(self, attr)
         for date_attr, iso_attr in self.cls.date_attrs.items():
             if self.get(date_attr):
                 dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
