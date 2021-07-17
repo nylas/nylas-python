@@ -27,6 +27,7 @@ from nylas.client.restful_models import (
     Label,
     Draft,
 )
+from nylas.client.neural_api_models import Neural
 from nylas.utils import convert_datetimes_to_timestamps, timestamp_from_dt
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
@@ -332,6 +333,10 @@ class APIClient(json.JSONEncoder):
     def calendars(self):
         return RestfulModelCollection(Calendar, self)
 
+    @property
+    def neural(self):
+        return Neural(self)
+
     ##########################################################
     #   Private functions used by Restful Model Collection   #
     ##########################################################
@@ -493,4 +498,22 @@ class APIClient(json.JSONEncoder):
         response = session.post(url, json=converted_data)
 
         result = _validate(response).json()
+        return cls.create(self, **result)
+
+    def _request_neural_resource(self, cls, data, path=None, method="PUT"):
+        if path is None:
+            path = cls.collection_name
+        url = URLObject(self.api_server).with_path("/neural/{name}".format(name=path))
+
+        session = self._get_http_session(cls.api_root)
+
+        converted_data = convert_datetimes_to_timestamps(data, cls.datetime_attrs)
+        response = session.request(method, url, json=converted_data)
+
+        result = _validate(response).json()
+        # The Neural API will always return only one item
+        # but sometimes it returns it in the form of a 'singleton' array
+        if isinstance(result, list):
+            result = result[0]
+
         return cls.create(self, **result)
