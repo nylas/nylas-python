@@ -1463,3 +1463,248 @@ def mock_availability(mocked_responses, api_url):
         content_type="application/json",
         callback=availability_callback,
     )
+
+
+@pytest.fixture
+def mock_sentiment_analysis(mocked_responses, api_url, account_id):
+    sentiment_url = "{base}/neural/sentiment".format(base=api_url)
+
+    def sentiment_callback(request):
+        payload = json.loads(request.body)
+        if "message_id" in payload:
+            response = [
+                {
+                    "account_id": account_id,
+                    "processed_length": 11,
+                    "sentiment": "NEUTRAL",
+                    "sentiment_score": 0.30000001192092896,
+                    "text": "hello world",
+                }
+            ]
+        else:
+            response = {
+                "account_id": account_id,
+                "processed_length": len(payload["text"]),
+                "sentiment": "NEUTRAL",
+                "sentiment_score": 0.30000001192092896,
+                "text": payload["text"],
+            }
+
+        return 200, {}, json.dumps(response)
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        sentiment_url,
+        content_type="application/json",
+        callback=sentiment_callback,
+    )
+
+
+@pytest.fixture
+def mock_extract_signature(mocked_responses, api_url, account_id):
+    signature_url = "{base}/neural/signature".format(base=api_url)
+
+    def signature_callback(request):
+        payload = json.loads(request.body)
+        response = {
+            "account_id": account_id,
+            "body": "This is the body<div>Nylas Swag</div><div>Software Engineer</div><div>123-456-8901</div><div>swag@nylas.com</div><img src='https://example.com/logo.png' alt='https://example.com/link.html'></a>",
+            "signature": "Nylas Swag\n\nSoftware Engineer\n\n123-456-8901\n\nswag@nylas.com",
+            "date": 1624029503,
+            "from": [
+                {
+                    "email": "swag@nylas.com",
+                    "name": "Nylas Swag",
+                },
+            ],
+            "id": "abc123",
+            "model_version": "0.0.1",
+            "object": "message",
+            "provider_name": "gmail",
+            "subject": "Subject",
+            "to": [
+                {
+                    "email": "me@nylas.com",
+                    "name": "me",
+                },
+            ],
+        }
+        if "parse_contacts" not in payload or payload["parse_contacts"] is True:
+            response["contacts"] = {
+                "job_titles": ["Software Engineer"],
+                "links": [
+                    {
+                        "description": "string",
+                        "url": "https://example.com/link.html",
+                    },
+                ],
+                "phone_numbers": ["123-456-8901"],
+                "emails": ["swag@nylas.com"],
+                "names": [
+                    {
+                        "first_name": "Nylas",
+                        "last_name": "Swag",
+                    },
+                ],
+            }
+
+        return 200, {}, json.dumps([response])
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        signature_url,
+        content_type="application/json",
+        callback=signature_callback,
+    )
+
+
+@pytest.fixture
+def mock_categorize(mocked_responses, api_url, account_id):
+    categorize_url = "{base}/neural/categorize".format(base=api_url)
+
+    def categorize_callback(request):
+        response = {
+            "account_id": account_id,
+            "body": "This is a body",
+            "categorizer": {
+                "categorized_at": "2021-06-24T17:28:09.549266",
+                "category": "feed",
+                "model_version": "6194f733",
+                "subcategories": ["ooo"],
+            },
+            "date": 1624029503,
+            "from": [
+                {
+                    "email": "swag@nylas.com",
+                    "name": "Nylas Swag",
+                },
+            ],
+            "id": "abc123",
+            "object": "message",
+            "provider_name": "gmail",
+            "subject": "Subject",
+            "to": [
+                {
+                    "email": "me@nylas.com",
+                    "name": "me",
+                },
+            ],
+        }
+
+        return 200, {}, json.dumps([response])
+
+    def recategorize_callback(request):
+        response = {
+            "account_id": account_id,
+            "category": "conversation",
+            "is_primary_label": "true",
+            "message_id": "abc123",
+            "recategorized_at": "2021-07-17T00:04:22.006193",
+            "recategorized_from": {
+                "category": "feed",
+                "model_version": "6194f733",
+                "subcategories": ["ooo"],
+            },
+            "subcategories": ["ooo"],
+        }
+
+        return 200, {}, json.dumps(response)
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        categorize_url,
+        content_type="application/json",
+        callback=categorize_callback,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        "{}/feedback".format(categorize_url),
+        content_type="application/json",
+        callback=recategorize_callback,
+    )
+
+
+@pytest.fixture
+def mock_ocr_request(mocked_responses, api_url, account_id):
+    ocr_url = "{base}/neural/ocr".format(base=api_url)
+
+    def ocr_callback(request):
+        response = {
+            "account_id": account_id,
+            "content_type": "application/pdf",
+            "filename": "sample.pdf",
+            "id": "abc123",
+            "object": "file",
+            "ocr": ["This is page 1", "This is page 2"],
+            "processed_pages": 2,
+            "size": 20,
+        }
+
+        return 200, {}, json.dumps(response)
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        ocr_url,
+        content_type="application/json",
+        callback=ocr_callback,
+    )
+
+
+@pytest.fixture
+def mock_clean_conversation(mocked_responses, api_url, account_id):
+    conversation_url = "{base}/neural/conversation".format(base=api_url)
+    file_url = "{base}/files/1781777f666586677621".format(base=api_url)
+
+    def conversation_callback(request):
+        response = {
+            "account_id": account_id,
+            "body": "<img src='cid:1781777f666586677621' /> This is the body",
+            "conversation": "<img src='cid:1781777f666586677621' /> This is the conversation",
+            "date": 1624029503,
+            "from": [
+                {
+                    "email": "swag@nylas.com",
+                    "name": "Nylas Swag",
+                },
+            ],
+            "id": "abc123",
+            "model_version": "0.0.1",
+            "object": "message",
+            "provider_name": "gmail",
+            "subject": "Subject",
+            "to": [
+                {
+                    "email": "me@nylas.com",
+                    "name": "me",
+                },
+            ],
+        }
+
+        return 200, {}, json.dumps([response])
+
+    def file_callback(request):
+        response = {
+            "id": "1781777f666586677621",
+            "content_type": "image/png",
+            "filename": "hello.png",
+            "account_id": account_id,
+            "object": "file",
+            "size": 123,
+        }
+
+        return 200, {}, json.dumps(response)
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        conversation_url,
+        content_type="application/json",
+        callback=conversation_callback,
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        file_url,
+        content_type="application/json",
+        callback=file_callback,
+    )
