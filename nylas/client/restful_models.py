@@ -20,7 +20,6 @@ def typed_dict_attr(items, attr_name=None):
     return dct
 
 
-class NylasAPIObject(dict):
 def _is_subclass(cls, parent):
     for base in cls.__bases__:
         if base.__name__.lower() == parent:
@@ -28,6 +27,7 @@ def _is_subclass(cls, parent):
     return False
 
 
+class RestfulModel(dict):
     attrs = []
     date_attrs = {}
     datetime_attrs = {}
@@ -43,7 +43,7 @@ def _is_subclass(cls, parent):
         self.id = None
         self.cls = cls
         self.api = api
-        super(NylasAPIObject, self).__init__()
+        super(RestfulModel, self).__init__()
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -123,6 +123,11 @@ def _is_subclass(cls, parent):
                     for value in values:
                         dct[attr].append(value)
         return dct
+
+
+class NylasAPIObject(RestfulModel):
+    def __init__(self, cls, api):
+        RestfulModel.__init__(self, cls, api)
 
     def child_collection(self, cls, **filters):
         return RestfulModelCollection(cls, self.api, **filters)
