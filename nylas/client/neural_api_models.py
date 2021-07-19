@@ -13,26 +13,27 @@ class Neural(RestfulModel):
     def __init__(self, api):
         RestfulModel.__init__(self, Neural, api)
 
-    def sentiment_analysis_message(self, message_id):
-        body = {"message_id": [message_id]}
+    def sentiment_analysis_message(self, message_ids):
+        body = {"message_id": message_ids}
         return self.api._request_neural_resource(NeuralSentimentAnalysis, body)
 
     def sentiment_analysis_text(self, text):
         body = {"text": text}
         return self.api._request_neural_resource(NeuralSentimentAnalysis, body)
 
-    def extract_signature(self, message_id, parse_contacts=None, options=None):
-        body = {"message_id": [message_id]}
+    def extract_signature(self, message_ids, parse_contacts=None, options=None):
+        body = {"message_id": message_ids}
         if parse_contacts is not None and isinstance(parse_contacts, bool):
             body["parse_contacts"] = parse_contacts
         if options is not None and isinstance(options, NeuralMessageOptions):
             _add_options_to_body(body, options)
-        signature = self.api._request_neural_resource(NeuralSignatureExtraction, body)
-        if signature.contacts:
-            signature.contacts = NeuralSignatureContact.create(
-                self.api, **signature.contacts
-            )
-        return signature
+        signatures = self.api._request_neural_resource(NeuralSignatureExtraction, body)
+        if parse_contacts is not False:
+            for sig in signatures:
+                sig.contacts = NeuralSignatureContact.create(
+                    self.api, **sig.contacts
+                )
+        return signatures
 
     def ocr_request(self, file_id, pages=None):
         body = {"file_id": file_id}
@@ -40,15 +41,15 @@ class Neural(RestfulModel):
             body["pages"] = pages
         return self.api._request_neural_resource(NeuralOcr, body)
 
-    def categorize(self, message_id):
-        body = {"message_id": [message_id]}
-        category = self.api._request_neural_resource(NeuralCategorizer, body)
-        if category.categorizer:
-            category.categorizer = Categorize.create(self.api, **category.categorizer)
-        return category
+    def categorize(self, message_ids):
+        body = {"message_id": message_ids}
+        categorized = self.api._request_neural_resource(NeuralCategorizer, body)
+        for message in categorized:
+            message.categorizer = Categorize.create(self.api, **message.categorizer)
+        return categorized
 
-    def clean_conversation(self, message_id, options=None):
-        body = {"message_id": [message_id]}
+    def clean_conversation(self, message_ids, options=None):
+        body = {"message_id": message_ids}
         if options is not None and isinstance(options, NeuralMessageOptions):
             _add_options_to_body(body, options)
         return self.api._request_neural_resource(NeuralCleanConversation, body)
@@ -136,7 +137,8 @@ class NeuralCategorizer(Message):
             NeuralCategorizer, data, "categorize/feedback", "POST"
         )
         data = {"message_id": self.id}
-        categorize = self.api._request_neural_resource(NeuralCategorizer, data)
+        response = self.api._request_neural_resource(NeuralCategorizer, data)
+        categorize = response[0]
         if categorize.categorizer:
             categorize.categorizer = Categorize.create(
                 self.api, **categorize.categorizer

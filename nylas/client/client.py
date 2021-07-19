@@ -511,9 +511,10 @@ class APIClient(json.JSONEncoder):
         response = session.request(method, url, json=converted_data)
 
         result = _validate(response).json()
-        # The Neural API will always return only one item
-        # but sometimes it returns it in the form of a 'singleton' array
         if isinstance(result, list):
-            result = result[0]
+            object_list = []
+            for obj in result:
+                object_list.append(cls.create(self, **obj))
+            return object_list
 
         return cls.create(self, **result)
