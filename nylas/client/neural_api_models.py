@@ -30,9 +30,7 @@ class Neural(RestfulModel):
         signatures = self.api._request_neural_resource(NeuralSignatureExtraction, body)
         if parse_contacts is not False:
             for sig in signatures:
-                sig.contacts = NeuralSignatureContact.create(
-                    self.api, **sig.contacts
-                )
+                sig.contacts = NeuralSignatureContact.create(self.api, **sig.contacts)
         return signatures
 
     def ocr_request(self, file_id, pages=None):
