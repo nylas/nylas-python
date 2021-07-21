@@ -24,7 +24,7 @@ TEST_DEPENDENCIES = [
     "twine",
     "pytz",
 ]
-RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0"]
+RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
 
 
 class PyTest(TestCommand):
@@ -62,7 +62,13 @@ def main():
     # by running: pip install nylas['release']
     if len(sys.argv) > 1:
         if sys.argv[1] == "publish":
-            subprocess.run("git push --follow-tags && python setup.py sdist upload")
+            try:
+                subprocess.check_output(["git", "push", "--follow-tags"])
+                subprocess.check_output(["python", "setup.py", "sdist"])
+                subprocess.check_output(["twine", "upload", "-r", "testpypi", "dist/*"])
+                subprocess.check_output(["twine", "upload", "dist/*"])
+            except FileNotFoundError as e:
+                print("Error encountered: {}.\n\n".format(e))
             sys.exit()
         elif sys.argv[1] == "release":
             if len(sys.argv) < 3:
