@@ -6,7 +6,6 @@ v.5.0.0
 * Transitioned from `app_id` and `app_secret` naming to `client_id` and `client_secret`
 * Add support for the Nylas Neural API
 * Add `metadata` field in the Event model to support new event metadata feature
-* Add filtering support for `metadata_pair`
 * Add new Room Resource fields  
 * Add `Nylas-API-Version` header support
 * Fix adding a tracking object to an existing `draft`
