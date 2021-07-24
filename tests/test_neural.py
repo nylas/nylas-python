@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+
 import pytest
 from nylas.client.restful_models import File
 
@@ -113,7 +115,7 @@ def test_categorize(mocked_responses, api_client):
     assert categorize.category == "feed"
     assert categorize.model_version == "6194f733"
     assert categorize.subcategories == ["ooo"]
-    assert categorize.categorized_at == "2021-06-24T17:28:09.549266"
+    assert categorize.categorized_at == datetime.utcfromtimestamp(1627076720)
 
 
 @pytest.mark.usefixtures("mock_categorize")

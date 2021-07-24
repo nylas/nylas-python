@@ -1567,7 +1567,7 @@ def mock_categorize(mocked_responses, api_url, account_id):
             "account_id": account_id,
             "body": "This is a body",
             "categorizer": {
-                "categorized_at": "2021-06-24T17:28:09.549266",
+                "categorized_at": 1627076720,
                 "category": "feed",
                 "model_version": "6194f733",
                 "subcategories": ["ooo"],
