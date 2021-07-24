@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Fix `categorized_at` type to be `epoch` in `NeuralCategorizer`
+
 v.5.0.0
 ----------------
 * Transitioned from `app_id` and `app_secret` naming to `client_id` and `client_secret`
