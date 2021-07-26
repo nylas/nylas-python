@@ -146,6 +146,7 @@ class NeuralCategorizer(Message):
 
 class Categorize(RestfulModel):
     attrs = ["category", "categorized_at", "model_version", "subcategories"]
+    datetime_attrs = {"categorized_at": "categorized_at"}
     collection_name = "category"
 
     def __init__(self, api):
