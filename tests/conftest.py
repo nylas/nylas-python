@@ -777,10 +777,14 @@ def mock_files(mocked_responses, api_url, account_id):
 
 @pytest.fixture
 def mock_event_create_response(mocked_responses, api_url, message_body):
-    values = [(400, {}, ""), (200, {}, json.dumps(message_body))]
-
     def callback(_request):
-        return values.pop()
+        try:
+            payload = json.loads(_request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        payload["id"] = "cv4ei7syx10uvsxbs21ccsezf"
+        return 200, {}, json.dumps(payload)
 
     mocked_responses.add_callback(
         responses.POST, api_url + "/events/", callback=callback

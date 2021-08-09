@@ -25,11 +25,6 @@ def test_event_crud(api_client):
     assert event1.title == "loaded from JSON"
     assert event1.get("ignored") is None
 
-    # Third time should fail.
-    event2 = blank_event(api_client)
-    with pytest.raises(RequestException):
-        event2.save()
-
 
 @pytest.mark.usefixtures("mock_event_create_notify_response")
 def test_event_notify(mocked_responses, api_client):
@@ -41,6 +36,40 @@ def test_event_notify(mocked_responses, api_client):
     query = URLObject(url).query_dict
     assert query["notify_participants"] == "true"
     assert query["other_param"] == "1"
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_conferencing(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.conferencing = {
+        "provider": "Zoom Meeting",
+        "details": {
+            "url": "https://us02web.zoom.us/j/****************",
+            "meeting_code": "213",
+            "password": "xyz",
+            "phone": ["+11234567890"],
+        },
+    }
+    event.save()
+    assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert event.conferencing["provider"] == "Zoom Meeting"
+    assert (
+        event.conferencing["details"]["url"]
+        == "https://us02web.zoom.us/j/****************"
+    )
+    assert event.conferencing["details"]["meeting_code"] == "213"
+    assert event.conferencing["details"]["password"] == "xyz"
+    assert event.conferencing["details"]["phone"] == ["+11234567890"]
+
+    body = json.loads(mocked_responses.calls[-1].request.body)
+    assert body["conferencing"]["provider"] == "Zoom Meeting"
+    assert (
+        body["conferencing"]["details"]["url"]
+        == "https://us02web.zoom.us/j/****************"
+    )
+    assert body["conferencing"]["details"]["meeting_code"] == "213"
+    assert body["conferencing"]["details"]["password"] == "xyz"
+    assert body["conferencing"]["details"]["phone"] == ["+11234567890"]
 
 
 @pytest.mark.usefixtures("mock_calendars", "mock_events")
