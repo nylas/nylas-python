@@ -48,19 +48,25 @@ def test_event_conferencing(mocked_responses, api_client):
             "meeting_code": "213",
             "password": "xyz",
             "phone": ["+11234567890"],
-        }
+        },
     }
     event.save()
     assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
     assert event.conferencing["provider"] == "Zoom Meeting"
-    assert event.conferencing["details"]["url"] == "https://us02web.zoom.us/j/****************"
+    assert (
+        event.conferencing["details"]["url"]
+        == "https://us02web.zoom.us/j/****************"
+    )
     assert event.conferencing["details"]["meeting_code"] == "213"
     assert event.conferencing["details"]["password"] == "xyz"
     assert event.conferencing["details"]["phone"] == ["+11234567890"]
 
     body = json.loads(mocked_responses.calls[-1].request.body)
     assert body["conferencing"]["provider"] == "Zoom Meeting"
-    assert body["conferencing"]["details"]["url"] == "https://us02web.zoom.us/j/****************"
+    assert (
+        body["conferencing"]["details"]["url"]
+        == "https://us02web.zoom.us/j/****************"
+    )
     assert body["conferencing"]["details"]["meeting_code"] == "213"
     assert body["conferencing"]["details"]["password"] == "xyz"
     assert body["conferencing"]["details"]["phone"] == ["+11234567890"]

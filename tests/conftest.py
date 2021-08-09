@@ -783,7 +783,7 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
         except ValueError:
             return 400, {}, ""
 
-        payload['id'] = "cv4ei7syx10uvsxbs21ccsezf"
+        payload["id"] = "cv4ei7syx10uvsxbs21ccsezf"
         return 200, {}, json.dumps(payload)
 
     mocked_responses.add_callback(
