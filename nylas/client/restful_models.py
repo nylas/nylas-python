@@ -603,6 +603,7 @@ class Event(NylasAPIObject):
         "account_id",
         "title",
         "description",
+        "conferencing",
         "location",
         "read_only",
         "when",
