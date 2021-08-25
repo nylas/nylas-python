@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased (dev)
 ----------------
 * Fix `categorized_at` type to be `epoch` in `NeuralCategorizer`
+* Add filtering of "None" value attributes before making requests
 
 v.5.0.0
 ----------------
