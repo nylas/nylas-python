@@ -668,7 +668,7 @@ class Event(NylasAPIObject):
                 "Cannot set both 'details' and 'autocreate' in conferencing object."
             )
 
-        super().save(**kwargs)
+        super(Event, self).save(**kwargs)
 
 
 class RoomResource(NylasAPIObject):
