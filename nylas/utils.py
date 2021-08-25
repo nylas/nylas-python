@@ -16,11 +16,12 @@ def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
     return int(delta.total_seconds() / timedelta(seconds=1).total_seconds())
 
 
-def convert_datetimes_to_timestamps(data, datetime_attrs):
+def save_request_body(data, datetime_attrs):
     """
     Given a dictionary of data, and a dictionary of datetime attributes,
-    return a new dictionary that converts any datetime attributes that may
-    be present to their timestamped equivalent.
+    return a new dictionary that is suitable for a request. It converts
+    any datetime attributes that may be present to their timestamped
+    equivalent, and it filters out any attributes set to "None".
     """
     if not data:
         return data
@@ -30,7 +31,7 @@ def convert_datetimes_to_timestamps(data, datetime_attrs):
         if key in datetime_attrs and isinstance(value, datetime):
             new_key = datetime_attrs[key]
             new_data[new_key] = timestamp_from_dt(value)
-        else:
+        elif value is not None:
             new_data[key] = value
 
     return new_data
