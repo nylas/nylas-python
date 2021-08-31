@@ -1,12 +1,13 @@
 nylas-python Changelog
 ======================
 
-Unreleased (dev)
+v5.1.0
 ----------------
-* Fix `categorized_at` type to be `epoch` in `NeuralCategorizer`
+* Add Event conferencing support
 * Add filtering of "None" value attributes before making requests
+* Fix `categorized_at` type to be `epoch` in `NeuralCategorizer`
 
-v.5.0.0
+v5.0.0
 ----------------
 * Transitioned from `app_id` and `app_secret` naming to `client_id` and `client_secret`
 * Add support for the Nylas Neural API
