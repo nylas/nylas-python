@@ -360,8 +360,8 @@ class APIClient(json.JSONEncoder):
                 self.api_server, self.client_id, cls.collection_name, postfix
             )
 
-        converted_filters = create_request_body(filters, cls.datetime_filter_attrs)
-        url = str(URLObject(url).add_query_params(converted_filters.items()))
+        converted_data = create_request_body(filters, cls.datetime_filter_attrs)
+        url = str(URLObject(url).add_query_params(converted_data.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results if x is not None]
@@ -381,8 +381,8 @@ class APIClient(json.JSONEncoder):
                 self.api_server, self.client_id, cls.collection_name, id, postfix
             )
 
-        converted_filters = create_request_body(filters, cls.datetime_filter_attrs)
-        url = str(URLObject(url).add_query_params(converted_filters.items()))
+        converted_data = create_request_body(filters, cls.datetime_filter_attrs)
+        url = str(URLObject(url).add_query_params(converted_data.items()))
         response = self._get_http_session(cls.api_root).get(
             url, headers=headers, stream=stream
         )
