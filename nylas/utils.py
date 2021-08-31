@@ -16,7 +16,7 @@ def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
     return int(delta.total_seconds() / timedelta(seconds=1).total_seconds())
 
 
-def save_request_body(data, datetime_attrs):
+def create_request_body(data, datetime_attrs):
     """
     Given a dictionary of data, and a dictionary of datetime attributes,
     return a new dictionary that is suitable for a request. It converts

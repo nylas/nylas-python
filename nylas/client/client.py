@@ -28,7 +28,7 @@ from nylas.client.restful_models import (
     Draft,
 )
 from nylas.client.neural_api_models import Neural
-from nylas.utils import timestamp_from_dt, save_request_body
+from nylas.utils import timestamp_from_dt, create_request_body
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
@@ -360,7 +360,7 @@ class APIClient(json.JSONEncoder):
                 self.api_server, self.client_id, cls.collection_name, postfix
             )
 
-        converted_filters = save_request_body(filters, cls.datetime_filter_attrs)
+        converted_filters = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(url)
         results = _validate(response).json()
@@ -381,7 +381,7 @@ class APIClient(json.JSONEncoder):
                 self.api_server, self.client_id, cls.collection_name, id, postfix
             )
 
-        converted_filters = save_request_body(filters, cls.datetime_filter_attrs)
+        converted_filters = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_filters.items()))
         response = self._get_http_session(cls.api_root).get(
             url, headers=headers, stream=stream
@@ -413,7 +413,7 @@ class APIClient(json.JSONEncoder):
         if cls == File:
             response = session.post(url, files=data)
         else:
-            converted_data = save_request_body(data, cls.datetime_attrs)
+            converted_data = create_request_body(data, cls.datetime_attrs)
             headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
             response = session.post(url, json=converted_data, headers=headers)
@@ -433,7 +433,7 @@ class APIClient(json.JSONEncoder):
             response = session.post(url, files=data)
         else:
             converted_data = [
-                save_request_body(datum, cls.datetime_attrs) for datum in data
+                create_request_body(datum, cls.datetime_attrs) for datum in data
             ]
             headers = {"Content-Type": "application/json"}
             headers.update(self.session.headers)
@@ -463,7 +463,7 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
-        converted_data = save_request_body(data, cls.datetime_attrs)
+        converted_data = create_request_body(data, cls.datetime_attrs)
         response = session.put(url, json=converted_data)
 
         result = _validate(response).json()
@@ -487,7 +487,7 @@ class APIClient(json.JSONEncoder):
             )
 
         url = URLObject(self.api_server).with_path(url_path)
-        converted_data = save_request_body(data, cls.datetime_attrs)
+        converted_data = create_request_body(data, cls.datetime_attrs)
 
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=converted_data)
@@ -502,7 +502,7 @@ class APIClient(json.JSONEncoder):
 
         session = self._get_http_session(cls.api_root)
 
-        converted_data = save_request_body(data, cls.datetime_attrs)
+        converted_data = create_request_body(data, cls.datetime_attrs)
         response = session.request(method, url, json=converted_data)
 
         result = _validate(response).json()
