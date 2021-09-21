@@ -301,6 +301,66 @@ class APIClient(json.JSONEncoder):
         _validate(resp)
         return resp.json()
 
+    def consecutive_availability(
+        self,
+        emails,
+        duration,
+        interval,
+        start_at,
+        end_at,
+        buffer=None,
+        free_busy=None,
+        open_hours=None,
+    ):
+        if isinstance(emails, six.string_types):
+            emails = [[emails]]
+        if isinstance(duration, timedelta):
+            duration_minutes = int(duration.total_seconds() // 60)
+        else:
+            duration_minutes = int(duration)
+        if isinstance(interval, timedelta):
+            interval_minutes = int(interval.total_seconds() // 60)
+        else:
+            interval_minutes = int(interval)
+        if isinstance(start_at, datetime):
+            start_time = timestamp_from_dt(start_at)
+        else:
+            start_time = start_at
+        if isinstance(end_at, datetime):
+            end_time = timestamp_from_dt(end_at)
+        else:
+            end_time = end_at
+
+        if open_hours is not None:
+            free_busy_emails = (
+                [fb["email"] for fb in free_busy] if free_busy is not None else []
+            )
+            for email in open_hours["emails"]:
+                if (
+                    any(email in sublist for sublist in emails) is not True
+                    and (email in free_busy_emails) is not True
+                ):
+                    raise ValueError(
+                        "Open Hours cannot contain an email not present in the main email list or the free busy email list."
+                    )
+
+        url = "{api_server}/calendars/availability/consecutive".format(
+            api_server=self.api_server
+        )
+        data = {
+            "emails": emails,
+            "duration_minutes": duration_minutes,
+            "interval_minutes": interval_minutes,
+            "start_time": start_time,
+            "end_time": end_time,
+            "buffer": buffer,
+            "free_busy": free_busy or [],
+            "open_hours": open_hours or [],
+        }
+        resp = self.session.post(url, json=data)
+        _validate(resp)
+        return resp.json()
+
     @property
     def account(self):
         return self._get_resource(SingletonAccount, "")
