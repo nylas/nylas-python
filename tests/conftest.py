@@ -1468,6 +1468,13 @@ def mock_availability(mocked_responses, api_url):
         callback=availability_callback,
     )
 
+    mocked_responses.add_callback(
+        responses.POST,
+        "{url}/consecutive".format(url=availability_url),
+        content_type="application/json",
+        callback=availability_callback,
+    )
+
 
 @pytest.fixture
 def mock_sentiment_analysis(mocked_responses, api_url, account_id):
