@@ -326,6 +326,8 @@ class APIClient(json.JSONEncoder):
     ):
         if isinstance(emails, six.string_types):
             emails = [[emails]]
+        elif isinstance(emails[0], list) is False:
+            raise ValueError("'emails' must be a list of lists.")
         if isinstance(duration, timedelta):
             duration_minutes = int(duration.total_seconds() // 60)
         else:
