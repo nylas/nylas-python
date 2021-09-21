@@ -658,6 +658,18 @@ class Event(NylasAPIObject):
         result = response.json()
         return Event.create(self, **result)
 
+    def save(self, **kwargs):
+        if (
+            self.conferencing
+            and "details" in self.conferencing
+            and "autocreate" in self.conferencing
+        ):
+            raise ValueError(
+                "Cannot set both 'details' and 'autocreate' in conferencing object."
+            )
+
+        super(Event, self).save(**kwargs)
+
 
 class RoomResource(NylasAPIObject):
     attrs = [

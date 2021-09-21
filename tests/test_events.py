@@ -39,7 +39,7 @@ def test_event_notify(mocked_responses, api_client):
 
 
 @pytest.mark.usefixtures("mock_event_create_response")
-def test_event_conferencing(mocked_responses, api_client):
+def test_event_conferencing_details(mocked_responses, api_client):
     event = blank_event(api_client)
     event.conferencing = {
         "provider": "Zoom Meeting",
@@ -70,6 +70,49 @@ def test_event_conferencing(mocked_responses, api_client):
     assert body["conferencing"]["details"]["meeting_code"] == "213"
     assert body["conferencing"]["details"]["password"] == "xyz"
     assert body["conferencing"]["details"]["phone"] == ["+11234567890"]
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_conferencing_autocreate(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.conferencing = {
+        "provider": "Zoom Meeting",
+        "autocreate": {
+            "settings": {},
+        },
+    }
+    event.save()
+    assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert event.conferencing["provider"] == "Zoom Meeting"
+    assert event.conferencing["autocreate"]["settings"] == {}
+
+    body = json.loads(mocked_responses.calls[-1].request.body)
+    assert body["conferencing"]["provider"] == "Zoom Meeting"
+    assert event.conferencing["autocreate"]["settings"] == {}
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_conferencing_details_autocreate_error(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.conferencing = {
+        "provider": "Zoom Meeting",
+        "details": {
+            "url": "https://us02web.zoom.us/j/****************",
+            "meeting_code": "213",
+            "password": "xyz",
+            "phone": ["+11234567890"],
+        },
+        "autocreate": {
+            "settings": {
+                "password": "1234",
+            },
+        },
+    }
+    with pytest.raises(ValueError) as excinfo:
+        event.save()
+    assert "Cannot set both 'details' and 'autocreate' in conferencing object." in str(
+        excinfo
+    )
 
 
 @pytest.mark.usefixtures("mock_calendars", "mock_events")
