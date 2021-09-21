@@ -602,7 +602,9 @@ class APIClient(json.JSONEncoder):
     def _validate_open_hours(self, emails, open_hours, free_busy):
         if isinstance(open_hours, list) is False:
             raise ValueError("'open_hours' must be an array.")
-        open_hours_emails = list(chain.from_iterable([oh["emails"] for oh in open_hours]))
+        open_hours_emails = list(
+            chain.from_iterable([oh["emails"] for oh in open_hours])
+        )
         free_busy_emails = (
             [fb["email"] for fb in free_busy] if free_busy is not None else []
         )
