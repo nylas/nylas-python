@@ -268,7 +268,14 @@ class APIClient(json.JSONEncoder):
         }
 
     def availability(
-        self, emails, duration, interval, start_at, end_at, free_busy=None
+        self,
+        emails,
+        duration,
+        interval,
+        start_at,
+        end_at,
+        free_busy=None,
+        open_hours=None,
     ):
         if isinstance(emails, six.string_types):
             emails = [emails]
@@ -288,6 +295,19 @@ class APIClient(json.JSONEncoder):
             end_time = timestamp_from_dt(end_at)
         else:
             end_time = end_at
+
+        if open_hours is not None:
+            free_busy_emails = (
+                [fb["email"] for fb in free_busy] if free_busy is not None else []
+            )
+            for email in open_hours["emails"]:
+                if (email in emails) is not True and (
+                    email in free_busy_emails
+                ) is not True:
+                    raise ValueError(
+                        "Open Hours cannot contain an email not present in the main email list or the free busy email list."
+                    )
+
         url = "{api_server}/calendars/availability".format(api_server=self.api_server)
         data = {
             "emails": emails,
@@ -296,6 +316,7 @@ class APIClient(json.JSONEncoder):
             "start_time": start_time,
             "end_time": end_time,
             "free_busy": free_busy or [],
+            "open_hours": open_hours or [],
         }
         resp = self.session.post(url, json=data)
         _validate(resp)
