@@ -318,7 +318,7 @@ def test_consecutive_availability(mocked_responses, api_client):
         "14:00",
     )
     api_client.consecutive_availability(
-        emails, duration, interval, start_at, end_at, open_hours=open_hours
+        emails, duration, interval, start_at, end_at, open_hours=[open_hours]
     )
 
     request = mocked_responses.calls[-1].request
@@ -332,15 +332,15 @@ def test_consecutive_availability(mocked_responses, api_client):
     assert data["start_time"] == 1577836800
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == []
-    assert data["open_hours"]["emails"] == [
+    assert data["open_hours"][0]["emails"] == [
         "one@example.com",
         "two@example.com",
         "three@example.com",
     ]
-    assert data["open_hours"]["days"] == [0]
-    assert data["open_hours"]["timezone"] == "America/Chicago"
-    assert data["open_hours"]["start"] == "10:00"
-    assert data["open_hours"]["end"] == "14:00"
+    assert data["open_hours"][0]["days"] == [0]
+    assert data["open_hours"][0]["timezone"] == "America/Chicago"
+    assert data["open_hours"][0]["start"] == "10:00"
+    assert data["open_hours"][0]["end"] == "14:00"
 
 
 @pytest.mark.usefixtures("mock_availability")
@@ -382,7 +382,7 @@ def test_consecutive_availability_free_busy(mocked_responses, api_client):
         start_at,
         end_at,
         free_busy=free_busy,
-        open_hours=open_hours,
+        open_hours=[open_hours],
     )
 
     request = mocked_responses.calls[-1].request
@@ -396,16 +396,16 @@ def test_consecutive_availability_free_busy(mocked_responses, api_client):
     assert data["start_time"] == 1577836800
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == free_busy
-    assert data["open_hours"]["emails"] == [
+    assert data["open_hours"][0]["emails"] == [
         "one@example.com",
         "two@example.com",
         "three@example.com",
         "visitor@external.net",
     ]
-    assert data["open_hours"]["days"] == [0]
-    assert data["open_hours"]["timezone"] == "America/Chicago"
-    assert data["open_hours"]["start"] == "10:00"
-    assert data["open_hours"]["end"] == "14:00"
+    assert data["open_hours"][0]["days"] == [0]
+    assert data["open_hours"][0]["timezone"] == "America/Chicago"
+    assert data["open_hours"][0]["start"] == "10:00"
+    assert data["open_hours"][0]["end"] == "14:00"
 
 
 @pytest.mark.usefixtures("mock_availability")
@@ -451,7 +451,7 @@ def test_consecutive_availability_invalid_open_hours_email(
             start_at,
             end_at,
             free_busy=free_busy,
-            open_hours=open_hours,
+            open_hours=[open_hours],
         )
 
 

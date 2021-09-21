@@ -4,6 +4,7 @@ from os import environ
 from base64 import b64encode
 import json
 from datetime import datetime, timedelta
+from itertools import chain
 
 import requests
 from urlobject import URLObject
@@ -295,18 +296,8 @@ class APIClient(json.JSONEncoder):
             end_time = timestamp_from_dt(end_at)
         else:
             end_time = end_at
-
         if open_hours is not None:
-            free_busy_emails = (
-                [fb["email"] for fb in free_busy] if free_busy is not None else []
-            )
-            for email in open_hours["emails"]:
-                if (email in emails) is not True and (
-                    email in free_busy_emails
-                ) is not True:
-                    raise ValueError(
-                        "Open Hours cannot contain an email not present in the main email list or the free busy email list."
-                    )
+            self._validate_open_hours(emails, open_hours, free_busy)
 
         url = "{api_server}/calendars/availability".format(api_server=self.api_server)
         data = {
@@ -351,19 +342,8 @@ class APIClient(json.JSONEncoder):
             end_time = timestamp_from_dt(end_at)
         else:
             end_time = end_at
-
         if open_hours is not None:
-            free_busy_emails = (
-                [fb["email"] for fb in free_busy] if free_busy is not None else []
-            )
-            for email in open_hours["emails"]:
-                if (
-                    any(email in sublist for sublist in emails) is not True
-                    and (email in free_busy_emails) is not True
-                ):
-                    raise ValueError(
-                        "Open Hours cannot contain an email not present in the main email list or the free busy email list."
-                    )
+            self._validate_open_hours(emails, open_hours, free_busy)
 
         url = "{api_server}/calendars/availability/consecutive".format(
             api_server=self.api_server
@@ -612,3 +592,18 @@ class APIClient(json.JSONEncoder):
             return object_list
 
         return cls.create(self, **result)
+
+    def _validate_open_hours(self, emails, open_hours, free_busy):
+        if isinstance(open_hours, list) is False:
+            raise ValueError("'open_hours' must be an array.")
+        open_hours_emails = list(chain.from_iterable([oh["emails"] for oh in open_hours]))
+        free_busy_emails = (
+            [fb["email"] for fb in free_busy] if free_busy is not None else []
+        )
+        if isinstance(emails[0], list) is True:
+            emails = list(chain.from_iterable(emails))
+        for email in open_hours_emails:
+            if (email in emails) is False and (email in free_busy_emails) is False:
+                raise ValueError(
+                    "Open Hours cannot contain an email not present in the main email list or the free busy email list."
+                )
