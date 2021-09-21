@@ -249,6 +249,24 @@ class APIClient(json.JSONEncoder):
         _validate(resp)
         return resp.json()
 
+    def open_hours(self, emails, days, timezone, start, end):
+        if isinstance(emails, six.string_types):
+            emails = [emails]
+        if isinstance(days, int):
+            days = [days]
+        if isinstance(start, datetime):
+            start = "{hour}:{minute}".format(hour=start.hour, minute=start.minute)
+        if isinstance(start, datetime):
+            end = "{hour}:{minute}".format(hour=end.hour, minute=end.minute)
+        return {
+            "emails": emails,
+            "days": days,
+            "timezone": timezone,
+            "start": start,
+            "end": end,
+            "object_type": "open_hours",
+        }
+
     def availability(
         self, emails, duration, interval, start_at, end_at, free_busy=None
     ):
