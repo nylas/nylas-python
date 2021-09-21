@@ -4,6 +4,7 @@ from os import environ
 from base64 import b64encode
 import json
 from datetime import datetime, timedelta
+from itertools import chain
 
 import requests
 from urlobject import URLObject
@@ -249,8 +250,35 @@ class APIClient(json.JSONEncoder):
         _validate(resp)
         return resp.json()
 
+    def open_hours(self, emails, days, timezone, start, end):
+        if isinstance(emails, six.string_types):
+            emails = [emails]
+        if isinstance(days, int):
+            days = [days]
+        if isinstance(start, datetime):
+            start = "{hour}:{minute}".format(hour=start.hour, minute=start.minute)
+        if isinstance(start, datetime):
+            end = "{hour}:{minute}".format(hour=end.hour, minute=end.minute)
+        return {
+            "emails": emails,
+            "days": days,
+            "timezone": timezone,
+            "start": start,
+            "end": end,
+            "object_type": "open_hours",
+        }
+
     def availability(
-        self, emails, duration, interval, start_at, end_at, free_busy=None
+        self,
+        emails,
+        duration,
+        interval,
+        start_at,
+        end_at,
+        buffer=None,
+        round_robin=None,
+        free_busy=None,
+        open_hours=None,
     ):
         if isinstance(emails, six.string_types):
             emails = [emails]
@@ -270,6 +298,9 @@ class APIClient(json.JSONEncoder):
             end_time = timestamp_from_dt(end_at)
         else:
             end_time = end_at
+        if open_hours is not None:
+            self._validate_open_hours(emails, open_hours, free_busy)
+
         url = "{api_server}/calendars/availability".format(api_server=self.api_server)
         data = {
             "emails": emails,
@@ -277,7 +308,61 @@ class APIClient(json.JSONEncoder):
             "interval_minutes": interval_minutes,
             "start_time": start_time,
             "end_time": end_time,
+            "buffer": buffer,
+            "round_robin": round_robin,
             "free_busy": free_busy or [],
+            "open_hours": open_hours or [],
+        }
+        resp = self.session.post(url, json=data)
+        _validate(resp)
+        return resp.json()
+
+    def consecutive_availability(
+        self,
+        emails,
+        duration,
+        interval,
+        start_at,
+        end_at,
+        buffer=None,
+        free_busy=None,
+        open_hours=None,
+    ):
+        if isinstance(emails, six.string_types):
+            emails = [[emails]]
+        elif isinstance(emails[0], list) is False:
+            raise ValueError("'emails' must be a list of lists.")
+        if isinstance(duration, timedelta):
+            duration_minutes = int(duration.total_seconds() // 60)
+        else:
+            duration_minutes = int(duration)
+        if isinstance(interval, timedelta):
+            interval_minutes = int(interval.total_seconds() // 60)
+        else:
+            interval_minutes = int(interval)
+        if isinstance(start_at, datetime):
+            start_time = timestamp_from_dt(start_at)
+        else:
+            start_time = start_at
+        if isinstance(end_at, datetime):
+            end_time = timestamp_from_dt(end_at)
+        else:
+            end_time = end_at
+        if open_hours is not None:
+            self._validate_open_hours(emails, open_hours, free_busy)
+
+        url = "{api_server}/calendars/availability/consecutive".format(
+            api_server=self.api_server
+        )
+        data = {
+            "emails": emails,
+            "duration_minutes": duration_minutes,
+            "interval_minutes": interval_minutes,
+            "start_time": start_time,
+            "end_time": end_time,
+            "buffer": buffer,
+            "free_busy": free_busy or [],
+            "open_hours": open_hours or [],
         }
         resp = self.session.post(url, json=data)
         _validate(resp)
@@ -513,3 +598,20 @@ class APIClient(json.JSONEncoder):
             return object_list
 
         return cls.create(self, **result)
+
+    def _validate_open_hours(self, emails, open_hours, free_busy):
+        if isinstance(open_hours, list) is False:
+            raise ValueError("'open_hours' must be an array.")
+        open_hours_emails = list(
+            chain.from_iterable([oh["emails"] for oh in open_hours])
+        )
+        free_busy_emails = (
+            [fb["email"] for fb in free_busy] if free_busy is not None else []
+        )
+        if isinstance(emails[0], list) is True:
+            emails = list(chain.from_iterable(emails))
+        for email in open_hours_emails:
+            if (email in emails) is False and (email in free_busy_emails) is False:
+                raise ValueError(
+                    "Open Hours cannot contain an email not present in the main email list or the free busy email list."
+                )

@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased (dev)
 ----------------
+* Add support for calendar consecutive availability
 * Add dynamic conferencing link creation support
 
 v5.1.0

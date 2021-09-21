@@ -324,6 +324,7 @@ def test_availability_with_free_busy(mocked_responses, api_client):
                     "end_time": 1584379800,
                 }
             ],
+            "object": "free_busy",
         }
     ]
     availability = api_client.availability(
@@ -344,6 +345,160 @@ def test_availability_with_free_busy(mocked_responses, api_client):
     assert data["start_time"] == 1577836800
     assert data["end_time"] == 1577923200
     assert data["free_busy"] == free_busy
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_consecutive_availability(mocked_responses, api_client):
+    emails = [["one@example.com"], ["two@example.com", "three@example.com"]]
+    duration = timedelta(minutes=30)
+    interval = timedelta(hours=1, minutes=30)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    open_hours = api_client.open_hours(
+        ["one@example.com", "two@example.com", "three@example.com"],
+        [0],
+        "America/Chicago",
+        "10:00",
+        "14:00",
+    )
+    api_client.consecutive_availability(
+        emails, duration, interval, start_at, end_at, open_hours=[open_hours]
+    )
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability/consecutive"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 30
+    assert isinstance(data["duration_minutes"], int)
+    assert data["interval_minutes"] == 90
+    assert isinstance(data["interval_minutes"], int)
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert data["free_busy"] == []
+    assert data["open_hours"][0]["emails"] == [
+        "one@example.com",
+        "two@example.com",
+        "three@example.com",
+    ]
+    assert data["open_hours"][0]["days"] == [0]
+    assert data["open_hours"][0]["timezone"] == "America/Chicago"
+    assert data["open_hours"][0]["start"] == "10:00"
+    assert data["open_hours"][0]["end"] == "14:00"
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_consecutive_availability_free_busy(mocked_responses, api_client):
+    emails = [["one@example.com"], ["two@example.com", "three@example.com"]]
+    duration = timedelta(minutes=30)
+    interval = timedelta(hours=1, minutes=30)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    open_hours = api_client.open_hours(
+        [
+            "one@example.com",
+            "two@example.com",
+            "three@example.com",
+            "visitor@external.net",
+        ],
+        [0],
+        "America/Chicago",
+        "10:00",
+        "14:00",
+    )
+    free_busy = [
+        {
+            "email": "visitor@external.net",
+            "time_slots": [
+                {
+                    "object": "time_slot",
+                    "status": "busy",
+                    "start_time": 1584377898,
+                    "end_time": 1584379800,
+                }
+            ],
+            "object": "free_busy",
+        }
+    ]
+    api_client.consecutive_availability(
+        emails,
+        duration,
+        interval,
+        start_at,
+        end_at,
+        free_busy=free_busy,
+        open_hours=[open_hours],
+    )
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability/consecutive"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 30
+    assert isinstance(data["duration_minutes"], int)
+    assert data["interval_minutes"] == 90
+    assert isinstance(data["interval_minutes"], int)
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert data["free_busy"] == free_busy
+    assert data["open_hours"][0]["emails"] == [
+        "one@example.com",
+        "two@example.com",
+        "three@example.com",
+        "visitor@external.net",
+    ]
+    assert data["open_hours"][0]["days"] == [0]
+    assert data["open_hours"][0]["timezone"] == "America/Chicago"
+    assert data["open_hours"][0]["start"] == "10:00"
+    assert data["open_hours"][0]["end"] == "14:00"
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_consecutive_availability_invalid_open_hours_email(
+    mocked_responses, api_client
+):
+    emails = [["one@example.com"], ["two@example.com", "three@example.com"]]
+    duration = timedelta(minutes=30)
+    interval = timedelta(hours=1, minutes=30)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    open_hours = api_client.open_hours(
+        [
+            "one@example.com",
+            "two@example.com",
+            "three@example.com",
+            "visitor@external.net",
+            "four@example.com",
+        ],
+        [0],
+        "America/Chicago",
+        "10:00",
+        "14:00",
+    )
+    free_busy = [
+        {
+            "email": "visitor@external.net",
+            "time_slots": [
+                {
+                    "object": "time_slot",
+                    "status": "busy",
+                    "start_time": 1584377898,
+                    "end_time": 1584379800,
+                }
+            ],
+            "object": "free_busy",
+        }
+    ]
+    with pytest.raises(ValueError):
+        api_client.consecutive_availability(
+            emails,
+            duration,
+            interval,
+            start_at,
+            end_at,
+            free_busy=free_busy,
+            open_hours=[open_hours],
+        )
 
 
 @pytest.mark.usefixtures("mock_events")
