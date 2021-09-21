@@ -281,6 +281,7 @@ def test_availability_with_free_busy(mocked_responses, api_client):
                     "end_time": 1584379800,
                 }
             ],
+            "object": "free_busy",
         }
     ]
     availability = api_client.availability(
@@ -373,6 +374,7 @@ def test_consecutive_availability_free_busy(mocked_responses, api_client):
                     "end_time": 1584379800,
                 }
             ],
+            "object": "free_busy",
         }
     ]
     api_client.consecutive_availability(
@@ -441,6 +443,7 @@ def test_consecutive_availability_invalid_open_hours_email(
                     "end_time": 1584379800,
                 }
             ],
+            "object": "free_busy",
         }
     ]
     with pytest.raises(ValueError):
