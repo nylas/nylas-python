@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Add dynamic conferencing link creation support
+
 v5.1.0
 ----------------
 * Add Event conferencing support
