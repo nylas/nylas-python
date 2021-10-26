@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+import copy
 import sys
 from os import environ
 from base64 import b64encode
@@ -27,6 +29,7 @@ from nylas.client.restful_models import (
     Folder,
     Label,
     Draft,
+    Scheduler,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.utils import timestamp_from_dt, create_request_body
@@ -419,6 +422,13 @@ class APIClient(json.JSONEncoder):
         return RestfulModelCollection(Calendar, self)
 
     @property
+    def scheduler(self):
+        # Make a copy of the API as we need to change the base url for Scheduler calls
+        api = copy.copy(self)
+        api.api_server = 'https://api.schedule.nylas.com'
+        return RestfulModelCollection(Scheduler, api)
+
+    @property
     def neural(self):
         return Neural(self)
 
@@ -539,10 +549,11 @@ class APIClient(json.JSONEncoder):
         else:
             _validate(session.delete(url))
 
-    def _update_resource(self, cls, id, data, **kwargs):
+    def _put_resource(self, cls, id, data, extra=None, **kwargs):
+        postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}/{id}".format(name=cls.collection_name, id=id))
+            .with_path("/{name}/{id}{postfix}".format(name=cls.collection_name, id=id, postfix=postfix))
             .set_query_params(**kwargs)
         )
 
@@ -551,7 +562,11 @@ class APIClient(json.JSONEncoder):
         converted_data = create_request_body(data, cls.datetime_attrs)
         response = session.put(url, json=converted_data)
 
-        result = _validate(response).json()
+        result = _validate(response)
+        return result.json()
+
+    def _update_resource(self, cls, id, data, **kwargs):
+        result = self._put_resource(cls, id, data, kwargs)
         return cls.create(self, **result)
 
     def _call_resource_method(self, cls, id, method_name, data):
