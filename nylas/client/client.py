@@ -425,7 +425,7 @@ class APIClient(json.JSONEncoder):
     def scheduler(self):
         # Make a copy of the API as we need to change the base url for Scheduler calls
         api = copy.copy(self)
-        api.api_server = 'https://api.schedule.nylas.com'
+        api.api_server = "https://api.schedule.nylas.com"
         return RestfulModelCollection(Scheduler, api)
 
     @property
@@ -554,7 +554,11 @@ class APIClient(json.JSONEncoder):
         postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}/{id}{postfix}".format(name=cls.collection_name, id=id, postfix=postfix))
+            .with_path(
+                "/{name}/{id}{postfix}".format(
+                    name=cls.collection_name, id=id, postfix=postfix
+                )
+            )
             .set_query_params(**kwargs)
         )
 

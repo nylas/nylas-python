@@ -710,36 +710,25 @@ class Scheduler(NylasAPIObject):
 
     def get_available_calendars(self):
         if not self.id:
-            raise ValueError(
-                "Cannot get calendars for a page without an ID"
-            )
+            raise ValueError("Cannot get calendars for a page without an ID")
 
-        response = self.api._get_resource_raw(
-            Scheduler, self.id, extra="calendars"
-        )
+        response = self.api._get_resource_raw(Scheduler, self.id, extra="calendars")
         response_body = response.json()
         for body in response_body:
-            for i in range(len(body['calendars'])):
-                body['calendars'][i] = Calendar.create(self.api, **body['calendars'][i])
+            for i in range(len(body["calendars"])):
+                body["calendars"][i] = Calendar.create(self.api, **body["calendars"][i])
 
         return response_body
 
     def upload_image(self, content_type, object_name):
         if not self.id:
-            raise ValueError(
-                "Cannot upload an image to a page without an ID"
-            )
+            raise ValueError("Cannot upload an image to a page without an ID")
 
-        data = {
-            "contentType": content_type,
-            "objectName": object_name
-        }
+        data = {"contentType": content_type, "objectName": object_name}
         response = self.api._put_resource(
             Scheduler, self.id, data, extra="upload-image"
         )
         return response
-
-
 
 
 class Namespace(NylasAPIObject):

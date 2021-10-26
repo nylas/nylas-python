@@ -25,9 +25,9 @@ def test_scheduler(api_client):
     assert scheduler.app_organization_id == 12345
     assert len(scheduler.config) == 4
     assert isinstance(scheduler.config, dict)
-    assert scheduler.config['locale'] == "en"
-    assert len(scheduler.config['reminders']) == 0
-    assert scheduler.config['timezone'] == "America/Los_Angeles"
+    assert scheduler.config["locale"] == "en"
+    assert len(scheduler.config["reminders"]) == 0
+    assert scheduler.config["timezone"] == "America/Los_Angeles"
     assert scheduler.edit_token == "test-edit-token-1"
     assert scheduler.name == "test-1"
     assert scheduler.slug == "test1"
@@ -63,9 +63,9 @@ def test_scheduler_get_available_calendars(api_client):
     assert calendar["calendars"][0].id == "calendar-id"
     assert calendar["calendars"][0].name == "Emailed events"
     assert calendar["calendars"][0].read_only
-    assert calendar['email'] == "swag@nylas.com"
-    assert calendar['id'] == "scheduler-id"
-    assert calendar['name'] == "Python Tester"
+    assert calendar["email"] == "swag@nylas.com"
+    assert calendar["id"] == "scheduler-id"
+    assert calendar["name"] == "Python Tester"
 
 
 @pytest.mark.usefixtures("mock_scheduler_get_available_calendars")
@@ -80,10 +80,10 @@ def test_scheduler_upload_image(api_client):
     scheduler = blank_scheduler_page(api_client)
     scheduler.id = "cv4ei7syx10uvsxbs21ccsezf"
     upload = scheduler.upload_image("image/png", "test.png")
-    assert upload['filename'] == "test.png"
-    assert upload['originalFilename'] == "test.png"
-    assert upload['publicUrl'] == "https://public.nylas.com/test.png"
-    assert upload['signedUrl'] == "https://signed.nylas.com/test.png"
+    assert upload["filename"] == "test.png"
+    assert upload["originalFilename"] == "test.png"
+    assert upload["publicUrl"] == "https://public.nylas.com/test.png"
+    assert upload["signedUrl"] == "https://signed.nylas.com/test.png"
 
 
 @pytest.mark.usefixtures("mock_scheduler_get_available_calendars")
@@ -91,4 +91,3 @@ def test_scheduler_get_available_calendars_no_id_throws_error(api_client):
     scheduler = blank_scheduler_page(api_client)
     with pytest.raises(ValueError):
         scheduler.upload_image("image/png", "test.png")
-

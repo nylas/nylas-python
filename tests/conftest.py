@@ -1305,18 +1305,18 @@ def mock_schedulers(mocked_responses, api_url):
                     "show_nylas_branding": "false",
                     "show_timezone_options": "true",
                     "show_week_view": "true",
-                    "submit_text": "Submit"
+                    "submit_text": "Submit",
                 },
                 "locale": "en",
                 "reminders": [],
-                "timezone": "America/Los_Angeles"
+                "timezone": "America/Los_Angeles",
             },
             "created_at": "2021-10-22",
             "edit_token": "test-edit-token-1",
             "id": 90210,
             "modified_at": "2021-10-22",
             "name": "test-1",
-            "slug": "test1"
+            "slug": "test1",
         },
         {
             "app_client_id": "test-client-id",
@@ -1324,28 +1324,26 @@ def mock_schedulers(mocked_responses, api_url):
             "config": {
                 "calendar_ids": {
                     "test-calendar-id": {
-                        "availability": [
-                            "availability-id"
-                        ],
-                        "booking": "booking-id"
+                        "availability": ["availability-id"],
+                        "booking": "booking-id",
                     }
                 },
                 "event": {
                     "capacity": -1,
                     "duration": 45,
                     "location": "Location TBD",
-                    "title": "test-event"
+                    "title": "test-event",
                 },
                 "locale": "en",
                 "reminders": [],
-                "timezone": "America/Los_Angeles"
+                "timezone": "America/Los_Angeles",
             },
             "created_at": "2021-10-22",
             "edit_token": "test-edit-token-2",
             "id": 90211,
             "modified_at": "2021-10-22",
             "name": "test-2",
-            "slug": "test2"
+            "slug": "test2",
         },
     ]
 
@@ -1353,7 +1351,10 @@ def mock_schedulers(mocked_responses, api_url):
         return 200, {}, json.dumps(scheduler_list)
 
     mocked_responses.add_callback(
-        responses.GET, "https://api.schedule.nylas.com/manage/pages", content_type="application/json", callback=list_callback
+        responses.GET,
+        "https://api.schedule.nylas.com/manage/pages",
+        content_type="application/json",
+        callback=list_callback,
     )
 
 
@@ -1362,15 +1363,11 @@ def mock_scheduler_get_available_calendars(mocked_responses, api_url):
     calendars = [
         {
             "calendars": [
-                {
-                    "id": "calendar-id",
-                    "name": "Emailed events",
-                    "read_only": "true"
-                },
+                {"id": "calendar-id", "name": "Emailed events", "read_only": "true"},
             ],
             "email": "swag@nylas.com",
             "id": "scheduler-id",
-            "name": "Python Tester"
+            "name": "Python Tester",
         }
     ]
 
@@ -1382,7 +1379,10 @@ def mock_scheduler_get_available_calendars(mocked_responses, api_url):
     )
 
     mocked_responses.add_callback(
-        responses.GET, calendars_url, content_type="application/json", callback=list_callback
+        responses.GET,
+        calendars_url,
+        content_type="application/json",
+        callback=list_callback,
     )
 
 
@@ -1398,12 +1398,17 @@ def mock_scheduler_upload_image(mocked_responses, api_url):
     def list_callback(arg=None):
         return 200, {}, json.dumps(upload)
 
-    calendars_url = "https://api.schedule.nylas.com/manage/pages/{id}/upload-image".format(
-        id="cv4ei7syx10uvsxbs21ccsezf"
+    calendars_url = (
+        "https://api.schedule.nylas.com/manage/pages/{id}/upload-image".format(
+            id="cv4ei7syx10uvsxbs21ccsezf"
+        )
     )
 
     mocked_responses.add_callback(
-        responses.PUT, calendars_url, content_type="application/json", callback=list_callback
+        responses.PUT,
+        calendars_url,
+        content_type="application/json",
+        callback=list_callback,
     )
 
 
