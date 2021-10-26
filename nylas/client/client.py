@@ -469,10 +469,11 @@ class APIClient(json.JSONEncoder):
         headers.update(self.session.headers)
 
         postfix = "/{}".format(extra) if extra else ""
+        id = "/{}".format(id) if id else ""
         if cls.api_root != "a":
-            url = "{}/{}/{}{}".format(self.api_server, cls.collection_name, id, postfix)
+            url = "{}/{}{}{}".format(self.api_server, cls.collection_name, id, postfix)
         else:
-            url = "{}/a/{}/{}/{}{}".format(
+            url = "{}/a/{}/{}{}{}".format(
                 self.api_server, self.client_id, cls.collection_name, id, postfix
             )
 
@@ -499,7 +500,7 @@ class APIClient(json.JSONEncoder):
     def _create_resource(self, cls, data, **kwargs):
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}/".format(name=cls.collection_name))
+            .with_path("/{name}".format(name=cls.collection_name))
             .set_query_params(**kwargs)
         )
 
@@ -520,7 +521,7 @@ class APIClient(json.JSONEncoder):
 
     def _create_resources(self, cls, data):
         url = URLObject(self.api_server).with_path(
-            "/{name}/".format(name=cls.collection_name)
+            "/{name}".format(name=cls.collection_name)
         )
         session = self._get_http_session(cls.api_root)
 
