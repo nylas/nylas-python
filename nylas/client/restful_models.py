@@ -703,6 +703,41 @@ class RoomResource(NylasAPIObject):
         NylasAPIObject.__init__(self, RoomResource, api)
 
 
+class Component(NylasAPIObject):
+    attrs = [
+        "id",
+        "account_id",
+        "name",
+        "type",
+        "action",
+        "active",
+        "settings",
+        "public_account_id",
+        "public_token_id",
+        "public_application_id",
+        "access_token",
+        "allowed_domains",
+    ]
+    datetime_attrs = {
+        "created_at": "created_at",
+        "updated_at": "updated_at",
+    }
+    read_only_attrs = {"id", "public_application_id", "created_at", "updated_at"}
+
+    collection_name = None
+    api_root = "component"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, RoomResource, api)
+
+    def as_json(self):
+        dct = NylasAPIObject.as_json(self)
+        # "type" cannot be modified after created
+        if self.id:
+            dct.pop("type")
+        return dct
+
+
 class Namespace(NylasAPIObject):
     attrs = [
         "account",

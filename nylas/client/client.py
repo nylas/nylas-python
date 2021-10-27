@@ -27,6 +27,7 @@ from nylas.client.restful_models import (
     Folder,
     Label,
     Draft,
+    Component,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.utils import timestamp_from_dt, create_request_body
@@ -417,6 +418,10 @@ class APIClient(json.JSONEncoder):
     @property
     def calendars(self):
         return RestfulModelCollection(Calendar, self)
+
+    @property
+    def components(self):
+        return RestfulModelCollection(Component, self)
 
     @property
     def neural(self):
