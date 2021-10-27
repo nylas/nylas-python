@@ -473,8 +473,13 @@ class APIClient(json.JSONEncoder):
                 server=self.api_server, path=path, id=id, postfix=postfix
             )
         else:
-            url = "{}/a/{}/{}{}{}".format(
-                self.api_server, self.client_id, cls.collection_name, id, postfix
+            url = "{server}/{prefix}/{client_id}{path}{id}{postfix}".format(
+                server=self.api_server,
+                prefix=cls.api_root,
+                client_id=self.client_id,
+                path=path,
+                id=id,
+                postfix=postfix,
             )
 
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
