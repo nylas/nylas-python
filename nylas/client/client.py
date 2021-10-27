@@ -462,9 +462,6 @@ class APIClient(json.JSONEncoder):
         self, cls, id, extra=None, headers=None, stream=False, **filters
     ):
         """Get an individual REST resource"""
-        headers = headers or {}
-        headers.update(self.session.headers)
-
         postfix = "/{}".format(extra) if extra else ""
         path = "/{}".format(cls.collection_name) if cls.collection_name else ""
         id = "/{}".format(id) if id else ""
@@ -484,9 +481,12 @@ class APIClient(json.JSONEncoder):
 
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_data.items()))
-        response = self._get_http_session(cls.api_root).get(
-            url, headers=headers, stream=stream
-        )
+
+        session = self._get_http_session(cls.api_root)
+
+        headers = headers or {}
+        headers.update(session.headers)
+        response = session.get(url, headers=headers, stream=stream)
         return _validate(response)
 
     def _get_resource(self, cls, id, **filters):
@@ -522,7 +522,7 @@ class APIClient(json.JSONEncoder):
         else:
             converted_data = create_request_body(data, cls.datetime_attrs)
             headers = {"Content-Type": "application/json"}
-            headers.update(self.session.headers)
+            headers.update(session.headers)
             response = session.post(url, json=converted_data, headers=headers)
 
         result = _validate(response).json()
@@ -547,7 +547,7 @@ class APIClient(json.JSONEncoder):
                 create_request_body(datum, cls.datetime_attrs) for datum in data
             ]
             headers = {"Content-Type": "application/json"}
-            headers.update(self.session.headers)
+            headers.update(session.headers)
             response = session.post(url, json=converted_data, headers=headers)
 
         results = _validate(response).json()
