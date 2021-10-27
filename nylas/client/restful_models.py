@@ -82,7 +82,13 @@ class RestfulModel(dict):
                 obj[date_attr] = datetime.strptime(kwargs[iso_attr], "%Y-%m-%d").date()
         for dt_attr, ts_attr in cls.datetime_attrs.items():
             if kwargs.get(ts_attr):
-                obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
+                try:
+                    obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
+                except TypeError:
+                    # If the datetime format is in the format of ISO8601
+                    obj[dt_attr] = datetime.strptime(
+                        kwargs[ts_attr], "%Y-%m-%dT%H:%M:%S.%fZ"
+                    )
         for attr, value_attr_name in cls.typed_dict_attrs.items():
             obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
