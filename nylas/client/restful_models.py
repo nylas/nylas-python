@@ -37,7 +37,7 @@ class RestfulModel(dict):
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
     # us use the same code for both.
-    api_root = "n"
+    api_root = None
 
     def __init__(self, cls, api):
         self.id = None

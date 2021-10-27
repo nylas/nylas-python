@@ -430,7 +430,7 @@ class APIClient(json.JSONEncoder):
         # Is this a request for a resource under the accounts/billing/admin
         # namespace (/a)? If the latter, pass the client_secret
         # instead of the secret_token
-        if api_root == "a":
+        if api_root:
             return self.admin_session
         return self.session
 
@@ -438,11 +438,18 @@ class APIClient(json.JSONEncoder):
         # FIXME @karim: remove this interim code when we've got rid
         # of the old accounts API.
         postfix = "/{}".format(extra) if extra else ""
-        if cls.api_root != "a":
-            url = "{}/{}{}".format(self.api_server, cls.collection_name, postfix)
+        path = "/{}".format(cls.collection_name) if cls.collection_name else ""
+        if not cls.api_root:
+            url = "{server}{path}{postfix}".format(
+                server=self.api_server, path=path, postfix=postfix
+            )
         else:
-            url = "{}/a/{}/{}{}".format(
-                self.api_server, self.client_id, cls.collection_name, postfix
+            url = "{server}/{prefix}/{client_id}{path}{postfix}".format(
+                server=self.api_server,
+                prefix=cls.api_root,
+                client_id=self.client_id,
+                path=path,
+                postfix=postfix,
             )
 
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
@@ -459,9 +466,12 @@ class APIClient(json.JSONEncoder):
         headers.update(self.session.headers)
 
         postfix = "/{}".format(extra) if extra else ""
+        path = "/{}".format(cls.collection_name) if cls.collection_name else ""
         id = "/{}".format(id) if id else ""
-        if cls.api_root != "a":
-            url = "{}/{}{}{}".format(self.api_server, cls.collection_name, id, postfix)
+        if not cls.api_root:
+            url = "{server}{path}{id}{postfix}".format(
+                server=self.api_server, path=path, id=id, postfix=postfix
+            )
         else:
             url = "{}/a/{}/{}{}{}".format(
                 self.api_server, self.client_id, cls.collection_name, id, postfix
@@ -488,9 +498,15 @@ class APIClient(json.JSONEncoder):
         return response.content
 
     def _create_resource(self, cls, data, **kwargs):
+        name = "{prefix}{path}".format(
+            prefix="/{}/{}".format(cls.api_root, self.client_id)
+            if cls.api_root
+            else "",
+            path="/{}".format(cls.collection_name) if cls.collection_name else "",
+        )
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}".format(name=cls.collection_name))
+            .with_path("{name}".format(name=name))
             .set_query_params(**kwargs)
         )
 
@@ -510,9 +526,13 @@ class APIClient(json.JSONEncoder):
         return cls.create(self, **result)
 
     def _create_resources(self, cls, data):
-        url = URLObject(self.api_server).with_path(
-            "/{name}".format(name=cls.collection_name)
+        name = "{prefix}{path}".format(
+            prefix="/{}/{}".format(cls.api_root, self.client_id)
+            if cls.api_root
+            else "",
+            path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
+        url = URLObject(self.api_server).with_path("{name}".format(name=name))
         session = self._get_http_session(cls.api_root)
 
         if cls == File:
@@ -529,9 +549,15 @@ class APIClient(json.JSONEncoder):
         return [cls.create(self, **x) for x in results]
 
     def _delete_resource(self, cls, id, data=None, **kwargs):
+        name = "{prefix}{path}".format(
+            prefix="/{}/{}".format(cls.api_root, self.client_id)
+            if cls.api_root
+            else "",
+            path="/{}".format(cls.collection_name) if cls.collection_name else "",
+        )
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}/{id}".format(name=cls.collection_name, id=id))
+            .with_path("{name}/{id}".format(name=name, id=id))
             .set_query_params(**kwargs)
         )
         session = self._get_http_session(cls.api_root)
@@ -541,9 +567,15 @@ class APIClient(json.JSONEncoder):
             _validate(session.delete(url))
 
     def _update_resource(self, cls, id, data, **kwargs):
+        name = "{prefix}{path}".format(
+            prefix="/{}/{}".format(cls.api_root, self.client_id)
+            if cls.api_root
+            else "",
+            path="/{}".format(cls.collection_name) if cls.collection_name else "",
+        )
         url = (
             URLObject(self.api_server)
-            .with_path("/{name}/{id}".format(name=cls.collection_name, id=id))
+            .with_path("{name}/{id}".format(name=name, id=id))
             .set_query_params(**kwargs)
         )
 
@@ -559,15 +591,17 @@ class APIClient(json.JSONEncoder):
         """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
 
-        if cls.api_root != "a":
+        path = "/{}".format(cls.collection_name) if cls.collection_name else ""
+        if not cls.api_root:
             url_path = "/{name}/{id}/{method}".format(
                 name=cls.collection_name, id=id, method=method_name
             )
         else:
             # Management method.
-            url_path = "/a/{client_id}/{name}/{id}/{method}".format(
+            url_path = "/{prefix}/{client_id}{path}/{id}/{method}".format(
+                prefix=cls.api_root,
                 client_id=self.client_id,
-                name=cls.collection_name,
+                path=path,
                 id=id,
                 method=method_name,
             )
