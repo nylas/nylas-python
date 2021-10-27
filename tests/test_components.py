@@ -24,8 +24,12 @@ def test_components(api_client):
     assert component.public_account_id == "account-id"
     assert component.public_application_id == "application-id"
     assert component.type == "agenda"
-    assert component.created_at == datetime.strptime("2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
-    assert component.updated_at == datetime.strptime("2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+    assert component.created_at == datetime.strptime(
+        "2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
+    assert component.updated_at == datetime.strptime(
+        "2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
     assert component.public_token_id == "token-id"
 
 
@@ -39,8 +43,12 @@ def test_components(api_client):
     assert component.public_account_id == "account-id"
     assert component.public_application_id == "application-id"
     assert component.type == "agenda"
-    assert component.created_at == datetime.strptime("2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
-    assert component.updated_at == datetime.strptime("2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+    assert component.created_at == datetime.strptime(
+        "2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
+    assert component.updated_at == datetime.strptime(
+        "2021-10-22T18:02:10.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
     assert component.public_token_id == "token-id"
 
 
@@ -65,7 +73,7 @@ def test_components_as_json_read_only(api_client):
     component = blank_component(api_client)
     component.id = "test-id"
     json = component.as_json()
-    assert 'id' not in json
-    assert 'public_application_id' not in json
-    assert 'created_at' not in json
-    assert 'updated_at' not in json
+    assert "id" not in json
+    assert "public_application_id" not in json
+    assert "created_at" not in json
+    assert "updated_at" not in json

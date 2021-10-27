@@ -1305,7 +1305,7 @@ def mock_components(mocked_responses, api_url):
             "created_at": "2021-10-22T18:02:10.000Z",
             "updated_at": "2021-10-22T18:02:10.000Z",
             "accessed_at": None,
-            "public_token_id": "token-id"
+            "public_token_id": "token-id",
         },
     ]
 
