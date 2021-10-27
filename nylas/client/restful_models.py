@@ -33,6 +33,7 @@ class RestfulModel(dict):
     datetime_attrs = {}
     datetime_filter_attrs = {}
     typed_dict_attrs = {}
+    read_only_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
@@ -105,18 +106,26 @@ class RestfulModel(dict):
         # their correct form though.
         reserved_keywords = ["from", "in"]
         for attr in self.cls.attrs:
+            if attr in self.read_only_attrs:
+                continue
             if hasattr(self, attr):
                 if attr in reserved_keywords:
                     dct[attr] = getattr(self, "{}_".format(attr))
                 else:
                     dct[attr] = getattr(self, attr)
         for date_attr, iso_attr in self.cls.date_attrs.items():
+            if date_attr in self.read_only_attrs:
+                continue
             if self.get(date_attr):
                 dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
         for dt_attr, ts_attr in self.cls.datetime_attrs.items():
+            if dt_attr in self.read_only_attrs:
+                continue
             if self.get(dt_attr):
                 dct[ts_attr] = timestamp_from_dt(self[dt_attr])
         for attr, value_attr in self.cls.typed_dict_attrs.items():
+            if attr in self.read_only_attrs:
+                continue
             typed_dict = getattr(self, attr)
             if value_attr:
                 dct[attr] = []
