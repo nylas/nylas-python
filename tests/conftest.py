@@ -828,6 +828,28 @@ def mock_send_rsvp(mocked_responses, api_url, message_body):
 
 
 @pytest.fixture
+def mock_components_create_response(mocked_responses, api_url, message_body):
+    def callback(_request):
+        try:
+            payload = json.loads(_request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        payload["id"] = "cv4ei7syx10uvsxbs21ccsezf"
+        return 200, {}, json.dumps(payload)
+
+    mocked_responses.add_callback(
+        responses.POST, re.compile(api_url + "/component/*"), callback=callback
+    )
+
+    mocked_responses.add(
+        responses.PUT,
+        re.compile(api_url + "/component/*"),
+        body=json.dumps(message_body),
+    )
+
+
+@pytest.fixture
 def mock_thread_search_response(mocked_responses, api_url):
     snippet = (
         "Hey Helena, Looking forward to getting together for dinner on Friday. "
@@ -1263,6 +1285,34 @@ def mock_events(mocked_responses, api_url):
         return (200, {}, json.dumps(events))
 
     endpoint = re.compile(api_url + "/events")
+    mocked_responses.add_callback(
+        responses.GET, endpoint, content_type="application/json", callback=list_callback
+    )
+
+
+@pytest.fixture
+def mock_components(mocked_responses, api_url):
+    components = [
+        {
+            "active": True,
+            "settings": {},
+            "allowed_domains": [],
+            "id": "component-id",
+            "name": "PyTest Component",
+            "public_account_id": "account-id",
+            "public_application_id": "application-id",
+            "type": "agenda",
+            "created_at": "2021-10-22T18:02:10.000Z",
+            "updated_at": "2021-10-22T18:02:10.000Z",
+            "accessed_at": None,
+            "public_token_id": "token-id"
+        },
+    ]
+
+    def list_callback(arg=None):
+        return 200, {}, json.dumps(components)
+
+    endpoint = re.compile(api_url + "/component/*")
     mocked_responses.add_callback(
         responses.GET, endpoint, content_type="application/json", callback=list_callback
     )
