@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Add support for Component CRUD
+
 v5.2.0
 ----------------
 * Add support for calendar consecutive availability

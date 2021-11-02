@@ -110,7 +110,7 @@ def mocked_responses():
 
 @pytest.fixture
 def mock_save_draft(mocked_responses, api_url):
-    save_endpoint = re.compile(api_url + "/drafts/")
+    save_endpoint = re.compile(api_url + "/drafts")
     response_body = json.dumps(
         {"id": "4dl0ni6vxomazo73r5oydo16k", "version": "4dw0ni6txomazo33r5ozdo16j"}
     )
@@ -641,7 +641,7 @@ def mock_draft_saved_response(mocked_responses, api_url):
 
     mocked_responses.add_callback(
         responses.POST,
-        api_url + "/drafts/",
+        api_url + "/drafts",
         content_type="application/json",
         callback=create_callback,
     )
@@ -699,7 +699,7 @@ def mock_draft_sent_response(mocked_responses, api_url):
 
     mocked_responses.add_callback(
         responses.POST,
-        api_url + "/send/",
+        api_url + "/send",
         callback=callback,
         content_type="application/json",
     )
@@ -714,7 +714,7 @@ def mock_draft_send_unsaved_response(mocked_responses, api_url):
 
     mocked_responses.add_callback(
         responses.POST,
-        api_url + "/send/",
+        api_url + "/send",
         callback=callback,
         content_type="application/json",
     )
@@ -771,7 +771,7 @@ def mock_files(mocked_responses, api_url, account_id):
         return (200, {}, json.dumps(body))
 
     mocked_responses.add_callback(
-        responses.POST, api_url + "/files/", callback=create_callback
+        responses.POST, api_url + "/files", callback=create_callback
     )
 
 
@@ -787,7 +787,7 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
         return 200, {}, json.dumps(payload)
 
     mocked_responses.add_callback(
-        responses.POST, api_url + "/events/", callback=callback
+        responses.POST, api_url + "/events", callback=callback
     )
 
     put_body = {"title": "loaded from JSON", "ignored": "ignored"}
@@ -813,7 +813,7 @@ def mock_event_create_response_with_limits(mocked_responses, api_url, message_bo
 def mock_event_create_notify_response(mocked_responses, api_url, message_body):
     mocked_responses.add(
         responses.POST,
-        api_url + "/events/?notify_participants=true&other_param=1",
+        api_url + "/events?notify_participants=true&other_param=1",
         body=json.dumps(message_body),
     )
 
@@ -823,6 +823,28 @@ def mock_send_rsvp(mocked_responses, api_url, message_body):
     mocked_responses.add(
         responses.POST,
         re.compile(api_url + "/send-rsvp"),
+        body=json.dumps(message_body),
+    )
+
+
+@pytest.fixture
+def mock_components_create_response(mocked_responses, api_url, message_body):
+    def callback(_request):
+        try:
+            payload = json.loads(_request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        payload["id"] = "cv4ei7syx10uvsxbs21ccsezf"
+        return 200, {}, json.dumps(payload)
+
+    mocked_responses.add_callback(
+        responses.POST, re.compile(api_url + "/component/*"), callback=callback
+    )
+
+    mocked_responses.add(
+        responses.PUT,
+        re.compile(api_url + "/component/*"),
         body=json.dumps(message_body),
     )
 
@@ -1094,7 +1116,7 @@ def mock_contacts(mocked_responses, account_id, api_url):
     )
     mocked_responses.add_callback(
         responses.POST,
-        api_url + "/contacts/",
+        api_url + "/contacts",
         content_type="application/json",
         callback=create_callback,
     )
@@ -1263,6 +1285,34 @@ def mock_events(mocked_responses, api_url):
         return (200, {}, json.dumps(events))
 
     endpoint = re.compile(api_url + "/events")
+    mocked_responses.add_callback(
+        responses.GET, endpoint, content_type="application/json", callback=list_callback
+    )
+
+
+@pytest.fixture
+def mock_components(mocked_responses, api_url):
+    components = [
+        {
+            "active": True,
+            "settings": {},
+            "allowed_domains": [],
+            "id": "component-id",
+            "name": "PyTest Component",
+            "public_account_id": "account-id",
+            "public_application_id": "application-id",
+            "type": "agenda",
+            "created_at": "2021-10-22T18:02:10.000Z",
+            "updated_at": "2021-10-22T18:02:10.000Z",
+            "accessed_at": None,
+            "public_token_id": "token-id",
+        },
+    ]
+
+    def list_callback(arg=None):
+        return 200, {}, json.dumps(components)
+
+    endpoint = re.compile(api_url + "/component/*")
     mocked_responses.add_callback(
         responses.GET, endpoint, content_type="application/json", callback=list_callback
     )

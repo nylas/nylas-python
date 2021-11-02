@@ -187,7 +187,7 @@ def test_create_resources(mocked_responses, api_client, api_url):
     ]
     mocked_responses.add(
         responses.POST,
-        api_url + "/contacts/",
+        api_url + "/contacts",
         content_type="application/json",
         status=200,
         body=json.dumps(contacts_data),
@@ -222,7 +222,7 @@ def test_201_response(mocked_responses, api_client, api_url):
     contact_data = {"id": 1, "given_name": "Charlie", "surname": "Bucket"}
     mocked_responses.add(
         responses.POST,
-        api_url + "/contacts/",
+        api_url + "/contacts",
         content_type="application/json",
         status=201,  # This HTTP status still indicates success,
         # even though it's not 200.
