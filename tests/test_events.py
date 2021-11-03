@@ -533,7 +533,7 @@ def test_event_notifications(mocked_responses, api_client):
     event.notifications = [
         {
             "type": "email",
-            "minutes_before_event": "60",
+            "minutes_before_event": 60,
             "subject": "Test Event Notification",
             "body": "Reminding you about our meeting.",
         }
@@ -542,6 +542,6 @@ def test_event_notifications(mocked_responses, api_client):
     assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
     assert len(event.notifications) == 1
     assert event.notifications[0]["type"] == "email"
-    assert event.notifications[0]["minutes_before_event"] == "60"
+    assert event.notifications[0]["minutes_before_event"] == 60
     assert event.notifications[0]["subject"] == "Test Event Notification"
     assert event.notifications[0]["body"] == "Reminding you about our meeting."
