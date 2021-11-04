@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
-from nylas.client.errors import FileUploadError, UnSyncedError
+from nylas.client.errors import FileUploadError, UnSyncedError, NylasApiError
 from nylas.utils import timestamp_from_dt
 
 # pylint: disable=attribute-defined-outside-init
@@ -596,7 +596,8 @@ class Contact(NylasAPIObject):
         response = self.api._get_resource_raw(
             Contact, self.id, extra="picture", stream=True
         )
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise NylasApiError(response)
         return response.raw
 
 
@@ -669,7 +670,8 @@ class Event(NylasAPIObject):
             "comment": comment,
         }
         response = self.api.session.post(url, json=data)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise NylasApiError(response)
         result = response.json()
         return Event.create(self, **result)
 
