@@ -39,5 +39,5 @@ class NylasApiError(HTTPError):
                 response_json["type"],
             )
             super(NylasApiError, self).__init__(error_message, response=response)
-        except ValueError or KeyError:
+        except (ValueError, KeyError):
             super(NylasApiError, self).__init__(response.text, response=response)
