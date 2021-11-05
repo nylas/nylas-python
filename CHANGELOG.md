@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased (dev)
 ----------------
 * Add support for Component CRUD
+* Add support for Event notifications
 
 v5.2.0
 ----------------

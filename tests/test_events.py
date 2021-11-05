@@ -525,3 +525,23 @@ def test_metadata_filtering(api_client):
 
     non_existant_event = api_client.events.where(metadata_pair={"bla": "blablabla"})
     assert len(non_existant_event.all()) == 0
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_notifications(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.notifications = [
+        {
+            "type": "email",
+            "minutes_before_event": 60,
+            "subject": "Test Event Notification",
+            "body": "Reminding you about our meeting.",
+        }
+    ]
+    event.save()
+    assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert len(event.notifications) == 1
+    assert event.notifications[0]["type"] == "email"
+    assert event.notifications[0]["minutes_before_event"] == 60
+    assert event.notifications[0]["subject"] == "Test Event Notification"
+    assert event.notifications[0]["body"] == "Reminding you about our meeting."
