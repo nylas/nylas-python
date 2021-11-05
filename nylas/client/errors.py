@@ -29,6 +29,7 @@ class NylasApiError(HTTPError):
     Error class for Nylas API Errors
     This class provides more information to the user sent from the server, if present
     """
+
     def __init__(self, response):
         try:
             response_json = json.loads(response.text)
