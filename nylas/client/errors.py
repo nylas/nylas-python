@@ -30,8 +30,8 @@ class NylasApiError(HTTPError):
     This class provides more information to the user sent from the server, if present
     """
     def __init__(self, response):
-        response_json = json.loads(response.text)
-        if response_json and "message" in response_json and "type" in response_json:
+        try:
+            response_json = json.loads(response.text)
             error_message = u"%s %s. Reason: %s. Nylas Error Type: %s" % (
                 response.status_code,
                 response.reason,
@@ -39,5 +39,5 @@ class NylasApiError(HTTPError):
                 response_json["type"],
             )
             super(NylasApiError, self).__init__(error_message, response=response)
-        else:
+        except ValueError or KeyError:
             super(NylasApiError, self).__init__(response.text, response=response)
