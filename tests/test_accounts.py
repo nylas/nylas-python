@@ -87,3 +87,12 @@ def test_account_access(api_client):
     account3 = api_client.accounts.first()
     assert isinstance(account3, APIAccount)
     assert account1.as_json() == account2.as_json() == account3.as_json()
+
+
+@pytest.mark.usefixtures("mock_accounts")
+def test_account_metadata(api_client_with_client_id, monkeypatch):
+    monkeypatch.setattr(api_client_with_client_id, "is_opensource_api", lambda: False)
+    account1 = api_client_with_client_id.accounts[0]
+    account1["metadata"] = {"test": "value"}
+    account1.save()
+    assert account1["metadata"] == {"test": "value"}
