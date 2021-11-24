@@ -462,19 +462,21 @@ class APIClient(json.JSONEncoder):
         return [cls.create(self, **x) for x in results if x is not None]
 
     def _get_resource_raw(
-        self, cls, id, extra=None, headers=None, stream=False, **filters
+        self, cls, id, extra=None, headers=None, stream=False, path=None, **filters
     ):
         """Get an individual REST resource"""
         headers = headers or {}
         headers.update(self.session.headers)
 
+        if path is None:
+            path = cls.collection_name
         postfix = "/{}".format(extra) if extra else ""
         id = "/{}".format(id) if id else ""
         if cls.api_root != "a":
-            url = "{}/{}{}{}".format(self.api_server, cls.collection_name, id, postfix)
+            url = "{}/{}{}{}".format(self.api_server, path, id, postfix)
         else:
             url = "{}/a/{}/{}{}{}".format(
-                self.api_server, self.client_id, cls.collection_name, id, postfix
+                self.api_server, self.client_id, path, id, postfix
             )
 
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
@@ -550,14 +552,14 @@ class APIClient(json.JSONEncoder):
         else:
             _validate(session.delete(url))
 
-    def _put_resource(self, cls, id, data, extra=None, **kwargs):
+    def _put_resource(self, cls, id, data, extra=None, path=None, **kwargs):
+        if path is None:
+            path = cls.collection_name
         postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
             .with_path(
-                "/{name}/{id}{postfix}".format(
-                    name=cls.collection_name, id=id, postfix=postfix
-                )
+                "/{name}/{id}{postfix}".format(name=path, id=id, postfix=postfix)
             )
             .set_query_params(**kwargs)
         )
@@ -574,19 +576,18 @@ class APIClient(json.JSONEncoder):
         result = self._put_resource(cls, id, data, kwargs)
         return cls.create(self, **result)
 
-    def _call_resource_method(self, cls, id, method_name, data):
-        """POST a dictionary to an API method,
-        for example /a/.../accounts/id/upgrade"""
-
+    def _post_resource(self, cls, id, method_name, data, path=None):
+        if path is None:
+            path = cls.collection_name
         if cls.api_root != "a":
             url_path = "/{name}/{id}/{method}".format(
-                name=cls.collection_name, id=id, method=method_name
+                name=path, id=id, method=method_name
             )
         else:
             # Management method.
             url_path = "/a/{client_id}/{name}/{id}/{method}".format(
                 client_id=self.client_id,
-                name=cls.collection_name,
+                name=path,
                 id=id,
                 method=method_name,
             )
@@ -597,7 +598,13 @@ class APIClient(json.JSONEncoder):
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=converted_data)
 
-        result = _validate(response).json()
+        return _validate(response).json()
+
+    def _call_resource_method(self, cls, id, method_name, data):
+        """POST a dictionary to an API method,
+        for example /a/.../accounts/id/upgrade"""
+
+        result = self._post_resource(cls, id, method_name, data)
         return cls.create(self, **result)
 
     def _request_neural_resource(self, cls, data, path=None, method="PUT"):
