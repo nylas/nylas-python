@@ -429,6 +429,7 @@ class APIClient(json.JSONEncoder):
     def scheduler(self):
         return SchedulerRestfulModelCollection(self)
 
+    @property
     def components(self):
         return RestfulModelCollection(Component, self)
 
@@ -477,7 +478,7 @@ class APIClient(json.JSONEncoder):
     ):
         """Get an individual REST resource"""
         if path is None:
-          path = cls.collection_name
+            path = cls.collection_name
         postfix = "/{}".format(extra) if extra else ""
         path = "/{}".format(path) if path else ""
         id = "/{}".format(id) if id else ""
@@ -596,18 +597,11 @@ class APIClient(json.JSONEncoder):
             else "",
             path="/{}".format(path) if path else "",
         )
-        url = (
-            URLObject(self.api_server)
-            .with_path("{name}/{id}".format(name=name, id=id))      
-              
-        
-        
+
         postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-            .with_path(
-                "/{name}/{id}{postfix}".format(name=path, id=id, postfix=postfix)
-            )
+            .with_path("{name}/{id}{postfix}".format(name=name, id=id, postfix=postfix))
             .set_query_params(**kwargs)
         )
 
@@ -628,7 +622,7 @@ class APIClient(json.JSONEncoder):
             path = cls.collection_name
         path = "/{}".format(path) if path else ""
         if not cls.api_root:
-            url_path = "/{name}/{id}/{method}".format(
+            url_path = "{name}/{id}/{method}".format(
                 name=path, id=id, method=method_name
             )
         else:
