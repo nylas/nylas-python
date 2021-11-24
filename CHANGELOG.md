@@ -4,6 +4,9 @@ nylas-python Changelog
 Unreleased (dev)
 ----------------
 * Add support for Scheduler API
+* Add support for Event notifications
+* Add support for Component CRUD
+* Improve error details returned from the API
 
 v5.2.0
 ----------------

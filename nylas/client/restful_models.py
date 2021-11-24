@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
-from nylas.client.errors import FileUploadError, UnSyncedError
+from nylas.client.errors import FileUploadError, UnSyncedError, NylasApiError
 from nylas.utils import timestamp_from_dt
 
 # pylint: disable=attribute-defined-outside-init
@@ -33,11 +33,12 @@ class RestfulModel(dict):
     datetime_attrs = {}
     datetime_filter_attrs = {}
     typed_dict_attrs = {}
+    read_only_attrs = {}
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
     # us use the same code for both.
-    api_root = "n"
+    api_root = None
 
     def __init__(self, cls, api):
         self.id = None
@@ -82,7 +83,13 @@ class RestfulModel(dict):
                 obj[date_attr] = datetime.strptime(kwargs[iso_attr], "%Y-%m-%d").date()
         for dt_attr, ts_attr in cls.datetime_attrs.items():
             if kwargs.get(ts_attr):
-                obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
+                try:
+                    obj[dt_attr] = datetime.utcfromtimestamp(kwargs[ts_attr])
+                except TypeError:
+                    # If the datetime format is in the format of ISO8601
+                    obj[dt_attr] = datetime.strptime(
+                        kwargs[ts_attr], "%Y-%m-%dT%H:%M:%S.%fZ"
+                    )
         for attr, value_attr_name in cls.typed_dict_attrs.items():
             obj[attr] = typed_dict_attr(kwargs.get(attr, []), attr_name=value_attr_name)
 
@@ -99,18 +106,26 @@ class RestfulModel(dict):
         # their correct form though.
         reserved_keywords = ["from", "in"]
         for attr in self.cls.attrs:
+            if attr in self.read_only_attrs:
+                continue
             if hasattr(self, attr):
                 if attr in reserved_keywords:
                     dct[attr] = getattr(self, "{}_".format(attr))
                 else:
                     dct[attr] = getattr(self, attr)
         for date_attr, iso_attr in self.cls.date_attrs.items():
+            if date_attr in self.read_only_attrs:
+                continue
             if self.get(date_attr):
                 dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
         for dt_attr, ts_attr in self.cls.datetime_attrs.items():
+            if dt_attr in self.read_only_attrs:
+                continue
             if self.get(dt_attr):
                 dct[ts_attr] = timestamp_from_dt(self[dt_attr])
         for attr, value_attr in self.cls.typed_dict_attrs.items():
+            if attr in self.read_only_attrs:
+                continue
             typed_dict = getattr(self, attr)
             if value_attr:
                 dct[attr] = []
@@ -581,7 +596,8 @@ class Contact(NylasAPIObject):
         response = self.api._get_resource_raw(
             Contact, self.id, extra="picture", stream=True
         )
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise NylasApiError(response)
         return response.raw
 
 
@@ -619,6 +635,7 @@ class Event(NylasAPIObject):
         "message_id",
         "ical_uid",
         "metadata",
+        "notifications",
     ]
     datetime_attrs = {"original_start_at": "original_start_time"}
     collection_name = "events"
@@ -654,7 +671,8 @@ class Event(NylasAPIObject):
             "comment": comment,
         }
         response = self.api.session.post(url, json=data)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise NylasApiError(response)
         result = response.json()
         return Event.create(self, **result)
 
@@ -729,6 +747,41 @@ class Scheduler(NylasAPIObject):
             Scheduler, self.id, data, extra="upload-image"
         )
         return response
+
+
+class Component(NylasAPIObject):
+    attrs = [
+        "id",
+        "account_id",
+        "name",
+        "type",
+        "action",
+        "active",
+        "settings",
+        "public_account_id",
+        "public_token_id",
+        "public_application_id",
+        "access_token",
+        "allowed_domains",
+    ]
+    datetime_attrs = {
+        "created_at": "created_at",
+        "updated_at": "updated_at",
+    }
+    read_only_attrs = {"id", "public_application_id", "created_at", "updated_at"}
+
+    collection_name = None
+    api_root = "component"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, RoomResource, api)
+
+    def as_json(self):
+        dct = NylasAPIObject.as_json(self)
+        # "type" cannot be modified after created
+        if self.id:
+            dct.pop("type")
+        return dct
 
 
 class Namespace(NylasAPIObject):
