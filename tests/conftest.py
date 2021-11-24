@@ -1350,11 +1350,23 @@ def mock_schedulers(mocked_responses, api_url):
     def list_callback(arg=None):
         return 200, {}, json.dumps(scheduler_list)
 
+    def return_one_callback(arg=None):
+        return 200, {}, json.dumps(scheduler_list[0])
+
+    info_endpoint = re.compile("https://api.schedule.nylas.com/schedule/.*/info")
+
     mocked_responses.add_callback(
         responses.GET,
         "https://api.schedule.nylas.com/manage/pages",
         content_type="application/json",
         callback=list_callback,
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        info_endpoint,
+        content_type="application/json",
+        callback=return_one_callback,
     )
 
 
@@ -1409,6 +1421,114 @@ def mock_scheduler_upload_image(mocked_responses, api_url):
         calendars_url,
         content_type="application/json",
         callback=list_callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_provider_availability(mocked_responses, api_url):
+    response = {
+        "busy": [
+            {
+                "end": 1636731958,
+                "start": 1636728347,
+            },
+        ],
+        "email": "test@example.com",
+        "name": "John Doe",
+    }
+
+    def callback(arg=None):
+        return 200, {}, json.dumps(response)
+
+    provider_url = re.compile(
+        "https://api.schedule.nylas.com/schedule/availability/(google|o365)"
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        provider_url,
+        callback=callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_timeslots(mocked_responses, api_url):
+    scheduler_time_slots = [
+        {
+            "account_id": "test-account-id",
+            "calendar_id": "test-calendar-id",
+            "emails": ["test@example.com"],
+            "end": 1636731958,
+            "host_name": "www.hostname.com",
+            "start": 1636728347,
+        },
+    ]
+
+    booking_confirmation = {
+        "account_id": "test-account-id",
+        "additional_field_values": {
+            "test": "yes",
+        },
+        "calendar_event_id": "test-event-id",
+        "calendar_id": "test-calendar-id",
+        "edit_hash": "test-edit-hash",
+        "end_time": 1636731958,
+        "id": 123,
+        "is_confirmed": False,
+        "location": "Earth",
+        "recipient_email": "recipient@example.com",
+        "recipient_locale": "en_US",
+        "recipient_name": "Recipient Doe",
+        "recipient_tz": "America/New_York",
+        "start_time": 1636728347,
+        "title": "Test Booking",
+    }
+
+    cancel_payload = {
+        "success": True,
+    }
+
+    def list_timeslots(arg=None):
+        return 200, {}, json.dumps(scheduler_time_slots)
+
+    def book_timeslot(arg=None):
+        return 200, {}, json.dumps(booking_confirmation)
+
+    def confirm_booking(arg=None):
+        booking_confirmation["is_confirmed"] = True
+        return 200, {}, json.dumps(booking_confirmation)
+
+    def cancel_booking(arg=None):
+        return 200, {}, json.dumps(cancel_payload)
+
+    timeslots_url = re.compile("https://api.schedule.nylas.com/schedule/.*/timeslots")
+
+    confirm_url = re.compile("https://api.schedule.nylas.com/schedule/.*/.*/confirm")
+
+    cancel_url = re.compile("https://api.schedule.nylas.com/schedule/.*/.*/cancel")
+
+    mocked_responses.add_callback(
+        responses.GET,
+        timeslots_url,
+        callback=list_timeslots,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        timeslots_url,
+        callback=book_timeslot,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        confirm_url,
+        callback=confirm_booking,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        cancel_url,
+        callback=cancel_booking,
     )
 
 
