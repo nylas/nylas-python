@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import copy
 import sys
 from os import environ
 from base64 import b64encode
@@ -29,9 +28,11 @@ from nylas.client.restful_models import (
     Folder,
     Label,
     Draft,
-    Scheduler,
 )
 from nylas.client.neural_api_models import Neural
+from nylas.client.scheduler_restful_model_collection import (
+    SchedulerRestfulModelCollection,
+)
 from nylas.utils import timestamp_from_dt, create_request_body
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
@@ -423,10 +424,7 @@ class APIClient(json.JSONEncoder):
 
     @property
     def scheduler(self):
-        # Make a copy of the API as we need to change the base url for Scheduler calls
-        api = copy.copy(self)
-        api.api_server = "https://api.schedule.nylas.com"
-        return RestfulModelCollection(Scheduler, api)
+        return SchedulerRestfulModelCollection(self)
 
     @property
     def neural(self):
