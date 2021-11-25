@@ -5,6 +5,7 @@ Unreleased (dev)
 ----------------
 * Add support for Event notifications
 * Add support for Component CRUD
+* Add metadata support for `Calendar`, `Message` and `Account`
 * Improve error details returned from the API
 
 v5.2.0

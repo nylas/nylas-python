@@ -173,6 +173,13 @@ def mock_accounts(mocked_responses, api_url, account_id, client_id):
             return (200, {}, json.dumps([]))
         return (200, {}, json.dumps(accounts))
 
+    def update_callback(request):
+        response = accounts[0]
+        payload = json.loads(request.body)
+        if payload["metadata"]:
+            response["metadata"] = payload["metadata"]
+        return 200, {}, json.dumps(response)
+
     url_re = "{base}(/a/{client_id})?/accounts/?".format(
         base=api_url, client_id=client_id
     )
@@ -181,6 +188,12 @@ def mock_accounts(mocked_responses, api_url, account_id, client_id):
         re.compile(url_re),
         content_type="application/json",
         callback=list_callback,
+    )
+    mocked_responses.add_callback(
+        responses.PUT,
+        re.compile(url_re),
+        content_type="application/json",
+        callback=update_callback,
     )
 
 
@@ -391,6 +404,8 @@ def mock_message(mocked_responses, api_url, account_id):
                 for l in payload["labels"]
             ]
             base_msg["labels"] = labels
+        if "metadata" in payload:
+            base_msg["metadata"] = payload["metadata"]
         return (200, {}, json.dumps(base_msg))
 
     endpoint = re.compile(api_url + "/messages/1234")

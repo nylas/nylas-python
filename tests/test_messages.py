@@ -144,3 +144,11 @@ def test_filter_messages_ts(mocked_responses, api_client):
     request = mocked_responses.calls[0].request
     url = URLObject(request.url)
     assert url.query_dict["received_before"] == "1275350400"
+
+
+@pytest.mark.usefixtures("mock_message", "mock_messages")
+def test_message_metadata(mocked_responses, api_client):
+    message = api_client.messages.first()
+    message["metadata"] = {"test": "value"}
+    message.save()
+    assert message.metadata == {"test": "value"}

@@ -184,6 +184,7 @@ class Message(NylasAPIObject):
         "to",
         "unread",
         "starred",
+        "metadata",
         "_folder",
         "_labels",
         "headers",
@@ -602,7 +603,15 @@ class Contact(NylasAPIObject):
 
 
 class Calendar(NylasAPIObject):
-    attrs = ["id", "account_id", "name", "description", "read_only", "object"]
+    attrs = [
+        "id",
+        "account_id",
+        "name",
+        "description",
+        "metadata",
+        "read_only",
+        "object",
+    ]
     collection_name = "calendars"
 
     def __init__(self, api):
@@ -773,6 +782,7 @@ class Account(NylasAPIObject):
         "provider",
         "sync_state",
         "trial",
+        "metadata",
     ]
 
     collection_name = "accounts"
@@ -781,7 +791,7 @@ class Account(NylasAPIObject):
         NylasAPIObject.__init__(self, Account, api)
 
     def as_json(self):
-        dct = NylasAPIObject.as_json(self)
+        dct = {"metadata": self.metadata}
         return dct
 
     def upgrade(self):
