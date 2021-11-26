@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import sys
 from os import environ
 from base64 import b64encode
@@ -31,6 +32,9 @@ from nylas.client.restful_models import (
     Component,
 )
 from nylas.client.neural_api_models import Neural
+from nylas.client.scheduler_restful_model_collection import (
+    SchedulerRestfulModelCollection,
+)
 from nylas.utils import timestamp_from_dt, create_request_body
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
@@ -422,6 +426,10 @@ class APIClient(json.JSONEncoder):
         return RestfulModelCollection(Calendar, self)
 
     @property
+    def scheduler(self):
+        return SchedulerRestfulModelCollection(self)
+
+    @property
     def components(self):
         return RestfulModelCollection(Component, self)
 
@@ -466,11 +474,13 @@ class APIClient(json.JSONEncoder):
         return [cls.create(self, **x) for x in results if x is not None]
 
     def _get_resource_raw(
-        self, cls, id, extra=None, headers=None, stream=False, **filters
+        self, cls, id, extra=None, headers=None, stream=False, path=None, **filters
     ):
         """Get an individual REST resource"""
+        if path is None:
+            path = cls.collection_name
         postfix = "/{}".format(extra) if extra else ""
-        path = "/{}".format(cls.collection_name) if cls.collection_name else ""
+        path = "/{}".format(path) if path else ""
         id = "/{}".format(id) if id else ""
         if not cls.api_root:
             url = "{server}{path}{id}{postfix}".format(
@@ -578,16 +588,20 @@ class APIClient(json.JSONEncoder):
         else:
             _validate(session.delete(url))
 
-    def _update_resource(self, cls, id, data, **kwargs):
+    def _put_resource(self, cls, id, data, extra=None, path=None, **kwargs):
+        if path is None:
+            path = cls.collection_name
         name = "{prefix}{path}".format(
             prefix="/{}/{}".format(cls.api_root, self.client_id)
             if cls.api_root
             else "",
-            path="/{}".format(cls.collection_name) if cls.collection_name else "",
+            path="/{}".format(path) if path else "",
         )
+
+        postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-            .with_path("{name}/{id}".format(name=name, id=id))
+            .with_path("{name}/{id}{postfix}".format(name=name, id=id, postfix=postfix))
             .set_query_params(**kwargs)
         )
 
@@ -596,17 +610,20 @@ class APIClient(json.JSONEncoder):
         converted_data = create_request_body(data, cls.datetime_attrs)
         response = session.put(url, json=converted_data)
 
-        result = _validate(response).json()
+        result = _validate(response)
+        return result.json()
+
+    def _update_resource(self, cls, id, data, **kwargs):
+        result = self._put_resource(cls, id, data, kwargs)
         return cls.create(self, **result)
 
-    def _call_resource_method(self, cls, id, method_name, data):
-        """POST a dictionary to an API method,
-        for example /a/.../accounts/id/upgrade"""
-
-        path = "/{}".format(cls.collection_name) if cls.collection_name else ""
+    def _post_resource(self, cls, id, method_name, data, path=None):
+        if path is None:
+            path = cls.collection_name
+        path = "/{}".format(path) if path else ""
         if not cls.api_root:
-            url_path = "/{name}/{id}/{method}".format(
-                name=cls.collection_name, id=id, method=method_name
+            url_path = "{name}/{id}/{method}".format(
+                name=path, id=id, method=method_name
             )
         else:
             # Management method.
@@ -624,7 +641,13 @@ class APIClient(json.JSONEncoder):
         session = self._get_http_session(cls.api_root)
         response = session.post(url, json=converted_data)
 
-        result = _validate(response).json()
+        return _validate(response).json()
+
+    def _call_resource_method(self, cls, id, method_name, data):
+        """POST a dictionary to an API method,
+        for example /a/.../accounts/id/upgrade"""
+
+        result = self._post_resource(cls, id, method_name, data)
         return cls.create(self, **result)
 
     def _request_neural_resource(self, cls, data, path=None, method="PUT"):

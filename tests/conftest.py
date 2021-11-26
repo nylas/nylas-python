@@ -814,6 +814,28 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
 
 
 @pytest.fixture
+def mock_scheduler_create_response(mocked_responses, api_url, message_body):
+    def callback(_request):
+        try:
+            payload = json.loads(_request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        payload["id"] = "cv4ei7syx10uvsxbs21ccsezf"
+        return 200, {}, json.dumps(payload)
+
+    mocked_responses.add_callback(
+        responses.POST, "https://api.schedule.nylas.com/manage/pages", callback=callback
+    )
+
+    mocked_responses.add(
+        responses.PUT,
+        "https://api.schedule.nylas.com/manage/pages/cv4ei7syx10uvsxbs21ccsezf",
+        body=json.dumps(message_body),
+    )
+
+
+@pytest.fixture
 def mock_event_create_response_with_limits(mocked_responses, api_url, message_body):
     def callback(request):
         url = URLObject(request.url)
@@ -1302,6 +1324,248 @@ def mock_events(mocked_responses, api_url):
     endpoint = re.compile(api_url + "/events")
     mocked_responses.add_callback(
         responses.GET, endpoint, content_type="application/json", callback=list_callback
+    )
+
+
+@pytest.fixture
+def mock_schedulers(mocked_responses, api_url):
+    scheduler_list = [
+        {
+            "app_client_id": "test-client-id",
+            "app_organization_id": 12345,
+            "config": {
+                "appearance": {
+                    "color": "#0068D3",
+                    "company_name": "",
+                    "logo": "",
+                    "show_autoschedule": "true",
+                    "show_nylas_branding": "false",
+                    "show_timezone_options": "true",
+                    "show_week_view": "true",
+                    "submit_text": "Submit",
+                },
+                "locale": "en",
+                "reminders": [],
+                "timezone": "America/Los_Angeles",
+            },
+            "created_at": "2021-10-22",
+            "edit_token": "test-edit-token-1",
+            "id": 90210,
+            "modified_at": "2021-10-22",
+            "name": "test-1",
+            "slug": "test1",
+        },
+        {
+            "app_client_id": "test-client-id",
+            "app_organization_id": 12345,
+            "config": {
+                "calendar_ids": {
+                    "test-calendar-id": {
+                        "availability": ["availability-id"],
+                        "booking": "booking-id",
+                    }
+                },
+                "event": {
+                    "capacity": -1,
+                    "duration": 45,
+                    "location": "Location TBD",
+                    "title": "test-event",
+                },
+                "locale": "en",
+                "reminders": [],
+                "timezone": "America/Los_Angeles",
+            },
+            "created_at": "2021-10-22",
+            "edit_token": "test-edit-token-2",
+            "id": 90211,
+            "modified_at": "2021-10-22",
+            "name": "test-2",
+            "slug": "test2",
+        },
+    ]
+
+    def list_callback(arg=None):
+        return 200, {}, json.dumps(scheduler_list)
+
+    def return_one_callback(arg=None):
+        return 200, {}, json.dumps(scheduler_list[0])
+
+    info_endpoint = re.compile("https://api.schedule.nylas.com/schedule/.*/info")
+
+    mocked_responses.add_callback(
+        responses.GET,
+        "https://api.schedule.nylas.com/manage/pages",
+        content_type="application/json",
+        callback=list_callback,
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        info_endpoint,
+        content_type="application/json",
+        callback=return_one_callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_get_available_calendars(mocked_responses, api_url):
+    calendars = [
+        {
+            "calendars": [
+                {"id": "calendar-id", "name": "Emailed events", "read_only": "true"},
+            ],
+            "email": "swag@nylas.com",
+            "id": "scheduler-id",
+            "name": "Python Tester",
+        }
+    ]
+
+    def list_callback(arg=None):
+        return 200, {}, json.dumps(calendars)
+
+    calendars_url = "https://api.schedule.nylas.com/manage/pages/{id}/calendars".format(
+        id="cv4ei7syx10uvsxbs21ccsezf"
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        calendars_url,
+        content_type="application/json",
+        callback=list_callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_upload_image(mocked_responses, api_url):
+    upload = {
+        "filename": "test.png",
+        "originalFilename": "test.png",
+        "publicUrl": "https://public.nylas.com/test.png",
+        "signedUrl": "https://signed.nylas.com/test.png",
+    }
+
+    def list_callback(arg=None):
+        return 200, {}, json.dumps(upload)
+
+    calendars_url = (
+        "https://api.schedule.nylas.com/manage/pages/{id}/upload-image".format(
+            id="cv4ei7syx10uvsxbs21ccsezf"
+        )
+    )
+
+    mocked_responses.add_callback(
+        responses.PUT,
+        calendars_url,
+        content_type="application/json",
+        callback=list_callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_provider_availability(mocked_responses, api_url):
+    response = {
+        "busy": [
+            {
+                "end": 1636731958,
+                "start": 1636728347,
+            },
+        ],
+        "email": "test@example.com",
+        "name": "John Doe",
+    }
+
+    def callback(arg=None):
+        return 200, {}, json.dumps(response)
+
+    provider_url = re.compile(
+        "https://api.schedule.nylas.com/schedule/availability/(google|o365)"
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        provider_url,
+        callback=callback,
+    )
+
+
+@pytest.fixture
+def mock_scheduler_timeslots(mocked_responses, api_url):
+    scheduler_time_slots = [
+        {
+            "account_id": "test-account-id",
+            "calendar_id": "test-calendar-id",
+            "emails": ["test@example.com"],
+            "end": 1636731958,
+            "host_name": "www.hostname.com",
+            "start": 1636728347,
+        },
+    ]
+
+    booking_confirmation = {
+        "account_id": "test-account-id",
+        "additional_field_values": {
+            "test": "yes",
+        },
+        "calendar_event_id": "test-event-id",
+        "calendar_id": "test-calendar-id",
+        "edit_hash": "test-edit-hash",
+        "end_time": 1636731958,
+        "id": 123,
+        "is_confirmed": False,
+        "location": "Earth",
+        "recipient_email": "recipient@example.com",
+        "recipient_locale": "en_US",
+        "recipient_name": "Recipient Doe",
+        "recipient_tz": "America/New_York",
+        "start_time": 1636728347,
+        "title": "Test Booking",
+    }
+
+    cancel_payload = {
+        "success": True,
+    }
+
+    def list_timeslots(arg=None):
+        return 200, {}, json.dumps(scheduler_time_slots)
+
+    def book_timeslot(arg=None):
+        return 200, {}, json.dumps(booking_confirmation)
+
+    def confirm_booking(arg=None):
+        booking_confirmation["is_confirmed"] = True
+        return 200, {}, json.dumps(booking_confirmation)
+
+    def cancel_booking(arg=None):
+        return 200, {}, json.dumps(cancel_payload)
+
+    timeslots_url = re.compile("https://api.schedule.nylas.com/schedule/.*/timeslots")
+
+    confirm_url = re.compile("https://api.schedule.nylas.com/schedule/.*/.*/confirm")
+
+    cancel_url = re.compile("https://api.schedule.nylas.com/schedule/.*/.*/cancel")
+
+    mocked_responses.add_callback(
+        responses.GET,
+        timeslots_url,
+        callback=list_timeslots,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        timeslots_url,
+        callback=book_timeslot,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        confirm_url,
+        callback=confirm_booking,
+    )
+
+    mocked_responses.add_callback(
+        responses.POST,
+        cancel_url,
+        callback=cancel_booking,
     )
 
 
