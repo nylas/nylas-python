@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Fix bug where updating an Event results in an API error
+
 v5.3.0
 ----------------
 * Add support for Scheduler API
