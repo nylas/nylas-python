@@ -181,6 +181,7 @@ class Message(NylasAPIObject):
         "starred",
         "subject",
         "thread_id",
+        "job_status_id",
         "to",
         "unread",
         "starred",
@@ -284,7 +285,7 @@ class Message(NylasAPIObject):
 
 
 class Folder(NylasAPIObject):
-    attrs = ["id", "display_name", "name", "object", "account_id"]
+    attrs = ["id", "display_name", "name", "object", "account_id", "job_status_id"]
     collection_name = "folders"
 
     def __init__(self, api):
@@ -300,7 +301,7 @@ class Folder(NylasAPIObject):
 
 
 class Label(NylasAPIObject):
-    attrs = ["id", "display_name", "name", "object", "account_id"]
+    attrs = ["id", "display_name", "name", "object", "account_id", "job_status_id"]
     collection_name = "labels"
 
     def __init__(self, api):
@@ -465,6 +466,7 @@ class Draft(Message):
         "subject",
         "thread_id",
         "to",
+        "job_status_id",
         "unread",
         "version",
         "file_ids",
@@ -572,6 +574,7 @@ class Contact(NylasAPIObject):
         "nickname",
         "company_name",
         "job_title",
+        "job_status_id",
         "manager_name",
         "office_location",
         "notes",
@@ -608,6 +611,7 @@ class Calendar(NylasAPIObject):
         "account_id",
         "name",
         "description",
+        "job_status_id"
         "metadata",
         "read_only",
         "object",
@@ -638,6 +642,7 @@ class Event(NylasAPIObject):
         "recurrence",
         "status",
         "master_event_id",
+        "job_status_id",
         "owner",
         "original_start_time",
         "object",
