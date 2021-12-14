@@ -611,7 +611,7 @@ class Calendar(NylasAPIObject):
         "account_id",
         "name",
         "description",
-        "job_status_id"
+        "job_status_id",
         "metadata",
         "read_only",
         "object",
@@ -718,6 +718,26 @@ class RoomResource(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, RoomResource, api)
+
+
+class JobStatus(NylasAPIObject):
+    attrs = [
+        "id",
+        "account_id",
+        "job_status_id",
+        "action",
+        "object",
+        "status",
+        "original_data",
+    ]
+    datetime_attrs = {"created_at": "created_at"}
+    collection_name = "job-statuses"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, JobStatus, api)
+
+    def is_successful(self):
+        return self.status == "successful"
 
 
 class Scheduler(NylasAPIObject):
