@@ -58,6 +58,7 @@ class RestfulModel(dict):
             object_type
             and object_type != cls_object_type
             and object_type != "account"
+            and cls_object_type != "jobstatus"
             and not _is_subclass(cls, object_type)
         ):
             # We were given a specific object type and we're trying to
@@ -65,6 +66,8 @@ class RestfulModel(dict):
             # and labels API.)
             # We need a special case for accounts because the /accounts API
             # is different between the open source and hosted API.
+            # And a special case for job status because the object refers to
+            # the type of objects' job status
             return
         obj = cls(api)  # pylint: disable=no-value-for-parameter
         obj.cls = cls
