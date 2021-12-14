@@ -1640,7 +1640,7 @@ def mock_job_statuses(mocked_responses, api_url):
             "id": "test_id",
             "job_status_id": "test_job_status_id",
             "object": "message",
-            "status": "successful"
+            "status": "successful",
         },
         {
             "account_id": "test_account_id",
@@ -1649,7 +1649,7 @@ def mock_job_statuses(mocked_responses, api_url):
             "id": "test_id_2",
             "job_status_id": "test_job_status_id_2",
             "object": "event",
-            "status": "successful"
+            "status": "successful",
         },
     ]
 
