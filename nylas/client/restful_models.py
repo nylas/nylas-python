@@ -617,6 +617,7 @@ class Calendar(NylasAPIObject):
         "job_status_id",
         "metadata",
         "read_only",
+        "is_primary",
         "object",
     ]
     collection_name = "calendars"
