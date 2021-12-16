@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Add job status support
+
 v5.3.0
 ----------------
 * Add support for Scheduler API
