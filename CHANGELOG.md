@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased (dev)
+v5.4.0
 ----------------
 * Add job status support
 * Add `is_primary` field to Calendar
