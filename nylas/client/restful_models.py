@@ -672,6 +672,12 @@ class Event(NylasAPIObject):
             dct["when"] = dct["when"].copy()
             dct["when"].pop("object", None)
 
+        if dct.get("participants") and isinstance(dct.get("participants"), list):
+            # The status of a participant cannot be updated and, if the key is
+            # included, it will return an error from the API
+            for participant in dct.get("participants"):
+                participant.pop("status", None)
+
         return dct
 
     def rsvp(self, status, comment=None):

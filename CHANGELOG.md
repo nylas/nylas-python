@@ -5,6 +5,7 @@ Unreleased (dev)
 ----------------
 * Add job status support
 * Add `is_primary` field to Calendar
+* Fix bug where updating an Event results in an API error
 
 v5.3.0
 ----------------
