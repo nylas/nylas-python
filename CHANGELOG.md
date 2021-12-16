@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased (dev)
+----------------
+* Add `is_primary` field to Calendar
+
 v5.3.0
 ----------------
 * Add support for Scheduler API
