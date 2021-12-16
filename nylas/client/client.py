@@ -30,6 +30,7 @@ from nylas.client.restful_models import (
     Label,
     Draft,
     Component,
+    JobStatus,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
@@ -424,6 +425,10 @@ class APIClient(json.JSONEncoder):
     @property
     def calendars(self):
         return RestfulModelCollection(Calendar, self)
+
+    @property
+    def job_statuses(self):
+        return RestfulModelCollection(JobStatus, self)
 
     @property
     def scheduler(self):

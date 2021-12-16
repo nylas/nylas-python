@@ -1631,6 +1631,39 @@ def mock_resources(mocked_responses, api_url):
 
 
 @pytest.fixture
+def mock_job_statuses(mocked_responses, api_url):
+    job_status = [
+        {
+            "account_id": "test_account_id",
+            "action": "save_draft",
+            "created_at": 1622846160,
+            "id": "test_id",
+            "job_status_id": "test_job_status_id",
+            "object": "message",
+            "status": "successful",
+        },
+        {
+            "account_id": "test_account_id",
+            "action": "update_event",
+            "created_at": 1622846160,
+            "id": "test_id_2",
+            "job_status_id": "test_job_status_id_2",
+            "object": "event",
+            "status": "successful",
+        },
+    ]
+
+    endpoint = re.compile(api_url + "/job-statuses")
+    mocked_responses.add(
+        responses.GET,
+        endpoint,
+        body=json.dumps(job_status),
+        status=200,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
 def mock_account_management(mocked_responses, api_url, account_id, client_id):
     account = {
         "account_id": account_id,

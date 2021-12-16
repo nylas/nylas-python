@@ -58,6 +58,7 @@ class RestfulModel(dict):
             object_type
             and object_type != cls_object_type
             and object_type != "account"
+            and cls_object_type != "jobstatus"
             and not _is_subclass(cls, object_type)
         ):
             # We were given a specific object type and we're trying to
@@ -65,6 +66,8 @@ class RestfulModel(dict):
             # and labels API.)
             # We need a special case for accounts because the /accounts API
             # is different between the open source and hosted API.
+            # And a special case for job status because the object refers to
+            # the type of objects' job status
             return
         obj = cls(api)  # pylint: disable=no-value-for-parameter
         obj.cls = cls
@@ -181,6 +184,7 @@ class Message(NylasAPIObject):
         "starred",
         "subject",
         "thread_id",
+        "job_status_id",
         "to",
         "unread",
         "starred",
@@ -284,7 +288,7 @@ class Message(NylasAPIObject):
 
 
 class Folder(NylasAPIObject):
-    attrs = ["id", "display_name", "name", "object", "account_id"]
+    attrs = ["id", "display_name", "name", "object", "account_id", "job_status_id"]
     collection_name = "folders"
 
     def __init__(self, api):
@@ -300,7 +304,7 @@ class Folder(NylasAPIObject):
 
 
 class Label(NylasAPIObject):
-    attrs = ["id", "display_name", "name", "object", "account_id"]
+    attrs = ["id", "display_name", "name", "object", "account_id", "job_status_id"]
     collection_name = "labels"
 
     def __init__(self, api):
@@ -465,6 +469,7 @@ class Draft(Message):
         "subject",
         "thread_id",
         "to",
+        "job_status_id",
         "unread",
         "version",
         "file_ids",
@@ -572,6 +577,7 @@ class Contact(NylasAPIObject):
         "nickname",
         "company_name",
         "job_title",
+        "job_status_id",
         "manager_name",
         "office_location",
         "notes",
@@ -608,8 +614,10 @@ class Calendar(NylasAPIObject):
         "account_id",
         "name",
         "description",
+        "job_status_id",
         "metadata",
         "read_only",
+        "is_primary",
         "object",
     ]
     collection_name = "calendars"
@@ -638,6 +646,7 @@ class Event(NylasAPIObject):
         "recurrence",
         "status",
         "master_event_id",
+        "job_status_id",
         "owner",
         "original_start_time",
         "object",
@@ -719,6 +728,26 @@ class RoomResource(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, RoomResource, api)
+
+
+class JobStatus(NylasAPIObject):
+    attrs = [
+        "id",
+        "account_id",
+        "job_status_id",
+        "action",
+        "object",
+        "status",
+        "original_data",
+    ]
+    datetime_attrs = {"created_at": "created_at"}
+    collection_name = "job-statuses"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, JobStatus, api)
+
+    def is_successful(self):
+        return self.status == "successful"
 
 
 class Scheduler(NylasAPIObject):
