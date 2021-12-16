@@ -667,7 +667,7 @@ class Event(NylasAPIObject):
             # The status of a participant cannot be updated and, if the key is
             # included, it will return an error from the API
             for participant in dct.get("participants"):
-                participant.pop("status")
+                participant.pop("status", None)
 
         return dct
 
