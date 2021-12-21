@@ -1734,6 +1734,40 @@ def mock_revoke_all_tokens(mocked_responses, api_url, account_id, client_id):
 
 
 @pytest.fixture
+def mock_application_details(mocked_responses, api_url, client_id):
+    application_details_url = "{base}/a/{client_id}".format(
+        base=api_url, client_id=client_id
+    )
+
+    def modify_endpoint(request):
+        return 200, {}, json.dumps(json.loads(request.body))
+
+    mocked_responses.add(
+        responses.GET,
+        application_details_url,
+        content_type="application/json",
+        status=200,
+        body=json.dumps(
+            {
+                "application_name": "My New App Name",
+                "icon_url": "http://localhost:5555/icon.png",
+                "redirect_uris": [
+                    "http://localhost:5555/login_callback",
+                    "localhost",
+                    "https://customerA.myapplication.com/login_callback",
+                ],
+            }
+        ),
+    )
+    mocked_responses.add_callback(
+        responses.PUT,
+        application_details_url,
+        content_type="application/json",
+        callback=modify_endpoint,
+    )
+
+
+@pytest.fixture
 def mock_ip_addresses(mocked_responses, api_url, client_id):
     ip_addresses_url = "{base}/a/{client_id}/ip_addresses".format(
         base=api_url, client_id=client_id
