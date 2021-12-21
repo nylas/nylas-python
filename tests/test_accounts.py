@@ -96,3 +96,10 @@ def test_account_metadata(api_client_with_client_id, monkeypatch):
     account1["metadata"] = {"test": "value"}
     account1.save()
     assert account1["metadata"] == {"test": "value"}
+
+
+@pytest.mark.usefixtures("mock_accounts")
+def test_application_account_delete(api_client_with_client_id, monkeypatch):
+    monkeypatch.setattr(api_client_with_client_id, "is_opensource_api", lambda: False)
+    account1 = api_client_with_client_id.accounts[0]
+    api_client_with_client_id.accounts.delete(account1.id)

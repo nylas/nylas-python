@@ -180,6 +180,10 @@ def mock_accounts(mocked_responses, api_url, account_id, client_id):
             response["metadata"] = payload["metadata"]
         return 200, {}, json.dumps(response)
 
+    def delete_callback(request):
+        response = {"success": True}
+        return 200, {}, json.dumps(response)
+
     url_re = "{base}(/a/{client_id})?/accounts/?".format(
         base=api_url, client_id=client_id
     )
@@ -194,6 +198,12 @@ def mock_accounts(mocked_responses, api_url, account_id, client_id):
         re.compile(url_re),
         content_type="application/json",
         callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.DELETE,
+        re.compile(url_re),
+        content_type="application/json",
+        callback=delete_callback,
     )
 
 
@@ -322,8 +332,16 @@ def mock_folder(mocked_responses, api_url, account_id):
             folder.update(payload)
         return (200, {}, json.dumps(folder))
 
+    def delete_callback(request):
+        payload = {"successful": True}
+        return 200, {}, json.dumps(payload)
+
     mocked_responses.add_callback(
         responses.PUT, url, content_type="application/json", callback=request_callback
+    )
+
+    mocked_responses.add_callback(
+        responses.DELETE, url, content_type="application/json", callback=delete_callback
     )
 
 
