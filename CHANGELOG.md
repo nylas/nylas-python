@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Improved support for Application Details
+
 v5.4.0
 ----------------
 * Add job status support
