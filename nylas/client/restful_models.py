@@ -878,9 +878,6 @@ class Account(NylasAPIObject):
     def downgrade(self):
         return self.api._call_resource_method(self, self.account_id, "downgrade", None)
 
-    def delete(self):
-        raise NotImplementedError
-
 
 class APIAccount(NylasAPIObject):
     attrs = [

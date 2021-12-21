@@ -55,13 +55,6 @@ def test_account_upgrade(api_client, client_id):
     assert account.billing_state == "paid"
 
 
-def test_account_delete(api_client, monkeypatch):
-    monkeypatch.setattr(api_client, "is_opensource_api", lambda: False)
-    account = api_client.accounts.create()
-    with pytest.raises(NotImplementedError):
-        account.delete()
-
-
 @pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
 def test_revoke_all_tokens(api_client_with_client_id):
     assert api_client_with_client_id.access_token is not None
