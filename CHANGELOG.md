@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Fix issue where keyword arguments calling `_update_resource` were not correctly resolving to URL params
+* Improved support for Application Details
 
 v5.4.0
 ----------------

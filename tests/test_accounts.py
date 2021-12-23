@@ -55,13 +55,6 @@ def test_account_upgrade(api_client, client_id):
     assert account.billing_state == "paid"
 
 
-def test_account_delete(api_client, monkeypatch):
-    monkeypatch.setattr(api_client, "is_opensource_api", lambda: False)
-    account = api_client.accounts.create()
-    with pytest.raises(NotImplementedError):
-        account.delete()
-
-
 @pytest.mark.usefixtures("mock_revoke_all_tokens", "mock_account")
 def test_revoke_all_tokens(api_client_with_client_id):
     assert api_client_with_client_id.access_token is not None
@@ -96,3 +89,38 @@ def test_account_metadata(api_client_with_client_id, monkeypatch):
     account1["metadata"] = {"test": "value"}
     account1.save()
     assert account1["metadata"] == {"test": "value"}
+
+
+@pytest.mark.usefixtures("mock_accounts")
+def test_application_account_delete(api_client_with_client_id, monkeypatch):
+    monkeypatch.setattr(api_client_with_client_id, "is_opensource_api", lambda: False)
+    account1 = api_client_with_client_id.accounts[0]
+    api_client_with_client_id.accounts.delete(account1.id)
+
+
+@pytest.mark.usefixtures("mock_application_details")
+def test_application_details(api_client_with_client_id, monkeypatch):
+    monkeypatch.setattr(api_client_with_client_id, "is_opensource_api", lambda: False)
+    app_data = api_client_with_client_id.application_details()
+    assert app_data["application_name"] == "My New App Name"
+    assert app_data["icon_url"] == "http://localhost:5555/icon.png"
+    assert app_data["redirect_uris"] == [
+        "http://localhost:5555/login_callback",
+        "localhost",
+        "https://customerA.myapplication.com/login_callback",
+    ]
+
+
+@pytest.mark.usefixtures("mock_application_details")
+def test_update_application_details(api_client_with_client_id, monkeypatch):
+    monkeypatch.setattr(api_client_with_client_id, "is_opensource_api", lambda: False)
+    updated_data = api_client_with_client_id.update_application_details(
+        application_name="New Name",
+        icon_url="https://myurl.com/icon.png",
+        redirect_uris=["https://redirect.com"],
+    )
+    assert updated_data["application_name"] == "New Name"
+    assert updated_data["icon_url"] == "https://myurl.com/icon.png"
+    assert updated_data["redirect_uris"] == [
+        "https://redirect.com",
+    ]
