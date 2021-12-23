@@ -90,13 +90,10 @@ class APIClient(json.JSONEncoder):
         self.authorize_url = api_server + "/oauth/authorize"
         self.access_token_url = api_server + "/oauth/token"
         self.revoke_url = api_server + "/oauth/revoke"
-        self.revoke_all_url = (
-            api_server + "/a/{client_id}/accounts/{account_id}/revoke-all"
-        )
+        self.application_url = api_server + "/a/{client_id}"
+        self.revoke_all_url = self.application_url + "/accounts/{account_id}/revoke-all"
         self.ip_addresses_url = api_server + "/a/{client_id}/ip_addresses"
-        self.token_info_url = (
-            api_server + "/a/{client_id}/accounts/{account_id}/token-info"
-        )
+        self.token_info_url = self.application_url + "/accounts/{account_id}/token-info"
 
         self.client_secret = client_secret
         self.client_id = client_id
@@ -197,6 +194,31 @@ class APIClient(json.JSONEncoder):
             return True
 
         return False
+
+    def application_details(self):
+        application_details_url = self.application_url.format(client_id=self.client_id)
+        resp = self.admin_session.get(application_details_url)
+        _validate(resp).json()
+        return resp.json()
+
+    def update_application_details(
+        self, application_name=None, icon_url=None, redirect_uris=None
+    ):
+        application_details_url = self.application_url.format(client_id=self.client_id)
+        data = {}
+        if application_name is not None:
+            data["application_name"] = application_name
+        if icon_url is not None:
+            data["icon_url"] = icon_url
+        if redirect_uris is not None:
+            data["redirect_uris"] = redirect_uris
+
+        headers = {"Content-Type": "application/json"}
+        headers.update(self.admin_session.headers)
+        resp = self.admin_session.put(
+            application_details_url, json=data, headers=headers
+        )
+        return _validate(resp).json()
 
     def revoke_token(self):
         resp = self.session.post(self.revoke_url)
