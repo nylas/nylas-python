@@ -641,7 +641,7 @@ class APIClient(json.JSONEncoder):
         return result.json()
 
     def _update_resource(self, cls, id, data, **kwargs):
-        result = self._put_resource(cls, id, data, kwargs)
+        result = self._put_resource(cls, id, data, **kwargs)
         return cls.create(self, **result)
 
     def _post_resource(self, cls, id, method_name, data, path=None):
