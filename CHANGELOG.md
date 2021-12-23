@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Fix issue where keyword arguments calling `_update_resource` were not correctly resolving to URL params
+
 v5.4.0
 ----------------
 * Add job status support
