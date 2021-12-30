@@ -570,9 +570,9 @@ def test_generate_ics_no_event_id(mocked_responses, api_client):
     assert ics_request.path_url == "/events/to-ics"
     assert ics_request.method == "POST"
     assert json.loads(ics_request.body) == {
-        'calendar_id': 'calendar_id',
-        'title': 'Paris-Brest',
-        'when': {'end_time': 1409594400, 'start_time': 1409594400}
+        "calendar_id": "calendar_id",
+        "title": "Paris-Brest",
+        "when": {"end_time": 1409594400, "start_time": 1409594400},
     }
 
 
@@ -580,7 +580,9 @@ def test_generate_ics_no_event_id(mocked_responses, api_client):
 def test_generate_ics_options(mocked_responses, api_client):
     event = blank_event(api_client)
     event.save()
-    ics = event.generate_ics(ical_uid="test_uuid", method="request", prodid="test_prodid")
+    ics = event.generate_ics(
+        ical_uid="test_uuid", method="request", prodid="test_prodid"
+    )
     ics_request = mocked_responses.calls[1].request
     assert len(mocked_responses.calls) == 2
     assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
@@ -591,8 +593,8 @@ def test_generate_ics_options(mocked_responses, api_client):
         "ics_options": {
             "ical_uid": "test_uuid",
             "method": "request",
-            "prodid": "test_prodid"
-        }
+            "prodid": "test_prodid",
+        },
     }
 
 

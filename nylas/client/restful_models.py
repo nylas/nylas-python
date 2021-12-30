@@ -738,13 +738,13 @@ class Event(NylasAPIObject):
         if ics_options:
             payload["ics_options"] = ics_options
 
-        response = self.api._post_resource(
-            Event, None, "to-ics", payload
-        )
+        response = self.api._post_resource(Event, None, "to-ics", payload)
         try:
             return response["ics"]
         except KeyError:
-            raise RuntimeError("Unexpected response from the API server. Returned 200 but no 'ics' string found.")
+            raise RuntimeError(
+                "Unexpected response from the API server. Returned 200 but no 'ics' string found."
+            )
 
     def save(self, **kwargs):
         if (

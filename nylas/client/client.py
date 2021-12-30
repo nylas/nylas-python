@@ -651,9 +651,7 @@ class APIClient(json.JSONEncoder):
         id = "/{}".format(id) if id else ""
         method = "/{}".format(method_name) if method_name else ""
         if not cls.api_root:
-            url_path = "{name}{id}{method}".format(
-                name=path, id=id, method=method
-            )
+            url_path = "{name}{id}{method}".format(name=path, id=id, method=method)
         else:
             # Management method.
             url_path = "/{prefix}/{client_id}{path}{id}{method}".format(
