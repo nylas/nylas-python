@@ -711,6 +711,10 @@ class Event(NylasAPIObject):
 
         Returns:
             str: String for writing directly into an ICS file
+
+        Raises:
+            ValueError: If the event does not have calendar_id or when set
+            RuntimeError: If the server returns an object without an ics string
         """
         if not self.calendar_id or not self.when:
             raise ValueError(
@@ -737,7 +741,10 @@ class Event(NylasAPIObject):
         response = self.api._post_resource(
             Event, None, "to-ics", payload
         )
-        return response["ics"]
+        try:
+            return response["ics"]
+        except KeyError:
+            raise RuntimeError("Unexpected response from the API server. Returned 200 but no 'ics' string found.")
 
     def save(self, **kwargs):
         if (
