@@ -700,6 +700,34 @@ class Event(NylasAPIObject):
         result = response.json()
         return Event.create(self, **result)
 
+    def generate_ics(self, ics_options=None):
+        """
+        Generate an ICS file server-side, from an Event
+
+        :param ics_options: Optional configuration for the ICS file
+        :type ics_options: ICSOptions
+        :return: String for writing directly into an ICS file
+        :rtype: str
+        """
+        if not self.calendar_id or not self.when:
+            raise ValueError(
+                "Cannot generate an ICS file for an event without a Calendar ID or when set"
+            )
+
+        payload = {}
+        if self.id:
+            payload["event_id"] = self.id
+        else:
+            payload = self.as_json()
+
+        if ics_options:
+            payload["ics_options"] = ics_options.as_json()
+
+        response = self.api._post_resource(
+            Event, None, "to-ics", payload
+        )
+        return response["ics"]
+
     def save(self, **kwargs):
         if (
             self.conferencing
