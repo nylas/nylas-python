@@ -545,3 +545,79 @@ def test_event_notifications(mocked_responses, api_client):
     assert event.notifications[0]["minutes_before_event"] == 60
     assert event.notifications[0]["subject"] == "Test Event Notification"
     assert event.notifications[0]["body"] == "Reminding you about our meeting."
+
+
+@pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
+def test_generate_ics_existing_event(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.save()
+    ics = event.generate_ics()
+    ics_request = mocked_responses.calls[1].request
+    assert len(mocked_responses.calls) == 2
+    assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert ics_request.path_url == "/events/to-ics"
+    assert ics_request.method == "POST"
+    assert json.loads(ics_request.body) == {"event_id": "cv4ei7syx10uvsxbs21ccsezf"}
+    assert isinstance(ics, str)
+
+
+@pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
+def test_generate_ics_no_event_id(mocked_responses, api_client):
+    event = blank_event(api_client)
+    ics = event.generate_ics()
+    ics_request = mocked_responses.calls[0].request
+    assert len(mocked_responses.calls) == 1
+    assert event.id is None
+    assert ics_request.path_url == "/events/to-ics"
+    assert ics_request.method == "POST"
+    assert json.loads(ics_request.body) == {
+        'calendar_id': 'calendar_id',
+        'title': 'Paris-Brest',
+        'when': {'end_time': 1409594400, 'start_time': 1409594400}
+    }
+    assert isinstance(ics, str)
+
+
+@pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
+def test_generate_ics_options(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.save()
+    ics = event.generate_ics(ical_uid="test_uuid", method="request", prodid="test_prodid")
+    ics_request = mocked_responses.calls[1].request
+    assert len(mocked_responses.calls) == 2
+    assert event.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert ics_request.path_url == "/events/to-ics"
+    assert ics_request.method == "POST"
+    assert json.loads(ics_request.body) == {
+        "event_id": "cv4ei7syx10uvsxbs21ccsezf",
+        "ics_options": {
+            "ical_uid": "test_uuid",
+            "method": "request",
+            "prodid": "test_prodid"
+        }
+    }
+    assert isinstance(ics, str)
+
+
+@pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
+def test_generate_ics_no_calendar_id_throws(mocked_responses, api_client):
+    event = blank_event(api_client)
+    del event.calendar_id
+    with pytest.raises(ValueError) as exc:
+        event.generate_ics()
+
+    assert str(exc.value) == (
+        "Cannot generate an ICS file for an event without a Calendar ID or when set"
+    )
+
+
+@pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
+def test_generate_ics_no_when_throws(mocked_responses, api_client):
+    event = blank_event(api_client)
+    del event.when
+    with pytest.raises(ValueError) as exc:
+        event.generate_ics()
+
+    assert str(exc.value) == (
+        "Cannot generate an ICS file for an event without a Calendar ID or when set"
+    )

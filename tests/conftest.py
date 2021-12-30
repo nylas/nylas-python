@@ -832,6 +832,13 @@ def mock_event_create_response(mocked_responses, api_url, message_body):
 
 
 @pytest.fixture
+def mock_event_generate_ics(mocked_responses, api_url, message_body):
+    mocked_responses.add(
+        responses.POST, api_url + "/events/to-ics", body=json.dumps({"ics": ""})
+    )
+
+
+@pytest.fixture
 def mock_scheduler_create_response(mocked_responses, api_url, message_body):
     def callback(_request):
         try:
