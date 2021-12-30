@@ -558,7 +558,6 @@ def test_generate_ics_existing_event(mocked_responses, api_client):
     assert ics_request.path_url == "/events/to-ics"
     assert ics_request.method == "POST"
     assert json.loads(ics_request.body) == {"event_id": "cv4ei7syx10uvsxbs21ccsezf"}
-    assert isinstance(ics, str)
 
 
 @pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
@@ -575,7 +574,6 @@ def test_generate_ics_no_event_id(mocked_responses, api_client):
         'title': 'Paris-Brest',
         'when': {'end_time': 1409594400, 'start_time': 1409594400}
     }
-    assert isinstance(ics, str)
 
 
 @pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
@@ -596,7 +594,6 @@ def test_generate_ics_options(mocked_responses, api_client):
             "prodid": "test_prodid"
         }
     }
-    assert isinstance(ics, str)
 
 
 @pytest.mark.usefixtures("mock_event_create_response", "mock_event_generate_ics")
