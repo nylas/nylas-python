@@ -848,6 +848,20 @@ class Namespace(NylasAPIObject):
         return RestfulModelCollection(cls, self.api, self.id, **filters)
 
 
+class ICSOptions(RestfulModel):
+    attrs = [
+        "ical_uid",
+        "method",
+        "prodid",
+    ]
+
+    collection_name = None
+    api_root = None
+
+    def __init__(self):
+        RestfulModel.__init__(self, ICSOptions, None)
+
+
 class Account(NylasAPIObject):
     api_root = "a"
 
