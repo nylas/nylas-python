@@ -648,18 +648,20 @@ class APIClient(json.JSONEncoder):
         if path is None:
             path = cls.collection_name
         path = "/{}".format(path) if path else ""
+        id = "/{}".format(id) if id else ""
+        method = "/{}".format(method_name) if method_name else ""
         if not cls.api_root:
-            url_path = "{name}/{id}/{method}".format(
-                name=path, id=id, method=method_name
+            url_path = "{name}{id}{method}".format(
+                name=path, id=id, method=method
             )
         else:
             # Management method.
-            url_path = "/{prefix}/{client_id}{path}/{id}/{method}".format(
+            url_path = "/{prefix}/{client_id}{path}{id}{method}".format(
                 prefix=cls.api_root,
                 client_id=self.client_id,
                 path=path,
                 id=id,
-                method=method_name,
+                method=method,
             )
 
         url = URLObject(self.api_server).with_path(url_path)
