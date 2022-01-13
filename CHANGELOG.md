@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.4.2
 ----------------
 * Add missing `source` field in `Contact` class
 
