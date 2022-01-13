@@ -1193,6 +1193,7 @@ def mock_contact(mocked_responses, account_id, api_url):
         "job_title": "QA Tester",
         "manager_name": "George",
         "office_location": "Over the Rainbow",
+        "source": "inbox",
         "notes": "This is a note",
         "picture_url": "{base}/contacts/{id}/picture".format(
             base=api_url, id="9hga75n6mdvq4zgcmhcn7hpys"
