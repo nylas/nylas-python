@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add missing `source` field in `Contact` class
+
 v5.4.1
 ----------------
 * Fix issue where keyword arguments calling `_update_resource` were not correctly resolving to URL params
