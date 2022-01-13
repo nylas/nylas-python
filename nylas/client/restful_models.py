@@ -580,6 +580,7 @@ class Contact(NylasAPIObject):
         "job_status_id",
         "manager_name",
         "office_location",
+        "source",
         "notes",
         "picture_url",
     ]

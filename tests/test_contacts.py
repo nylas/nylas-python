@@ -20,6 +20,7 @@ def test_get_contact(api_client):
     assert contact.given_name == "Given"
     assert contact.surname == "Sur"
     assert contact.birthday == date(1964, 10, 5)
+    assert contact.source == "inbox"
 
 
 @pytest.mark.usefixtures("mock_contacts")

@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add support for `Event` to ICS
+* Add missing `source` field in `Contact` class
 
 v5.4.1
 ----------------
