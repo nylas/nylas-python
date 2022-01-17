@@ -701,6 +701,51 @@ class Event(NylasAPIObject):
         result = response.json()
         return Event.create(self, **result)
 
+    def generate_ics(self, ical_uid=None, method=None, prodid=None):
+        """
+        Generate an ICS file server-side, from an Event
+
+        Args:
+            ical_uid (str): Unique identifier used events across calendaring systems
+            method (str): Description of invitation and response methods for attendees
+            prodid (str): Company-specific unique product identifier
+
+        Returns:
+            str: String for writing directly into an ICS file
+
+        Raises:
+            ValueError: If the event does not have calendar_id or when set
+            RuntimeError: If the server returns an object without an ics string
+        """
+        if not self.calendar_id or not self.when:
+            raise ValueError(
+                "Cannot generate an ICS file for an event without a Calendar ID or when set"
+            )
+
+        payload = {}
+        ics_options = {}
+        if self.id:
+            payload["event_id"] = self.id
+        else:
+            payload = self.as_json()
+
+        if ical_uid:
+            ics_options["ical_uid"] = ical_uid
+        if method:
+            ics_options["method"] = method
+        if prodid:
+            ics_options["prodid"] = prodid
+
+        if ics_options:
+            payload["ics_options"] = ics_options
+
+        response = self.api._post_resource(Event, None, "to-ics", payload)
+        if "ics" in response:
+            return response["ics"]
+        raise RuntimeError(
+            "Unexpected response from the API server. Returned 200 but no 'ics' string found."
+        )
+
     def save(self, **kwargs):
         if (
             self.conferencing
