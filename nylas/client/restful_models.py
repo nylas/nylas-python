@@ -746,7 +746,6 @@ class Event(NylasAPIObject):
             "Unexpected response from the API server. Returned 200 but no 'ics' string found."
         )
 
-
     def save(self, **kwargs):
         if (
             self.conferencing
