@@ -33,7 +33,7 @@ class NylasApiError(HTTPError):
     def __init__(self, response):
         try:
             response_json = json.loads(response.text)
-            error_message = u"%s %s. Reason: %s. Nylas Error Type: %s" % (
+            error_message = "%s %s. Reason: %s. Nylas Error Type: %s" % (
                 response.status_code,
                 response.reason,
                 response_json["message"],

@@ -195,7 +195,7 @@ class APIClient(json.JSONEncoder):
             self.access_token_url, data=urlencode(args), headers=headers
         ).json()
 
-        self.access_token = resp[u"access_token"]
+        self.access_token = resp["access_token"]
         return resp
 
     def token_for_code(self, code):
