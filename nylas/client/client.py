@@ -169,7 +169,16 @@ class APIClient(json.JSONEncoder):
         url = URLObject(self.authorize_url).add_query_params(args.items())
         return str(url)
 
-    def token_for_code(self, code):
+    def send_authorization(self, code):
+        """
+        Exchanges an authorization code for an access token.
+
+        Args:
+            code (str): The authorization code returned from authenticating the user
+
+        Returns:
+            dict: The response from the API containing the access token
+        """
         args = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
@@ -186,7 +195,11 @@ class APIClient(json.JSONEncoder):
             self.access_token_url, data=urlencode(args), headers=headers
         ).json()
 
-        self.access_token = resp[u"access_token"]
+        self.access_token = resp["access_token"]
+        return resp
+
+    def token_for_code(self, code):
+        self.send_authorization(code)
         return self.access_token
 
     def is_opensource_api(self):
