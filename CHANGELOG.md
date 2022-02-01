@@ -1,13 +1,13 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.5.0
 ----------------
+* Add support for `Event` to ICS
 * Enable full payload response for exchanging the token for code
 
 v5.4.2
 ----------------
-* Add support for `Event` to ICS
 * Add missing `source` field in `Contact` class
 
 v5.4.1
