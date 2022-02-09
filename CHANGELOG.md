@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Enable Nylas API v2.4 support
+
 v5.5.0
 ----------------
 * Add support for `Event` to ICS
