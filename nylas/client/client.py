@@ -351,11 +351,14 @@ class APIClient(json.JSONEncoder):
             "interval_minutes": interval_minutes,
             "start_time": start_time,
             "end_time": end_time,
-            "buffer": buffer,
-            "round_robin": round_robin,
             "free_busy": free_busy or [],
             "open_hours": open_hours or [],
         }
+        if buffer is not None:
+            data["buffer"] = buffer
+        if round_robin is not None:
+            data["round_robin"] = round_robin
+
         resp = self.session.post(url, json=data)
         _validate(resp)
         return resp.json()
@@ -403,10 +406,12 @@ class APIClient(json.JSONEncoder):
             "interval_minutes": interval_minutes,
             "start_time": start_time,
             "end_time": end_time,
-            "buffer": buffer,
             "free_busy": free_busy or [],
             "open_hours": open_hours or [],
         }
+        if buffer is not None:
+            data["buffer"] = buffer
+
         resp = self.session.post(url, json=data)
         _validate(resp)
         return resp.json()
