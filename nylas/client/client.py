@@ -193,9 +193,10 @@ class APIClient(json.JSONEncoder):
 
         resp = requests.post(
             self.access_token_url, data=urlencode(args), headers=headers
-        ).json()
+        )
+        results = _validate(resp).json()
 
-        self.access_token = resp["access_token"]
+        self.access_token = results["access_token"]
         return resp
 
     def token_for_code(self, code):
