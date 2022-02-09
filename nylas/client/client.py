@@ -188,7 +188,7 @@ class APIClient(json.JSONEncoder):
 
         headers = {
             "Content-type": "application/x-www-form-urlencoded",
-            "Accept": "text/plain",
+            "Accept": "application/json",
         }
 
         resp = requests.post(
