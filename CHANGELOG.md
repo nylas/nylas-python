@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Fix `native-authentication-gmail` example app
+
 v5.5.0
 ----------------
 * Add support for `Event` to ICS
