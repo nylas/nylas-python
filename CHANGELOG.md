@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Omit `None` values from resulting `as_json()` object
+
 v5.5.0
 ----------------
 * Add support for `Event` to ICS
