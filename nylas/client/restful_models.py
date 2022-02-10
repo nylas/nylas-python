@@ -901,7 +901,7 @@ class Webhook(NylasAPIObject):
             dct = NylasAPIObject.as_json(self)
         return dct
 
-    class Triggers(str, Enum):
+    class Trigger(str, Enum):
         """
         This is an Enum representing all the possible webhook triggers
 

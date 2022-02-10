@@ -58,7 +58,7 @@ def test_delete_webhook(mocked_responses, api_client_with_client_id):
 def test_create_webhook(mocked_responses, api_client_with_client_id):
     webhook = api_client_with_client_id.webhooks.create()
     webhook.callback_url = "https://your-server.com/webhook"
-    webhook.triggers = [Webhook.Triggers.MESSAGE_CREATED]
+    webhook.triggers = [Webhook.Trigger.MESSAGE_CREATED]
     webhook.state = Webhook.State.ACTIVE
     webhook.application_id = "should-not-send"
     webhook.version = "should-not-send"
