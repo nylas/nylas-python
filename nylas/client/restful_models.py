@@ -874,6 +874,33 @@ class Component(NylasAPIObject):
         return dct
 
 
+class Webhook(NylasAPIObject):
+    attrs = [
+        "id",
+        "callback_url",
+        "state",
+        "triggers",
+        "application_id",
+        "version",
+    ]
+    read_only_attrs = {"id", "application_id", "version"}
+
+    collection_name = "webhooks"
+    api_root = "a"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, Webhook, api)
+
+    def as_json(self):
+        dct = {}
+        # Only 'state' can get updated
+        if self.id:
+            dct["state"] = self.state
+        else:
+            dct = NylasAPIObject.as_json(self)
+        return dct
+
+
 class Namespace(NylasAPIObject):
     attrs = [
         "account",
