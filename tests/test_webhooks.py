@@ -34,7 +34,7 @@ def test_single_webhook(mocked_responses, api_client_with_client_id):
 @pytest.mark.usefixtures("mock_webhooks")
 def test_update_webhook(mocked_responses, api_client_with_client_id):
     webhook = api_client_with_client_id.webhooks.get("abc123")
-    webhook.state = "inactive"
+    webhook.state = Webhook.State.INACTIVE
     webhook.save()
     assert len(mocked_responses.calls) == 2
     request = mocked_responses.calls[1].request
@@ -58,8 +58,8 @@ def test_delete_webhook(mocked_responses, api_client_with_client_id):
 def test_create_webhook(mocked_responses, api_client_with_client_id):
     webhook = api_client_with_client_id.webhooks.create()
     webhook.callback_url = "https://your-server.com/webhook"
-    webhook.triggers = ["message.created"]
-    webhook.state = "active"
+    webhook.triggers = [Webhook.Triggers.MESSAGE_CREATED]
+    webhook.state = Webhook.State.ACTIVE
     webhook.application_id = "should-not-send"
     webhook.version = "should-not-send"
     webhook.save()

@@ -1,5 +1,6 @@
 from datetime import datetime
 from collections import defaultdict
+from enum import Enum
 
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
@@ -899,6 +900,45 @@ class Webhook(NylasAPIObject):
         else:
             dct = NylasAPIObject.as_json(self)
         return dct
+
+    class Triggers(str, Enum):
+        """
+        This is an Enum representing all the possible webhook triggers
+
+        see more: https://developer.nylas.com/docs/developer-tools/webhooks/available-webhooks
+        """
+
+        ACCOUNT_CONNECTED = "account.connected"
+        ACCOUNT_RUNNING = "account.running"
+        ACCOUNT_STOPPED = "account.stopped"
+        ACCOUNT_INVALID = "account.invalid"
+        ACCOUNT_SYNC_ERROR = "account.sync_error"
+        MESSAGE_CREATED = "message.created"
+        MESSAGE_OPENED = "message.opened"
+        MESSAGE_UPDATED = "message.updated"
+        MESSAGE_LINK_CLICKED = "message.link_clicked"
+        THREAD_REPLIED = "thread.replied"
+        CONTACT_CREATED = "contact.created"
+        CONTACT_UPDATED = "contact.updated"
+        CONTACT_DELETED = "contact.deleted"
+        CALENDAR_CREATED = "calendar.created"
+        CALENDAR_UPDATED = "calendar.updated"
+        CALENDAR_DELETED = "calendar.deleted"
+        EVENT_CREATED = "event.created"
+        EVENT_UPDATED = "event.updated"
+        EVENT_DELETED = "event.deleted"
+        JOB_SUCCESSFUL = "job.successful"
+        JOB_FAILED = "job.failed"
+
+    class State(str, Enum):
+        """
+        This is an Enum representing all the possible webhook states
+
+        see more: https://developer.nylas.com/docs/developer-tools/webhooks/#enable-and-disable-webhooks
+        """
+
+        ACTIVE = "active"
+        INACTIVE = "inactive"
 
 
 class Namespace(NylasAPIObject):
