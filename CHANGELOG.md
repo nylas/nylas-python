@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add validation for `send_authorization`
+* Fix `native-authentication-gmail` example app
 
 v5.5.0
 ----------------
