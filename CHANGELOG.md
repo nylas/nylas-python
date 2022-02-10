@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add validation for `send_authorization`
+
 v5.5.0
 ----------------
 * Add support for `Event` to ICS
