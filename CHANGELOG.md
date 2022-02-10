@@ -3,7 +3,13 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Omit `None` values from resulting `as_json()` object
 * Enable Nylas API v2.4 support
+
+v5.5.1
+----------------
+* Add validation for `send_authorization`
+* Fix `native-authentication-gmail` example app
 
 v5.5.0
 ----------------
