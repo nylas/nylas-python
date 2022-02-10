@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Omit `None` values from resulting `as_json()` object
+* Enable Nylas API v2.4 support
 
 v5.5.1
 ----------------
