@@ -114,9 +114,11 @@ class RestfulModel(dict):
                 continue
             if hasattr(self, attr):
                 if attr in reserved_keywords:
-                    dct[attr] = getattr(self, "{}_".format(attr))
+                    attr_value = getattr(self, "{}_".format(attr))
                 else:
-                    dct[attr] = getattr(self, attr)
+                    attr_value = getattr(self, attr)
+                if attr_value is not None:
+                    dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
             if date_attr in self.read_only_attrs:
                 continue
