@@ -864,7 +864,7 @@ class Component(NylasAPIObject):
     api_root = "component"
 
     def __init__(self, api):
-        NylasAPIObject.__init__(self, RoomResource, api)
+        NylasAPIObject.__init__(self, Component, api)
 
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
