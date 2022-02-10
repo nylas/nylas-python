@@ -54,11 +54,14 @@ class RestfulModel(dict):
     def create(cls, api, **kwargs):
         object_type = kwargs.get("object")
         cls_object_type = getattr(cls, "object_type", cls.__name__.lower())
+        # These are classes that should bypass the check below because they
+        # often represent other types (e.g. a delta's object type might be event)
+        class_check_whitelist = ["jobstatus", "delta"]
         if (
             object_type
             and object_type != cls_object_type
             and object_type != "account"
-            and cls_object_type != "jobstatus"
+            and cls_object_type not in class_check_whitelist
             and not _is_subclass(cls, object_type)
         ):
             # We were given a specific object type and we're trying to
