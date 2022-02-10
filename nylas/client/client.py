@@ -13,6 +13,7 @@ from urlobject import URLObject
 import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
+from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -478,6 +479,10 @@ class APIClient(json.JSONEncoder):
     @property
     def components(self):
         return RestfulModelCollection(Component, self)
+
+    @property
+    def deltas(self):
+        return DeltaCollection(self)
 
     @property
     def neural(self):
