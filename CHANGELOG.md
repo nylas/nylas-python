@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Omit `None` values from resulting `as_json()` object
+
 v5.5.1
 ----------------
 * Add validation for `send_authorization`
