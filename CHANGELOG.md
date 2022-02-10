@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add Webhook support
+
 v5.5.0
 ----------------
 * Add support for `Event` to ICS
