@@ -1,5 +1,4 @@
 import json
-from json import JSONDecodeError
 
 from requests import ReadTimeout
 
@@ -168,11 +167,11 @@ class DeltaCollection:
             if raw_rsp:
                 buffer.extend(raw_rsp)
                 try:
-                    buffer_json = json.loads(buffer)
+                    buffer_json = json.loads(buffer.decode())
                     delta = Deltas.create(self.api, **buffer_json)
                     if emit_deltas:
                         callback(delta)
-                except JSONDecodeError:
+                except ValueError:
                     continue
 
         return delta
