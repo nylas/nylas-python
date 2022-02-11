@@ -1,3 +1,8 @@
+import json
+from json import JSONDecodeError
+
+from requests import ReadTimeout
+
 from nylas.client.delta_models import Delta, Deltas
 
 
@@ -42,3 +47,40 @@ class DeltaCollection:
             Delta, None, path=self.path, cursor=cursor
         ).json()
         return Deltas.create(self.api, **response)
+
+    def longpoll(self, cursor, timeout):
+        """
+        Long-poll for deltas
+
+        Args:
+            cursor (str): The cursor to poll from
+            timeout (int): The number of seconds to poll for before timing out
+
+        Returns:
+            Deltas: The API response containing the list of deltas
+        """
+
+        delta = {}
+
+        try:
+            buffer = bytearray()
+            response = self.api._get_resource_raw(
+                Delta,
+                "longpoll",
+                stream=True,
+                path=self.path,
+                timeout=timeout,
+                cursor=cursor,
+            )
+            for raw_rsp in response.iter_lines():
+                if raw_rsp:
+                    buffer.extend(raw_rsp)
+                    try:
+                        buffer_json = json.loads(buffer)
+                        delta = Deltas.create(self.api, **buffer_json)
+                    except JSONDecodeError:
+                        continue
+        except ReadTimeout:
+            pass
+
+        return delta
