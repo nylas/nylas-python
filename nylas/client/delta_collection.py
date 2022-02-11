@@ -22,6 +22,7 @@ class DeltaCollection:
         Raises:
             RuntimeError: If the server returns an object without a cursor
         """
+
         response = self.api._post_resource(
             Delta, "latest_cursor", None, None, path=self.path
         )
@@ -32,19 +33,29 @@ class DeltaCollection:
 
         return response["cursor"]
 
-    def since(self, cursor):
+    def since(self, cursor, view=None, include_types=None, excluded_types=None):
         """
         Get a list of delta cursors since a specified cursor
 
         Args:
             cursor (str): The first cursor to request from
+            view (str): Value representing if delta expands thread and message objects.
+            include_types (list[str] | str): The objects to exclusively include in the returned deltas. Note you cannot set both included and excluded types.
+            excluded_types (list[str] | str): The objects to exclude in the returned deltas. Note you cannot set both included and excluded types.
 
         Returns:
-            Deltas: String for writing directly into an ICS file
+            Deltas: The API response containing the list of deltas
         """
 
+        include_types, excluded_types = _validate_types(include_types, excluded_types)
         response = self.api._get_resource_raw(
-            Delta, None, path=self.path, cursor=cursor
+            Delta,
+            None,
+            path=self.path,
+            cursor=cursor,
+            view=view,
+            include_types=include_types,
+            excluded_types=excluded_types,
         ).json()
         return Deltas.create(self.api, **response)
 
