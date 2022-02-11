@@ -81,24 +81,27 @@ class DeltaCollection:
         if callback and callable(callback):
             emit_deltas = True
 
-        response = self.api._get_resource_raw(
-            Delta,
-            "streaming",
-            stream=True,
-            path=self.path,
-            timeout=timeout,
-            cursor=cursor,
-            view=view,
-            include_types=include_types,
-            excluded_types=excluded_types,
-        )
-        for raw_rsp in response.iter_lines():
-            if raw_rsp:
-                response_json = json.loads(raw_rsp)
-                delta = Delta.create(self.api, **response_json)
-                deltas.append(delta)
-                if emit_deltas:
-                    callback(delta)
+        try:
+            response = self.api._get_resource_raw(
+                Delta,
+                "streaming",
+                stream=True,
+                path=self.path,
+                stream_timeout=timeout,
+                cursor=cursor,
+                view=view,
+                include_types=include_types,
+                excluded_types=excluded_types,
+            )
+            for raw_rsp in response.iter_lines():
+                if raw_rsp:
+                    response_json = json.loads(raw_rsp)
+                    delta = Delta.create(self.api, **response_json)
+                    deltas.append(delta)
+                    if emit_deltas:
+                        callback(delta)
+        except ReadTimeout:
+            pass
 
         return deltas
 
@@ -116,26 +119,23 @@ class DeltaCollection:
 
         delta = {}
 
-        try:
-            buffer = bytearray()
-            response = self.api._get_resource_raw(
-                Delta,
-                "longpoll",
-                stream=True,
-                path=self.path,
-                timeout=timeout,
-                cursor=cursor,
-            )
-            for raw_rsp in response.iter_lines():
-                if raw_rsp:
-                    buffer.extend(raw_rsp)
-                    try:
-                        buffer_json = json.loads(buffer)
-                        delta = Deltas.create(self.api, **buffer_json)
-                    except JSONDecodeError:
-                        continue
-        except ReadTimeout:
-            pass
+        buffer = bytearray()
+        response = self.api._get_resource_raw(
+            Delta,
+            "longpoll",
+            stream=True,
+            path=self.path,
+            timeout=timeout,
+            cursor=cursor,
+        )
+        for raw_rsp in response.iter_lines():
+            if raw_rsp:
+                buffer.extend(raw_rsp)
+                try:
+                    buffer_json = json.loads(buffer)
+                    delta = Deltas.create(self.api, **buffer_json)
+                except JSONDecodeError:
+                    continue
 
         return delta
 

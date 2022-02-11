@@ -532,7 +532,7 @@ class APIClient(json.JSONEncoder):
         headers=None,
         stream=False,
         path=None,
-        timeout=None,
+        stream_timeout=None,
         **filters
     ):
         """Get an individual REST resource"""
@@ -562,7 +562,9 @@ class APIClient(json.JSONEncoder):
 
         headers = headers or {}
         headers.update(session.headers)
-        response = session.get(url, headers=headers, stream=stream, timeout=timeout)
+        response = session.get(
+            url, headers=headers, stream=stream, timeout=stream_timeout
+        )
         return _validate(response)
 
     def _get_resource(self, cls, id, **filters):
