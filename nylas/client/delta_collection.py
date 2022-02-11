@@ -45,6 +45,9 @@ class DeltaCollection:
 
         Returns:
             Deltas: The API response containing the list of deltas
+
+        Raises:
+            ValueError: If both include_types and excluded_types are set
         """
 
         include_types, excluded_types = _validate_types(include_types, excluded_types)
@@ -138,6 +141,9 @@ class DeltaCollection:
 
         Returns:
             Deltas: The API response containing the list of deltas
+
+        Raises:
+            ValueError: If both include_types and excluded_types are set
         """
 
         delta = {}
