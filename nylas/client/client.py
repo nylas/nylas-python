@@ -525,7 +525,15 @@ class APIClient(json.JSONEncoder):
         return [cls.create(self, **x) for x in results if x is not None]
 
     def _get_resource_raw(
-        self, cls, id, extra=None, headers=None, stream=False, path=None, **filters
+        self,
+        cls,
+        id,
+        extra=None,
+        headers=None,
+        stream=False,
+        path=None,
+        timeout=None,
+        **filters
     ):
         """Get an individual REST resource"""
         if path is None:
@@ -554,7 +562,7 @@ class APIClient(json.JSONEncoder):
 
         headers = headers or {}
         headers.update(session.headers)
-        response = session.get(url, headers=headers, stream=stream)
+        response = session.get(url, headers=headers, stream=stream, timeout=timeout)
         return _validate(response)
 
     def _get_resource(self, cls, id, **filters):
