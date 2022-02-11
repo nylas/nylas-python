@@ -2141,3 +2141,191 @@ def mock_clean_conversation(mocked_responses, api_url, account_id):
         content_type="application/json",
         callback=file_callback,
     )
+
+
+@pytest.fixture
+def mock_deltas_since(mocked_responses, api_url):
+    deltas = {
+        "cursor_start": "start_cursor",
+        "cursor_end": "end_cursor",
+        "deltas": [
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "given_name": "First",
+                    "surname": "Last",
+                    "id": "id-1234",
+                    "object": "contact",
+                },
+                "cursor": "contact_cursor",
+                "event": "create",
+                "id": "delta-1",
+                "object": "contact",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "content_type": "text/plain",
+                    "filename": "sample.txt",
+                    "id": "id-1234",
+                    "object": "file",
+                    "size": 123,
+                },
+                "cursor": "file_cursor",
+                "event": "create",
+                "id": "delta-2",
+                "object": "file",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "to": [{"email": "foo", "name": "bar"}],
+                    "subject": "foo",
+                    "id": "id-1234",
+                    "object": "message",
+                },
+                "cursor": "message_cursor",
+                "event": "create",
+                "id": "delta-3",
+                "object": "message",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "to": [{"email": "foo", "name": "bar"}],
+                    "subject": "foo",
+                    "id": "id-1234",
+                    "object": "draft",
+                },
+                "cursor": "draft_cursor",
+                "event": "create",
+                "id": "delta-4",
+                "object": "draft",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "subject": "Subject",
+                    "id": "id-1234",
+                    "object": "thread",
+                },
+                "cursor": "thread_cursor",
+                "event": "create",
+                "id": "delta-5",
+                "object": "thread",
+            },
+            {
+                "attributes": {
+                    "id": "id-1234",
+                    "title": "test event",
+                    "when": {"time": 1409594400, "object": "time"},
+                    "participants": [
+                        {
+                            "name": "foo",
+                            "email": "bar",
+                            "status": "noreply",
+                            "comment": "This is a comment",
+                            "phone_number": "416-000-0000",
+                        },
+                    ],
+                    "ical_uid": "id-5678",
+                    "master_event_id": "master-1234",
+                    "original_start_time": 1409592400,
+                },
+                "cursor": "event_cursor",
+                "event": "create",
+                "id": "delta-6",
+                "object": "event",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "id": "id-1234",
+                    "object": "folder",
+                    "name": "inbox",
+                    "display_name": "name",
+                },
+                "cursor": "folder_cursor",
+                "event": "create",
+                "id": "delta-7",
+                "object": "folder",
+            },
+            {
+                "attributes": {
+                    "account_id": "aid-5678",
+                    "id": "id-1234",
+                    "object": "label",
+                    "name": "inbox",
+                },
+                "cursor": "label_cursor",
+                "event": "create",
+                "id": "delta-8",
+                "object": "label",
+            },
+        ],
+    }
+
+    def callback(request):
+        return 200, {}, json.dumps(deltas)
+
+    mocked_responses.add_callback(
+        responses.GET,
+        "{base}/delta".format(base=api_url),
+        callback=callback,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
+def mock_delta_cursor(mocked_responses, api_url):
+    def callback(request):
+        return 200, {}, json.dumps({"cursor": "cursor"})
+
+    mocked_responses.add_callback(
+        responses.POST,
+        "{base}/delta/latest_cursor".format(base=api_url),
+        callback=callback,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
+def mock_delta_stream(mocked_responses, api_url):
+    delta = {
+        "attributes": {
+            "account_id": "aid-5678",
+            "given_name": "First",
+            "surname": "Last",
+            "id": "id-1234",
+            "object": "contact",
+        },
+        "cursor": "contact_cursor",
+        "event": "create",
+        "id": "delta-1",
+        "object": "contact",
+    }
+
+    def stream_callback(request):
+        return 200, {}, json.dumps(delta)
+
+    def longpoll_callback(request):
+        response = {
+            "cursor_start": "start_cursor",
+            "cursor_end": "end_cursor",
+            "deltas": [delta],
+        }
+        return 200, {}, json.dumps(response)
+
+    mocked_responses.add_callback(
+        responses.GET,
+        "{base}/delta/streaming".format(base=api_url),
+        callback=stream_callback,
+        content_type="application/json",
+    )
+
+    mocked_responses.add_callback(
+        responses.GET,
+        "{base}/delta/longpoll".format(base=api_url),
+        callback=longpoll_callback,
+        content_type="application/json",
+    )
