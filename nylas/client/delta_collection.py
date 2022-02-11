@@ -48,6 +48,60 @@ class DeltaCollection:
         ).json()
         return Deltas.create(self.api, **response)
 
+    def stream(
+        self,
+        cursor,
+        callback=None,
+        timeout=None,
+        view=None,
+        include_types=None,
+        excluded_types=None,
+    ):
+        """
+        Stream deltas
+
+        Args:
+            cursor (str): The cursor to stream from
+            callback: A callable function to invoke on each delta received. No callback is set by default.
+            timeout (int): The number of seconds to stream for before timing out. No timeout is set by default.
+            view (str): Value representing if delta expands thread and message objects.
+            include_types (list[str] | str): The objects to exclusively include in the returned deltas. Note you cannot set both included and excluded types.
+            excluded_types (list[str] | str): The objects to exclude in the returned deltas. Note you cannot set both included and excluded types.
+
+        Returns:
+            list[Delta]: The list of streamed deltas
+
+        Raises:
+            ValueError: If both include_types and excluded_types are set
+        """
+
+        deltas = []
+        include_types, excluded_types = _validate_types(include_types, excluded_types)
+        emit_deltas = False
+        if callback and callable(callback):
+            emit_deltas = True
+
+        response = self.api._get_resource_raw(
+            Delta,
+            "streaming",
+            stream=True,
+            path=self.path,
+            timeout=timeout,
+            cursor=cursor,
+            view=view,
+            include_types=include_types,
+            excluded_types=excluded_types,
+        )
+        for raw_rsp in response.iter_lines():
+            if raw_rsp:
+                response_json = json.loads(raw_rsp)
+                delta = Delta.create(self.api, **response_json)
+                deltas.append(delta)
+                if emit_deltas:
+                    callback(delta)
+
+        return deltas
+
     def longpoll(self, cursor, timeout):
         """
         Long-poll for deltas
@@ -84,3 +138,21 @@ class DeltaCollection:
             pass
 
         return delta
+
+
+# Helper functions for validating type inputs
+def _validate_types(include_types, excluded_types):
+    if include_types and excluded_types:
+        raise ValueError("You cannot set both include_types and excluded_types")
+
+    return _join_types(include_types), _join_types(excluded_types)
+
+
+def _join_types(types):
+    if types:
+        if isinstance(types, str):
+            return types
+        try:
+            return ",".join(types)
+        except TypeError:
+            return None
