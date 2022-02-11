@@ -105,19 +105,35 @@ class DeltaCollection:
 
         return deltas
 
-    def longpoll(self, cursor, timeout):
+    def longpoll(
+        self,
+        cursor,
+        timeout,
+        callback=None,
+        view=None,
+        include_types=None,
+        excluded_types=None,
+    ):
         """
         Long-poll for deltas
 
         Args:
             cursor (str): The cursor to poll from
             timeout (int): The number of seconds to poll for before timing out
+            callback: A callable function to invoke on each delta received. No callback is set by default.
+            view (str): Value representing if delta expands thread and message objects.
+            include_types (list[str] | str): The objects to exclusively include in the returned deltas. Note you cannot set both included and excluded types.
+            excluded_types (list[str] | str): The objects to exclude in the returned deltas. Note you cannot set both included and excluded types.
 
         Returns:
             Deltas: The API response containing the list of deltas
         """
 
         delta = {}
+        include_types, excluded_types = _validate_types(include_types, excluded_types)
+        emit_deltas = False
+        if callback and callable(callback):
+            emit_deltas = True
 
         buffer = bytearray()
         response = self.api._get_resource_raw(
@@ -127,6 +143,9 @@ class DeltaCollection:
             path=self.path,
             timeout=timeout,
             cursor=cursor,
+            view=view,
+            include_types=include_types,
+            excluded_types=excluded_types,
         )
         for raw_rsp in response.iter_lines():
             if raw_rsp:
@@ -134,6 +153,8 @@ class DeltaCollection:
                 try:
                     buffer_json = json.loads(buffer)
                     delta = Deltas.create(self.api, **buffer_json)
+                    if emit_deltas:
+                        callback(delta)
                 except JSONDecodeError:
                     continue
 
