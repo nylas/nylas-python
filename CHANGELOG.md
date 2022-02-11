@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Add Delta support
 * Omit `None` values from resulting `as_json()` object
 
 v5.5.1
