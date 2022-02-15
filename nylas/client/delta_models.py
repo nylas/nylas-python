@@ -13,11 +13,11 @@ from nylas.client.restful_models import (
 
 
 class Deltas(RestfulModel):
-    attrs = [
+    attrs = (
         "cursor_start",
         "cursor_end",
         "_deltas",
-    ]
+    )
     read_only_attrs = tuple(attrs)
 
     def __init__(self, api):
@@ -39,13 +39,13 @@ class Deltas(RestfulModel):
 
 
 class Delta(RestfulModel):
-    attrs = [
+    attrs = (
         "id",
         "cursor",
         "event",
         "object",
         "_attributes",
-    ]
+    )
     read_only_attrs = tuple(attrs)
     class_mapping = {
         "contact": Contact,
