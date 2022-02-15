@@ -1,5 +1,6 @@
 from datetime import datetime
 from collections import defaultdict
+from enum import Enum
 
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
@@ -866,7 +867,7 @@ class Component(NylasAPIObject):
     api_root = "component"
 
     def __init__(self, api):
-        NylasAPIObject.__init__(self, RoomResource, api)
+        NylasAPIObject.__init__(self, Component, api)
 
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
@@ -874,6 +875,72 @@ class Component(NylasAPIObject):
         if self.id:
             dct.pop("type")
         return dct
+
+
+class Webhook(NylasAPIObject):
+    attrs = (
+        "id",
+        "callback_url",
+        "state",
+        "triggers",
+        "application_id",
+        "version",
+    )
+    read_only_attrs = {"id", "application_id", "version"}
+
+    collection_name = "webhooks"
+    api_root = "a"
+
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, Webhook, api)
+
+    def as_json(self):
+        dct = {}
+        # Only 'state' can get updated
+        if self.id:
+            dct["state"] = self.state
+        else:
+            dct = NylasAPIObject.as_json(self)
+        return dct
+
+    class Trigger(str, Enum):
+        """
+        This is an Enum representing all the possible webhook triggers
+
+        see more: https://developer.nylas.com/docs/developer-tools/webhooks/available-webhooks
+        """
+
+        ACCOUNT_CONNECTED = "account.connected"
+        ACCOUNT_RUNNING = "account.running"
+        ACCOUNT_STOPPED = "account.stopped"
+        ACCOUNT_INVALID = "account.invalid"
+        ACCOUNT_SYNC_ERROR = "account.sync_error"
+        MESSAGE_CREATED = "message.created"
+        MESSAGE_OPENED = "message.opened"
+        MESSAGE_UPDATED = "message.updated"
+        MESSAGE_LINK_CLICKED = "message.link_clicked"
+        THREAD_REPLIED = "thread.replied"
+        CONTACT_CREATED = "contact.created"
+        CONTACT_UPDATED = "contact.updated"
+        CONTACT_DELETED = "contact.deleted"
+        CALENDAR_CREATED = "calendar.created"
+        CALENDAR_UPDATED = "calendar.updated"
+        CALENDAR_DELETED = "calendar.deleted"
+        EVENT_CREATED = "event.created"
+        EVENT_UPDATED = "event.updated"
+        EVENT_DELETED = "event.deleted"
+        JOB_SUCCESSFUL = "job.successful"
+        JOB_FAILED = "job.failed"
+
+    class State(str, Enum):
+        """
+        This is an Enum representing all the possible webhook states
+
+        see more: https://developer.nylas.com/docs/developer-tools/webhooks/#enable-and-disable-webhooks
+        """
+
+        ACTIVE = "active"
+        INACTIVE = "inactive"
 
 
 class Namespace(NylasAPIObject):

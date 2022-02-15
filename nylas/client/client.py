@@ -31,6 +31,7 @@ from nylas.client.restful_models import (
     Draft,
     Component,
     JobStatus,
+    Webhook,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
@@ -478,6 +479,10 @@ class APIClient(json.JSONEncoder):
     @property
     def components(self):
         return RestfulModelCollection(Component, self)
+
+    @property
+    def webhooks(self):
+        return RestfulModelCollection(Webhook, self)
 
     @property
     def neural(self):

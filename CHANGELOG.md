@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Add Webhook support
 * Omit `None` values from resulting `as_json()` object
 * Enable Nylas API v2.4 support
 

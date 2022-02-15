@@ -1624,6 +1624,106 @@ def mock_components(mocked_responses, api_url):
 
 
 @pytest.fixture
+def mock_create_webhook(mocked_responses, api_url, client_id):
+    webhook = {"application_id": "application-id", "id": "webhook-id", "version": "1.0"}
+
+    def callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        if (
+            "callback_url" not in payload
+            and ("triggers" not in payload and type(payload["triggers"]) is not list)
+            and "state" not in payload
+        ):
+            return 400, {}, ""
+
+        webhook["callback_url"] = payload["callback_url"]
+        webhook["triggers"] = payload["triggers"]
+        webhook["state"] = payload["state"]
+
+        return 200, {}, json.dumps(webhook)
+
+    endpoint = "{base}/a/{client_id}/webhooks".format(base=api_url, client_id=client_id)
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint,
+        callback=callback,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
+def mock_webhooks(mocked_responses, api_url, client_id):
+    webhook = {
+        "application_id": "application-id",
+        "callback_url": "https://your-server.com/webhook",
+        "id": "webhook-id",
+        "state": "active",
+        "triggers": ["message.created"],
+        "version": "2.0",
+    }
+
+    def list_callback(request):
+        return 200, {}, json.dumps([webhook])
+
+    def single_callback(request):
+        webhook["id"] = get_id_from_url(request.url)
+        return 200, {}, json.dumps(webhook)
+
+    def update_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        if "state" in payload:
+            webhook["state"] = payload["state"]
+        webhook["id"] = get_id_from_url(request.url)
+        return 200, {}, json.dumps(webhook)
+
+    def delete_callback(request):
+        return 200, {}, json.dumps({"success": True})
+
+    def get_id_from_url(url):
+        path = URLObject(url).path
+        return path.rsplit("/", 1)[-1]
+
+    endpoint_single = re.compile(
+        "{base}/a/{client_id}/webhooks/*".format(base=api_url, client_id=client_id)
+    )
+    endpoint_list = "{base}/a/{client_id}/webhooks".format(
+        base=api_url, client_id=client_id
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_list,
+        content_type="application/json",
+        callback=list_callback,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_single,
+        content_type="application/json",
+        callback=single_callback,
+    )
+    mocked_responses.add_callback(
+        responses.PUT,
+        endpoint_single,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.DELETE,
+        endpoint_single,
+        content_type="application/json",
+        callback=delete_callback,
+    )
+
+
+@pytest.fixture
 def mock_resources(mocked_responses, api_url):
     resources = [
         {
