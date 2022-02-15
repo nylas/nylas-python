@@ -32,6 +32,7 @@ from nylas.client.restful_models import (
     Draft,
     Component,
     JobStatus,
+    Webhook,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
@@ -41,7 +42,7 @@ from nylas.utils import timestamp_from_dt, create_request_body
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
-SUPPORTED_API_VERSION = "2.2"
+SUPPORTED_API_VERSION = "2.4"
 
 
 def _validate(response):
@@ -483,6 +484,10 @@ class APIClient(json.JSONEncoder):
     @property
     def deltas(self):
         return DeltaCollection(self)
+
+    @property
+    def webhooks(self):
+        return RestfulModelCollection(Webhook, self)
 
     @property
     def neural(self):
