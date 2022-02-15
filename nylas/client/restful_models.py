@@ -878,14 +878,14 @@ class Component(NylasAPIObject):
 
 
 class Webhook(NylasAPIObject):
-    attrs = [
+    attrs = (
         "id",
         "callback_url",
         "state",
         "triggers",
         "application_id",
         "version",
-    ]
+    )
     read_only_attrs = {"id", "application_id", "version"}
 
     collection_name = "webhooks"
