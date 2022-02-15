@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.6.0
 ----------------
 * Add Delta support
 * Add Webhook support
