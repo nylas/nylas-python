@@ -13,6 +13,7 @@ from urlobject import URLObject
 import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
+from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -481,6 +482,10 @@ class APIClient(json.JSONEncoder):
         return RestfulModelCollection(Component, self)
 
     @property
+    def deltas(self):
+        return DeltaCollection(self)
+
+    @property
     def webhooks(self):
         return RestfulModelCollection(Webhook, self)
 
@@ -525,7 +530,15 @@ class APIClient(json.JSONEncoder):
         return [cls.create(self, **x) for x in results if x is not None]
 
     def _get_resource_raw(
-        self, cls, id, extra=None, headers=None, stream=False, path=None, **filters
+        self,
+        cls,
+        id,
+        extra=None,
+        headers=None,
+        stream=False,
+        path=None,
+        stream_timeout=None,
+        **filters
     ):
         """Get an individual REST resource"""
         if path is None:
@@ -554,7 +567,9 @@ class APIClient(json.JSONEncoder):
 
         headers = headers or {}
         headers.update(session.headers)
-        response = session.get(url, headers=headers, stream=stream)
+        response = session.get(
+            url, headers=headers, stream=stream, timeout=stream_timeout
+        )
         return _validate(response)
 
     def _get_resource(self, cls, id, **filters):
