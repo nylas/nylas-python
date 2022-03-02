@@ -42,6 +42,37 @@ def test_outbox_update(mocked_responses, api_client):
 
 
 @pytest.mark.usefixtures("mock_outbox")
+def test_outbox_send_at_before_today_should_raise(mocked_responses, api_client):
+    with pytest.raises(ValueError) as excinfo:
+        api_client.outbox._validate_and_format_datetime(636309514, None)
+    assert "Cannot set message to be sent at a time before the current time." in str(
+        excinfo
+    )
+
+
+@pytest.mark.usefixtures("mock_outbox")
+def test_outbox_retry_limit_datetime_before_send_at_should_raise(
+    mocked_responses, api_client
+):
+    tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
+    day_after = tomorrow + datetime.timedelta(days=1)
+    with pytest.raises(ValueError) as excinfo:
+        api_client.outbox._validate_and_format_datetime(
+            send_at=day_after, retry_limit_datetime=tomorrow
+        )
+    assert "Cannot set message to stop retrying before time to send at." in str(excinfo)
+
+
+@pytest.mark.usefixtures("mock_outbox")
+def test_outbox_retry_limit_datetime_before_today_should_raise(
+    mocked_responses, api_client
+):
+    with pytest.raises(ValueError) as excinfo:
+        api_client.outbox._validate_and_format_datetime(None, 636309514)
+    assert "Cannot set message to stop retrying before time to send at." in str(excinfo)
+
+
+@pytest.mark.usefixtures("mock_outbox")
 def test_outbox_delete(mocked_responses, api_client):
     api_client.outbox.delete("job-status-id")
 
