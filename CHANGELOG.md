@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add Outbox support
+
 v5.6.0
 ----------------
 * Add Delta support
