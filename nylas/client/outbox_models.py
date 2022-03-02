@@ -141,4 +141,4 @@ class Outbox:
         """
         json = {"email": email_address}
 
-        self.api._delete_resource(OutboxJobStatus, "subuser", data=json)
+        self.api._delete_resource(SendGridVerifiedStatus, "subuser", data=json)
