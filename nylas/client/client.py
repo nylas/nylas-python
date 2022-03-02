@@ -15,6 +15,7 @@ from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
+from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
     Calendar,
@@ -492,6 +493,10 @@ class APIClient(json.JSONEncoder):
     @property
     def neural(self):
         return Neural(self)
+
+    @property
+    def outbox(self):
+        return Outbox(self)
 
     ##########################################################
     #   Private functions used by Restful Model Collection   #

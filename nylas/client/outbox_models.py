@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from nylas.client.restful_models import RestfulModel, Draft
+from nylas.utils import timestamp_from_dt
 
 
 class OutboxMessage(RestfulModel):
@@ -42,3 +45,96 @@ class SendGridVerifiedStatus(RestfulModel):
     def __init__(self, api):
         RestfulModel.__init__(self, SendGridVerifiedStatus, api)
 
+
+class Outbox:
+    def __init__(self, api):
+        self.api = api
+
+    def send(self, draft, send_at, retry_limit_datetime=None):
+        """
+        Send a message via Outbox
+
+        Args:
+            draft (Draft | OutboxMessage): The message to send
+            send_at (datetime | int): The date and time to send the message. If set to 0, Outbox will send this message immediately.
+            retry_limit_datetime (datetime | int): Optional date and time to stop retry attempts for a message.
+
+        Returns:
+            OutboxJobStatus: The Outbox message job status
+        """
+        json = draft.as_json()
+        if isinstance(send_at, datetime):
+            send_at = timestamp_from_dt(send_at)
+        if isinstance(retry_limit_datetime, datetime):
+            retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
+
+        json['send_at'] = send_at
+        if retry_limit_datetime is not None:
+            json['retry_limit_datetime'] = retry_limit_datetime
+
+        return self.api._create_resource(OutboxJobStatus, json)
+
+    def update(self, job_status_id, draft=None, send_at=None, retry_limit_datetime=None):
+        """
+        Update a scheduled Outbox message
+
+        Args:
+            job_status_id (str): The ID of the outbox job status
+            draft (Draft | OutboxMessage): The message object with updated values
+            send_at (datetime | int): The date and time to send the message. If set to 0, Outbox will send this message immediately.
+            retry_limit_datetime (datetime | int): Optional date and time to stop retry attempts for a message.
+
+        Returns:
+            OutboxJobStatus: The updated Outbox message job status
+        """
+        json = {}
+        if draft:
+            json = draft.as_json()
+        if isinstance(send_at, datetime):
+            send_at = timestamp_from_dt(send_at)
+        if isinstance(retry_limit_datetime, datetime):
+            retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
+
+        if send_at is not None:
+            json['send_at'] = send_at
+        if retry_limit_datetime is not None:
+            json['retry_limit_datetime'] = retry_limit_datetime
+
+        response = self.api._patch_resource(OutboxJobStatus, job_status_id, json)
+        return OutboxJobStatus.create(self.api, **response)
+
+    def delete(self, job_status_id):
+        """
+        Delete a scheduled Outbox message
+
+        Args:
+            job_status_id (str): The ID of the outbox job status to delete
+        """
+
+        self.api._delete_resource(OutboxJobStatus, job_status_id)
+
+    def send_grid_verification_status(self):
+        """
+        SendGrid - Check Authentication and Verification Status
+
+        Returns:
+            SendGridVerifiedStatus: The status of the domain authentication and the single sender verification for SendGrid integrations
+        """
+        response = self.api._get_resource_raw(SendGridVerifiedStatus, None, extra="verified_status")
+        response_body = response.json()
+        if "results" not in response_body:
+            raise RuntimeError(
+                "Unexpected response from the API server. Returned 200 but no 'ics' string found."
+            )
+        return SendGridVerifiedStatus.create(self.api, **(response_body['results']))
+
+    def delete_send_grid_sub_user(self, email_address):
+        """
+        SendGrid -  Delete SendGrid Subuser and UAS Grant
+
+        Args:
+            email_address (str): Email address for SendGrid subuser to delete
+        """
+        json = {"email": email_address}
+
+        self.api._delete_resource(OutboxJobStatus, "subuser", data=json)
