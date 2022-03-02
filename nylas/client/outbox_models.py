@@ -61,12 +61,14 @@ class Outbox:
 
         Returns:
             OutboxJobStatus: The Outbox message job status
+
+        Raises:
+            ValueError: If the date and times provided are not valid
         """
         json = draft.as_json()
-        if isinstance(send_at, datetime):
-            send_at = timestamp_from_dt(send_at)
-        if isinstance(retry_limit_datetime, datetime):
-            retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
+        send_at, retry_limit_datetime = self._validate_and_format_datetime(
+            send_at, retry_limit_datetime
+        )
 
         json["send_at"] = send_at
         if retry_limit_datetime is not None:
@@ -88,14 +90,16 @@ class Outbox:
 
         Returns:
             OutboxJobStatus: The updated Outbox message job status
+
+        Raises:
+            ValueError: If the date and times provided are not valid
         """
         json = {}
         if draft:
             json = draft.as_json()
-        if isinstance(send_at, datetime):
-            send_at = timestamp_from_dt(send_at)
-        if isinstance(retry_limit_datetime, datetime):
-            retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
+        send_at, retry_limit_datetime = self._validate_and_format_datetime(
+            send_at, retry_limit_datetime
+        )
 
         if send_at is not None:
             json["send_at"] = send_at
@@ -121,6 +125,9 @@ class Outbox:
 
         Returns:
             SendGridVerifiedStatus: The status of the domain authentication and the single sender verification for SendGrid integrations
+
+        Raises:
+            RuntimeError: If the server returns an object without results
         """
         response = self.api._get_resource_raw(
             SendGridVerifiedStatus, None, extra="verified_status"
@@ -142,3 +149,31 @@ class Outbox:
         json = {"email": email_address}
 
         self.api._delete_resource(SendGridVerifiedStatus, "subuser", data=json)
+
+    def _validate_and_format_datetime(self, send_at, retry_limit_datetime):
+        send_at_epoch = (
+            timestamp_from_dt(send_at) if isinstance(send_at, datetime) else send_at
+        )
+        retry_limit_datetime_epoch = (
+            timestamp_from_dt(retry_limit_datetime)
+            if isinstance(retry_limit_datetime, datetime)
+            else retry_limit_datetime
+        )
+        now_epoch = timestamp_from_dt(datetime.today())
+
+        if send_at_epoch and send_at_epoch != 0:
+            if send_at_epoch < now_epoch:
+                raise ValueError(
+                    "Cannot set message to be sent at a time before the current time."
+                )
+
+        if retry_limit_datetime_epoch and retry_limit_datetime_epoch != 0:
+            current_send_at = (
+                send_at_epoch if send_at_epoch and send_at_epoch != 0 else now_epoch
+            )
+            if retry_limit_datetime_epoch < current_send_at:
+                raise ValueError(
+                    "Cannot set message to stop retrying before time to send at."
+                )
+
+        return send_at_epoch, retry_limit_datetime_epoch
