@@ -672,22 +672,26 @@ class APIClient(json.JSONEncoder):
         postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-                .with_path("{name}/{id}{postfix}".format(name=name, id=id, postfix=postfix))
-                .set_query_params(**kwargs)
+            .with_path("{name}/{id}{postfix}".format(name=name, id=id, postfix=postfix))
+            .set_query_params(**kwargs)
         )
         converted_data = create_request_body(data, cls.datetime_attrs)
 
         return url, self._get_http_session(cls.api_root), converted_data
 
     def _patch_resource(self, cls, id, data, extra=None, path=None, **kwargs):
-        url, session, converted_data = self._setup_update_resource(cls, id, data, extra=extra, path=path, **kwargs)
+        url, session, converted_data = self._setup_update_resource(
+            cls, id, data, extra=extra, path=path, **kwargs
+        )
         response = session.patch(url, json=converted_data)
 
         result = _validate(response)
         return result.json()
 
     def _put_resource(self, cls, id, data, extra=None, path=None, **kwargs):
-        url, session, converted_data = self._setup_update_resource(cls, id, data, extra=extra, path=path, **kwargs)
+        url, session, converted_data = self._setup_update_resource(
+            cls, id, data, extra=extra, path=path, **kwargs
+        )
         response = session.put(url, json=converted_data)
 
         result = _validate(response)

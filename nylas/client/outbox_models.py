@@ -13,7 +13,7 @@ class OutboxMessage(RestfulModel):
     datetime_attrs = {
         "send_at": "send_at",
         "retry_limit_datetime": "retry_limit_datetime",
-        "original_send_at": "original_send_at"
+        "original_send_at": "original_send_at",
     }
     read_only_attrs = {"send_at", "retry_limit_datetime", "original_send_at"}
     collection_name = "v2/outbox"
@@ -68,13 +68,15 @@ class Outbox:
         if isinstance(retry_limit_datetime, datetime):
             retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
 
-        json['send_at'] = send_at
+        json["send_at"] = send_at
         if retry_limit_datetime is not None:
-            json['retry_limit_datetime'] = retry_limit_datetime
+            json["retry_limit_datetime"] = retry_limit_datetime
 
         return self.api._create_resource(OutboxJobStatus, json)
 
-    def update(self, job_status_id, draft=None, send_at=None, retry_limit_datetime=None):
+    def update(
+        self, job_status_id, draft=None, send_at=None, retry_limit_datetime=None
+    ):
         """
         Update a scheduled Outbox message
 
@@ -96,9 +98,9 @@ class Outbox:
             retry_limit_datetime = timestamp_from_dt(retry_limit_datetime)
 
         if send_at is not None:
-            json['send_at'] = send_at
+            json["send_at"] = send_at
         if retry_limit_datetime is not None:
-            json['retry_limit_datetime'] = retry_limit_datetime
+            json["retry_limit_datetime"] = retry_limit_datetime
 
         response = self.api._patch_resource(OutboxJobStatus, job_status_id, json)
         return OutboxJobStatus.create(self.api, **response)
@@ -120,13 +122,15 @@ class Outbox:
         Returns:
             SendGridVerifiedStatus: The status of the domain authentication and the single sender verification for SendGrid integrations
         """
-        response = self.api._get_resource_raw(SendGridVerifiedStatus, None, extra="verified_status")
+        response = self.api._get_resource_raw(
+            SendGridVerifiedStatus, None, extra="verified_status"
+        )
         response_body = response.json()
         if "results" not in response_body:
             raise RuntimeError(
                 "Unexpected response from the API server. Returned 200 but no 'ics' string found."
             )
-        return SendGridVerifiedStatus.create(self.api, **(response_body['results']))
+        return SendGridVerifiedStatus.create(self.api, **(response_body["results"]))
 
     def delete_send_grid_sub_user(self, email_address):
         """
