@@ -65,16 +65,16 @@ class Outbox:
         Raises:
             ValueError: If the date and times provided are not valid
         """
-        json = draft.as_json()
+        draft_json = draft.as_json()
         send_at, retry_limit_datetime = self._validate_and_format_datetime(
             send_at, retry_limit_datetime
         )
 
-        json["send_at"] = send_at
+        draft_json["send_at"] = send_at
         if retry_limit_datetime is not None:
-            json["retry_limit_datetime"] = retry_limit_datetime
+            draft_json["retry_limit_datetime"] = retry_limit_datetime
 
-        return self.api._create_resource(OutboxJobStatus, json)
+        return self.api._create_resource(OutboxJobStatus, draft_json)
 
     def update(
         self, job_status_id, draft=None, send_at=None, retry_limit_datetime=None
@@ -94,19 +94,19 @@ class Outbox:
         Raises:
             ValueError: If the date and times provided are not valid
         """
-        json = {}
+        payload = {}
         if draft:
-            json = draft.as_json()
+            payload = draft.as_json()
         send_at, retry_limit_datetime = self._validate_and_format_datetime(
             send_at, retry_limit_datetime
         )
 
         if send_at is not None:
-            json["send_at"] = send_at
+            payload["send_at"] = send_at
         if retry_limit_datetime is not None:
-            json["retry_limit_datetime"] = retry_limit_datetime
+            payload["retry_limit_datetime"] = retry_limit_datetime
 
-        response = self.api._patch_resource(OutboxJobStatus, job_status_id, json)
+        response = self.api._patch_resource(OutboxJobStatus, job_status_id, payload)
         return OutboxJobStatus.create(self.api, **response)
 
     def delete(self, job_status_id):
@@ -146,9 +146,9 @@ class Outbox:
         Args:
             email_address (str): Email address for SendGrid subuser to delete
         """
-        json = {"email": email_address}
+        payload = {"email": email_address}
 
-        self.api._delete_resource(SendGridVerifiedStatus, "subuser", data=json)
+        self.api._delete_resource(SendGridVerifiedStatus, "subuser", data=payload)
 
     def _validate_and_format_datetime(self, send_at, retry_limit_datetime):
         send_at_epoch = (
