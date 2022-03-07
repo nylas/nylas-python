@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import json
 
 import pytest
@@ -54,8 +54,8 @@ def test_outbox_send_at_before_today_should_raise(mocked_responses, api_client):
 def test_outbox_retry_limit_datetime_before_send_at_should_raise(
     mocked_responses, api_client
 ):
-    tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
-    day_after = tomorrow + datetime.timedelta(days=1)
+    tomorrow = datetime.today() + timedelta(days=1)
+    day_after = tomorrow + timedelta(days=1)
     with pytest.raises(ValueError) as excinfo:
         api_client.outbox._validate_and_format_datetime(
             send_at=day_after, retry_limit_datetime=tomorrow
@@ -109,8 +109,8 @@ def prepare_outbox_request(api_client):
     draft.subject = "With Love, from Nylas"
     draft.to = [{"email": "test@email.com", "name": "Me"}]
     draft.body = "This email was sent using the Nylas email API. Visit https://nylas.com for details."
-    tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
-    day_after = tomorrow + datetime.timedelta(days=1)
+    tomorrow = datetime.today() + timedelta(days=1)
+    day_after = tomorrow + timedelta(days=1)
 
     return draft, tomorrow, day_after
 
