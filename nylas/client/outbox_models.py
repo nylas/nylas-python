@@ -137,7 +137,7 @@ class Outbox:
             raise RuntimeError(
                 "Unexpected response from the API server. Returned 200 but no 'ics' string found."
             )
-        return SendGridVerifiedStatus.create(self.api, **(response_body["results"]))
+        return SendGridVerifiedStatus.create(self.api, **response_body["results"])
 
     def delete_send_grid_sub_user(self, email_address):
         """
@@ -161,8 +161,7 @@ class Outbox:
         )
         now_epoch = timestamp_from_dt(datetime.today())
 
-        if send_at_epoch and send_at_epoch != 0:
-            if send_at_epoch < now_epoch:
+        if send_at_epoch and send_at_epoch != 0 and send_at_epoch < now_epoch:
                 raise ValueError(
                     "Cannot set message to be sent at a time before the current time."
                 )
