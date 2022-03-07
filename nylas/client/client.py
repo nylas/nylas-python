@@ -8,13 +8,13 @@ from datetime import datetime, timedelta
 from itertools import chain
 
 import requests
-from requests import HTTPError
 from urlobject import URLObject
 import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
+from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
     Calendar,
@@ -493,6 +493,10 @@ class APIClient(json.JSONEncoder):
     def neural(self):
         return Neural(self)
 
+    @property
+    def outbox(self):
+        return Outbox(self)
+
     ##########################################################
     #   Private functions used by Restful Model Collection   #
     ##########################################################
@@ -532,7 +536,7 @@ class APIClient(json.JSONEncoder):
     def _get_resource_raw(
         self,
         cls,
-        id,
+        resource_id,
         extra=None,
         headers=None,
         stream=False,
@@ -545,10 +549,10 @@ class APIClient(json.JSONEncoder):
             path = cls.collection_name
         postfix = "/{}".format(extra) if extra else ""
         path = "/{}".format(path) if path else ""
-        id = "/{}".format(id) if id else ""
+        resource_id = "/{}".format(resource_id) if resource_id else ""
         if not cls.api_root:
             url = "{server}{path}{id}{postfix}".format(
-                server=self.api_server, path=path, id=id, postfix=postfix
+                server=self.api_server, path=path, id=resource_id, postfix=postfix
             )
         else:
             url = "{server}/{prefix}/{client_id}{path}{id}{postfix}".format(
@@ -556,7 +560,7 @@ class APIClient(json.JSONEncoder):
                 prefix=cls.api_root,
                 client_id=self.client_id,
                 path=path,
-                id=id,
+                id=resource_id,
                 postfix=postfix,
             )
 
@@ -572,16 +576,16 @@ class APIClient(json.JSONEncoder):
         )
         return _validate(response)
 
-    def _get_resource(self, cls, id, **filters):
-        response = self._get_resource_raw(cls, id, **filters)
+    def _get_resource(self, cls, resource_id, **filters):
+        response = self._get_resource_raw(cls, resource_id, **filters)
         result = response.json()
         if isinstance(result, list):
             result = result[0]
         return cls.create(self, **result)
 
-    def _get_resource_data(self, cls, id, extra=None, headers=None, **filters):
+    def _get_resource_data(self, cls, resource_id, extra=None, headers=None, **filters):
         response = self._get_resource_raw(
-            cls, id, extra=extra, headers=headers, **filters
+            cls, resource_id, extra=extra, headers=headers, **filters
         )
         return response.content
 
@@ -636,7 +640,7 @@ class APIClient(json.JSONEncoder):
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
 
-    def _delete_resource(self, cls, id, data=None, **kwargs):
+    def _delete_resource(self, cls, resource_id, data=None, **kwargs):
         name = "{prefix}{path}".format(
             prefix="/{}/{}".format(cls.api_root, self.client_id)
             if cls.api_root
@@ -645,7 +649,7 @@ class APIClient(json.JSONEncoder):
         )
         url = (
             URLObject(self.api_server)
-            .with_path("{name}/{id}".format(name=name, id=id))
+            .with_path("{name}/{id}".format(name=name, id=resource_id))
             .set_query_params(**kwargs)
         )
         session = self._get_http_session(cls.api_root)
@@ -654,7 +658,9 @@ class APIClient(json.JSONEncoder):
         else:
             _validate(session.delete(url))
 
-    def _put_resource(self, cls, id, data, extra=None, path=None, **kwargs):
+    def _setup_update_resource(
+        self, cls, resource_id, data, extra=None, path=None, **kwargs
+    ):
         if path is None:
             path = cls.collection_name
         name = "{prefix}{path}".format(
@@ -667,37 +673,56 @@ class APIClient(json.JSONEncoder):
         postfix = "/{}".format(extra) if extra else ""
         url = (
             URLObject(self.api_server)
-            .with_path("{name}/{id}{postfix}".format(name=name, id=id, postfix=postfix))
+            .with_path(
+                "{name}/{id}{postfix}".format(
+                    name=name, id=resource_id, postfix=postfix
+                )
+            )
             .set_query_params(**kwargs)
         )
-
-        session = self._get_http_session(cls.api_root)
-
         converted_data = create_request_body(data, cls.datetime_attrs)
+
+        return url, self._get_http_session(cls.api_root), converted_data
+
+    def _patch_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
+        url, session, converted_data = self._setup_update_resource(
+            cls, resource_id, data, extra=extra, path=path, **kwargs
+        )
+        response = session.patch(url, json=converted_data)
+
+        result = _validate(response)
+        return result.json()
+
+    def _put_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
+        url, session, converted_data = self._setup_update_resource(
+            cls, resource_id, data, extra=extra, path=path, **kwargs
+        )
         response = session.put(url, json=converted_data)
 
         result = _validate(response)
         return result.json()
 
-    def _update_resource(self, cls, id, data, **kwargs):
-        result = self._put_resource(cls, id, data, **kwargs)
+    def _update_resource(self, cls, resource_id, data, **kwargs):
+        result = self._put_resource(cls, resource_id, data, **kwargs)
         return cls.create(self, **result)
 
-    def _post_resource(self, cls, id, method_name, data, path=None):
+    def _post_resource(self, cls, resource_id, method_name, data, path=None):
         if path is None:
             path = cls.collection_name
         path = "/{}".format(path) if path else ""
-        id = "/{}".format(id) if id else ""
+        resource_id = "/{}".format(resource_id) if resource_id else ""
         method = "/{}".format(method_name) if method_name else ""
         if not cls.api_root:
-            url_path = "{name}{id}{method}".format(name=path, id=id, method=method)
+            url_path = "{name}{id}{method}".format(
+                name=path, id=resource_id, method=method
+            )
         else:
             # Management method.
             url_path = "/{prefix}/{client_id}{path}{id}{method}".format(
                 prefix=cls.api_root,
                 client_id=self.client_id,
                 path=path,
-                id=id,
+                id=resource_id,
                 method=method,
             )
 
@@ -709,11 +734,11 @@ class APIClient(json.JSONEncoder):
 
         return _validate(response).json()
 
-    def _call_resource_method(self, cls, id, method_name, data):
+    def _call_resource_method(self, cls, resource_id, method_name, data):
         """POST a dictionary to an API method,
         for example /a/.../accounts/id/upgrade"""
 
-        result = self._post_resource(cls, id, method_name, data)
+        result = self._post_resource(cls, resource_id, method_name, data)
         return cls.create(self, **result)
 
     def _request_neural_resource(self, cls, data, path=None, method="PUT"):

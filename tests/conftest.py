@@ -2429,3 +2429,87 @@ def mock_delta_stream(mocked_responses, api_url):
         callback=longpoll_callback,
         content_type="application/json",
     )
+
+
+@pytest.fixture
+def mock_outbox(mocked_responses, api_url):
+    outbox_job_status = {
+        "job_status_id": "job-status-id",
+        "status": "pending",
+        "original_data": {
+            "subject": "With Love, from Nylas",
+            "to": [{"name": "Me", "email": "test@email.com"}],
+            "body": "This email was sent using the Nylas email API. Visit https://nylas.com for details.",
+        },
+        "account_id": "account-id",
+    }
+
+    def return_job_status(request):
+        response = outbox_job_status
+        payload = json.loads(request.body)
+        if "send_at" in payload:
+            response["original_data"]["send_at"] = payload["send_at"]
+            response["original_data"]["original_send_at"] = payload["send_at"]
+            response["original_data"]["retry_limit_datetime"] = payload["send_at"]
+        if "retry_limit_datetime" in payload:
+            response["original_data"]["retry_limit_datetime"] = payload[
+                "retry_limit_datetime"
+            ]
+        return 200, {}, json.dumps(response)
+
+    def delete_callback(request):
+        return 200, {}, ""
+
+    outbox_endpoint = "{base}/v2/outbox".format(base=api_url)
+    endpoint_single = re.compile("{outbox_url}/*".format(outbox_url=outbox_endpoint))
+
+    mocked_responses.add_callback(
+        responses.POST,
+        outbox_endpoint,
+        callback=return_job_status,
+        content_type="application/json",
+    )
+
+    mocked_responses.add_callback(
+        responses.PATCH,
+        endpoint_single,
+        callback=return_job_status,
+        content_type="application/json",
+    )
+
+    mocked_responses.add_callback(
+        responses.DELETE,
+        endpoint_single,
+        callback=delete_callback,
+        content_type="application/json",
+    )
+
+
+@pytest.fixture
+def mock_outbox_send_grid(mocked_responses, api_url):
+    send_grid_verification = {
+        "results": {"domain_verified": True, "sender_verified": True}
+    }
+
+    def return_status(request):
+        return 200, {}, json.dumps(send_grid_verification)
+
+    def delete_callback(request):
+        return 200, {}, ""
+
+    verification_url = "{base}/v2/outbox/onboard/verified_status".format(base=api_url)
+    delete_url = "{base}/v2/outbox/onboard/subuser".format(base=api_url)
+
+    mocked_responses.add_callback(
+        responses.GET,
+        verification_url,
+        callback=return_status,
+        content_type="application/json",
+    )
+
+    mocked_responses.add_callback(
+        responses.DELETE,
+        delete_url,
+        callback=delete_callback,
+        content_type="application/json",
+    )
