@@ -162,9 +162,9 @@ class Outbox:
         now_epoch = timestamp_from_dt(datetime.today())
 
         if send_at_epoch and send_at_epoch != 0 and send_at_epoch < now_epoch:
-                raise ValueError(
-                    "Cannot set message to be sent at a time before the current time."
-                )
+            raise ValueError(
+                "Cannot set message to be sent at a time before the current time."
+            )
 
         if retry_limit_datetime_epoch and retry_limit_datetime_epoch != 0:
             current_send_at = (
