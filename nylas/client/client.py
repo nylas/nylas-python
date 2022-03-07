@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from itertools import chain
 
 import requests
-from requests import HTTPError
 from urlobject import URLObject
 import six
 from six.moves.urllib.parse import urlencode
