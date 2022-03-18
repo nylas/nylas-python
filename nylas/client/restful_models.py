@@ -159,17 +159,24 @@ class NylasAPIObject(RestfulModel):
 
     def save(self, **kwargs):
         if self.id:
-            new_obj = self.api._update_resource(
-                self.cls, self.id, self.as_json(), **kwargs
-            )
+            new_obj = self._update_resource(**kwargs)
         else:
-            new_obj = self.api._create_resource(self.cls, self.as_json(), **kwargs)
-        for attr in self.cls.attrs:
-            if hasattr(new_obj, attr):
-                setattr(self, attr, getattr(new_obj, attr))
+            new_obj = self._create_resource(**kwargs)
+        self._update_values(new_obj)
 
     def update(self):
-        new_obj = self.api._update_resource(self.cls, self.id, self.as_json())
+        new_obj = self._update_resource()
+        self._update_values(new_obj)
+
+    def _create_resource(self, **kwargs):
+        return self.api._create_resource(self.cls, self.as_json(), **kwargs)
+
+    def _update_resource(self, **kwargs):
+        return self.api._update_resource(
+            self.cls, self.id, self.as_json(), **kwargs
+        )
+
+    def _update_values(self, new_obj):
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
                 setattr(self, attr, getattr(new_obj, attr))
