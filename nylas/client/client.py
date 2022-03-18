@@ -14,6 +14,7 @@ from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
+from nylas.client.integration_models import IntegrationRestfulModelCollection, Integration
 from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -38,7 +39,7 @@ from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
     SchedulerRestfulModelCollection,
 )
-from nylas.utils import timestamp_from_dt, create_request_body
+from nylas.utils import timestamp_from_dt, create_request_body, AuthMethod, HttpMethod
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
@@ -121,17 +122,13 @@ class APIClient(json.JSONEncoder):
         self.admin_session = requests.Session()
 
         if client_secret is not None:
-            b64_client_secret = b64encode((client_secret + ":").encode("utf8"))
-            authorization = "Basic {secret}".format(
-                secret=b64_client_secret.decode("utf8")
-            )
             self.admin_session.headers = {
-                "Authorization": authorization,
                 "X-Nylas-API-Wrapper": "python",
                 "X-Nylas-Client-Id": self.client_id,
                 "Nylas-API-Version": self.api_version,
                 "User-Agent": version_header,
             }
+            self.admin_session.headers.update(self._add_auth_header(AuthMethod.BASIC))
         super(APIClient, self).__init__()
 
     @property
@@ -141,12 +138,6 @@ class APIClient(json.JSONEncoder):
     @access_token.setter
     def access_token(self, value):
         self._access_token = value
-        if value:
-            authorization = "Bearer {token}".format(token=value)
-            self.session.headers["Authorization"] = authorization
-        else:
-            if "Authorization" in self.session.headers:
-                del self.session.headers["Authorization"]
 
     def authentication_url(
         self,
@@ -193,8 +184,8 @@ class APIClient(json.JSONEncoder):
             "Accept": "application/json",
         }
 
-        resp = requests.post(
-            self.access_token_url, data=urlencode(args), headers=headers
+        resp = self._request(
+            HttpMethod.POST, self.access_token_url, headers=headers, data=urlencode(args)
         )
         results = _validate(resp).json()
 
@@ -268,9 +259,10 @@ class APIClient(json.JSONEncoder):
         token_info_url = self.token_info_url.format(
             client_id=self.client_id, account_id=self.account.id
         )
-        self.admin_session.headers["Content-Type"] = "application/json"
+        headers = {"Content-Type": "application/json"}
+        headers.update(self.admin_session.headers)
         resp = self.admin_session.post(
-            token_info_url, json={"access_token": self.access_token}
+            token_info_url, headers=headers, json={"access_token": self.access_token}
         )
         _validate(resp).json()
         return resp.json()
@@ -292,7 +284,7 @@ class APIClient(json.JSONEncoder):
             "start_time": start_time,
             "end_time": end_time,
         }
-        resp = self.session.post(url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data)
         _validate(resp)
         return resp.json()
 
@@ -362,7 +354,7 @@ class APIClient(json.JSONEncoder):
         if round_robin is not None:
             data["round_robin"] = round_robin
 
-        resp = self.session.post(url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data)
         _validate(resp)
         return resp.json()
 
@@ -415,7 +407,7 @@ class APIClient(json.JSONEncoder):
         if buffer is not None:
             data["buffer"] = buffer
 
-        resp = self.session.post(url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data)
         _validate(resp)
         return resp.json()
 
@@ -529,7 +521,7 @@ class APIClient(json.JSONEncoder):
 
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_data.items()))
-        response = self._get_http_session(cls.api_root).get(url)
+        response = self._request(HttpMethod.GET, url, cls=cls)
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results if x is not None]
 
@@ -567,13 +559,7 @@ class APIClient(json.JSONEncoder):
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_data.items()))
 
-        session = self._get_http_session(cls.api_root)
-
-        headers = headers or {}
-        headers.update(session.headers)
-        response = session.get(
-            url, headers=headers, stream=stream, timeout=stream_timeout
-        )
+        response = self._request(HttpMethod.GET, url, cls=cls, headers=headers, stream=stream, timeout=stream_timeout)
         return _validate(response)
 
     def _get_resource(self, cls, resource_id, **filters):
@@ -602,15 +588,12 @@ class APIClient(json.JSONEncoder):
             .set_query_params(**kwargs)
         )
 
-        session = self._get_http_session(cls.api_root)
-
         if cls == File:
-            response = session.post(url, files=data)
+            response = self._request(HttpMethod.POST, url, cls=cls, files=data)
         else:
             converted_data = create_request_body(data, cls.datetime_attrs)
             headers = {"Content-Type": "application/json"}
-            headers.update(session.headers)
-            response = session.post(url, json=converted_data, headers=headers)
+            response = self._request(HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data)
 
         result = _validate(response).json()
         if cls.collection_name == "send":
@@ -625,17 +608,15 @@ class APIClient(json.JSONEncoder):
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = URLObject(self.api_server).with_path("{name}".format(name=name))
-        session = self._get_http_session(cls.api_root)
 
         if cls == File:
-            response = session.post(url, files=data)
+            response = self._request(HttpMethod.POST, url, cls=cls, files=data)
         else:
             converted_data = [
                 create_request_body(datum, cls.datetime_attrs) for datum in data
             ]
             headers = {"Content-Type": "application/json"}
-            headers.update(session.headers)
-            response = session.post(url, json=converted_data, headers=headers)
+            response = self._request(HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data)
 
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
@@ -652,14 +633,13 @@ class APIClient(json.JSONEncoder):
             .with_path("{name}/{id}".format(name=name, id=resource_id))
             .set_query_params(**kwargs)
         )
-        session = self._get_http_session(cls.api_root)
         if data:
-            _validate(session.delete(url, json=data))
+            _validate(self._request(HttpMethod.DELETE, url, cls=cls, json=data))
         else:
-            _validate(session.delete(url))
+            _validate(self._request(HttpMethod.DELETE, url, cls=cls))
 
-    def _setup_update_resource(
-        self, cls, resource_id, data, extra=None, path=None, **kwargs
+    def _request_update_resource(
+        self, method, cls, resource_id, data, extra=None, path=None, **kwargs
     ):
         if path is None:
             path = cls.collection_name
@@ -682,25 +662,16 @@ class APIClient(json.JSONEncoder):
         )
         converted_data = create_request_body(data, cls.datetime_attrs)
 
-        return url, self._get_http_session(cls.api_root), converted_data
+        response = self._request(method, url, cls=cls, json=converted_data)
+
+        result = _validate(response)
+        return result.json()
 
     def _patch_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
-        url, session, converted_data = self._setup_update_resource(
-            cls, resource_id, data, extra=extra, path=path, **kwargs
-        )
-        response = session.patch(url, json=converted_data)
-
-        result = _validate(response)
-        return result.json()
+        return self._request_update_resource(HttpMethod.PATCH, cls, resource_id, data, extra=extra, path=path, **kwargs)
 
     def _put_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
-        url, session, converted_data = self._setup_update_resource(
-            cls, resource_id, data, extra=extra, path=path, **kwargs
-        )
-        response = session.put(url, json=converted_data)
-
-        result = _validate(response)
-        return result.json()
+        return self._request_update_resource(HttpMethod.PUT, cls, resource_id, data, extra=extra, path=path, **kwargs)
 
     def _update_resource(self, cls, resource_id, data, **kwargs):
         result = self._put_resource(cls, resource_id, data, **kwargs)
@@ -729,9 +700,7 @@ class APIClient(json.JSONEncoder):
         url = URLObject(self.api_server).with_path(url_path)
         converted_data = create_request_body(data, cls.datetime_attrs)
 
-        session = self._get_http_session(cls.api_root)
-        response = session.post(url, json=converted_data)
-
+        response = self._request(HttpMethod.POST, url, cls=cls, json=converted_data)
         return _validate(response).json()
 
     def _call_resource_method(self, cls, resource_id, method_name, data):
@@ -741,15 +710,15 @@ class APIClient(json.JSONEncoder):
         result = self._post_resource(cls, resource_id, method_name, data)
         return cls.create(self, **result)
 
-    def _request_neural_resource(self, cls, data, path=None, method="PUT"):
+    def _request_neural_resource(self, cls, data, path=None, method=None):
         if path is None:
             path = cls.collection_name
+        if method is None:
+            method = HttpMethod.PUT
         url = URLObject(self.api_server).with_path("/neural/{name}".format(name=path))
 
-        session = self._get_http_session(cls.api_root)
-
         converted_data = create_request_body(data, cls.datetime_attrs)
-        response = session.request(method, url, json=converted_data)
+        response = self._request(method, url, cls=cls, json=converted_data)
 
         result = _validate(response).json()
         if isinstance(result, list):
@@ -776,3 +745,30 @@ class APIClient(json.JSONEncoder):
                 raise ValueError(
                     "Open Hours cannot contain an email not present in the main email list or the free busy email list."
                 )
+
+    def _request(self, method, url, cls=None, headers=None, **kwargs):
+        api_root = None
+        auth_method = None
+        if cls:
+            api_root = cls.api_root
+            auth_method = cls.auth_method
+
+        session = self._get_http_session(api_root)
+        headers = headers or {}
+        headers.update(session.headers)
+        headers.update(self._add_auth_header(auth_method))
+        return session.request(method.name, url, headers=headers, **kwargs)
+
+    def _add_auth_header(self, auth_method):
+        if auth_method is AuthMethod.BEARER:
+            authorization = "Bearer {token}".format(token=self.access_token)
+        elif auth_method is AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
+            credential = "{client_id}:{client_secret}".format(client_id=self.client_id, client_secret=self.client_secret)
+            authorization = "Basic {credential}".format(credential=b64encode(credential.encode("utf8")))
+        else:
+            b64_client_secret = b64encode((self.client_secret + ":").encode("utf8"))
+            authorization = "Basic {secret}".format(
+                secret=b64_client_secret.decode("utf8")
+            )
+
+        return {"Authorization": authorization}

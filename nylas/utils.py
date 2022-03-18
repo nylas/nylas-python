@@ -1,5 +1,6 @@
 from __future__ import division
 from datetime import datetime, timedelta
+from enum import Enum
 
 
 def timestamp_from_dt(dt, epoch=datetime(1970, 1, 1)):
@@ -50,3 +51,25 @@ def convert_metadata_pairs_to_array(data):
         metadata_pair.append(key + ":" + value)
 
     return metadata_pair
+
+
+class AuthMethod(str, Enum):
+    """
+    This is an Enum representing all the different authentication methods that the Nylas APIs support
+    """
+
+    BEARER = 1
+    BASIC = 2
+    BASIC_CLIENT_ID_AND_SECRET = 3
+
+
+class HttpMethod(str, Enum):
+    """
+    This is an Enum representing all the HTTP Methods that the Nylas APIs support
+    """
+
+    GET = 1
+    PUT = 2
+    POST = 3
+    PATCH = 4
+    DELETE = 5

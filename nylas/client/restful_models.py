@@ -5,7 +5,7 @@ from enum import Enum
 from six import StringIO
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.errors import FileUploadError, UnSyncedError, NylasApiError
-from nylas.utils import timestamp_from_dt
+from nylas.utils import timestamp_from_dt, AuthMethod
 
 # pylint: disable=attribute-defined-outside-init
 
@@ -35,6 +35,7 @@ class RestfulModel(dict):
     datetime_filter_attrs = {}
     typed_dict_attrs = {}
     read_only_attrs = {}
+    auth_method = AuthMethod.BEARER
     # The Nylas API holds most objects for an account directly under '/',
     # but some of them are under '/a' (mostly the account-management
     # and billing code). api_root is a tiny metaprogramming hack to let
