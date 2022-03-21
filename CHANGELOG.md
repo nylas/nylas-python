@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add Outbox support
+* Enable Nylas API v2.5 support
 
 v5.6.0
 ----------------
