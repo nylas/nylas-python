@@ -30,16 +30,20 @@ def test_custom_client():
     )
 
 
-def test_client_access_token():
-    client = APIClient(access_token="foo")
-    assert client.access_token == "foo"
-    assert client.session.headers["Authorization"] == "Bearer foo"
-    client.access_token = "bar"
-    assert client.access_token == "bar"
-    assert client.session.headers["Authorization"] == "Bearer bar"
-    client.access_token = None
-    assert client.access_token is None
-    assert "Authorization" not in client.session.headers
+@pytest.mark.usefixtures("mock_resources")
+def test_client_access_token(api_client, mocked_responses):
+    api_client.access_token = "foo"
+    assert api_client.access_token == "foo"
+    api_client.room_resources.first()
+    assert mocked_responses.calls[0].request.headers["Authorization"] == "Bearer foo"
+    api_client.access_token = "bar"
+    api_client.room_resources.first()
+    assert api_client.access_token == "bar"
+    assert mocked_responses.calls[1].request.headers["Authorization"] == "Bearer bar"
+    api_client.access_token = None
+    api_client.room_resources.first()
+    assert api_client.access_token is None
+    assert "Authorization" not in api_client.session.headers
 
 
 def test_client_headers():
