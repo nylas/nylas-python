@@ -764,15 +764,18 @@ class APIClient(json.JSONEncoder):
         return session.request(method.name, url, headers=headers, **kwargs)
 
     def _add_auth_header(self, auth_method):
+        authorization = None
         if auth_method is AuthMethod.BEARER:
-            authorization = "Bearer {token}".format(token=self.access_token)
+            authorization = "Bearer {token}".format(token=self.access_token) if self.access_token else None
         elif auth_method is AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
-            credential = "{client_id}:{client_secret}".format(client_id=self.client_id, client_secret=self.client_secret)
-            authorization = "Basic {credential}".format(credential=b64encode(credential.encode("utf8")))
+            if self.client_id and self.client_secret:
+                credential = "{client_id}:{client_secret}".format(client_id=self.client_id, client_secret=self.client_secret)
+                authorization = "Basic {credential}".format(credential=b64encode(credential.encode("utf8")))
         else:
-            b64_client_secret = b64encode((self.client_secret + ":").encode("utf8"))
-            authorization = "Basic {secret}".format(
-                secret=b64_client_secret.decode("utf8")
-            )
+            if self.client_secret:
+                b64_client_secret = b64encode(("{}:".format(self.client_secret)).encode("utf8"))
+                authorization = "Basic {secret}".format(
+                    secret=b64_client_secret.decode("utf8")
+                )
 
-        return {"Authorization": authorization}
+        return {"Authorization": authorization} if authorization else {}
