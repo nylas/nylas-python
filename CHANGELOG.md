@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add Outbox support
+* Add Integration API support
 
 v5.6.0
 ----------------
