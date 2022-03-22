@@ -2522,27 +2522,19 @@ def mock_integrations(mocked_responses, client_id):
         "provider": "zoom",
         "settings": {
             "client_id": "test_client_id",
-            "client_secret": "test_client_secret"
+            "client_secret": "test_client_secret",
         },
-        "redirect_uris": [
-            "https://www.nylas.com"
-        ],
-        "expires_in": 12000
+        "redirect_uris": ["https://www.nylas.com"],
+        "expires_in": 12000,
     }
 
     def list_callback(request):
-        response = {
-            "data": [integration],
-            "limit": 10,
-            "offset": 0
-        }
+        response = {"data": [integration], "limit": 10, "offset": 0}
         return 200, {}, json.dumps(response)
 
     def single_callback(request):
         integration["provider"] = get_id_from_url(request.url)
-        response = {
-            "data": integration
-        }
+        response = {"data": integration}
         return 200, {}, json.dumps(response)
 
     def update_callback(request):
@@ -2551,10 +2543,7 @@ def mock_integrations(mocked_responses, client_id):
         except ValueError:
             return 400, {}, ""
 
-        response = {
-            "success": True,
-            "data": payload
-        }
+        response = {"success": True, "data": payload}
         return 200, {}, json.dumps(response)
 
     def delete_callback(request):
@@ -2564,12 +2553,8 @@ def mock_integrations(mocked_responses, client_id):
         path = URLObject(url).path
         return path.rsplit("/", 1)[-1]
 
-    endpoint_post = re.compile(
-        "https://.*nylas.com/connect/integrations"
-    )
-    endpoint_single = re.compile(
-        "https://.*nylas.com/connect/integrations/.*"
-    )
+    endpoint_post = re.compile("https://.*nylas.com/connect/integrations")
+    endpoint_single = re.compile("https://.*nylas.com/connect/integrations/.*")
     endpoint_list = re.compile("https://.*nylas.com/connect/integrations\?.*")
     mocked_responses.add_callback(
         responses.GET,

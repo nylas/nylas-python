@@ -14,7 +14,10 @@ from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
-from nylas.client.integration_models import IntegrationRestfulModelCollection, Integration
+from nylas.client.integration_models import (
+    IntegrationRestfulModelCollection,
+    Integration,
+)
 from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -185,7 +188,10 @@ class APIClient(json.JSONEncoder):
         }
 
         resp = self._request(
-            HttpMethod.POST, self.access_token_url, headers=headers, data=urlencode(args)
+            HttpMethod.POST,
+            self.access_token_url,
+            headers=headers,
+            data=urlencode(args),
         )
         results = _validate(resp).json()
 
@@ -563,7 +569,14 @@ class APIClient(json.JSONEncoder):
         converted_data = create_request_body(filters, cls.datetime_filter_attrs)
         url = str(URLObject(url).add_query_params(converted_data.items()))
 
-        response = self._request(HttpMethod.GET, url, cls=cls, headers=headers, stream=stream, timeout=stream_timeout)
+        response = self._request(
+            HttpMethod.GET,
+            url,
+            cls=cls,
+            headers=headers,
+            stream=stream,
+            timeout=stream_timeout,
+        )
         return _validate(response)
 
     def _get_resource(self, cls, resource_id, **filters):
@@ -597,7 +610,9 @@ class APIClient(json.JSONEncoder):
         else:
             converted_data = create_request_body(data, cls.datetime_attrs)
             headers = {"Content-Type": "application/json"}
-            response = self._request(HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data)
+            response = self._request(
+                HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data
+            )
 
         result = _validate(response).json()
         if cls.collection_name == "send":
@@ -620,7 +635,9 @@ class APIClient(json.JSONEncoder):
                 create_request_body(datum, cls.datetime_attrs) for datum in data
             ]
             headers = {"Content-Type": "application/json"}
-            response = self._request(HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data)
+            response = self._request(
+                HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data
+            )
 
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
@@ -672,10 +689,14 @@ class APIClient(json.JSONEncoder):
         return result.json()
 
     def _patch_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
-        return self._request_update_resource(HttpMethod.PATCH, cls, resource_id, data, extra=extra, path=path, **kwargs)
+        return self._request_update_resource(
+            HttpMethod.PATCH, cls, resource_id, data, extra=extra, path=path, **kwargs
+        )
 
     def _put_resource(self, cls, resource_id, data, extra=None, path=None, **kwargs):
-        return self._request_update_resource(HttpMethod.PUT, cls, resource_id, data, extra=extra, path=path, **kwargs)
+        return self._request_update_resource(
+            HttpMethod.PUT, cls, resource_id, data, extra=extra, path=path, **kwargs
+        )
 
     def _update_resource(self, cls, resource_id, data, **kwargs):
         result = self._put_resource(cls, resource_id, data, **kwargs)
@@ -766,14 +787,24 @@ class APIClient(json.JSONEncoder):
     def _add_auth_header(self, auth_method):
         authorization = None
         if auth_method is AuthMethod.BEARER:
-            authorization = "Bearer {token}".format(token=self.access_token) if self.access_token else None
+            authorization = (
+                "Bearer {token}".format(token=self.access_token)
+                if self.access_token
+                else None
+            )
         elif auth_method is AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
             if self.client_id and self.client_secret:
-                credential = "{client_id}:{client_secret}".format(client_id=self.client_id, client_secret=self.client_secret)
-                authorization = "Basic {credential}".format(credential=b64encode(credential.encode("utf8")))
+                credential = "{client_id}:{client_secret}".format(
+                    client_id=self.client_id, client_secret=self.client_secret
+                )
+                authorization = "Basic {credential}".format(
+                    credential=b64encode(credential.encode("utf8"))
+                )
         else:
             if self.client_secret:
-                b64_client_secret = b64encode(("{}:".format(self.client_secret)).encode("utf8"))
+                b64_client_secret = b64encode(
+                    ("{}:".format(self.client_secret)).encode("utf8")
+                )
                 authorization = "Basic {secret}".format(
                     secret=b64_client_secret.decode("utf8")
                 )

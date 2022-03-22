@@ -172,9 +172,7 @@ class NylasAPIObject(RestfulModel):
         return self.api._create_resource(self.cls, self.as_json(), **kwargs)
 
     def _update_resource(self, **kwargs):
-        return self.api._update_resource(
-            self.cls, self.id, self.as_json(), **kwargs
-        )
+        return self.api._update_resource(self.cls, self.id, self.as_json(), **kwargs)
 
     def _update_values(self, new_obj):
         for attr in self.cls.attrs:

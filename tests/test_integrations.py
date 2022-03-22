@@ -62,13 +62,11 @@ def test_update_integration(mocked_responses, api_client):
         "name": "Updated Integration Name",
         "settings": {
             "client_id": "test_client_id",
-            "client_secret": "test_client_secret"
+            "client_secret": "test_client_secret",
         },
-        "redirect_uris": [
-            "https://www.nylas.com"
-        ],
+        "redirect_uris": ["https://www.nylas.com"],
         "expires_in": 12000,
-        "scope": []
+        "scope": [],
     }
     assert isinstance(integration, Integration)
     assert integration.id == "zoom"
@@ -103,13 +101,11 @@ def test_create_integration(mocked_responses, api_client):
         "provider": "zoom",
         "settings": {
             "client_id": "test_client_id",
-            "client_secret": "test_client_secret"
+            "client_secret": "test_client_secret",
         },
-        "redirect_uris": [
-            "https://www.nylas.com"
-        ],
+        "redirect_uris": ["https://www.nylas.com"],
         "expires_in": 12000,
-        "scope": ["test.scope"]
+        "scope": ["test.scope"],
     }
     assert isinstance(integration, Integration)
     assert integration.name == "Nylas Playground"

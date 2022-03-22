@@ -14,7 +14,7 @@ class Integration(NylasAPIObject):
         "settings",
         "redirect_uris",
         "scope",
-        "id"
+        "id",
     )
     read_only_attrs = {"provider", "id"}
     auth_method = AuthMethod.BASIC_CLIENT_ID_AND_SECRET
@@ -53,9 +53,7 @@ class Integration(NylasAPIObject):
 
     def _update_resource(self, **kwargs):
         provider = self.id or self.provider
-        return self.api._patch_resource(
-            self.cls, provider, self.as_json(), **kwargs
-        )
+        return self.api._patch_resource(self.cls, provider, self.as_json(), **kwargs)
 
     class Region(str, Enum):
         """
@@ -134,7 +132,9 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
         Args:
             provider (Integration.Provider): The provider
         """
-        super(IntegrationRestfulModelCollection, self).delete(provider.value, data=data, **kwargs)
+        super(IntegrationRestfulModelCollection, self).delete(
+            provider.value, data=data, **kwargs
+        )
 
     def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
         filters = copy(self.filters)
@@ -146,7 +146,13 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
         if "data" not in response or response["data"] is None:
             return []
 
-        return [self.model_class.create(self, **x) for x in response["data"] if x is not None]
+        return [
+            self.model_class.create(self, **x)
+            for x in response["data"]
+            if x is not None
+        ]
 
     def _set_integrations_api_url(self):
-        self.api.api_server = "https://{app_name}.{region}.nylas.com".format(app_name=self.app_name, region=self.region.value)
+        self.api.api_server = "https://{app_name}.{region}.nylas.com".format(
+            app_name=self.app_name, region=self.region.value
+        )
