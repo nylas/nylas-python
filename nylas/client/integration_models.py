@@ -76,11 +76,43 @@ class Integration(NylasAPIObject):
 
 
 class IntegrationRestfulModelCollection(RestfulModelCollection):
-    def __init__(self, api, app_name, region):
+    def __init__(self, api):
+        self._app_name = "beta"
+        self._region = Integration.Region.US
         # Make a copy of the API as we need to change the base url for Integration calls
         integration_api = copy(api)
-        integration_api.api_server = "https://{app_name}.{region}.nylas.com".format(app_name=app_name, region=region.value)
         RestfulModelCollection.__init__(self, Integration, integration_api)
+        self._set_integrations_api_url()
+
+    @property
+    def app_name(self):
+        return self._app_name
+
+    @app_name.setter
+    def app_name(self, value):
+        """
+        Set the name of the application to prefix the URL for all integration calls for this instance
+
+        Args:
+            value (str): The name of the application
+        """
+        self._app_name = value
+        self._set_integrations_api_url()
+
+    @property
+    def region(self):
+        return self._region
+
+    @region.setter
+    def region(self, value):
+        """
+        Set the region to prefix the URL for all integration calls for this instance
+
+        Args:
+            value (Integration.Region): The region
+        """
+        self._region = value
+        self._set_integrations_api_url()
 
     def get(self, provider):
         """
@@ -114,3 +146,6 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
             return []
 
         return [self.model_class.create(self, **x) for x in response["data"] if x is not None]
+
+    def _set_integrations_api_url(self):
+        self.api.api_server = "https://{app_name}.{region}.nylas.com".format(app_name=self.app_name, region=self.region.value)

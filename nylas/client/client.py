@@ -490,8 +490,8 @@ class APIClient(json.JSONEncoder):
         return Outbox(self)
 
     @property
-    def integrations(self, app_name="beta", region=Integration.Region.US):
-        return IntegrationRestfulModelCollection(self, app_name, region)
+    def integrations(self):
+        return IntegrationRestfulModelCollection(self)
 
     ##########################################################
     #   Private functions used by Restful Model Collection   #
