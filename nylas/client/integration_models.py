@@ -14,8 +14,9 @@ class Integration(NylasAPIObject):
         "settings",
         "redirect_uris",
         "scope",
+        "id"
     )
-    read_only_attrs = {"provider"}
+    read_only_attrs = {"provider", "id"}
     auth_method = AuthMethod.BASIC_CLIENT_ID_AND_SECRET
     collection_name = "connect/integrations"
 
