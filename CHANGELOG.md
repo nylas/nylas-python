@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add Outbox support
+* Fix `Draft` not sending metadata
 
 v5.6.0
 ----------------
