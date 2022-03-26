@@ -484,6 +484,7 @@ class Draft(Message):
         "starred",
         "snippet",
         "tracking",
+        "metadata",
     ]
     datetime_attrs = {"last_modified_at": "date"}
     collection_name = "drafts"
