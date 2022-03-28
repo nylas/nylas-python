@@ -42,7 +42,7 @@ from nylas.utils import timestamp_from_dt, create_request_body
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
 API_SERVER = "https://api.nylas.com"
-SUPPORTED_API_VERSION = "2.4"
+SUPPORTED_API_VERSION = "2.5"
 
 
 def _validate(response):
