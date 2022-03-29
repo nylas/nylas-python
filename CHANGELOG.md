@@ -4,7 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add Outbox support
-* Add Integration API support
+* Add UAS Support (Integrations API, Grants API, UAS Hosted Authentication)
 
 v5.6.0
 ----------------
