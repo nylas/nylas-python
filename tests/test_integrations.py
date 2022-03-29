@@ -3,12 +3,12 @@ import json
 import pytest
 from urlobject import URLObject
 
-from nylas.client.integration_models import Integration
+from nylas.client.uas_models import UAS, Integration
 
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_integration(mocked_responses, api_client):
-    integration = api_client.integrations.first()
+    integration = api_client.uas.integrations.first()
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations"
     assert request.method == "GET"
@@ -24,15 +24,16 @@ def test_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_integration_api_url(mocked_responses, api_client):
-    integrations = api_client.integrations
+    uas = api_client.uas
+    integrations = uas.integrations
     integrations.first()
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).hostname == "beta.us.nylas.com"
-    integrations.app_name = "test_app"
+    uas.app_name = "test_app"
     integrations.first()
     request = mocked_responses.calls[1].request
     assert URLObject(request.url).hostname == "test_app.us.nylas.com"
-    integrations.region = Integration.Region.EU
+    uas.region = UAS.Region.EU
     integrations.first()
     request = mocked_responses.calls[2].request
     assert URLObject(request.url).hostname == "test_app.eu.nylas.com"
@@ -40,7 +41,7 @@ def test_integration_api_url(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_single_integration(mocked_responses, api_client):
-    integration = api_client.integrations.get(Integration.Provider.ZOOM)
+    integration = api_client.uas.integrations.get(UAS.Provider.ZOOM)
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations/zoom"
     assert request.method == "GET"
@@ -51,7 +52,7 @@ def test_single_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_update_integration(mocked_responses, api_client):
-    integration = api_client.integrations.get(Integration.Provider.ZOOM)
+    integration = api_client.uas.integrations.get(UAS.Provider.ZOOM)
     integration.name = "Updated Integration Name"
     integration.save()
     assert len(mocked_responses.calls) == 2
@@ -76,7 +77,7 @@ def test_update_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_delete_integration(mocked_responses, api_client):
-    api_client.integrations.delete(Integration.Provider.ZOOM)
+    api_client.uas.integrations.delete(UAS.Provider.ZOOM)
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations/zoom"
     assert request.method == "DELETE"
@@ -84,9 +85,9 @@ def test_delete_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_create_integration(mocked_responses, api_client):
-    integration = api_client.integrations.create()
+    integration = api_client.uas.integrations.create()
     integration.name = "Nylas Playground"
-    integration.provider = Integration.Provider.ZOOM
+    integration.provider = UAS.Provider.ZOOM
     integration.settings["client_id"] = "test_client_id"
     integration.settings["client_secret"] = "test_client_secret"
     integration.redirect_uris = ["https://www.nylas.com"]

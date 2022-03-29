@@ -14,10 +14,6 @@ from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
 from nylas.client.errors import MessageRejectedError, NylasApiError
-from nylas.client.integration_models import (
-    IntegrationRestfulModelCollection,
-    Integration,
-)
 from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -42,6 +38,7 @@ from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
     SchedulerRestfulModelCollection,
 )
+from nylas.client.uas_models import UAS
 from nylas.utils import timestamp_from_dt, create_request_body, AuthMethod, HttpMethod
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
@@ -496,8 +493,8 @@ class APIClient(json.JSONEncoder):
         return Outbox(self)
 
     @property
-    def integrations(self):
-        return IntegrationRestfulModelCollection(self)
+    def uas(self):
+        return UAS(self)
 
     ##########################################################
     #   Private functions used by Restful Model Collection   #

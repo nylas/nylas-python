@@ -44,7 +44,7 @@ class Integration(NylasAPIObject):
     def as_json(self):
         dct = super(Integration, self).as_json()
         if not self.id:
-            if isinstance(self.provider, Integration.Provider):
+            if isinstance(self.provider, UAS.Provider):
                 dct["provider"] = self.provider.value
             else:
                 dct["provider"] = self.provider
@@ -55,32 +55,21 @@ class Integration(NylasAPIObject):
         provider = self.id or self.provider
         return self.api._patch_resource(self.cls, provider, self.as_json(), **kwargs)
 
-    class Region(str, Enum):
-        """
-        This is an Enum the regions supported by the Integrations API
-        """
-
-        US = "us"
-        EU = "eu"
-
-    class Provider(str, Enum):
-        """
-        This is an Enum representing all the available providers for integrations
-        """
-
-        GOOGLE = "google"
-        MICROSOFT = "microsoft"
-        IMAP = "imap"
-        ZOOM = "zoom"
 
 
-class IntegrationRestfulModelCollection(RestfulModelCollection):
+    def __init__(self, api):
+        NylasAPIObject.__init__(self, Grant, api)
+        self.settings = {}
+        self.metadata = {}
+        self.scope = []
+
+
+class UAS(object):
     def __init__(self, api):
         self._app_name = "beta"
-        self._region = Integration.Region.US
+        self._region = UAS.Region.US
         # Make a copy of the API as we need to change the base url for Integration calls
-        integration_api = copy(api)
-        RestfulModelCollection.__init__(self, Integration, integration_api)
+        self.api = copy(api)
         self._set_integrations_api_url()
 
     @property
@@ -113,12 +102,44 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
         self._region = value
         self._set_integrations_api_url()
 
+    @property
+    def integrations(self):
+        return IntegrationRestfulModelCollection(self.api)
+
+    def _set_integrations_api_url(self):
+        self.api.api_server = "https://{app_name}.{region}.nylas.com".format(
+            app_name=self.app_name, region=self.region.value
+        )
+
+    class Region(str, Enum):
+        """
+        This is an Enum the regions supported by the Integrations API
+        """
+
+        US = "us"
+        EU = "eu"
+
+    class Provider(str, Enum):
+        """
+        This is an Enum representing all the available providers for integrations
+        """
+
+        GOOGLE = "google"
+        MICROSOFT = "microsoft"
+        IMAP = "imap"
+        ZOOM = "zoom"
+
+
+class IntegrationRestfulModelCollection(RestfulModelCollection):
+    def __init__(self, api):
+        RestfulModelCollection.__init__(self, Integration, api)
+
     def get(self, provider):
         """
         Get an existing integration for a provider
 
         Args:
-            provider (Integration.Provider): The provider
+            provider (UAS.Provider): The provider
 
         Returns:
             Integration: The existing integration
@@ -130,7 +151,7 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
         Deletes an existing integration for a provider
 
         Args:
-            provider (Integration.Provider): The provider
+            provider (UAS.Provider): The provider
         """
         super(IntegrationRestfulModelCollection, self).delete(
             provider.value, data=data, **kwargs
@@ -151,8 +172,3 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
             for x in response["data"]
             if x is not None
         ]
-
-    def _set_integrations_api_url(self):
-        self.api.api_server = "https://{app_name}.{region}.nylas.com".format(
-            app_name=self.app_name, region=self.region.value
-        )
