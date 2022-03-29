@@ -160,6 +160,40 @@ class UAS(object):
     def grants(self):
         return GrantRestfulModelCollection(self.api)
 
+    def hosted_authentication(
+        self,
+        provider,
+        redirect_uri,
+        grant_id=None,
+        login_hint=None,
+        state=None,
+        expires_in=None,
+        settings=None,
+        metadata=None,
+        scope=None,
+    ):
+        request = {"provider": provider, "redirect_uri": redirect_uri}
+        if grant_id:
+            request["grant_id"] = grant_id
+        if login_hint:
+            request["login_hint"] = login_hint
+        if state:
+            request["state"] = state
+        if expires_in:
+            request["expires_in"] = expires_in
+        if settings:
+            request["settings"] = settings
+        if metadata:
+            request["metadata"] = metadata
+        if scope:
+            request["scope"] = scope
+
+        response = self.api._post_resource(Grant, "auth", None, request, path="connect")
+        if "data" in response:
+            response = response["data"]
+
+        return response
+
     def _set_integrations_api_url(self):
         self.api.api_server = "https://{app_name}.{region}.nylas.com".format(
             app_name=self.app_name, region=self.region.value
