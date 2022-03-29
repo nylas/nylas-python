@@ -156,6 +156,10 @@ class UAS(object):
     def integrations(self):
         return IntegrationRestfulModelCollection(self.api)
 
+    @property
+    def grants(self):
+        return GrantRestfulModelCollection(self.api)
+
     def _set_integrations_api_url(self):
         self.api.api_server = "https://{app_name}.{region}.nylas.com".format(
             app_name=self.app_name, region=self.region.value
@@ -180,7 +184,28 @@ class UAS(object):
         ZOOM = "zoom"
 
 
-class IntegrationRestfulModelCollection(RestfulModelCollection):
+class UASRestfulModelCollection(RestfulModelCollection):
+    def __init__(self, model_class, api):
+        RestfulModelCollection.__init__(self, model_class, api)
+
+    def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
+        filters = copy(self.filters)
+        filters["offset"] = offset
+        if not filters.get("limit"):
+            filters["limit"] = limit
+
+        response = self.api._get_resource_raw(self.model_class, None, **filters).json()
+        if "data" not in response or response["data"] is None:
+            return []
+
+        return [
+            self.model_class.create(self, **x)
+            for x in response["data"]
+            if x is not None
+        ]
+
+
+class IntegrationRestfulModelCollection(UASRestfulModelCollection):
     def __init__(self, api):
         RestfulModelCollection.__init__(self, Integration, api)
 
@@ -207,18 +232,14 @@ class IntegrationRestfulModelCollection(RestfulModelCollection):
             provider.value, data=data, **kwargs
         )
 
-    def _get_model_collection(self, offset=0, limit=CHUNK_SIZE):
-        filters = copy(self.filters)
-        filters["offset"] = offset
-        if not filters.get("limit"):
-            filters["limit"] = limit
 
-        response = self.api._get_resource_raw(self.model_class, None, **filters).json()
-        if "data" not in response or response["data"] is None:
-            return []
+class GrantRestfulModelCollection(UASRestfulModelCollection):
+    def __init__(self, api):
+        RestfulModelCollection.__init__(self, Grant, api)
 
-        return [
-            self.model_class.create(self, **x)
-            for x in response["data"]
-            if x is not None
-        ]
+    def on_demand_sync(self, id, sync_from=None):
+        path = "sync"
+        if sync_from:
+            path = path + "?sync_from={}".format(sync_from)
+        response = self.api._post_resource(Grant, id, path, data=None)
+        return self.model_class.create(self, **response)
