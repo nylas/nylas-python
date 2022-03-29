@@ -154,10 +154,22 @@ class UAS(object):
 
     @property
     def integrations(self):
+        """
+        Integrations API for integrating a provider to the Nylas application
+
+        Returns:
+            IntegrationRestfulModelCollection: The Integration API configured with the app_name and region
+        """
         return IntegrationRestfulModelCollection(self.api)
 
     @property
     def grants(self):
+        """
+        Native Authentication for the integrated provider
+
+        Returns:
+            GrantRestfulModelCollection: The Grants API configured with the app_name and region
+        """
         return GrantRestfulModelCollection(self.api)
 
     def hosted_authentication(
@@ -172,6 +184,23 @@ class UAS(object):
         metadata=None,
         scope=None,
     ):
+        """
+        Hosted Authentication for the integrated provider
+
+        Args:
+            provider (UAS.Provider): OAuth provider
+            redirect_uri (str): The URI for the final redirect
+            grant_id (str): Existing Grant ID to trigger a re-authentication
+            login_hint (str): Hint to simplify the login flow
+            state (str): State value to return after authentication flow is completed
+            expires_in (int): How long this request (and the attached login) ID will remain valid before the link expires
+            settings (dict[str, str]): Settings required by provider
+            metadata (dict[str, any]): Metadata to store as part of the grant
+            scope (list[str]): OAuth provider-specific scopes
+
+        Returns:
+            dict[str, any]: The login information
+        """
         request = {"provider": provider, "redirect_uri": redirect_uri}
         if grant_id:
             request["grant_id"] = grant_id
@@ -271,9 +300,19 @@ class GrantRestfulModelCollection(UASRestfulModelCollection):
     def __init__(self, api):
         RestfulModelCollection.__init__(self, Grant, api)
 
-    def on_demand_sync(self, id, sync_from=None):
+    def on_demand_sync(self, grant_id, sync_from=None):
+        """
+        Trigger a grant sync on demand
+
+        Args:
+            grant_id (str): The grant ID to sync
+            sync_from (int): Epoch timestamp when the sync starts from
+
+        Returns:
+            Grant: The grant after triggering the sync
+        """
         path = "sync"
         if sync_from:
             path = path + "?sync_from={}".format(sync_from)
-        response = self.api._post_resource(Grant, id, path, data=None)
+        response = self.api._post_resource(Grant, grant_id, path, data=None)
         return self.model_class.create(self, **response)
