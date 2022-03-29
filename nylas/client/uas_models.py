@@ -56,12 +56,62 @@ class Integration(NylasAPIObject):
         return self.api._patch_resource(self.cls, provider, self.as_json(), **kwargs)
 
 
+class Grant(NylasAPIObject):
+    attrs = (
+        "id",
+        "provider",
+        "state",
+        "email",
+        "ip",
+        "grant_status",
+        "user_agent",
+        "created_at",
+        "updated_at",
+        "settings",
+        "metadata",
+        "scope",
+    )
+    read_only_attrs = {
+        "id",
+        "email",
+        "ip",
+        "grant_status",
+        "user_agent",
+        "created_at",
+        "updated_at",
+    }
+    auth_method = AuthMethod.BASIC_CLIENT_ID_AND_SECRET
+    collection_name = "connect/grants"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Grant, api)
         self.settings = {}
         self.metadata = {}
         self.scope = []
+
+    @classmethod
+    def create(cls, api, **kwargs):
+        if "data" in kwargs:
+            kwargs = kwargs.get("data")
+        obj = super(Grant, cls).create(api, **kwargs)
+        return obj
+
+    def as_json(self):
+        dct = super(Grant, self).as_json()
+        # provider and state can not be updated
+        if self.id:
+            del dct["provider"]
+            del dct["state"]
+        else:
+            if isinstance(self.provider, UAS.Provider):
+                dct["provider"] = self.provider.value
+            else:
+                dct["provider"] = self.provider
+
+        return dct
+
+    def _update_resource(self, **kwargs):
+        return self.api._patch_resource(self.cls, self.id, self.as_json(), **kwargs)
 
 
 class UAS(object):
