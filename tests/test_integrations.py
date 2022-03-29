@@ -203,3 +203,32 @@ def test_grant_on_demand_sync(mocked_responses, api_client):
     assert request.method == "POST"
     assert request.body is None
     assert isinstance(grant, Grant)
+
+
+@pytest.mark.usefixtures("mock_uas_hosted_auth")
+def test_grant_uas_hosted_auth(mocked_responses, api_client):
+    api_client.uas.hosted_authentication(
+        provider=UAS.Provider.ZOOM,
+        redirect_uri="https://myapp.com/callback-handler",
+        grant_id="test-grant-id",
+        login_hint="example@email.com",
+        state="test-state",
+        expires_in=60,
+        settings={"refresh_token": "test-refresh-token"},
+        metadata={"isAdmin": True},
+        scope=["meeting:write"],
+    )
+    request = mocked_responses.calls[0].request
+    assert URLObject(request.url).path == "/connect/auth"
+    assert request.method == "POST"
+    assert json.loads(request.body) == {
+        "provider": "zoom",
+        "redirect_uri": "https://myapp.com/callback-handler",
+        "grant_id": "test-grant-id",
+        "login_hint": "example@email.com",
+        "state": "test-state",
+        "expires_in": 60,
+        "settings": {"refresh_token": "test-refresh-token"},
+        "scope": ["meeting:write"],
+        "metadata": {"isAdmin": True},
+    }

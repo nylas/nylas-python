@@ -2667,3 +2667,33 @@ def mock_grants(mocked_responses, client_id):
         content_type="application/json",
         callback=delete_callback,
     )
+
+
+@pytest.fixture
+def mock_uas_hosted_auth(mocked_responses, client_id):
+    api_response = {
+        "success": True,
+        "data": {
+            "url": "https://accounts.nylas.com/connect/login?id=uas-hosted-id",
+            "id": "uas-hosted-id",
+            "expires_at": 0,
+            "request": {},
+        },
+    }
+
+    def hosted_auth_response(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        api_response["data"]["request"] = payload
+        return 200, {}, json.dumps(api_response)
+
+    endpoint = re.compile("https://.*nylas.com/connect/auth")
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint,
+        content_type="application/json",
+        callback=hosted_auth_response,
+    )
