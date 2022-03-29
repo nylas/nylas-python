@@ -2586,3 +2586,84 @@ def mock_integrations(mocked_responses, client_id):
         content_type="application/json",
         callback=delete_callback,
     )
+
+
+@pytest.fixture
+def mock_grants(mocked_responses, client_id):
+    grant = {
+        "id": "grant-id",
+        "provider": "zoom",
+        "grant_status": "valid",
+        "email": "email@example.com",
+        "metadata": {"isAdmin": True},
+        "scope": ["meeting:write"],
+        "user_agent": "string",
+        "ip": "string",
+        "state": "my-state",
+        "created_at": 1617817109,
+        "updated_at": 1617817109,
+    }
+
+    def list_callback(request):
+        response = {"data": [grant], "limit": 10, "offset": 0}
+        return 200, {}, json.dumps(response)
+
+    def single_callback(request):
+        response = {"data": grant}
+        return 200, {}, json.dumps(response)
+
+    def update_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        response = {"success": True, "data": payload}
+        return 200, {}, json.dumps(response)
+
+    def delete_callback(request):
+        return 200, {}, json.dumps({"success": True})
+
+    def on_demand_sync(request):
+        return 200, {}, json.dumps(grant)
+
+    endpoint_post = re.compile("https://.*nylas.com/connect/grants")
+    endpoint_single = re.compile("https://.*nylas.com/connect/grants/.*")
+    endpoint_list = re.compile("https://.*nylas.com/connect/grants\?.*")
+    endpoint_sync = re.compile("https://.*nylas.com/connect/grants/.*/sync.*")
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint_sync,
+        content_type="application/json",
+        callback=on_demand_sync,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_list,
+        content_type="application/json",
+        callback=list_callback,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_single,
+        content_type="application/json",
+        callback=single_callback,
+    )
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint_post,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.PATCH,
+        endpoint_single,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.DELETE,
+        endpoint_single,
+        content_type="application/json",
+        callback=delete_callback,
+    )
