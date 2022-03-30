@@ -5,6 +5,7 @@ Unreleased
 ----------------
 * Add Outbox support
 * Add UAS Support (Integrations API, Grants API, UAS Hosted Authentication)
+* Add support for `limit` and `offset` for message/thread search
 * Enable Nylas API v2.5 support
 * Fix `Draft` not sending metadata
 
