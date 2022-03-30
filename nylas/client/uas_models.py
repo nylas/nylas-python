@@ -26,9 +26,21 @@ class Integration(NylasAPIObject):
         self.scope = []
 
     def set_client_id(self, client_id):
+        """
+        Set the client ID of the OAuth provider
+
+        Args:
+            client_id (str): Client ID of the OAuth provider
+        """
         self.settings["client_id"] = client_id
 
     def set_client_secret(self, client_secret):
+        """
+        Set the client secret of the OAuth provider
+
+        Args:
+            client_secret (str): Client secret of the OAuth provider
+        """
         self.settings["client_secret"] = client_secret
 
     @classmethod
