@@ -1023,7 +1023,7 @@ def mock_message_search_response(mocked_responses, api_url):
 
     mocked_responses.add(
         responses.GET,
-        api_url + "/messages/search?q=Pinot",
+        re.compile(api_url + "/messages/search\?q=Pinot.*"),
         body=response_body,
         status=200,
         content_type="application/json",

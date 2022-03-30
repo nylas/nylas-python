@@ -17,6 +17,13 @@ def test_search_messages(api_client):
 
 
 @pytest.mark.usefixtures("mock_message_search_response")
+def test_search_messages_with_limit_offset(mocked_responses, api_client):
+    api_client.messages.search("Pinot", limit=10, offset=0)
+    request = mocked_responses.calls[0].request
+    assert request.path_url == "/messages/search?q=Pinot&limit=10&offset=0"
+
+
+@pytest.mark.usefixtures("mock_message_search_response")
 def test_search_drafts(api_client):
     with pytest.raises(Exception):
         api_client.drafts.search("Pinot")
