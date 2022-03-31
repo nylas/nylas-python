@@ -38,7 +38,7 @@ from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
     SchedulerRestfulModelCollection,
 )
-from nylas.client.uas_models import UAS
+from nylas.client.authentication_models import Authentication
 from nylas.utils import timestamp_from_dt, create_request_body, AuthMethod, HttpMethod
 
 DEBUG = environ.get("NYLAS_CLIENT_DEBUG")
@@ -493,8 +493,8 @@ class APIClient(json.JSONEncoder):
         return Outbox(self)
 
     @property
-    def uas(self):
-        return UAS(self)
+    def authentication(self):
+        return Authentication(self)
 
     ##########################################################
     #   Private functions used by Restful Model Collection   #

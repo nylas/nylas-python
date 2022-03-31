@@ -56,7 +56,7 @@ class Integration(NylasAPIObject):
     def as_json(self):
         dct = super(Integration, self).as_json()
         if not self.id:
-            if isinstance(self.provider, UAS.Provider):
+            if isinstance(self.provider, Authentication.Provider):
                 dct["provider"] = self.provider.value
             else:
                 dct["provider"] = self.provider
@@ -115,7 +115,7 @@ class Grant(NylasAPIObject):
             del dct["provider"]
             del dct["state"]
         else:
-            if isinstance(self.provider, UAS.Provider):
+            if isinstance(self.provider, Authentication.Provider):
                 dct["provider"] = self.provider.value
             else:
                 dct["provider"] = self.provider
@@ -126,10 +126,10 @@ class Grant(NylasAPIObject):
         return self.api._patch_resource(self.cls, self.id, self.as_json(), **kwargs)
 
 
-class UAS(object):
+class Authentication(object):
     def __init__(self, api):
         self._app_name = "beta"
-        self._region = UAS.Region.US
+        self._region = Authentication.Region.US
         # Make a copy of the API as we need to change the base url for Integration calls
         self.api = copy(api)
         self._set_integrations_api_url()
@@ -200,7 +200,7 @@ class UAS(object):
         Hosted Authentication for the integrated provider
 
         Args:
-            provider (UAS.Provider): OAuth provider
+            provider (Authentication.Provider): OAuth provider
             redirect_uri (str): The URI for the final redirect
             grant_id (str): Existing Grant ID to trigger a re-authentication
             login_hint (str): Hint to simplify the login flow
@@ -259,7 +259,7 @@ class UAS(object):
         ZOOM = "zoom"
 
 
-class UASRestfulModelCollection(RestfulModelCollection):
+class AuthenticationRestfulModelCollection(RestfulModelCollection):
     def __init__(self, model_class, api):
         RestfulModelCollection.__init__(self, model_class, api)
 
@@ -280,16 +280,16 @@ class UASRestfulModelCollection(RestfulModelCollection):
         ]
 
 
-class IntegrationRestfulModelCollection(UASRestfulModelCollection):
+class IntegrationRestfulModelCollection(AuthenticationRestfulModelCollection):
     def __init__(self, api):
-        RestfulModelCollection.__init__(self, Integration, api)
+        AuthenticationRestfulModelCollection.__init__(self, Integration, api)
 
     def get(self, provider):
         """
         Get an existing integration for a provider
 
         Args:
-            provider (UAS.Provider): The provider
+            provider (Authentication.Provider): The provider
 
         Returns:
             Integration: The existing integration
@@ -301,16 +301,16 @@ class IntegrationRestfulModelCollection(UASRestfulModelCollection):
         Deletes an existing integration for a provider
 
         Args:
-            provider (UAS.Provider): The provider
+            provider (Authentication.Provider): The provider
         """
         super(IntegrationRestfulModelCollection, self).delete(
             provider.value, data=data, **kwargs
         )
 
 
-class GrantRestfulModelCollection(UASRestfulModelCollection):
+class GrantRestfulModelCollection(AuthenticationRestfulModelCollection):
     def __init__(self, api):
-        RestfulModelCollection.__init__(self, Grant, api)
+        AuthenticationRestfulModelCollection.__init__(self, Grant, api)
 
     def on_demand_sync(self, grant_id, sync_from=None):
         """

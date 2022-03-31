@@ -3,21 +3,21 @@ import json
 import pytest
 from urlobject import URLObject
 
-from nylas.client.uas_models import UAS, Integration, Grant
+from nylas.client.authentication_models import Authentication, Integration, Grant
 
 
 @pytest.mark.usefixtures("mock_integrations")
-def test_uas_api_url(mocked_responses, api_client):
-    uas = api_client.uas
-    integrations = uas.integrations
+def test_authentication_api_url(mocked_responses, api_client):
+    authentication = api_client.authentication
+    integrations = authentication.integrations
     integrations.first()
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).hostname == "beta.us.nylas.com"
-    uas.app_name = "test_app"
+    authentication.app_name = "test_app"
     integrations.first()
     request = mocked_responses.calls[1].request
     assert URLObject(request.url).hostname == "test_app.us.nylas.com"
-    uas.region = UAS.Region.EU
+    authentication.region = Authentication.Region.EU
     integrations.first()
     request = mocked_responses.calls[2].request
     assert URLObject(request.url).hostname == "test_app.eu.nylas.com"
@@ -25,7 +25,7 @@ def test_uas_api_url(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_integration(mocked_responses, api_client):
-    integration = api_client.uas.integrations.first()
+    integration = api_client.authentication.integrations.first()
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations"
     assert request.method == "GET"
@@ -41,7 +41,7 @@ def test_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_single_integration(mocked_responses, api_client):
-    integration = api_client.uas.integrations.get(UAS.Provider.ZOOM)
+    integration = api_client.authentication.integrations.get(Authentication.Provider.ZOOM)
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations/zoom"
     assert request.method == "GET"
@@ -52,7 +52,7 @@ def test_single_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_update_integration(mocked_responses, api_client):
-    integration = api_client.uas.integrations.get(UAS.Provider.ZOOM)
+    integration = api_client.authentication.integrations.get(Authentication.Provider.ZOOM)
     integration.name = "Updated Integration Name"
     integration.save()
     assert len(mocked_responses.calls) == 2
@@ -77,7 +77,7 @@ def test_update_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_delete_integration(mocked_responses, api_client):
-    api_client.uas.integrations.delete(UAS.Provider.ZOOM)
+    api_client.authentication.integrations.delete(Authentication.Provider.ZOOM)
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations/zoom"
     assert request.method == "DELETE"
@@ -85,9 +85,9 @@ def test_delete_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_create_integration(mocked_responses, api_client):
-    integration = api_client.uas.integrations.create()
+    integration = api_client.authentication.integrations.create()
     integration.name = "Nylas Playground"
-    integration.provider = UAS.Provider.ZOOM
+    integration.provider = Authentication.Provider.ZOOM
     integration.settings["client_id"] = "test_client_id"
     integration.settings["client_secret"] = "test_client_secret"
     integration.redirect_uris = ["https://www.nylas.com"]
@@ -121,7 +121,7 @@ def test_create_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_grant(mocked_responses, api_client):
-    grant = api_client.uas.grants.first()
+    grant = api_client.authentication.grants.first()
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/grants"
     assert request.method == "GET"
@@ -140,7 +140,7 @@ def test_grant(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_single_grant(mocked_responses, api_client):
-    grant = api_client.uas.grants.get("grant-id")
+    grant = api_client.authentication.grants.get("grant-id")
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/grants/grant-id"
     assert request.method == "GET"
@@ -150,7 +150,7 @@ def test_single_grant(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_update_grant(mocked_responses, api_client):
-    grant = api_client.uas.grants.get("grant-id")
+    grant = api_client.authentication.grants.get("grant-id")
     grant.settings = {"refresh_token": "test_token"}
     grant.save()
     assert len(mocked_responses.calls) == 2
@@ -169,7 +169,7 @@ def test_update_grant(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_delete_grant(mocked_responses, api_client):
-    api_client.uas.grants.delete("grant-id")
+    api_client.authentication.grants.delete("grant-id")
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/grants/grant-id"
     assert request.method == "DELETE"
@@ -177,8 +177,8 @@ def test_delete_grant(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_create_grant(mocked_responses, api_client):
-    grant = api_client.uas.grants.create()
-    grant.provider = UAS.Provider.ZOOM
+    grant = api_client.authentication.grants.create()
+    grant.provider = Authentication.Provider.ZOOM
     grant.settings = {"refresh_token": "test-refresh-token"}
     grant.metadata = {"isAdmin": True}
     grant.scope = ["meeting:write"]
@@ -197,7 +197,7 @@ def test_create_grant(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_grants")
 def test_grant_on_demand_sync(mocked_responses, api_client):
-    grant = api_client.uas.grants.on_demand_sync("grant-id", sync_from=12000)
+    grant = api_client.authentication.grants.on_demand_sync("grant-id", sync_from=12000)
     request = mocked_responses.calls[0].request
     assert request.path_url == "/connect/grants/grant-id/sync?sync_from=12000"
     assert request.method == "POST"
@@ -205,10 +205,10 @@ def test_grant_on_demand_sync(mocked_responses, api_client):
     assert isinstance(grant, Grant)
 
 
-@pytest.mark.usefixtures("mock_uas_hosted_auth")
-def test_grant_uas_hosted_auth(mocked_responses, api_client):
-    api_client.uas.hosted_authentication(
-        provider=UAS.Provider.ZOOM,
+@pytest.mark.usefixtures("mock_authentication_hosted_auth")
+def test_grant_authentication_hosted_auth(mocked_responses, api_client):
+    api_client.authentication.hosted_authentication(
+        provider=Authentication.Provider.ZOOM,
         redirect_uri="https://myapp.com/callback-handler",
         grant_id="test-grant-id",
         login_hint="example@email.com",

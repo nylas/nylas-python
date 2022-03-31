@@ -2670,7 +2670,7 @@ def mock_grants(mocked_responses, client_id):
 
 
 @pytest.fixture
-def mock_uas_hosted_auth(mocked_responses, client_id):
+def mock_authentication_hosted_auth(mocked_responses, client_id):
     api_response = {
         "success": True,
         "data": {
