@@ -5,6 +5,7 @@ Unreleased
 ----------------
 * Add Outbox support
 * Add support for `limit` and `offset` for message/thread search
+* Add `authentication_type` field to `Account`
 * Enable Nylas API v2.5 support
 * Fix `Draft` not sending metadata
 

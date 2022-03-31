@@ -978,6 +978,7 @@ class Account(NylasAPIObject):
         "namespace_id",
         "provider",
         "sync_state",
+        "authentication_type",
         "trial",
         "metadata",
     ]
