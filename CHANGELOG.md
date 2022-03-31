@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add Outbox support
+* Add support for new (beta) Integrations authentication (Integrations API, Grants API, Hosted Authentication for Integrations)
 * Add support for `limit` and `offset` for message/thread search
 * Add `authentication_type` field to `Account`
 * Enable Nylas API v2.5 support

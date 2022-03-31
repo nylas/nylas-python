@@ -2514,3 +2514,187 @@ def mock_outbox_send_grid(mocked_responses, api_url):
         callback=delete_callback,
         content_type="application/json",
     )
+
+
+@pytest.fixture
+def mock_integrations(mocked_responses, client_id):
+    integration = {
+        "name": "Nylas Playground",
+        "provider": "zoom",
+        "settings": {
+            "client_id": "test_client_id",
+            "client_secret": "test_client_secret",
+        },
+        "redirect_uris": ["https://www.nylas.com"],
+        "expires_in": 12000,
+    }
+
+    def list_callback(request):
+        response = {"data": [integration], "limit": 10, "offset": 0}
+        return 200, {}, json.dumps(response)
+
+    def single_callback(request):
+        integration["provider"] = get_id_from_url(request.url)
+        response = {"data": integration}
+        return 200, {}, json.dumps(response)
+
+    def update_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        response = {"success": True, "data": payload}
+        return 200, {}, json.dumps(response)
+
+    def delete_callback(request):
+        return 200, {}, json.dumps({"success": True})
+
+    def get_id_from_url(url):
+        path = URLObject(url).path
+        return path.rsplit("/", 1)[-1]
+
+    endpoint_post = re.compile("https://.*nylas.com/connect/integrations")
+    endpoint_single = re.compile("https://.*nylas.com/connect/integrations/.*")
+    endpoint_list = re.compile("https://.*nylas.com/connect/integrations\?.*")
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_list,
+        content_type="application/json",
+        callback=list_callback,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_single,
+        content_type="application/json",
+        callback=single_callback,
+    )
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint_post,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.PATCH,
+        endpoint_single,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.DELETE,
+        endpoint_single,
+        content_type="application/json",
+        callback=delete_callback,
+    )
+
+
+@pytest.fixture
+def mock_grants(mocked_responses, client_id):
+    grant = {
+        "id": "grant-id",
+        "provider": "zoom",
+        "grant_status": "valid",
+        "email": "email@example.com",
+        "metadata": {"isAdmin": True},
+        "scope": ["meeting:write"],
+        "user_agent": "string",
+        "ip": "string",
+        "state": "my-state",
+        "created_at": 1617817109,
+        "updated_at": 1617817109,
+    }
+
+    def list_callback(request):
+        response = {"data": [grant], "limit": 10, "offset": 0}
+        return 200, {}, json.dumps(response)
+
+    def single_callback(request):
+        response = {"data": grant}
+        return 200, {}, json.dumps(response)
+
+    def update_callback(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        response = {"success": True, "data": payload}
+        return 200, {}, json.dumps(response)
+
+    def delete_callback(request):
+        return 200, {}, json.dumps({"success": True})
+
+    def on_demand_sync(request):
+        return 200, {}, json.dumps(grant)
+
+    endpoint_post = re.compile("https://.*nylas.com/connect/grants")
+    endpoint_single = re.compile("https://.*nylas.com/connect/grants/.*")
+    endpoint_list = re.compile("https://.*nylas.com/connect/grants\?.*")
+    endpoint_sync = re.compile("https://.*nylas.com/connect/grants/.*/sync.*")
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint_sync,
+        content_type="application/json",
+        callback=on_demand_sync,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_list,
+        content_type="application/json",
+        callback=list_callback,
+    )
+    mocked_responses.add_callback(
+        responses.GET,
+        endpoint_single,
+        content_type="application/json",
+        callback=single_callback,
+    )
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint_post,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.PATCH,
+        endpoint_single,
+        content_type="application/json",
+        callback=update_callback,
+    )
+    mocked_responses.add_callback(
+        responses.DELETE,
+        endpoint_single,
+        content_type="application/json",
+        callback=delete_callback,
+    )
+
+
+@pytest.fixture
+def mock_authentication_hosted_auth(mocked_responses, client_id):
+    api_response = {
+        "success": True,
+        "data": {
+            "url": "https://accounts.nylas.com/connect/login?id=uas-hosted-id",
+            "id": "uas-hosted-id",
+            "expires_at": 0,
+            "request": {},
+        },
+    }
+
+    def hosted_auth_response(request):
+        try:
+            payload = json.loads(request.body)
+        except ValueError:
+            return 400, {}, ""
+
+        api_response["data"]["request"] = payload
+        return 200, {}, json.dumps(api_response)
+
+    endpoint = re.compile("https://.*nylas.com/connect/auth")
+    mocked_responses.add_callback(
+        responses.POST,
+        endpoint,
+        content_type="application/json",
+        callback=hosted_auth_response,
+    )

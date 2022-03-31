@@ -1,4 +1,5 @@
 from nylas.client.restful_models import RestfulModel, Message, File, Contact
+from nylas.utils import HttpMethod
 import re
 
 
@@ -132,7 +133,7 @@ class NeuralCategorizer(Message):
     def recategorize(self, category):
         data = {"message_id": self.id, "category": category}
         self.api._request_neural_resource(
-            NeuralCategorizer, data, "categorize/feedback", "POST"
+            NeuralCategorizer, data, "categorize/feedback", method=HttpMethod.POST
         )
         data = {"message_id": self.id}
         response = self.api._request_neural_resource(NeuralCategorizer, data)
