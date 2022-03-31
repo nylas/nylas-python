@@ -41,7 +41,9 @@ def test_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_single_integration(mocked_responses, api_client):
-    integration = api_client.authentication.integrations.get(Authentication.Provider.ZOOM)
+    integration = api_client.authentication.integrations.get(
+        Authentication.Provider.ZOOM
+    )
     request = mocked_responses.calls[0].request
     assert URLObject(request.url).path == "/connect/integrations/zoom"
     assert request.method == "GET"
@@ -52,7 +54,9 @@ def test_single_integration(mocked_responses, api_client):
 
 @pytest.mark.usefixtures("mock_integrations")
 def test_update_integration(mocked_responses, api_client):
-    integration = api_client.authentication.integrations.get(Authentication.Provider.ZOOM)
+    integration = api_client.authentication.integrations.get(
+        Authentication.Provider.ZOOM
+    )
     integration.name = "Updated Integration Name"
     integration.save()
     assert len(mocked_responses.calls) == 2
