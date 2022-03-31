@@ -1800,6 +1800,7 @@ def mock_account_management(mocked_responses, api_url, account_id, client_id):
         "provider": "gmail",
         "organization_unit": "label",
         "billing_state": "paid",
+        "authentication_type": "password",
     }
     paid_response = json.dumps(account)
     account["billing_state"] = "cancelled"
