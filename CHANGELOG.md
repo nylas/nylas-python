@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.7.0
 ----------------
 * Add Outbox support
 * Add support for new (beta) Integrations authentication (Integrations API, Grants API, Hosted Authentication for Integrations)
