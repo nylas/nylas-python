@@ -62,3 +62,6 @@ local/
 
 pip-selfcheck.json
 tests/output
+local.env
+examples/test.py
+.env
