@@ -64,8 +64,16 @@ class RestfulModelCollection(object):
         return self._range(self.filters["offset"], limit)
 
     def count(self):
+        """
+        Get the number of objects in the collection being queried
+
+        Returns:
+            int: The number of objects in the collection being queried
+        """
         self.filters["view"] = "count"
-        response = self.api._get_resource_raw(self.model_class, resource_id=None, **self.filters).json()
+        response = self.api._get_resource_raw(
+            self.model_class, resource_id=None, **self.filters
+        ).json()
         return response["count"]
 
     def where(self, filter=None, **filters):
