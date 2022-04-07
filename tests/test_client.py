@@ -276,3 +276,16 @@ def test_pagination(mocked_responses, api_client, api_url):
 
     contacts = list(api_client.contacts.where(limit=75))
     assert len(contacts) == 75
+
+
+def test_count(mocked_responses, api_client, api_url):
+    count_data = {"count": 721}
+    mocked_responses.add(
+        responses.GET,
+        api_url + "/contacts",
+        content_type="application/json",
+        body=json.dumps(count_data),
+    )
+
+    contact_count = api_client.contacts.count()
+    assert contact_count == 721
