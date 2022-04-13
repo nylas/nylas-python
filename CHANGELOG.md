@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for getting the number of queried objects (count view)
+
 v5.7.0
 ----------------
 * Add Outbox support
