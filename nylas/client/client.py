@@ -287,7 +287,7 @@ class APIClient(json.JSONEncoder):
             "start_time": start_time,
             "end_time": end_time,
         }
-        resp = self._request(HttpMethod.POST, url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
 
@@ -357,7 +357,7 @@ class APIClient(json.JSONEncoder):
         if round_robin is not None:
             data["round_robin"] = round_robin
 
-        resp = self._request(HttpMethod.POST, url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
 
@@ -410,7 +410,7 @@ class APIClient(json.JSONEncoder):
         if buffer is not None:
             data["buffer"] = buffer
 
-        resp = self._request(HttpMethod.POST, url, json=data)
+        resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
 
