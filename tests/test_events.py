@@ -2,7 +2,6 @@ import json
 from datetime import datetime, timedelta
 import pytest
 from urlobject import URLObject
-from requests import RequestException
 from nylas.client.restful_models import Event
 
 
@@ -15,15 +14,39 @@ def blank_event(api_client):
 
 
 @pytest.mark.usefixtures("mock_event_create_response")
-def test_event_crud(api_client):
+def test_event_crud(mocked_responses, api_client):
     event1 = blank_event(api_client)
+    event1.object = "should not send"
+    event1.account_id = "should not send"
+    event1.job_status_id = "should not send"
+    event1.ical_uid = "should not send"
+    event1.message_id = "should not send"
+    event1.owner = "should not send"
+    event1.status = "should not send"
+    event1.master_event_id = "should not send"
+    event1.original_start_time = "should not send"
     event1.save()
+    request = mocked_responses.calls[0].request
+    body = json.loads(request.body)
     assert event1.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert "title" in body
+    assert "object" not in body
+    assert "account_id" not in body
+    assert "job_status_id" not in body
+    assert "ical_uid" not in body
+    assert "message_id" not in body
+    assert "owner" not in body
+    assert "status" not in body
+    assert "master_event_id" not in body
+    assert "original_start_time" not in body
 
     event1.title = "blah"
     event1.save()
+    request = mocked_responses.calls[1].request
+    body = json.loads(request.body)
     assert event1.title == "loaded from JSON"
     assert event1.get("ignored") is None
+    assert "id" not in body
 
 
 @pytest.mark.usefixtures("mock_event_create_notify_response")
