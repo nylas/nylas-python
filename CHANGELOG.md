@@ -1,9 +1,10 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.8.0
 ----------------
 * Add support for getting the number of queried objects (count view)
+* Improve usage of read only fields in models
 * Fix Calendar availability functions not using the correct authentication method
 
 v5.7.0
