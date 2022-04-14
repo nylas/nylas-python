@@ -151,6 +151,8 @@ class RestfulModel(dict):
 
 
 class NylasAPIObject(RestfulModel):
+    read_only_attrs = {"id", "account_id", "object", "job_status_id"}
+
     def __init__(self, cls, api):
         RestfulModel.__init__(self, cls, api)
 
@@ -638,6 +640,7 @@ class Calendar(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Calendar, api)
+        self.read_only_attrs.update({"is_primary", "read_only"})
 
     @property
     def events(self):
@@ -674,6 +677,16 @@ class Event(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Event, api)
+        self.read_only_attrs.update(
+            {
+                "ical_uid",
+                "message_id",
+                "owner",
+                "status",
+                "master_event_id",
+                "original_start_time",
+            }
+        )
 
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
@@ -804,6 +817,13 @@ class JobStatus(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, JobStatus, api)
+        self.read_only_attrs.update(
+            {
+                "action",
+                "status",
+                "original_data",
+            }
+        )
 
     def is_successful(self):
         return self.status == "successful"
@@ -871,13 +891,19 @@ class Component(NylasAPIObject):
         "created_at": "created_at",
         "updated_at": "updated_at",
     }
-    read_only_attrs = {"id", "public_application_id", "created_at", "updated_at"}
 
     collection_name = None
     api_root = "component"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Component, api)
+        self.read_only_attrs.update(
+            {
+                "public_application_id",
+                "created_at",
+                "updated_at",
+            }
+        )
 
     def as_json(self):
         dct = NylasAPIObject.as_json(self)
@@ -896,13 +922,13 @@ class Webhook(NylasAPIObject):
         "application_id",
         "version",
     )
-    read_only_attrs = {"id", "application_id", "version"}
 
     collection_name = "webhooks"
     api_root = "a"
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Webhook, api)
+        self.read_only_attrs.update({"application_id", "version"})
 
     def as_json(self):
         dct = {}
