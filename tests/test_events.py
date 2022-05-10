@@ -138,6 +138,51 @@ def test_event_conferencing_details_autocreate_error(mocked_responses, api_clien
     )
 
 
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_error_if_participants_more_than_capacity(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.capacity = 1
+    event.participants = [
+        {"email": "person1@email.com"},
+        {"email": "person2@email.com"},
+    ]
+    with pytest.raises(ValueError) as excinfo:
+        event.save()
+    assert "The number of participants in the event exceeds the set capacity." in str(
+        excinfo
+    )
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_no_error_if_capacity_negative_one(mocked_responses, api_client):
+    event = blank_event(api_client)
+    event.capacity = -1
+    event.participants = [
+        {"email": "person1@email.com"},
+        {"email": "person2@email.com"},
+    ]
+    event.save()
+
+
+@pytest.mark.usefixtures("mock_event_create_response")
+def test_event_no_error_if_participants_less_than_eql_capacity(
+    mocked_responses, api_client
+):
+    event = blank_event(api_client)
+    event.capacity = 2
+    event.participants = [
+        {"email": "person1@email.com"},
+        {"email": "person2@email.com"},
+    ]
+    event.save()
+    event.capacity = 3
+    event.participants = [
+        {"email": "person1@email.com"},
+        {"email": "person2@email.com"},
+    ]
+    event.save()
+
+
 @pytest.mark.usefixtures("mock_calendars", "mock_events")
 def test_calendar_events(api_client):
     calendar = api_client.calendars.first()
