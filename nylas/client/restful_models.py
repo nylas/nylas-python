@@ -775,7 +775,7 @@ class Event(NylasAPIObject):
             "Unexpected response from the API server. Returned 200 but no 'ics' string found."
         )
 
-    def save(self, **kwargs):
+    def validate(self):
         if (
             self.conferencing
             and "details" in self.conferencing
@@ -784,6 +784,18 @@ class Event(NylasAPIObject):
             raise ValueError(
                 "Cannot set both 'details' and 'autocreate' in conferencing object."
             )
+        if (
+            self.capacity
+            and self.capacity != -1
+            and self.participants
+            and len(self.participants) > self.capacity
+        ):
+            raise ValueError(
+                "The number of participants in the event exceeds the set capacity."
+            )
+
+    def save(self, **kwargs):
+        self.validate()
 
         super(Event, self).save(**kwargs)
 
