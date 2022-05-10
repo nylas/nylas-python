@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for collective and group events
+
 v5.8.0
 ----------------
 * Add support for getting the number of queried objects (count view)
