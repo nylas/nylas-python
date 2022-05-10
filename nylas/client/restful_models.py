@@ -671,6 +671,9 @@ class Event(NylasAPIObject):
         "ical_uid",
         "metadata",
         "notifications",
+        "event_collection_id",
+        "capacity",
+        "round_robin_order",
     ]
     datetime_attrs = {"original_start_at": "original_start_time"}
     collection_name = "events"
