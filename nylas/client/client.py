@@ -316,6 +316,7 @@ class APIClient(json.JSONEncoder):
         interval,
         start_at,
         end_at,
+        event_collection_id=None,
         buffer=None,
         round_robin=None,
         free_busy=None,
@@ -356,6 +357,8 @@ class APIClient(json.JSONEncoder):
             data["buffer"] = buffer
         if round_robin is not None:
             data["round_robin"] = round_robin
+        if event_collection_id is not None:
+            data["event_collection_id"] = event_collection_id
 
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
