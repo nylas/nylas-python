@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.9.0
 ----------------
 * Add support for collective and group events
 
