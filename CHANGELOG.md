@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add option to include read only params in `as_json`
+
 v5.9.0
 ----------------
 * Add support for collective and group events

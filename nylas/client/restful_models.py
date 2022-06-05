@@ -106,7 +106,7 @@ class RestfulModel(dict):
 
         return obj
 
-    def as_json(self):
+    def as_json(self, enforce_read_only=True):
         dct = {}
         # Some API parameters like "from" and "in" also are
         # Python reserved keywords. To work around this, we rename
@@ -114,7 +114,7 @@ class RestfulModel(dict):
         # their correct form though.
         reserved_keywords = ["from", "in"]
         for attr in self.cls.attrs:
-            if attr in self.read_only_attrs:
+            if attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             if hasattr(self, attr):
                 if attr in reserved_keywords:
@@ -124,17 +124,17 @@ class RestfulModel(dict):
                 if attr_value is not None:
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
-            if date_attr in self.read_only_attrs:
+            if date_attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             if self.get(date_attr):
                 dct[iso_attr] = self[date_attr].strftime("%Y-%m-%d")
         for dt_attr, ts_attr in self.cls.datetime_attrs.items():
-            if dt_attr in self.read_only_attrs:
+            if dt_attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             if self.get(dt_attr):
                 dct[ts_attr] = timestamp_from_dt(self[dt_attr])
         for attr, value_attr in self.cls.typed_dict_attrs.items():
-            if attr in self.read_only_attrs:
+            if attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             typed_dict = getattr(self, attr)
             if value_attr:
