@@ -40,7 +40,7 @@ except ImportError:
 # For more information, check out the documentation: http://flask.pocoo.org
 # Create a Flask app, and load the configuration file.
 app = Flask(__name__)
-app.config.from_json("config.json")
+app.config.from_pyfile("config.py")
 
 # Check for dummy configuration values.
 # If you are building your own application based on this example,
