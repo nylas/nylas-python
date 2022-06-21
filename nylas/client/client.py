@@ -231,7 +231,7 @@ class APIClient(json.JSONEncoder):
         return _validate(resp).json()
 
     def revoke_token(self):
-        resp = self.session.post(self.revoke_url)
+        resp = requests.post(self.revoke_url, auth=(self.access_token, None))
         _validate(resp)
         self.auth_token = None
         self.access_token = None
