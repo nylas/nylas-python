@@ -1,9 +1,11 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.9.1
 ----------------
 * Add option to include read only params in `as_json`
+* Change config file in `hosted-oauth` example to match new Flask rules
+* Fix unauthorized error for `revoke_token`
 
 v5.9.0
 ----------------
