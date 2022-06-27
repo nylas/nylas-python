@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add `enforce_read_only` parameter to overriding `as_json` functions
+
 v5.9.1
 ----------------
 * Add option to include read only params in `as_json`

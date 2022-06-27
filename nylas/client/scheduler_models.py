@@ -47,7 +47,7 @@ class SchedulerBookingRequest(RestfulModel):
     def __init__(self, api):
         RestfulModel.__init__(self, SchedulerBookingRequest, api)
 
-    def as_json(self):
+    def as_json(self, enforce_read_only=True):
         dct = RestfulModel.as_json(self)
         if "additional_values" not in dct or dct["additional_values"] is None:
             dct["additional_values"] = {}

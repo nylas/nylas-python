@@ -53,8 +53,11 @@ class Integration(NylasAPIObject):
 
         return obj
 
-    def as_json(self):
-        dct = super(Integration, self).as_json()
+    def as_json(self, enforce_read_only=True):
+        dct = super(Integration, self).as_json(enforce_read_only)
+        if enforce_read_only is False:
+            return dct
+
         if not self.id:
             if isinstance(self.provider, Authentication.Provider):
                 dct["provider"] = self.provider.value
@@ -108,8 +111,11 @@ class Grant(NylasAPIObject):
         obj = super(Grant, cls).create(api, **kwargs)
         return obj
 
-    def as_json(self):
-        dct = super(Grant, self).as_json()
+    def as_json(self, enforce_read_only=True):
+        dct = super(Grant, self).as_json(enforce_read_only)
+        if enforce_read_only is False:
+            return dct
+
         # provider and state can not be updated
         if self.id:
             del dct["provider"]

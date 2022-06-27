@@ -691,8 +691,11 @@ class Event(NylasAPIObject):
             }
         )
 
-    def as_json(self):
-        dct = NylasAPIObject.as_json(self)
+    def as_json(self, enforce_read_only=True):
+        dct = NylasAPIObject.as_json(self, enforce_read_only)
+        if enforce_read_only is False:
+            return dct
+
         # Filter some parameters we got from the API
         if dct.get("when"):
             # Currently, the event (self) and the dict (dct) share the same
@@ -920,8 +923,11 @@ class Component(NylasAPIObject):
             }
         )
 
-    def as_json(self):
-        dct = NylasAPIObject.as_json(self)
+    def as_json(self, enforce_read_only=True):
+        dct = NylasAPIObject.as_json(self, enforce_read_only)
+        if enforce_read_only is False:
+            return dct
+
         # "type" cannot be modified after created
         if self.id:
             dct.pop("type")
@@ -945,13 +951,13 @@ class Webhook(NylasAPIObject):
         NylasAPIObject.__init__(self, Webhook, api)
         self.read_only_attrs.update({"application_id", "version"})
 
-    def as_json(self):
+    def as_json(self, enforce_read_only=True):
         dct = {}
         # Only 'state' can get updated
-        if self.id:
+        if self.id and enforce_read_only is True:
             dct["state"] = self.state
         else:
-            dct = NylasAPIObject.as_json(self)
+            dct = NylasAPIObject.as_json(self, enforce_read_only)
         return dct
 
     class Trigger(str, Enum):
@@ -1035,9 +1041,11 @@ class Account(NylasAPIObject):
     def __init__(self, api):
         NylasAPIObject.__init__(self, Account, api)
 
-    def as_json(self):
-        dct = {"metadata": self.metadata}
-        return dct
+    def as_json(self, enforce_read_only=True):
+        if enforce_read_only is False:
+            return NylasAPIObject.as_json(self, enforce_read_only)
+        else:
+            return {"metadata": self.metadata}
 
     def upgrade(self):
         return self.api._call_resource_method(self, self.account_id, "upgrade", None)
@@ -1063,10 +1071,6 @@ class APIAccount(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, APIAccount, api)
-
-    def as_json(self):
-        dct = NylasAPIObject.as_json(self)
-        return dct
 
 
 class SingletonAccount(APIAccount):
