@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add `metadata` field to `JobStatus`
+
 v5.9.2
 ----------------
 * Add `enforce_read_only` parameter to overriding `as_json` functions

@@ -1767,6 +1767,7 @@ def mock_job_statuses(mocked_responses, api_url):
             "job_status_id": "test_job_status_id",
             "object": "message",
             "status": "successful",
+            "metadata": {"message_id": "nylas_message_id"},
         },
         {
             "account_id": "test_account_id",

@@ -28,6 +28,7 @@ def test_job_status(api_client):
     assert job_status["object"] == "message"
     assert job_status["status"] == "successful"
     assert job_status["created_at"] == datetime(2021, 6, 4, 22, 36)
+    assert job_status["metadata"] == {"message_id": "nylas_message_id"}
 
 
 @pytest.mark.usefixtures("mock_job_statuses")
