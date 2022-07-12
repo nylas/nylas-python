@@ -72,6 +72,13 @@ def _validate(response):
     return response
 
 
+def _validate_availability_query(query):
+    if (query.get("emails", None) is None or len(query["emails"]) == 0) and (
+        query.get("calendars", None) is None or len(query["calendars"]) == 0
+    ):
+        raise ValueError("Must set either 'emails' or 'calendars' in the query.")
+
+
 class APIClient(json.JSONEncoder):
     """API client for the Nylas API."""
 
@@ -290,6 +297,7 @@ class APIClient(json.JSONEncoder):
         if calendars is not None and len(calendars) > 0:
             data["calendars"] = calendars
 
+        _validate_availability_query(data)
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
@@ -366,6 +374,7 @@ class APIClient(json.JSONEncoder):
         if calendars is not None and len(calendars) > 0:
             data["calendars"] = calendars
 
+        _validate_availability_query(data)
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
@@ -422,6 +431,7 @@ class APIClient(json.JSONEncoder):
         if calendars is not None and len(calendars) > 0:
             data["calendars"] = calendars
 
+        _validate_availability_query(data)
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
