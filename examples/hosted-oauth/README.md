@@ -21,9 +21,9 @@ You should see your client ID and client secret on the dashboard,
 once you've logged in on the
 [Nylas Developer](https://developer.nylas.com/) website.
 
-## Update the `config.json` File
+## Update the `config.py` File
 
-Open the `config.json` file in this directory, and replace the example
+Open the `config.py` file in this directory, and replace the example
 client ID and client secret with the real values that you got from the Nylas
 Developer dashboard. You'll also need to replace the example secret key with
 any random string of letters and numbers: a keyboard mash will do.
