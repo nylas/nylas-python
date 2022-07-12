@@ -270,7 +270,7 @@ class APIClient(json.JSONEncoder):
         _validate(resp).json()
         return resp.json()
 
-    def free_busy(self, emails, start_at, end_at):
+    def free_busy(self, emails, start_at, end_at, calendars=None):
         if isinstance(emails, six.string_types):
             emails = [emails]
         if isinstance(start_at, datetime):
@@ -287,6 +287,9 @@ class APIClient(json.JSONEncoder):
             "start_time": start_time,
             "end_time": end_time,
         }
+        if calendars is not None and len(calendars) > 0:
+            data["calendars"] = calendars
+
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
         return resp.json()
@@ -321,6 +324,7 @@ class APIClient(json.JSONEncoder):
         round_robin=None,
         free_busy=None,
         open_hours=None,
+        calendars=None,
     ):
         if isinstance(emails, six.string_types):
             emails = [emails]
@@ -359,6 +363,8 @@ class APIClient(json.JSONEncoder):
             data["round_robin"] = round_robin
         if event_collection_id is not None:
             data["event_collection_id"] = event_collection_id
+        if calendars is not None and len(calendars) > 0:
+            data["calendars"] = calendars
 
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
@@ -374,6 +380,7 @@ class APIClient(json.JSONEncoder):
         buffer=None,
         free_busy=None,
         open_hours=None,
+        calendars=None,
     ):
         if isinstance(emails, six.string_types):
             emails = [[emails]]
@@ -412,6 +419,8 @@ class APIClient(json.JSONEncoder):
         }
         if buffer is not None:
             data["buffer"] = buffer
+        if calendars is not None and len(calendars) > 0:
+            data["calendars"] = calendars
 
         resp = self._request(HttpMethod.POST, url, json=data, cls=Calendar)
         _validate(resp)
