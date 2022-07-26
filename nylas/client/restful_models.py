@@ -829,6 +829,7 @@ class JobStatus(NylasAPIObject):
         "object",
         "status",
         "original_data",
+        "metadata",
     ]
     datetime_attrs = {"created_at": "created_at"}
     collection_name = "job-statuses"

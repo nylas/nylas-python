@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Add `metadata` field to `JobStatus`
 * Add support for `calendar` field in free-busy, availability, and consecutive availability queries
 
 v5.9.2
