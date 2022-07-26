@@ -292,6 +292,41 @@ def test_free_busy_single_email(mocked_responses, api_client):
     assert data["end_time"] == 951868800
 
 
+@pytest.mark.usefixtures("mock_free_busy")
+def test_free_busy_with_calendars(mocked_responses, api_client):
+    email = "ben@bitdiddle.com"
+    start_at = datetime(2000, 1, 1)
+    end_at = datetime(2000, 3, 1)
+    calendars = [
+        {
+            "account_id": "test_account_id",
+            "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+        }
+    ]
+    api_client.free_busy([email], start_at, end_at, calendars)
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/free-busy"
+    data = json.loads(request.body)
+    assert data["emails"] == [email]
+    assert data["start_time"] == 946684800
+    assert data["end_time"] == 951868800
+    assert len(data["calendars"]) == 1
+    assert data["calendars"][0] == {
+        "account_id": "test_account_id",
+        "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+    }
+
+
+@pytest.mark.usefixtures("mock_free_busy")
+def test_free_busy_without_emails_or_calendar(mocked_responses, api_client):
+    start_at = datetime(2000, 1, 1)
+    end_at = datetime(2000, 3, 1)
+    with pytest.raises(ValueError) as excinfo:
+        api_client.free_busy([], start_at, end_at)
+    assert "Must set either 'emails' or 'calendars' in the query." in str(excinfo)
+
+
 @pytest.mark.usefixtures("mock_availability")
 def test_availability_datetime(mocked_responses, api_client):
     emails = ["one@example.com", "two@example.com", "three@example.com"]
@@ -416,6 +451,56 @@ def test_availability_with_free_busy(mocked_responses, api_client):
 
 
 @pytest.mark.usefixtures("mock_availability")
+def test_availability_with_calendars(mocked_responses, api_client):
+    emails = [
+        "one@example.com",
+        "two@example.com",
+        "three@example.com",
+        "visitor@external.net",
+    ]
+    duration = 48
+    interval = timedelta(minutes=18)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    calendars = [
+        {
+            "account_id": "test_account_id",
+            "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+        }
+    ]
+    api_client.availability(
+        emails, duration, interval, start_at, end_at, calendars=calendars
+    )
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 48
+    assert isinstance(data["duration_minutes"], int)
+    assert data["interval_minutes"] == 18
+    assert isinstance(data["interval_minutes"], int)
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert len(data["calendars"]) == 1
+    assert data["calendars"][0] == {
+        "account_id": "test_account_id",
+        "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+    }
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_without_emails_or_calendar(mocked_responses, api_client):
+    duration = 48
+    interval = timedelta(minutes=18)
+    start_at = datetime(2000, 1, 1)
+    end_at = datetime(2000, 3, 1)
+    with pytest.raises(ValueError) as excinfo:
+        api_client.availability([], duration, interval, start_at, end_at)
+    assert "Must set either 'emails' or 'calendars' in the query." in str(excinfo)
+
+
+@pytest.mark.usefixtures("mock_availability")
 def test_consecutive_availability(mocked_responses, api_client):
     emails = [["one@example.com"], ["two@example.com", "three@example.com"]]
     duration = timedelta(minutes=30)
@@ -519,6 +604,51 @@ def test_consecutive_availability_free_busy(mocked_responses, api_client):
     assert data["open_hours"][0]["timezone"] == "America/Chicago"
     assert data["open_hours"][0]["start"] == "10:00"
     assert data["open_hours"][0]["end"] == "14:00"
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_consecutive_availability_with_calendars(mocked_responses, api_client):
+    emails = [["one@example.com"], ["two@example.com", "three@example.com"]]
+    duration = timedelta(minutes=30)
+    interval = timedelta(hours=1, minutes=30)
+    start_at = datetime(2020, 1, 1)
+    end_at = datetime(2020, 1, 2)
+    calendars = [
+        {
+            "account_id": "test_account_id",
+            "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+        }
+    ]
+    api_client.consecutive_availability(
+        emails, duration, interval, start_at, end_at, calendars=calendars
+    )
+
+    request = mocked_responses.calls[-1].request
+    assert URLObject(request.url).path == "/calendars/availability/consecutive"
+    data = json.loads(request.body)
+    assert data["emails"] == emails
+    assert data["duration_minutes"] == 30
+    assert isinstance(data["duration_minutes"], int)
+    assert data["interval_minutes"] == 90
+    assert isinstance(data["interval_minutes"], int)
+    assert data["start_time"] == 1577836800
+    assert data["end_time"] == 1577923200
+    assert len(data["calendars"]) == 1
+    assert data["calendars"][0] == {
+        "account_id": "test_account_id",
+        "calendar_ids": ["example_calendar_a", "example_calendar_b"],
+    }
+
+
+@pytest.mark.usefixtures("mock_availability")
+def test_availability_without_emails_or_calendar(mocked_responses, api_client):
+    duration = 48
+    interval = timedelta(minutes=18)
+    start_at = datetime(2000, 1, 1)
+    end_at = datetime(2000, 3, 1)
+    with pytest.raises(ValueError) as excinfo:
+        api_client.consecutive_availability([], duration, interval, start_at, end_at)
+    assert "Must set either 'emails' or 'calendars' in the query." in str(excinfo)
 
 
 @pytest.mark.usefixtures("mock_availability")
