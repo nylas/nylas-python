@@ -135,7 +135,6 @@ def test_client_authentication_url_scopes_none(api_client, api_url):
                 ("redirect_uri", "/redirect"),
                 ("response_type", "code"),
                 ("client_id", "None"),
-                ("scopes", "email"),
                 # no scopes parameter
             ]
         )
@@ -184,12 +183,12 @@ def test_client_authentication_url_invalid_param_values(api_client, api_url):
     actual = URLObject(api_client.authentication_url("/redirect", scopes="email", provider="Google"))
     assert urls_equal(expected, actual)
 
-    expected.set_query_param("provider", "gmail")
+    expected2 = expected.set_query_param("provider", "gmail")
 
     actual2 = URLObject(api_client.authentication_url("/redirect", scopes="email", provider="gmail",
                                                       redirect_on_error="true"))
 
-    assert urls_equal(expected, actual2)
+    assert urls_equal(expected2, actual2)
 
 
 def test_client_token_for_code(mocked_responses, api_client, api_url):
