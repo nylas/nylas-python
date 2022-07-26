@@ -156,12 +156,15 @@ def test_client_authentication_url_optional_params(api_client, api_url):
                 ("client_id", "None"),
                 ("scopes", "email"),
                 ("provider", "gmail"),
-                ("redirect_on_error", "false")
+                ("redirect_on_error", "false"),
             ]
         )
     )
-    actual = URLObject(api_client.authentication_url("/redirect", scopes="email", provider="gmail",
-                                                     redirect_on_error=False))
+    actual = URLObject(
+        api_client.authentication_url(
+            "/redirect", scopes="email", provider="gmail", redirect_on_error=False
+        )
+    )
     assert urls_equal(expected, actual)
 
 
@@ -180,13 +183,18 @@ def test_client_authentication_url_invalid_param_values(api_client, api_url):
             ]
         )
     )
-    actual = URLObject(api_client.authentication_url("/redirect", scopes="email", provider="Google"))
+    actual = URLObject(
+        api_client.authentication_url("/redirect", scopes="email", provider="Google")
+    )
     assert urls_equal(expected, actual)
 
     expected2 = expected.set_query_param("provider", "gmail")
 
-    actual2 = URLObject(api_client.authentication_url("/redirect", scopes="email", provider="gmail",
-                                                      redirect_on_error="true"))
+    actual2 = URLObject(
+        api_client.authentication_url(
+            "/redirect", scopes="email", provider="gmail", redirect_on_error="true"
+        )
+    )
 
     assert urls_equal(expected2, actual2)
 
