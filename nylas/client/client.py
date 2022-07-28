@@ -152,6 +152,8 @@ class APIClient(json.JSONEncoder):
         login_hint="",
         state="",
         scopes=("email", "calendar", "contacts"),
+        provider="",
+        redirect_on_error=None,
     ):
         args = {
             "redirect_uri": redirect_uri,
@@ -165,6 +167,16 @@ class APIClient(json.JSONEncoder):
             if isinstance(scopes, str):
                 scopes = [scopes]
             args["scopes"] = ",".join(scopes)
+        if provider and provider in [
+            "icloud",
+            "gmail",
+            "office365",
+            "exchange",
+            "imap",
+        ]:
+            args["provider"] = provider
+        if redirect_on_error is not None and isinstance(redirect_on_error, bool):
+            args["redirect_on_error"] = "true" if redirect_on_error is True else "false"
 
         url = URLObject(self.authorize_url).add_query_params(args.items())
         return str(url)

@@ -143,6 +143,62 @@ def test_client_authentication_url_scopes_none(api_client, api_url):
     assert urls_equal(expected, actual)
 
 
+def test_client_authentication_url_optional_params(api_client, api_url):
+    expected = (
+        URLObject(api_url)
+        .with_path("/oauth/authorize")
+        .set_query_params(
+            [
+                ("login_hint", ""),
+                ("state", ""),
+                ("redirect_uri", "/redirect"),
+                ("response_type", "code"),
+                ("client_id", "None"),
+                ("scopes", "email"),
+                ("provider", "gmail"),
+                ("redirect_on_error", "false"),
+            ]
+        )
+    )
+    actual = URLObject(
+        api_client.authentication_url(
+            "/redirect", scopes="email", provider="gmail", redirect_on_error=False
+        )
+    )
+    assert urls_equal(expected, actual)
+
+
+def test_client_authentication_url_invalid_param_values(api_client, api_url):
+    expected = (
+        URLObject(api_url)
+        .with_path("/oauth/authorize")
+        .set_query_params(
+            [
+                ("login_hint", ""),
+                ("state", ""),
+                ("redirect_uri", "/redirect"),
+                ("response_type", "code"),
+                ("client_id", "None"),
+                ("scopes", "email"),
+            ]
+        )
+    )
+    actual = URLObject(
+        api_client.authentication_url("/redirect", scopes="email", provider="Google")
+    )
+    assert urls_equal(expected, actual)
+
+    expected2 = expected.set_query_param("provider", "gmail")
+
+    actual2 = URLObject(
+        api_client.authentication_url(
+            "/redirect", scopes="email", provider="gmail", redirect_on_error="true"
+        )
+    )
+
+    assert urls_equal(expected2, actual2)
+
+
 def test_client_token_for_code(mocked_responses, api_client, api_url):
     endpoint = re.compile(api_url + "/oauth/token")
     response_body = json.dumps({"access_token": "hooray"})
