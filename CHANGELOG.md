@@ -1,9 +1,10 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.10.0
 ----------------
 * Add `metadata` field to `JobStatus`
+* Add missing hosted authentication parameters
 * Add support for `calendar` field in free-busy, availability, and consecutive availability queries
 
 v5.9.2
