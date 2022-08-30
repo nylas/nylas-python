@@ -20,7 +20,7 @@ Here are some resources to help you get started:
 
 If you have a question about the Nylas Communications Platform, please reach out to support@nylas.com to get help.
 
-# ⚙️ Install
+## ⚙️ Install
 
 The Nylas Python SDK is available via pip:
 
@@ -35,7 +35,7 @@ git clone https://github.com/nylas/nylas-python.git && cd nylas-python
 python setup.py install
 ```
 
-# ⚡️ Usage
+## ⚡️ Usage
 
 To use this SDK, you first need to [sign up for a free Nylas developer account](https://nylas.com/register).
 
@@ -64,10 +64,10 @@ print(message.subject)
 
 To learn more about how to use the Nylas Python SDK, please refer to our [Python SDK QuickStart Guide](https://docs.nylas.com/docs/quickstart-python) and our [Python tutorials](https://docs.nylas.com/docs/tutorials).
 
-# 💙 Contributing
+## 💙 Contributing
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 
-# 📝 License
+## 📝 License
 
 This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms.
