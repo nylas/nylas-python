@@ -1,4 +1,11 @@
-# Nylas Python SDK ![Build Status](https://github.com/nylas/nylas-python/workflows/Test/badge.svg) [![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
+<a href="https://www.nylas.com/">
+    <img src="https://brand.nylas.com/assets/downloads/logo_horizontal_png/Nylas-Logo-Horizontal-Blue_.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
+</a>
+
+# Nylas Python SDK
+
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/nylas/nylas-python/Test)](https://github.com/nylas/nylas-python/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg?token=HyxGAn5bJR)](https://codecov.io/gh/nylas/nylas-python)
 
 This is the GitHub repository for the Nylas Python SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Python to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Python SDK Quickstart Guide](https://docs.nylas.com/docs/quickstart-python).
 
@@ -13,18 +20,22 @@ Here are some resources to help you get started:
 
 If you have a question about the Nylas Communications Platform, please reach out to support@nylas.com to get help.
 
-# Install
+# ⚙️ Install
 
 The Nylas Python SDK is available via pip:
 
-`pip install nylas`
+```bash
+pip install nylas
+```
 
 To install the SDK from source, clone this repo and run the install script.
 
-    git clone https://github.com/nylas/nylas-python.git && cd nylas-python
-    python setup.py install
+```bash
+git clone https://github.com/nylas/nylas-python.git && cd nylas-python
+python setup.py install
+```
 
-# Usage
+# ⚡️ Usage
 
 To use this SDK, you first need to [sign up for a free Nylas developer account](https://nylas.com/register).
 
@@ -33,26 +44,30 @@ Then, follow our guide to [setup your first app and get your API access keys](ht
 Next, in your python script, import the `APIClient` class from the `nylas` package, and create a new instance of this class, passing the variables you gathered when you got your developer API keys. In the following example, replace `CLIENT_ID`, `CLIENT_SECRET`, and `ACCESS_TOKEN` with your values.
 
 
-    from nylas import APIClient
+```python
+from nylas import APIClient
 
-    nylas = APIClient(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        ACCESS_TOKEN
-    )
+nylas = APIClient(
+    CLIENT_ID,
+    CLIENT_SECRET,
+    ACCESS_TOKEN
+)
+```
 
 Now, you can use `nylas` to access full email, calendar, and contacts functionality. For example, here is how you would print the subject line for the most recent email message to the console.
 
 
-    message = nylas.messages.first()
-    print(message.subject)
+```python
+message = nylas.messages.first()
+print(message.subject)
+```
 
 To learn more about how to use the Nylas Python SDK, please refer to our [Python SDK QuickStart Guide](https://docs.nylas.com/docs/quickstart-python) and our [Python tutorials](https://docs.nylas.com/docs/tutorials).
 
-# Contributing
+# 💙 Contributing
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 
-# License
+# 📝 License
 
 This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms.
