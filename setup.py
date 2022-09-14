@@ -17,7 +17,6 @@ RUN_DEPENDENCIES = [
     "urlobject",
     "enum34>=1.1.10",
     "hmac",
-    "hashlib",
 ]
 TEST_DEPENDENCIES = [
     "pytest",
