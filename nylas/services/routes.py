@@ -11,7 +11,12 @@ class Routes:
 
         Args:
             api (APIClient): The configured Nylas API client
+
+        Raises:
+            ValueError: If a Nylas API client is not passed in
         """
+        if not api or not isinstance(api, APIClient):
+            raise ValueError("An APIClient must be set for Routes")
         self._api = api
 
     def build_auth_url(
