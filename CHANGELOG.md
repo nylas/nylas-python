@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for backend frameworks by providing routes to handle webhooks events and authentication
+
 v5.10.0
 ----------------
 * Add `metadata` field to `JobStatus`
