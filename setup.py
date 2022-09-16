@@ -16,6 +16,7 @@ RUN_DEPENDENCIES = [
     "six>=1.4.1",
     "urlobject",
     "enum34>=1.1.10",
+    "flask>=1.0.0"
 ]
 TEST_DEPENDENCIES = [
     "pytest",
