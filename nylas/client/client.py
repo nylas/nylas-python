@@ -817,13 +817,13 @@ class APIClient(json.JSONEncoder):
 
     def _add_auth_header(self, auth_method):
         authorization = None
-        if auth_method is AuthMethod.BEARER:
+        if auth_method == AuthMethod.BEARER:
             authorization = (
                 "Bearer {token}".format(token=self.access_token)
                 if self.access_token
                 else None
             )
-        elif auth_method is AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
+        elif auth_method == AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
             if self.client_id and self.client_secret:
                 credential = "{client_id}:{client_secret}".format(
                     client_id=self.client_id, client_secret=self.client_secret
