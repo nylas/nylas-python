@@ -829,7 +829,7 @@ class APIClient(json.JSONEncoder):
                     client_id=self.client_id, client_secret=self.client_secret
                 )
                 authorization = "Basic {credential}".format(
-                    credential=b64encode(credential.encode("utf8"))
+                    credential=b64encode(credential.encode("utf8")).decode("utf8")
                 )
         else:
             if self.client_secret:
