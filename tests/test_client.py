@@ -6,7 +6,7 @@ from urlobject import URLObject
 import responses
 from nylas.client import APIClient
 from nylas.client.restful_models import Contact
-from utils import AuthMethod
+from nylas.utils import AuthMethod
 
 
 def urls_equal(url1, url2):
