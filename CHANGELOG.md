@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v5.10.1
+----------------
+* Fix authentication for integrations
+
 v5.10.0
 ----------------
 * Add `metadata` field to `JobStatus`
