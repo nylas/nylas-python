@@ -118,4 +118,4 @@ No more headaches building unique integrations against archaic and outdated IMAP
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
