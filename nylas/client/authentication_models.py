@@ -246,6 +246,20 @@ class Authentication(object):
             app_name=self.app_name, region=self.region.value
         )
 
+    def _hosted_authentication_enhanced_events(
+        self, provider, redirect_uri, account_id
+    ):
+        request = {
+            "provider": provider,
+            "redirect_uri": redirect_uri,
+            "account_id": account_id,
+        }
+        response = self.api._post_resource(Grant, "auth", None, request, path="connect")
+        if "data" in response:
+            response = response["data"]
+
+        return response
+
     class Region(str, Enum):
         """
         This is an Enum the regions supported by the Integrations API
