@@ -236,3 +236,20 @@ def test_grant_authentication_hosted_auth(mocked_responses, api_client):
         "scope": ["meeting:write"],
         "metadata": {"isAdmin": True},
     }
+
+
+@pytest.mark.usefixtures("mock_authentication_hosted_auth")
+def test_grant_authentication_hosted_auth_enhanced_events(mocked_responses, api_client):
+    api_client.authentication._hosted_authentication_enhanced_events(
+        provider=Authentication.Provider.ZOOM,
+        redirect_uri="https://myapp.com/callback-handler",
+        account_id="test-account-id",
+    )
+    request = mocked_responses.calls[0].request
+    assert URLObject(request.url).path == "/connect/auth"
+    assert request.method == "POST"
+    assert json.loads(request.body) == {
+        "provider": "zoom",
+        "redirect_uri": "https://myapp.com/callback-handler",
+        "account_id": "test-account-id",
+    }
