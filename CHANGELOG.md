@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v5.10.2
+----------------
+* Update package setup to be compatible with PEP 517
+
 v5.10.1
 ----------------
 * Fix authentication for integrations
