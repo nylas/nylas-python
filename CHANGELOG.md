@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for calendar colors (for Microsoft calendars)
+
 v5.10.2
 ----------------
 * Update package setup to be compatible with PEP 517

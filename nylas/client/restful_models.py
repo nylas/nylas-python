@@ -630,6 +630,7 @@ class Calendar(NylasAPIObject):
         "account_id",
         "name",
         "description",
+        "hex_color",
         "job_status_id",
         "metadata",
         "read_only",
@@ -640,7 +641,7 @@ class Calendar(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Calendar, api)
-        self.read_only_attrs.update({"is_primary", "read_only"})
+        self.read_only_attrs.update({"is_primary", "read_only", "hex_color"})
 
     @property
     def events(self):
