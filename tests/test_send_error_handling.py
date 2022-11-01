@@ -51,6 +51,8 @@ def test_handle_quota_exceeded(mocked_responses, api_client, api_url):
     with pytest.raises(RateLimitError) as exc:
         draft.send()
     assert "Too Many Requests" in str(exc.value)
+    assert exc.value.rate_limit == 500
+    assert exc.value.rate_limit_reset == 10
 
 
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")

@@ -55,8 +55,8 @@ class RateLimitError(NylasApiError):
 
     def __init__(self, response):
         try:
-            self.rate_limit = response.headers[self.RATE_LIMIT_LIMIT_HEADER]
-            self.rate_limit_reset = response.headers[self.RATE_LIMIT_RESET_HEADER]
+            self.rate_limit = int(response.headers[self.RATE_LIMIT_LIMIT_HEADER])
+            self.rate_limit_reset = int(response.headers[self.RATE_LIMIT_RESET_HEADER])
             super(RateLimitError, self).__init__(response)
         except (ValueError, KeyError):
             super(RateLimitError, self).__init__(response)
