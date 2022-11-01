@@ -4,11 +4,11 @@ import pytest
 import responses
 import six
 from requests import RequestException
-from nylas.client.errors import MessageRejectedError
+from nylas.client.errors import MessageRejectedError, RateLimitError
 
 
 def mock_sending_error(
-    http_code, message, mocked_responses, api_url, server_error=None
+    http_code, message, mocked_responses, api_url, server_error=None, headers=None
 ):
     send_endpoint = re.compile(api_url + "/send")
     response_body = {"type": "api_error", "message": message}
@@ -27,6 +27,7 @@ def mock_sending_error(
         content_type="application/json",
         status=http_code,
         body=response_body,
+        headers=headers
     )
 
 
@@ -43,8 +44,9 @@ def test_handle_message_rejected(mocked_responses, api_client, api_url):
 def test_handle_quota_exceeded(mocked_responses, api_client, api_url):
     draft = api_client.drafts.create()
     error_message = "Daily sending quota exceeded"
-    mock_sending_error(429, error_message, mocked_responses, api_url=api_url)
-    with pytest.raises(RequestException) as exc:
+    error_headers = {"X-RateLimit-Limit": "500", "X-RateLimit-Reset": "10"}
+    mock_sending_error(429, error_message, mocked_responses, api_url=api_url, headers=error_headers)
+    with pytest.raises(RateLimitError) as exc:
         draft.send()
     assert "Too Many Requests" in str(exc.value)
 
