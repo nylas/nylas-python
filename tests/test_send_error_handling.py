@@ -27,7 +27,7 @@ def mock_sending_error(
         content_type="application/json",
         status=http_code,
         body=response_body,
-        headers=headers
+        headers=headers,
     )
 
 
@@ -45,7 +45,9 @@ def test_handle_quota_exceeded(mocked_responses, api_client, api_url):
     draft = api_client.drafts.create()
     error_message = "Daily sending quota exceeded"
     error_headers = {"X-RateLimit-Limit": "500", "X-RateLimit-Reset": "10"}
-    mock_sending_error(429, error_message, mocked_responses, api_url=api_url, headers=error_headers)
+    mock_sending_error(
+        429, error_message, mocked_responses, api_url=api_url, headers=error_headers
+    )
     with pytest.raises(RateLimitError) as exc:
         draft.send()
     assert "Too Many Requests" in str(exc.value)
