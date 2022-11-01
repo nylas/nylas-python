@@ -56,6 +56,18 @@ def test_handle_quota_exceeded(mocked_responses, api_client, api_url):
 
 
 @pytest.mark.usefixtures("mock_account", "mock_save_draft")
+def test_handle_quota_exceeded_no_headers(mocked_responses, api_client, api_url):
+    draft = api_client.drafts.create()
+    error_message = "Daily sending quota exceeded"
+    mock_sending_error(
+        429, error_message, mocked_responses, api_url=api_url
+    )
+    with pytest.raises(RateLimitError) as exc:
+        draft.send()
+    assert "Too Many Requests" in str(exc.value)
+
+
+@pytest.mark.usefixtures("mock_account", "mock_save_draft")
 def test_handle_service_unavailable(mocked_responses, api_client, api_url):
     draft = api_client.drafts.create()
     error_message = "The server unexpectedly closed the connection"
