@@ -25,10 +25,12 @@ def test_event_crud(mocked_responses, api_client):
     event1.status = "should not send"
     event1.master_event_id = "should not send"
     event1.original_start_time = "should not send"
+    event1.visibility = "private"
     event1.save()
     request = mocked_responses.calls[0].request
     body = json.loads(request.body)
     assert event1.id == "cv4ei7syx10uvsxbs21ccsezf"
+    assert event1.visibility == "private"
     assert "title" in body
     assert "object" not in body
     assert "account_id" not in body
