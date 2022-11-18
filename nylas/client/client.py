@@ -13,7 +13,7 @@ import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
-from nylas.client.errors import MessageRejectedError, NylasApiError
+from nylas.client.errors import MessageRejectedError, NylasApiError, RateLimitError
 from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -66,6 +66,8 @@ def _validate(response):
         # we will handle it separate and handle a _different_ exception
         # so that users don't think they need to pay.
         raise MessageRejectedError(response)
+    elif response.status_code == 429:
+        raise RateLimitError(response)
     elif response.status_code >= 400:
         raise NylasApiError(response)
 
