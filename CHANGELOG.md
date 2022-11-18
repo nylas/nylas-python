@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.11.0
 ----------------
 * Add support for calendar colors (for Microsoft calendars)
 * Add support for rate limit errors
