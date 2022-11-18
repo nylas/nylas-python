@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add support for calendar colors (for Microsoft calendars)
+* Add support for visibility field in Event
 
 v5.10.2
 ----------------
