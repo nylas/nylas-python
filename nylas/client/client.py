@@ -33,6 +33,7 @@ from nylas.client.restful_models import (
     Component,
     JobStatus,
     Webhook,
+    Send,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
@@ -640,6 +641,11 @@ class APIClient(json.JSONEncoder):
 
         if cls == File:
             response = self._request(HttpMethod.POST, url, cls=cls, files=data)
+        elif cls == Send and type(data) is not dict:
+            headers = {"Content-Type": "message/rfc822"}
+            response = self._request(
+                HttpMethod.POST, url, cls=cls, headers=headers, data=data
+            )
         else:
             converted_data = create_request_body(data, cls.datetime_attrs)
             headers = {"Content-Type": "application/json"}

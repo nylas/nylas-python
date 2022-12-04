@@ -514,6 +514,18 @@ class Draft(Message):
         if file.id in self.file_ids:
             self.file_ids.remove(file.id)
 
+    def send_raw(self, mime_message):
+        """
+        Send a raw MIME message
+
+        Args:
+            mime_message (str): The raw MIME message to send
+
+        Returns:
+            Message: The sent message
+        """
+        return self.api._create_resource(Send, mime_message)
+
     def send(self):
         if not self.id:
             data = self.as_json()
