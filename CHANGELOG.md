@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for sending raw MIME messages
+
 v5.11.0
 ----------------
 * Add support for calendar colors (for Microsoft calendars)
