@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.12.0
 ----------------
 * Add support for sending raw MIME messages
 
