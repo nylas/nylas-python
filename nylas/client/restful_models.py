@@ -50,7 +50,15 @@ class RestfulModel(dict):
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-    __getattr__ = dict.get
+
+    def __getattr__(self, k):
+        try:
+            return self[k]
+        # Imitate default behaviour so builtin functions like 'hasattr' can function properly
+        except KeyError:
+            raise AttributeError(
+                "'{}' object has no attribute '{}'".format(self.cls.__name__, k)
+            )
 
     @classmethod
     def create(cls, api, **kwargs):
