@@ -121,14 +121,14 @@ class RestfulModel(dict):
         # them to "from_" and "in_". The API still needs them in
         # their correct form though.
         reserved_keywords = ["from", "in"]
+        for attr in reserved_keywords:
+            if hasattr(self, "{}_".format(attr)):
+                dct[attr] = getattr(self, "{}_".format(attr))
         for attr in self.cls.attrs:
             if attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             if hasattr(self, attr):
-                if attr in reserved_keywords:
-                    attr_value = getattr(self, "{}_".format(attr))
-                else:
-                    attr_value = getattr(self, attr)
+                attr_value = getattr(self, attr)
                 if attr_value is not None:
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
