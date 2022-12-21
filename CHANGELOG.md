@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0
+----------------
+* **BREAKING CHANGE:** `RestfulModel.__getattr__()` now throws an `AttributeError` if the attribute is not set on the object.
+
 v5.12.0
 ----------------
 * Add support for sending raw MIME messages
