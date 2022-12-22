@@ -122,6 +122,8 @@ class APIClient(json.JSONEncoder):
             "X-Nylas-Client-Id": self.client_id,
             "Nylas-API-Version": self.api_version,
             "User-Agent": version_header,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
         }
         self._access_token = None
         self.access_token = access_token
@@ -137,6 +139,8 @@ class APIClient(json.JSONEncoder):
                 "X-Nylas-Client-Id": self.client_id,
                 "Nylas-API-Version": self.api_version,
                 "User-Agent": version_header,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
             }
             self.admin_session.headers.update(self._add_auth_header(AuthMethod.BASIC))
         super(APIClient, self).__init__()
@@ -818,10 +822,11 @@ class APIClient(json.JSONEncoder):
             auth_method = cls.auth_method
 
         session = self._get_http_session(api_root)
-        headers = headers or {}
-        headers.update(session.headers)
-        headers.update(self._add_auth_header(auth_method))
-        return session.request(method.name, url, headers=headers, **kwargs)
+        outgoing_headers = {}
+        outgoing_headers.update(session.headers)
+        outgoing_headers.update(headers or {})
+        outgoing_headers.update(self._add_auth_header(auth_method))
+        return session.request(method.name, url, headers=outgoing_headers, **kwargs)
 
     def _add_auth_header(self, auth_method):
         authorization = None
