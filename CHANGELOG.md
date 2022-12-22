@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0
+----------------
+* Add defaults for Content-Type and Aceept headers for outgoing API requests
+
 v5.12.0
 ----------------
 * Add support for sending raw MIME messages
