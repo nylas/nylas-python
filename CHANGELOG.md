@@ -4,6 +4,7 @@ nylas-python Changelog
 v6.0.0
 ----------------
 * **BREAKING CHANGE:** `RestfulModel.__getattr__()` now throws an `AttributeError` if the attribute is not set on the object.
+* Add defaults for Content-Type and Aceept headers for outgoing API requests
 
 v5.12.0
 ----------------
