@@ -514,6 +514,18 @@ class Draft(Message):
         if file.id in self.file_ids:
             self.file_ids.remove(file.id)
 
+    def send_raw(self, mime_message):
+        """
+        Send a raw MIME message
+
+        Args:
+            mime_message (str): The raw MIME message to send
+
+        Returns:
+            Message: The sent message
+        """
+        return self.api._create_resource(Send, mime_message)
+
     def send(self):
         if not self.id:
             data = self.as_json()
@@ -573,8 +585,11 @@ class File(NylasAPIObject):
         if not self.id:
             message = "Can't download a file that hasn't been uploaded."
             raise FileUploadError(message)
+        headers = {"Accept": "*/*"}
 
-        return self.api._get_resource_data(File, self.id, extra="download")
+        return self.api._get_resource_data(
+            File, self.id, extra="download", headers=headers
+        )
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, File, api)
@@ -630,6 +645,7 @@ class Calendar(NylasAPIObject):
         "account_id",
         "name",
         "description",
+        "hex_color",
         "job_status_id",
         "metadata",
         "read_only",
@@ -640,7 +656,7 @@ class Calendar(NylasAPIObject):
 
     def __init__(self, api):
         NylasAPIObject.__init__(self, Calendar, api)
-        self.read_only_attrs.update({"is_primary", "read_only"})
+        self.read_only_attrs.update({"is_primary", "read_only", "hex_color"})
 
     @property
     def events(self):
@@ -674,6 +690,7 @@ class Event(NylasAPIObject):
         "event_collection_id",
         "capacity",
         "round_robin_order",
+        "visibility",
     ]
     datetime_attrs = {"original_start_at": "original_start_time"}
     collection_name = "events"

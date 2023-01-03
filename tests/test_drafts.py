@@ -86,6 +86,27 @@ def test_send_draft_with_tracking(mocked_responses, api_client):
     assert send_payload["tracking"] == tracking
 
 
+@pytest.mark.usefixtures("mock_draft_raw_response")
+def test_send_draft_raw_mime(mocked_responses, api_client):
+    raw_mime = """MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Subject: With Love, From Nylas
+From: You <mostafa.r.nylas@gmail.com>
+To: My Nylas Friend <mostafa.r.nylas@gmail.com>
+
+This email was sent via raw MIME using the Nylas email API. Visit https://nylas.com for details.
+"""
+    draft = api_client.drafts.create()
+    draft.send_raw(raw_mime)
+
+    send_payload = mocked_responses.calls[-1].request
+    assert type(send_payload.body) == str
+    assert send_payload.body == raw_mime
+    assert send_payload.path_url == "/send"
+    assert send_payload.method == "POST"
+    assert send_payload.headers["Content-Type"] == "message/rfc822"
+
+
 @pytest.mark.usefixtures("mock_files")
 def test_draft_attachment(api_client):
     draft = api_client.drafts.create()

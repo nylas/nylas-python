@@ -13,7 +13,7 @@ import six
 from six.moves.urllib.parse import urlencode
 from nylas._client_sdk_version import __VERSION__
 from nylas.client.delta_collection import DeltaCollection
-from nylas.client.errors import MessageRejectedError, NylasApiError
+from nylas.client.errors import MessageRejectedError, NylasApiError, RateLimitError
 from nylas.client.outbox_models import Outbox
 from nylas.client.restful_model_collection import RestfulModelCollection
 from nylas.client.restful_models import (
@@ -33,6 +33,7 @@ from nylas.client.restful_models import (
     Component,
     JobStatus,
     Webhook,
+    Send,
 )
 from nylas.client.neural_api_models import Neural
 from nylas.client.scheduler_restful_model_collection import (
@@ -66,6 +67,8 @@ def _validate(response):
         # we will handle it separate and handle a _different_ exception
         # so that users don't think they need to pay.
         raise MessageRejectedError(response)
+    elif response.status_code == 429:
+        raise RateLimitError(response)
     elif response.status_code >= 400:
         raise NylasApiError(response)
 
@@ -119,6 +122,8 @@ class APIClient(json.JSONEncoder):
             "X-Nylas-Client-Id": self.client_id,
             "Nylas-API-Version": self.api_version,
             "User-Agent": version_header,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
         }
         self._access_token = None
         self.access_token = access_token
@@ -134,6 +139,8 @@ class APIClient(json.JSONEncoder):
                 "X-Nylas-Client-Id": self.client_id,
                 "Nylas-API-Version": self.api_version,
                 "User-Agent": version_header,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
             }
             self.admin_session.headers.update(self._add_auth_header(AuthMethod.BASIC))
         super(APIClient, self).__init__()
@@ -213,10 +220,7 @@ class APIClient(json.JSONEncoder):
             "code": code,
         }
 
-        headers = {
-            "Content-type": "application/x-www-form-urlencoded",
-            "Accept": "application/json",
-        }
+        headers = {"Content-type": "application/x-www-form-urlencoded"}
 
         resp = self._request(
             HttpMethod.POST,
@@ -266,10 +270,8 @@ class APIClient(json.JSONEncoder):
         if redirect_uris is not None:
             data["redirect_uris"] = redirect_uris
 
-        headers = {"Content-Type": "application/json"}
-        headers.update(self.admin_session.headers)
         resp = self.admin_session.put(
-            application_details_url, json=data, headers=headers
+            application_details_url, json=data, headers=self.admin_session.headers
         )
         return _validate(resp).json()
 
@@ -287,9 +289,9 @@ class APIClient(json.JSONEncoder):
         if keep_access_token is not None:
             data["keep_access_token"] = keep_access_token
 
-        headers = {"Content-Type": "application/json"}
-        headers.update(self.admin_session.headers)
-        resp = self.admin_session.post(revoke_all_url, json=data, headers=headers)
+        resp = self.admin_session.post(
+            revoke_all_url, json=data, headers=self.admin_session.headers
+        )
         _validate(resp).json()
         if keep_access_token != self.access_token:
             self.auth_token = None
@@ -305,10 +307,10 @@ class APIClient(json.JSONEncoder):
         token_info_url = self.token_info_url.format(
             client_id=self.client_id, account_id=self.account.id
         )
-        headers = {"Content-Type": "application/json"}
-        headers.update(self.admin_session.headers)
         resp = self.admin_session.post(
-            token_info_url, headers=headers, json={"access_token": self.access_token}
+            token_info_url,
+            headers=self.admin_session.headers,
+            json={"access_token": self.access_token},
         )
         _validate(resp).json()
         return resp.json()
@@ -662,12 +664,14 @@ class APIClient(json.JSONEncoder):
 
         if cls == File:
             response = self._request(HttpMethod.POST, url, cls=cls, files=data)
+        elif cls == Send and type(data) is not dict:
+            headers = {"Content-Type": "message/rfc822"}
+            response = self._request(
+                HttpMethod.POST, url, cls=cls, headers=headers, data=data
+            )
         else:
             converted_data = create_request_body(data, cls.datetime_attrs)
-            headers = {"Content-Type": "application/json"}
-            response = self._request(
-                HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data
-            )
+            response = self._request(HttpMethod.POST, url, cls=cls, json=converted_data)
 
         result = _validate(response).json()
         if cls.collection_name == "send":
@@ -689,10 +693,7 @@ class APIClient(json.JSONEncoder):
             converted_data = [
                 create_request_body(datum, cls.datetime_attrs) for datum in data
             ]
-            headers = {"Content-Type": "application/json"}
-            response = self._request(
-                HttpMethod.POST, url, cls=cls, headers=headers, json=converted_data
-            )
+            response = self._request(HttpMethod.POST, url, cls=cls, json=converted_data)
 
         results = _validate(response).json()
         return [cls.create(self, **x) for x in results]
@@ -834,26 +835,27 @@ class APIClient(json.JSONEncoder):
             auth_method = cls.auth_method
 
         session = self._get_http_session(api_root)
-        headers = headers or {}
-        headers.update(session.headers)
-        headers.update(self._add_auth_header(auth_method))
-        return session.request(method.name, url, headers=headers, **kwargs)
+        outgoing_headers = {}
+        outgoing_headers.update(session.headers)
+        outgoing_headers.update(headers or {})
+        outgoing_headers.update(self._add_auth_header(auth_method))
+        return session.request(method.name, url, headers=outgoing_headers, **kwargs)
 
     def _add_auth_header(self, auth_method):
         authorization = None
-        if auth_method is AuthMethod.BEARER:
+        if auth_method == AuthMethod.BEARER:
             authorization = (
                 "Bearer {token}".format(token=self.access_token)
                 if self.access_token
                 else None
             )
-        elif auth_method is AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
+        elif auth_method == AuthMethod.BASIC_CLIENT_ID_AND_SECRET:
             if self.client_id and self.client_secret:
                 credential = "{client_id}:{client_secret}".format(
                     client_id=self.client_id, client_secret=self.client_secret
                 )
                 authorization = "Basic {credential}".format(
-                    credential=b64encode(credential.encode("utf8"))
+                    credential=b64encode(credential.encode("utf8")).decode("utf8")
                 )
         else:
             if self.client_secret:

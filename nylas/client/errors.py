@@ -42,3 +42,21 @@ class NylasApiError(HTTPError):
             super(NylasApiError, self).__init__(error_message, response=response)
         except (ValueError, KeyError):
             super(NylasApiError, self).__init__(response.text, response=response)
+
+
+class RateLimitError(NylasApiError):
+    """
+    Error class for 429 rate limit errors
+    This class provides details about the rate limit returned from the server
+    """
+
+    RATE_LIMIT_LIMIT_HEADER = "X-RateLimit-Limit"
+    RATE_LIMIT_RESET_HEADER = "X-RateLimit-Reset"
+
+    def __init__(self, response):
+        try:
+            self.rate_limit = int(response.headers[self.RATE_LIMIT_LIMIT_HEADER])
+            self.rate_limit_reset = int(response.headers[self.RATE_LIMIT_RESET_HEADER])
+            super(RateLimitError, self).__init__(response)
+        except (ValueError, KeyError):
+            super(RateLimitError, self).__init__(response)

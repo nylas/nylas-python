@@ -1,9 +1,28 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.0.0
 ----------------
 * Add support for backend frameworks by providing routes to handle webhooks events and authentication
+* Add defaults for Content-Type and Aceept headers for outgoing API requests
+
+v5.12.0
+----------------
+* Add support for sending raw MIME messages
+
+v5.11.0
+----------------
+* Add support for calendar colors (for Microsoft calendars)
+* Add support for rate limit errors
+* Add support for visibility field in Event
+
+v5.10.2
+----------------
+* Update package setup to be compatible with PEP 517
+
+v5.10.1
+----------------
+* Fix authentication for integrations
 
 v5.10.0
 ----------------

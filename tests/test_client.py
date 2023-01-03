@@ -6,6 +6,7 @@ from urlobject import URLObject
 import responses
 from nylas.client import APIClient
 from nylas.client.restful_models import Contact
+from nylas.utils import AuthMethod
 
 
 def urls_equal(url1, url2):
@@ -345,3 +346,22 @@ def test_count(mocked_responses, api_client, api_url):
 
     contact_count = api_client.contacts.count()
     assert contact_count == 721
+
+
+def test_add_auth_header_bearer(api_client):
+    api_client.access_token = "access_token"
+    auth_header = api_client._add_auth_header(AuthMethod.BEARER)
+    assert auth_header == {"Authorization": "Bearer access_token"}
+
+
+def test_add_auth_header_basic_client_id_and_secret(api_client):
+    api_client.client_id = "client_id"
+    api_client.client_secret = "client_secret"
+    auth_header = api_client._add_auth_header(AuthMethod.BASIC_CLIENT_ID_AND_SECRET)
+    assert auth_header == {"Authorization": "Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ="}
+
+
+def test_add_auth_header_basic(api_client):
+    api_client.client_secret = "client_secret"
+    auth_header = api_client._add_auth_header(AuthMethod.BASIC)
+    assert auth_header == {"Authorization": "Basic Y2xpZW50X3NlY3JldDo="}
