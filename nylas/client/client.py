@@ -162,6 +162,21 @@ class APIClient(json.JSONEncoder):
         provider="",
         redirect_on_error=None,
     ):
+        """
+        Build the URL for authenticating users to your application via Hosted Authentication
+
+        Args:
+            redirect_uri (str): The URI to which the user will be redirected once authentication completes
+            login_hint (str): The user's email address
+            state (str): An optional arbitrary string that is returned as a URL parameter in your redirect URI
+            scopes (list[str]): Authentication scopes to request from the authenticating user
+            provider (str): Override the detected provider to authenticate to
+            redirect_on_error (bool): When set to True, it redirects users to the redirect_uri on encountering an error
+
+        Returns:
+            str: The URL for hosted authentication
+        """
+
         args = {
             "redirect_uri": redirect_uri,
             "client_id": self.client_id or "None",  # 'None' for back-compat
@@ -219,6 +234,15 @@ class APIClient(json.JSONEncoder):
         return resp
 
     def token_for_code(self, code):
+        """
+        Exchange an authorization code for an access token
+
+        Args:
+            code (str): One-time authorization code from Nylas
+
+        Returns:
+            dict: The object containing the access token and other information
+        """
         self.send_authorization(code)
         return self.access_token
 
