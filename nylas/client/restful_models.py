@@ -50,7 +50,15 @@ class RestfulModel(dict):
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-    __getattr__ = dict.get
+
+    def __getattr__(self, k):
+        try:
+            return self[k]
+        # Imitate default behaviour so builtin functions like 'hasattr' can function properly
+        except KeyError:
+            raise AttributeError(
+                "'{}' object has no attribute '{}'".format(self.cls.__name__, k)
+            )
 
     @classmethod
     def create(cls, api, **kwargs):
@@ -113,14 +121,14 @@ class RestfulModel(dict):
         # them to "from_" and "in_". The API still needs them in
         # their correct form though.
         reserved_keywords = ["from", "in"]
+        for attr in reserved_keywords:
+            if hasattr(self, "{}_".format(attr)):
+                dct[attr] = getattr(self, "{}_".format(attr))
         for attr in self.cls.attrs:
             if attr in self.read_only_attrs and enforce_read_only is True:
                 continue
             if hasattr(self, attr):
-                if attr in reserved_keywords:
-                    attr_value = getattr(self, "{}_".format(attr))
-                else:
-                    attr_value = getattr(self, attr)
+                attr_value = getattr(self, attr)
                 if attr_value is not None:
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
@@ -225,12 +233,12 @@ class Message(NylasAPIObject):
     @property
     def folder(self):
         # Instantiate a Folder object from the API response
-        if self._folder:
+        if hasattr(self, "_folder"):
             return Folder.create(self.api, **self._folder)
 
     @property
     def labels(self):
-        if self._labels:
+        if hasattr(self, "_labels"):
             return [Label.create(self.api, **l) for l in self._labels]
         return []
 
@@ -383,13 +391,13 @@ class Thread(NylasAPIObject):
 
     @property
     def folders(self):
-        if self._folders:
+        if hasattr(self, "_folders"):
             return [Folder.create(self.api, **f) for f in self._folders]
         return []
 
     @property
     def labels(self):
-        if self._labels:
+        if hasattr(self, "_labels"):
             return [Label.create(self.api, **l) for l in self._labels]
         return []
 
@@ -399,7 +407,7 @@ class Thread(NylasAPIObject):
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
                 setattr(self, attr, getattr(new_obj, attr))
-        return self.folder
+        return self.folders
 
     def update_labels(self, label_ids=None):
         label_ids = label_ids or []
@@ -560,6 +568,7 @@ class File(NylasAPIObject):
     collection_name = "files"
 
     def save(self):  # pylint: disable=arguments-differ
+        content_type = self.content_type if hasattr(self, "content_type") else None
         stream = getattr(self, "stream", None)
         if not stream:
             data = getattr(self, "data", None)
@@ -573,7 +582,7 @@ class File(NylasAPIObject):
             )
             raise FileUploadError(message)
 
-        file_info = (self.filename, stream, self.content_type, {})  # upload headers
+        file_info = (self.filename, stream, content_type, {})  # upload headers
 
         new_obj = self.api._create_resources(File, {"file": file_info})
         new_obj = new_obj[0]
@@ -766,7 +775,7 @@ class Event(NylasAPIObject):
             ValueError: If the event does not have calendar_id or when set
             RuntimeError: If the server returns an object without an ics string
         """
-        if not self.calendar_id or not self.when:
+        if not hasattr(self, "calendar_id") or not hasattr(self, "when"):
             raise ValueError(
                 "Cannot generate an ICS file for an event without a Calendar ID or when set"
             )
@@ -797,7 +806,7 @@ class Event(NylasAPIObject):
 
     def validate(self):
         if (
-            self.conferencing
+            hasattr(self, "conferencing")
             and "details" in self.conferencing
             and "autocreate" in self.conferencing
         ):
@@ -805,9 +814,9 @@ class Event(NylasAPIObject):
                 "Cannot set both 'details' and 'autocreate' in conferencing object."
             )
         if (
-            self.capacity
+            hasattr(self, "capacity")
             and self.capacity != -1
-            and self.participants
+            and hasattr(self, "participants")
             and len(self.participants) > self.capacity
         ):
             raise ValueError(
@@ -1063,7 +1072,7 @@ class Account(NylasAPIObject):
         if enforce_read_only is False:
             return NylasAPIObject.as_json(self, enforce_read_only)
         else:
-            return {"metadata": self.metadata}
+            return {"metadata": self.metadata if hasattr(self, "metadata") else {}}
 
     def upgrade(self):
         return self.api._call_resource_method(self, self.account_id, "upgrade", None)
