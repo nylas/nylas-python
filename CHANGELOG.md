@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-v6.0.0
+v6.0.0a1
 ----------------
 * **BREAKING CHANGE:** `RestfulModel.__getattr__()` now throws an `AttributeError` if the attribute is not set on the object.
 * Add support for backend frameworks by providing routes to handle webhooks events and authentication
