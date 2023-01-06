@@ -21,13 +21,13 @@ class FlaskBinding(Blueprint):
         2. '/nylas/exchange-mailbox-token': Exchange an authorization code for an access token
 
         Args:
-            name (str):
-            import_name (str):
-            api (APIClient):
-            default_scopes (list[str]):
-            exchange_mailbox_token_callback:
-            client_uri (str):
-            override_paths (dict):
+            name (str): The name of the blueprint. Will be prepended to each endpoint name.
+            import_name (str): The name of the blueprint package, usually ``__name__``.
+            api (APIClient): The configured Nylas API client
+            default_scopes (list[str]): The authentication scopes to request from the authenticating user
+            exchange_mailbox_token_callback: A callback function invoked after exchanging for the access token
+            client_uri (str): The route of the client
+            override_paths (dict): Override the paths of the routes served by this blueprint
         """
         super(FlaskBinding, self).__init__(name, import_name)
         current_app.config["routes"] = Routes(api)
