@@ -231,7 +231,7 @@ class APIClient(json.JSONEncoder):
         results = _validate(resp).json()
 
         self.access_token = results["access_token"]
-        return resp
+        return results
 
     def token_for_code(self, code):
         """
