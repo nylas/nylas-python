@@ -346,6 +346,7 @@ class Thread(NylasAPIObject):
         "draft_ids",
         "id",
         "message_ids",
+        "_messages",
         "account_id",
         "object",
         "participants",
@@ -383,6 +384,8 @@ class Thread(NylasAPIObject):
 
     @property
     def messages(self):
+        if hasattr(self, "_messages"):
+            return [Message.create(self.api, **f) for f in self._messages]
         return self.child_collection(Message, thread_id=self.id)
 
     @property
