@@ -52,7 +52,7 @@ class Routes:
         Returns:
             dict: The object containing the access token and other information
         """
-        return self._api.token_for_code(code)
+        return self._api.send_authorization(code)
 
     def verify_webhook_signature(self, nylas_signature, raw_body):
         """

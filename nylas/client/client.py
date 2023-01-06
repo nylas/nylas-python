@@ -241,7 +241,7 @@ class APIClient(json.JSONEncoder):
             code (str): One-time authorization code from Nylas
 
         Returns:
-            dict: The object containing the access token and other information
+            str: The access token
         """
         self.send_authorization(code)
         return self.access_token
