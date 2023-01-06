@@ -57,13 +57,14 @@ class FlaskBinding(Blueprint):
         access_token = current_app.config.get("routes").exchange_code_for_token(
             request_body["token"]
         )
+        res = access_token
 
         if current_app.config.get("exchange_mailbox_token_callback") and callable(
             current_app.config.get("exchange_mailbox_token_callback")
         ):
-            current_app.config.get("exchange_mailbox_token_callback")(access_token)
+            res = current_app.config.get("exchange_mailbox_token_callback")(access_token)
 
-        return "success"
+        return res
 
     def build(self):
         """
