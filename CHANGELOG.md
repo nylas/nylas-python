@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v5.12.1
+----------------
+* Only install enum34 on python34 and below
+
 v5.12.0
 ----------------
 * Add support for sending raw MIME messages
