@@ -350,6 +350,7 @@ class Thread(NylasAPIObject):
         "draft_ids",
         "id",
         "message_ids",
+        "messages",
         "account_id",
         "object",
         "participants",
