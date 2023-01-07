@@ -129,6 +129,10 @@ class RestfulModel(dict):
                 continue
             if hasattr(self, attr):
                 attr_value = getattr(self, attr)
+                if type(attr_value) is RestfulModel:
+                    attr_value = attr_value.as_json()
+                if type(attr_value) is RestfulModelCollection:
+                    attr_value = [model.as_json() for model in attr_value]
                 if attr_value is not None:
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
