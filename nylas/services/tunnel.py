@@ -2,8 +2,8 @@ import uuid
 
 import websocket
 
-from client import APIClient
-from client.restful_models import Webhook
+from nylas.client import APIClient
+from nylas.client.restful_models import Webhook
 from config import DEFAULT_REGION
 
 
