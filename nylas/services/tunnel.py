@@ -1,6 +1,7 @@
 import uuid
 
 import websocket
+from threading import Thread
 
 from client import APIClient
 from client.restful_models import Webhook
@@ -24,6 +25,16 @@ def open_webhook_tunnel(api, config):
             and events to subscribe to
     """
 
+    ws = _build_webhook_tunnel(api, config)
+    ws_run = Thread(target=_run_webhook_tunnel, args=(ws,))
+    ws_run.start()
+
+
+def _run_webhook_tunnel(ws):
+    ws.run_forever()
+
+
+def _build_webhook_tunnel(api, config):
     ws_domain = "wss://tunnel.nylas.com"
     callback_domain = "cb.nylas.com"
     # This UUID will map our websocket to a webhook in the forwarding server
@@ -57,15 +68,12 @@ def open_webhook_tunnel(api, config):
         on_cont_message=on_cont_message,
         on_data=on_data,
     )
-    _build_webhook_tunnel(api, callback_domain, tunnel_id, triggers)
-    ws.run_forever()
 
-
-def _build_webhook_tunnel(api, callback_domain, tunnel_path, triggers):
+    # Register the webhook to the Nylas application
     webhook = api.webhooks.create()
-    webhook.callback_url = "https://{}/{}".format(callback_domain, tunnel_path)
+    webhook.callback_url = "https://{}/{}".format(callback_domain, tunnel_id)
     webhook.triggers = triggers
     webhook.state = Webhook.State.ACTIVE.value
     webhook.save()
-    return webhook
 
+    return ws
