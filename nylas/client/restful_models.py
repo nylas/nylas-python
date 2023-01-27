@@ -130,6 +130,8 @@ class RestfulModel(dict):
             if hasattr(self, attr):
                 attr_value = getattr(self, attr)
                 if attr_value is not None:
+                    if attr.startswith("_"):
+                        attr = attr[1:]
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
             if date_attr in self.read_only_attrs and enforce_read_only is True:
