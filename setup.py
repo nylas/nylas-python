@@ -15,10 +15,8 @@ RUN_DEPENDENCIES = [
     "requests[security]>=2.4.2",
     "six>=1.4.1",
     "urlobject",
+    "enum34>=1.1.10; python_version<='3.4'",
 ]
-
-if sys.version_info[:2] <= (3, 4):
-    RUN_DEPENDENCIES.append("enum34>=1.1.10")
 
 TEST_DEPENDENCIES = [
     "pytest",
