@@ -15,7 +15,7 @@ RUN_DEPENDENCIES = [
     "requests[security]>=2.4.2",
     "six>=1.4.1",
     "urlobject",
-    "websocket-client==0.59.0"
+    "websocket-client==0.59.0",
 ]
 
 if sys.version_info[:2] <= (3, 4):

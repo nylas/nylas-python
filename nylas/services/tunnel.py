@@ -1,11 +1,12 @@
 import uuid
 
 import websocket
+import json
 from threading import Thread
 
-from client import APIClient
-from client.restful_models import Webhook
-from config import DEFAULT_REGION
+from nylas.client import APIClient
+from nylas.client.restful_models import Webhook
+from nylas.config import DEFAULT_REGION
 
 
 def open_webhook_tunnel(api, config):
@@ -40,24 +41,36 @@ def _build_webhook_tunnel(api, config):
     # This UUID will map our websocket to a webhook in the forwarding server
     tunnel_id = str(uuid.uuid4())
 
-    region = config.get('region', DEFAULT_REGION)
-    triggers = config.get('triggers', [e.value for e in Webhook.Trigger])
-    on_message = config.get('on_message', None)
-    on_open = config.get('on_open', None)
-    on_error = config.get('on_error', None)
-    on_close = config.get('on_close', None)
-    on_ping = config.get('on_ping', None)
-    on_pong = config.get('on_pong', None)
-    on_cont_message = config.get('on_cont_message', None)
-    on_data = config.get('on_data', None)
+    region = config.get("region", DEFAULT_REGION)
+    triggers = config.get("triggers", [e.value for e in Webhook.Trigger])
+
+    def on_message(wsapp, message):
+        # If user defined an "on_message" callback, we'll parse the delta first
+        usr_on_message = config.get("on_message", None)
+        if not usr_on_message:
+            return
+
+        parsed_message = json.loads(message)
+        parsed_body = json.loads(parsed_message["body"])
+        deltas = parsed_body["deltas"]
+        for delta in deltas:
+            usr_on_message(delta)
+
+    on_open = config.get("on_open", None)
+    on_error = config.get("on_error", None)
+    on_close = config.get("on_close", None)
+    on_ping = config.get("on_ping", None)
+    on_pong = config.get("on_pong", None)
+    on_cont_message = config.get("on_cont_message", None)
+    on_data = config.get("on_data", None)
 
     ws = websocket.WebSocketApp(
         ws_domain,
         header={
-            'Client-Id': api.client_id,
-            'Client-Secret': api.client_secret,
-            'Tunnel-Id': tunnel_id,
-            'Region': region.value,
+            "Client-Id": api.client_id,
+            "Client-Secret": api.client_secret,
+            "Tunnel-Id": tunnel_id,
+            "Region": region.value,
         },
         on_open=on_open,
         on_message=on_message,
