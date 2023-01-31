@@ -81,6 +81,11 @@ def test_register_webhook(mocked_responses, api_client_with_client_id):
     }
 
 
+# ============================================================================
+# Mock functions for websocket callback
+# ============================================================================
+
+
 # This function mocks websocket implementation and returns a list of params as a dict
 def mock_websocket(
     domain,
@@ -95,11 +100,6 @@ def mock_websocket(
     on_data,
 ):
     return locals()
-
-
-# ============================================================================
-# Mock functions for websocket callback
-# ============================================================================
 
 
 def on_open():
