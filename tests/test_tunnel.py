@@ -1,4 +1,5 @@
 import json
+from unittest.mock import Mock
 
 import pytest
 from urlobject import URLObject
@@ -79,6 +80,35 @@ def test_register_webhook(mocked_responses, api_client_with_client_id):
         "triggers": ["message.created"],
         "state": "active",
     }
+
+
+@pytest.mark.usefixtures("mock_create_webhook")
+def test_open_webhook_tunnel(mocker, api_client_with_client_id):
+    mock_build = Mock()
+    mock_run = Mock()
+    mocker.patch("nylas.services.tunnel._build_webhook_tunnel", mock_build)
+    mocker.patch("nylas.services.tunnel._run_webhook_tunnel", mock_run)
+
+    tunnel.open_webhook_tunnel(api_client_with_client_id, {"region": Region.IRELAND})
+
+    mock_build_calls = mock_build.call_args_list
+    assert len(mock_build_calls) == 1
+    assert len(mock_build_calls[0].args) == 2
+    assert mock_build_calls[0].args == (
+        api_client_with_client_id,
+        {"region": Region.IRELAND},
+    )
+
+    mock_run_calls = mock_run.call_args_list
+    assert len(mock_run_calls) == 1
+
+
+def test_run_webhook_tunnel():
+    mock = Mock()
+    tunnel._run_webhook_tunnel(mock)
+    mock_method_calls = mock.method_calls
+    assert len(mock_method_calls) == 1
+    assert mock_method_calls[0][0] == "run_forever"
 
 
 # ============================================================================
