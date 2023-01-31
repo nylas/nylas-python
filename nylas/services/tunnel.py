@@ -35,6 +35,14 @@ def _run_webhook_tunnel(ws):
     ws.run_forever()
 
 
+def _register_webhook(api, callback_domain, tunnel_id, triggers):
+    webhook = api.webhooks.create()
+    webhook.callback_url = "https://{}/{}".format(callback_domain, tunnel_id)
+    webhook.triggers = triggers
+    webhook.state = Webhook.State.ACTIVE.value
+    webhook.save()
+
+
 def _build_webhook_tunnel(api, config):
     ws_domain = "wss://tunnel.nylas.com"
     callback_domain = "cb.nylas.com"
@@ -83,10 +91,6 @@ def _build_webhook_tunnel(api, config):
     )
 
     # Register the webhook to the Nylas application
-    webhook = api.webhooks.create()
-    webhook.callback_url = "https://{}/{}".format(callback_domain, tunnel_id)
-    webhook.triggers = triggers
-    webhook.state = Webhook.State.ACTIVE.value
-    webhook.save()
+    _register_webhook(api, callback_domain, tunnel_id, triggers)
 
     return ws
