@@ -25,6 +25,7 @@ TEST_DEPENDENCIES = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
+    "pytest-mock",
     "responses==0.10.5",
     "twine",
     "pytz",
