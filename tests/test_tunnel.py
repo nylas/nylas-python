@@ -117,6 +117,17 @@ def test_run_webhook_tunnel():
     assert mock_method_calls[0][0] == "run_forever"
 
 
+def test_parse_deltas():
+    message = '{"body": "{\\"deltas\\": [{\\"date\\": 1675098465, \\"object\\": \\"message\\", \\"type\\": \\"message.created\\", \\"object_data\\": {\\"namespace_id\\": \\"namespace_123\\", \\"account_id\\": \\"account_123\\", \\"object\\": \\"message\\", \\"attributes\\": {\\"thread_id\\": \\"thread_123\\", \\"received_date\\": 1675098459}, \\"id\\": \\"123\\", \\"metadata\\": null}}]}"}'
+    deltas = tunnel._parse_deltas(message)
+    assert len(deltas) == 1
+    delta = deltas[0]
+    assert delta["date"] == 1675098465
+    assert delta["object"] == "message"
+    assert delta["type"] == Webhook.Trigger.MESSAGE_CREATED
+    assert delta["object_data"] is not None
+
+
 # ============================================================================
 # Mock functions for websocket callback
 # ============================================================================
