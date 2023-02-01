@@ -353,6 +353,7 @@ class Thread(NylasAPIObject):
         "version",
         "_folders",
         "_labels",
+        "_messages",
         "received_recent_date",
         "has_attachments",
     ]
@@ -375,6 +376,8 @@ class Thread(NylasAPIObject):
 
     @property
     def messages(self):
+        if self._messages:
+            return [Message.create(self.api, **f) for f in self._messages]
         return self.child_collection(Message, thread_id=self.id)
 
     @property
