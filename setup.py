@@ -16,16 +16,20 @@ RUN_DEPENDENCIES = [
     "six>=1.4.1",
     "urlobject",
     "enum34>=1.1.10; python_version<='3.4'",
+    "websocket-client==0.59.0",
 ]
 
 TEST_DEPENDENCIES = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
+    "pytest-mock",
     "responses==0.10.5",
     "twine",
     "pytz",
+    "mock; python_version<'3.3'",
 ]
+
 RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
 
 
