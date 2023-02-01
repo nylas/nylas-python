@@ -545,6 +545,22 @@ def mock_labelled_thread(mocked_responses, api_url, account_id):
                 "object": "label",
             },
         ],
+        "messages": [
+            {
+                "account_id": account_id,
+                "date": 1675274530,
+                "id": "222",
+                "labels": [
+                    {
+                        "display_name": "Trash",
+                        "id": "trash-id",
+                        "name": "trash",
+                    },
+                ],
+                "object": "message",
+                "thread_id": "111",
+            }
+        ],
         "first_message_timestamp": 1451703845,
         "last_message_timestamp": 1483326245,
         "last_message_received_timestamp": 1483326245,
