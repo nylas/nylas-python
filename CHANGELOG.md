@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v5.13.1
+----------------
+* Fix `send_authorization` not returning the correct dict
+* Fix expanded threads not inflating the messages objects properly
+* Fix class attributes with leading underscores not serializing as expected
+
 v5.13.0
 ----------------
 * Add local webhook development support
