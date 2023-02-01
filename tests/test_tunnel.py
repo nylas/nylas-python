@@ -61,6 +61,7 @@ def test_build_webhook_tunnel_defaults(mocker, api_client_with_client_id):
         "Region": "us",
     }
     assert ws["on_open"] is None
+    assert ws["on_message"] is None
     assert ws["on_error"] is None
     assert ws["on_close"] is None
     assert ws["on_ping"] is None
@@ -135,6 +136,10 @@ def mock_websocket(
     on_data,
 ):
     return locals()
+
+
+def on_message():
+    print("on_message")
 
 
 def on_open():
