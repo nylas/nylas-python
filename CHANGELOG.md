@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+v5.13.0
+----------------
+* Add local webhook development support
+* Use PEP508 syntax for conditional dependencies
+
 v5.12.1
 ----------------
 * Only install enum34 on python34 and below
