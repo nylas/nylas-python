@@ -1,5 +1,10 @@
 import json
-from unittest.mock import Mock
+import sys
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import Mock
+else:
+    from mock import Mock
 
 import pytest
 from urlobject import URLObject

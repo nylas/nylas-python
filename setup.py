@@ -30,6 +30,10 @@ TEST_DEPENDENCIES = [
     "twine",
     "pytz",
 ]
+
+if sys.version_info < (3, 3):
+    TEST_DEPENDENCIES.append("mock")
+
 RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
 
 
