@@ -122,6 +122,8 @@ class RestfulModel(dict):
                 else:
                     attr_value = getattr(self, attr)
                 if attr_value is not None:
+                    if attr.startswith("_"):
+                        attr = attr[1:]
                     dct[attr] = attr_value
         for date_attr, iso_attr in self.cls.date_attrs.items():
             if date_attr in self.read_only_attrs and enforce_read_only is True:
@@ -353,6 +355,7 @@ class Thread(NylasAPIObject):
         "version",
         "_folders",
         "_labels",
+        "_messages",
         "received_recent_date",
         "has_attachments",
     ]
@@ -375,6 +378,8 @@ class Thread(NylasAPIObject):
 
     @property
     def messages(self):
+        if self._messages:
+            return [Message.create(self.api, **f) for f in self._messages]
         return self.child_collection(Message, thread_id=self.id)
 
     @property

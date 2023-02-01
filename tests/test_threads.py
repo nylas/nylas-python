@@ -71,6 +71,14 @@ def test_thread_messages(api_client):
     assert all(isinstance(message, Message) for message in thread.messages)
 
 
+@pytest.mark.usefixtures("mock_labelled_thread")
+def test_thread_messages_from_expanded_thread(api_client):
+    thread = api_client.threads.get(111)
+    assert len(thread.messages) == 1
+    message = thread.messages[0]
+    assert isinstance(message, Message)
+
+
 @pytest.mark.usefixtures("mock_threads", "mock_drafts")
 def test_thread_drafts(api_client):
     thread = api_client.threads.first()
