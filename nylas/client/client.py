@@ -218,6 +218,15 @@ class APIClient(json.JSONEncoder):
         return resp
 
     def token_for_code(self, code):
+        """
+        Exchange an authorization code for an access token
+
+        Args:
+            code (str): One-time authorization code from Nylas
+
+        Returns:
+            str: The access token
+        """
         self.send_authorization(code)
         return self.access_token
 
