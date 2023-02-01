@@ -52,18 +52,7 @@ def _build_webhook_tunnel(api, config):
     region = config.get("region", DEFAULT_REGION)
     triggers = config.get("triggers", [e.value for e in Webhook.Trigger])
 
-    def on_message(wsapp, message):
-        # If user defined an "on_message" callback, we'll parse the delta first
-        usr_on_message = config.get("on_message", None)
-        if not usr_on_message:
-            return
-
-        parsed_message = json.loads(message)
-        parsed_body = json.loads(parsed_message["body"])
-        deltas = parsed_body["deltas"]
-        for delta in deltas:
-            usr_on_message(delta)
-
+    usr_on_message = config.get("on_message", None)
     on_open = config.get("on_open", None)
     on_error = config.get("on_error", None)
     on_close = config.get("on_close", None)
@@ -71,6 +60,11 @@ def _build_webhook_tunnel(api, config):
     on_pong = config.get("on_pong", None)
     on_cont_message = config.get("on_cont_message", None)
     on_data = config.get("on_data", None)
+
+    def on_message(wsapp, message):
+        deltas = _parse_deltas(message)
+        for delta in deltas:
+            usr_on_message(delta)
 
     ws = websocket.WebSocketApp(
         ws_domain,
@@ -81,7 +75,7 @@ def _build_webhook_tunnel(api, config):
             "Region": region.value,
         },
         on_open=on_open,
-        on_message=on_message,
+        on_message=on_message if usr_on_message else None,
         on_error=on_error,
         on_close=on_close,
         on_ping=on_ping,
@@ -94,3 +88,9 @@ def _build_webhook_tunnel(api, config):
     _register_webhook(api, callback_domain, tunnel_id, triggers)
 
     return ws
+
+
+def _parse_deltas(message):
+    parsed_message = json.loads(message)
+    parsed_body = json.loads(parsed_message["body"])
+    return parsed_body["deltas"]
