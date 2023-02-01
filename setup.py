@@ -15,6 +15,7 @@ RUN_DEPENDENCIES = [
     "requests[security]>=2.4.2",
     "six>=1.4.1",
     "urlobject",
+    "websocket-client==0.59.0",
 ]
 
 if sys.version_info[:2] <= (3, 4):
@@ -24,10 +25,15 @@ TEST_DEPENDENCIES = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
+    "pytest-mock",
     "responses==0.10.5",
     "twine",
     "pytz",
 ]
+
+if sys.version_info < (3, 3):
+    TEST_DEPENDENCIES.append("mock")
+
 RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
 
 
