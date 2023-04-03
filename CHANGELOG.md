@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for verifying webhook signatures
+
 v5.13.1
 ----------------
 * Fix `send_authorization` not returning the correct dict

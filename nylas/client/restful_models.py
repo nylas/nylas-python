@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 from datetime import datetime
 from collections import defaultdict
 from enum import Enum
@@ -979,6 +981,24 @@ class Webhook(NylasAPIObject):
         else:
             dct = NylasAPIObject.as_json(self, enforce_read_only)
         return dct
+
+    @staticmethod
+    def verify_webhook_signature(nylas_signature, raw_body, client_secret):
+        """
+        Verify incoming webhook signature came from Nylas
+
+        Args:
+            nylas_signature (str): The signature to verify
+            raw_body (bytes | bytearray): The raw body from the payload
+            client_secret (str): Client secret of the app receiving the webhook
+
+        Returns:
+            bool: True if the webhook signature was verified from Nylas
+        """
+        digest = hmac.new(
+            str.encode(client_secret), msg=raw_body, digestmod=hashlib.sha256
+        ).hexdigest()
+        return hmac.compare_digest(digest, nylas_signature)
 
     class Trigger(str, Enum):
         """
