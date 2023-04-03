@@ -39,7 +39,7 @@ def test_token_info(api_client_with_client_id):
 
 
 @pytest.mark.usefixtures("mock_token_info", "mock_account")
-def test_token_info(api_client_with_client_id):
+def test_token_info_with_account_id(api_client_with_client_id):
     result = api_client_with_client_id.token_info(
         account_id="anvkhwelkfdoehdflhdjkfhe1"
     )
