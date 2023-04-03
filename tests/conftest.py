@@ -1955,9 +1955,7 @@ def mock_ip_addresses(mocked_responses, api_url, client_id):
 
 @pytest.fixture
 def mock_token_info(mocked_responses, api_url, account_id, client_id):
-    token_info_url = "{base}/a/{client_id}/accounts/{id}/token-info".format(
-        base=api_url, id=account_id, client_id=client_id
-    )
+    token_info_url = re.compile(api_url + "/a/.*/accounts/.*/token-info")
     mocked_responses.add(
         responses.POST,
         token_info_url,

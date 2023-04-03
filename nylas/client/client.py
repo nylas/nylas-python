@@ -289,10 +289,16 @@ class APIClient(json.JSONEncoder):
         _validate(resp).json()
         return resp.json()
 
-    def token_info(self):
-        token_info_url = self.token_info_url.format(
-            client_id=self.client_id, account_id=self.account.id
-        )
+    def token_info(self, account_id=None):
+        token_info_url = ""
+        if account_id is not None:
+            token_info_url = self.token_info_url.format(
+                client_id=self.client_id, account_id=account_id
+            )
+        else:
+            token_info_url = self.token_info_url.format(
+                client_id=self.client_id, account_id=self.account.id
+            )
         headers = {"Content-Type": "application/json"}
         headers.update(self.admin_session.headers)
         resp = self.admin_session.post(
