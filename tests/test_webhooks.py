@@ -78,3 +78,21 @@ def test_create_webhook(mocked_responses, api_client_with_client_id):
     assert webhook.state == "active"
     assert webhook.triggers == ["message.created"]
     assert webhook.version == "1.0"
+
+
+def test_verify_webhook_signature():
+    is_verified = Webhook.verify_webhook_signature(
+        "ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c",
+        str.encode("test123"),
+        "myClientSecret",
+    )
+    assert is_verified is True
+
+
+def test_verify_webhook_signature_bad_signature():
+    is_verified = Webhook.verify_webhook_signature(
+        "ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c",
+        str.encode("test1234"),
+        "myClientSecret",
+    )
+    assert is_verified is False
