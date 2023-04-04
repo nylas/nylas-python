@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add support for verifying webhook signatures
+* Add optional parameter for token-info endpoint
 
 v5.13.1
 ----------------
