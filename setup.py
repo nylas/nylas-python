@@ -83,7 +83,7 @@ def main():
     setup(
         name="nylas",
         version=VERSION,
-        python_requires='>=3.8',
+        python_requires=">=3.8",
         packages=find_packages(),
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
