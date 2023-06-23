@@ -1,6 +1,7 @@
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.calendars import Calendars
+from nylas.resources.events import Events
 
 
 class Client(object):
@@ -16,3 +17,7 @@ class Client(object):
     @property
     def calendars(self) -> Calendars:
         return Calendars(self.http_client)
+
+    @property
+    def events(self) -> Events:
+        return Events(self.http_client)
