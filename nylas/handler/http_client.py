@@ -5,11 +5,14 @@ import requests
 from requests import Response
 
 from nylas._client_sdk_version import __VERSION__
+from nylas.model.nylas_api_error_response import NylasApiErrorResponse
 
 
 def _validate_response(response: Response) -> dict:
     json = response.json()
-    # TODO::Handle errors
+    if response.status_code >= 400:
+        raise NylasApiErrorResponse(json["request_id"], json["error"])
+
     return json
 
 
