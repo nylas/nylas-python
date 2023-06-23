@@ -1,5 +1,6 @@
 from nylas.handler.http_client import HttpClient
 from nylas.resources.grants import Grants
+from nylas.resources.providers import Providers
 from nylas.resources.resource import Resource
 
 
@@ -12,3 +13,7 @@ class Auth(Resource):
     @property
     def grants(self) -> Grants:
         return Grants(self._http_client)
+
+    @property
+    def providers(self) -> Providers:
+        return Providers(self._http_client, self.client_id)
