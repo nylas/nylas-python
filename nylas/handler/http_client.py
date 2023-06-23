@@ -2,8 +2,15 @@ import sys
 import urllib.parse
 
 import requests
+from requests import Response
 
 from nylas._client_sdk_version import __VERSION__
+
+
+def _validate_response(response: Response) -> dict:
+    json = response.json()
+    # TODO::Handle errors
+    return json
 
 
 class HttpClient(object):
@@ -15,24 +22,24 @@ class HttpClient(object):
         self.timeout = timeout
         self.session = requests.Session()
 
-    def get(self, path, headers=None, query_params=None):
+    def get(self, path, headers=None, query_params=None) -> dict:
         return self._execute("GET", path, headers, query_params)
 
-    def post(self, path, headers=None, query_params=None, request_body=None):
+    def post(self, path, headers=None, query_params=None, request_body=None) -> dict:
         return self._execute("POST", path, headers, query_params, request_body)
 
-    def put(self, path, headers=None, query_params=None, request_body=None):
+    def put(self, path, headers=None, query_params=None, request_body=None) -> dict:
         return self._execute("PUT", path, headers, query_params, request_body)
 
-    def patch(self, path, headers=None, query_params=None, request_body=None):
+    def patch(self, path, headers=None, query_params=None, request_body=None) -> dict:
         return self._execute("PATCH", path, headers, query_params, request_body)
 
-    def delete(self, path, headers=None, query_params=None):
+    def delete(self, path, headers=None, query_params=None) -> dict:
         return self._execute("DELETE", path, headers, query_params)
 
     def _execute(
         self, method, path, headers: None, query_params=None, request_body=None
-    ):
+    ) -> dict:
         request = self._build_request(method, path, headers, query_params)
         response = self.session.request(
             request["method"],
@@ -40,9 +47,8 @@ class HttpClient(object):
             headers=request["headers"],
             json=request_body,
         )
-        # TODO::Handle errors
         # TODO::Also validate and parse response
-        return response
+        return _validate_response(response)
 
     def _build_request(
         self, method: str, path: str, headers: dict = None, query_params: dict = None
