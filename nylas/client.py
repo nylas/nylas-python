@@ -1,5 +1,6 @@
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
+from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
 from nylas.resources.events import Events
 
@@ -13,6 +14,9 @@ class Client(object):
         self.api_key = api_key
         self.api_server = api_server
         self.http_client = HttpClient(self.api_server, self.api_key, timeout)
+
+    def auth(self, client_id: str, client_secret: str) -> Auth:
+        return Auth(self.http_client, client_id, client_secret)
 
     @property
     def calendars(self) -> Calendars:
