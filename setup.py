@@ -12,25 +12,13 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
     ).group(1)
 
 RUN_DEPENDENCIES = [
-    "requests[security]>=2.4.2",
-    "six>=1.4.1",
-    "urlobject",
-    "enum34>=1.1.10; python_version<='3.4'",
-    "websocket-client==0.59.0",
+    "requests[security]>=2.31.0",
+    "urlobject>=2.4.3",
 ]
 
-TEST_DEPENDENCIES = [
-    "pytest",
-    "pytest-cov",
-    "pytest-timeout",
-    "pytest-mock",
-    "responses==0.10.5",
-    "twine",
-    "pytz",
-    "mock; python_version<'3.3'",
-]
+TEST_DEPENDENCIES = []
 
-RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
+RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
 
 class PyTest(TestCommand):
@@ -95,6 +83,7 @@ def main():
     setup(
         name="nylas",
         version=VERSION,
+        python_requires=">=3.8",
         packages=find_packages(),
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
