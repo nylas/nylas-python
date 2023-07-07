@@ -5,7 +5,7 @@ import requests
 from requests import Response
 
 from nylas._client_sdk_version import __VERSION__
-from nylas.model.nylas_api_error_response import NylasApiErrorResponse
+from nylas.models.nylas_api_error_response import NylasApiErrorResponse
 
 
 def _validate_response(response: Response) -> dict:

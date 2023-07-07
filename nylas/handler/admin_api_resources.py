@@ -1,6 +1,6 @@
-from nylas.model.delete_response import DeleteResponse
-from nylas.model.list_response import ListResponse
-from nylas.model.response import Response
+from nylas.models.delete_response import DeleteResponse
+from nylas.models.list_response import ListResponse
+from nylas.models.response import Response
 from nylas.resources.resource import Resource
 
 

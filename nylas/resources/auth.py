@@ -4,8 +4,8 @@ import urllib.parse
 import uuid
 
 from nylas.handler.http_client import HttpClient
-from nylas.model.pkce_auth_url import PkceAuthUrl
-from nylas.model.response import Response
+from nylas.models.pkce_auth_url import PkceAuthUrl
+from nylas.models.response import Response
 from nylas.resources.grants import Grants
 from nylas.resources.providers import Providers
 from nylas.resources.resource import Resource

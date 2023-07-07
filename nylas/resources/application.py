@@ -1,5 +1,5 @@
 from nylas.handler.http_client import HttpClient
-from nylas.model.response import Response
+from nylas.models.response import Response
 from nylas.resources.redirect_uris import RedirectUris
 from nylas.resources.resource import Resource
 

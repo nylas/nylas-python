@@ -5,7 +5,7 @@ from nylas.handler.grants_api_resources import (
     UpdatableGrantsApiResource,
     DestroyableGrantsApiResource,
 )
-from nylas.model.response import Response
+from nylas.models.response import Response
 
 
 class Events(
