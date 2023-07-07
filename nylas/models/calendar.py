@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 
+from dataclasses_json import dataclass_json
 
+
+@dataclass_json
 @dataclass
 class Calendar:
     id: str
@@ -10,10 +13,10 @@ class Calendar:
     timezone: str
     read_only: bool
     is_owned_by_user: bool
-    description: Optional[str]
-    location: Optional[str]
-    hex_color: Optional[str]
-    hex_foreground_color: Optional[str]
-    is_primary: Optional[bool]
-    metadata: Optional[Dict[str, Any]]
     object: str = "calendar"
+    description: Optional[str] = None
+    location: Optional[str] = None
+    hex_color: Optional[str] = None
+    hex_foreground_color: Optional[str] = None
+    is_primary: Optional[bool] = None
+    metadata: Optional[Dict[str, Any]] = None

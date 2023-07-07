@@ -1,6 +1,8 @@
-from typing import NamedTuple, Dict, Any, TypeVar, Generic
+from typing import TypeVar, Generic, Type
 
-T = TypeVar("T")
+from dataclasses_json import DataClassJsonMixin
+
+T = TypeVar("T", bound=DataClassJsonMixin)
 
 
 class Response(Generic[T]):
@@ -14,8 +16,8 @@ class Response(Generic[T]):
         self.data = data
 
     @classmethod
-    def from_dict(cls, resp: dict):
+    def from_dict(cls, resp: dict, generic_type: Type[T]):
         return cls(
             request_id=resp["request_id"],
-            data=resp["data"],
+            data=generic_type.from_dict(resp["data"]),
         )

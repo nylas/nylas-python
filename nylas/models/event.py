@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 
+from dataclasses_json import dataclass_json
 
+
+@dataclass_json
 @dataclass
 class Event:
     id: str

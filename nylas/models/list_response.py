@@ -1,4 +1,4 @@
-from typing import NamedTuple, List, Dict, Any, Optional, TypeVar, Generic
+from typing import List, Optional, TypeVar, Generic, Type
 
 T = TypeVar("T")
 
@@ -16,9 +16,12 @@ class ListResponse(Generic[T]):
         self.next_cursor = next_cursor
 
     @classmethod
-    def from_dict(cls, resp: dict):
+    def from_dict(cls, resp: dict, generic_type: Type[T]):
+        converted_data = []
+        for item in resp["data"]:
+            converted_data.append(generic_type.from_dict(item))
         return cls(
             request_id=resp["request_id"],
-            data=resp["data"],
+            data=converted_data,
             next_cursor=resp.get("next_cursor", None),
         )

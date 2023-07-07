@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, get_args
 
 from nylas.models.delete_response import DeleteResponse
 from nylas.models.list_response import ListResponse
@@ -12,7 +12,8 @@ class ListableGrantsApiResource(Resource, Generic[T]):
     def list(self, identifier: str, query_params: dict = None) -> ListResponse[T]:
         path = "/v3/grants/{}/{}".format(identifier, self.resource_name)
         response_json = self._http_client.get(path, query_params)
-        return ListResponse.from_dict(response_json)
+        generic_type = get_args(self.__orig_bases__[0])[0]
+        return ListResponse.from_dict(response_json, generic_type)
 
 
 class FindableGrantsApiResource(Resource, Generic[T]):
@@ -24,7 +25,8 @@ class FindableGrantsApiResource(Resource, Generic[T]):
     ) -> Response[T]:
         path = "/v3/grants/{}/{}/{}".format(identifier, self.resource_name, object_id)
         response_json = self._http_client.get(path, query_params=query_params)
-        return Response.from_dict(response_json)
+        generic_type = get_args(self.__orig_bases__[0])[0]
+        return Response.from_dict(response_json, generic_type)
 
 
 class CreatableGrantsApiResource(Resource, Generic[T]):
@@ -35,7 +37,8 @@ class CreatableGrantsApiResource(Resource, Generic[T]):
         response_json = self._http_client.post(
             path, request_body=request_body, query_params=query_params
         )
-        return Response.from_dict(response_json)
+        generic_type = get_args(self.__orig_bases__[0])[0]
+        return Response.from_dict(response_json, generic_type)
 
 
 class UpdatableGrantsApiResource(Resource, Generic[T]):
@@ -50,7 +53,8 @@ class UpdatableGrantsApiResource(Resource, Generic[T]):
         response_json = self._http_client.put(
             path, request_body=request_body, query_params=query_params
         )
-        return Response.from_dict(response_json)
+        generic_type = get_args(self.__orig_bases__[0])[0]
+        return Response.from_dict(response_json, generic_type)
 
 
 class DestroyableGrantsApiResource(Resource):
