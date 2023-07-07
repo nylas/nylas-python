@@ -13,10 +13,9 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
 
 RUN_DEPENDENCIES = [
     "requests[security]>=2.31.0",
-    "urlobject>=2.4.3",
 ]
 
-TEST_DEPENDENCIES = []
+TEST_DEPENDENCIES = ["pytest>=7.4.0"]
 
 RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
