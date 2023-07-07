@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from nylas.model.nylas_api_error import NylasApiError
+from nylas.models.nylas_api_error import NylasApiError
 
 
 class NylasApiErrorResponse(Exception):
