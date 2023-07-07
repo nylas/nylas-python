@@ -5,14 +5,15 @@ from nylas.handler.grants_api_resources import (
     UpdatableGrantsApiResource,
     DestroyableGrantsApiResource,
 )
+from nylas.models.calendar import Calendar
 from nylas.models.response import Response
 
 
 class Calendars(
-    ListableGrantsApiResource,
-    FindableGrantsApiResource,
-    CreatableGrantsApiResource,
-    UpdatableGrantsApiResource,
+    ListableGrantsApiResource[Calendar],
+    FindableGrantsApiResource[Calendar],
+    CreatableGrantsApiResource[Calendar],
+    UpdatableGrantsApiResource[Calendar],
     DestroyableGrantsApiResource,
 ):
     def __init__(self, http_client):

@@ -5,14 +5,15 @@ from nylas.handler.grants_api_resources import (
     UpdatableGrantsApiResource,
     DestroyableGrantsApiResource,
 )
+from nylas.models.event import Event
 from nylas.models.response import Response
 
 
 class Events(
-    ListableGrantsApiResource,
-    FindableGrantsApiResource,
-    CreatableGrantsApiResource,
-    UpdatableGrantsApiResource,
+    ListableGrantsApiResource[Event],
+    FindableGrantsApiResource[Event],
+    CreatableGrantsApiResource[Event],
+    UpdatableGrantsApiResource[Event],
     DestroyableGrantsApiResource,
 ):
     def __init__(self, http_client):
