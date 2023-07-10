@@ -5,13 +5,14 @@ from nylas.handler.admin_api_resources import (
     UpdatableAdminApiResource,
     DestroyableAdminApiResource,
 )
+from nylas.models.grant import Grant
 
 
 class Grants(
-    ListableAdminApiResource,
-    FindableAdminApiResource,
-    CreatableAdminApiResource,
-    UpdatableAdminApiResource,
+    ListableAdminApiResource[Grant],
+    FindableAdminApiResource[Grant],
+    CreatableAdminApiResource[Grant],
+    UpdatableAdminApiResource[Grant],
     DestroyableAdminApiResource,
 ):
     def __init__(self, http_client):

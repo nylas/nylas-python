@@ -1,5 +1,6 @@
 from nylas.handler.http_client import HttpClient
 from nylas.models.list_response import ListResponse
+from nylas.models.provider import Provider, ProviderDetectResponse
 from nylas.models.response import Response
 from nylas.resources.resource import Resource
 
@@ -9,7 +10,7 @@ class Providers(Resource):
         super(Providers, self).__init__("providers", http_client)
         self.client_id = client_id
 
-    def list(self) -> ListResponse:
+    def list(self) -> ListResponse[Provider]:
         """
         List all providers.
 
@@ -20,9 +21,9 @@ class Providers(Resource):
         json_response = self._http_client.get(
             "/v3/connect/providers/find", query_params={"client_id": self.client_id}
         )
-        return ListResponse.from_dict(json_response)
+        return ListResponse.from_dict(json_response, Provider)
 
-    def detect(self, query_params: dict) -> Response:
+    def detect(self, query_params: dict) -> Response[ProviderDetectResponse]:
         """
         Detect providers.
 
@@ -33,8 +34,8 @@ class Providers(Resource):
             Response: The detected provider.
         """
 
-        json_response = self._http_client.get(
-            "/v3/connect/providers/detect",
+        json_response = self._http_client.post(
+            "/v3/providers/detect",
             query_params={"client_id": self.client_id, **query_params},
         )
-        return Response.from_dict(json_response)
+        return Response.from_dict(json_response, ProviderDetectResponse)

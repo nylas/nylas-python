@@ -18,7 +18,7 @@ class Response(tuple, Generic[T]):
         return cls
 
     @classmethod
-    def from_dict(cls, resp: dict, generic_type: Type[T]):
+    def from_dict(cls, resp: dict, generic_type):
         return cls(
             data=generic_type.from_dict(resp["data"]),
             request_id=resp["request_id"],

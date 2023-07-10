@@ -5,13 +5,14 @@ from nylas.handler.admin_api_resources import (
     UpdatableAdminApiResource,
     DestroyableAdminApiResource,
 )
+from nylas.models.reditect_uri import RedirectUri
 
 
 class RedirectUris(
-    ListableAdminApiResource,
-    FindableAdminApiResource,
-    CreatableAdminApiResource,
-    UpdatableAdminApiResource,
+    ListableAdminApiResource[RedirectUri],
+    FindableAdminApiResource[RedirectUri],
+    CreatableAdminApiResource[RedirectUri],
+    UpdatableAdminApiResource[RedirectUri],
     DestroyableAdminApiResource,
 ):
     def __init__(self, http_client):

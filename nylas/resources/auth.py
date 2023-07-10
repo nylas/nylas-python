@@ -4,7 +4,12 @@ import urllib.parse
 import uuid
 
 from nylas.handler.http_client import HttpClient
-from nylas.models.pkce_auth_url import PkceAuthUrl
+from nylas.models.auth import (
+    CodeExchangeResponse,
+    PkceAuthUrl,
+    OpenID,
+    ServerSideHostedAuthResponse,
+)
 from nylas.models.response import Response
 from nylas.resources.grants import Grants
 from nylas.resources.providers import Providers
@@ -32,7 +37,7 @@ class Auth(Resource):
 
     def exchange_code_for_token(
         self, code: str, redirect_uri: str, code_verifier: str = None
-    ) -> Response:
+    ) -> Response[CodeExchangeResponse]:
         """Exchange an authorization code for an access token.
 
         Args:
@@ -57,7 +62,9 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def refresh_access_token(self, refresh_token: str, redirect_uri: str) -> Response:
+    def refresh_access_token(
+        self, refresh_token: str, redirect_uri: str
+    ) -> Response[CodeExchangeResponse]:
         """Refresh an access token.
 
         Args:
@@ -78,7 +85,7 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def validate_id_token(self, id_token: str) -> Response:
+    def validate_id_token(self, id_token: str) -> Response[OpenID]:
         """Validate an ID token.
 
         Args:
@@ -94,7 +101,7 @@ class Auth(Resource):
 
         return self._validate_token(query_params)
 
-    def validate_access_token(self, access_token: str) -> Response:
+    def validate_access_token(self, access_token: str) -> Response[OpenID]:
         """Validate an access token.
 
         Args:
@@ -154,7 +161,9 @@ class Auth(Resource):
 
         return self._url_auth_builder(query)
 
-    def hosted_auth(self, config: dict) -> Response:
+    def server_side_hosted_auth(
+        self, config: dict
+    ) -> Response[ServerSideHostedAuthResponse]:
         """Create a new authorization request and get a new unique login url.
         Used only for hosted authentication.
         This is the initial step requested from the server side to issue a new login url.
@@ -174,7 +183,7 @@ class Auth(Resource):
             headers={"Authorization": "Basic {}".format(encoded_credentials)},
         )
 
-        return Response.from_dict(json_response)
+        return Response.from_dict(json_response, ServerSideHostedAuthResponse)
 
     def revoke(self, token: str) -> True:
         """Revoke a single access token.
@@ -243,14 +252,14 @@ class Auth(Resource):
 
         return params
 
-    def _get_token(self, request_body: dict) -> Response:
+    def _get_token(self, request_body: dict) -> Response[CodeExchangeResponse]:
         json_response = self._http_client.post(
             "/v3/connect/token", request_body=request_body
         )
-        return Response.from_dict(json_response)
+        return Response.from_dict(json_response, CodeExchangeResponse)
 
-    def _validate_token(self, query_params: dict) -> Response:
+    def _validate_token(self, query_params: dict) -> Response[OpenID]:
         json_response = self._http_client.get(
             "/v3/connect/tokeninfo", query_params=query_params
         )
-        return Response.from_dict(json_response)
+        return Response.from_dict(json_response, OpenID)
