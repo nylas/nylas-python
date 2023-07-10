@@ -2,6 +2,7 @@ from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
 from nylas.resources.auth import Auth
+from nylas.resources.availability import Availability
 from nylas.resources.calendars import Calendars
 from nylas.resources.events import Events
 
@@ -22,6 +23,10 @@ class Client(object):
     @property
     def applications(self) -> Applications:
         return Applications(self.http_client)
+
+    @property
+    def availability(self) -> Availability:
+        return Availability(self.http_client)
 
     @property
     def calendars(self) -> Calendars:
