@@ -59,3 +59,10 @@ class WebhookDeleteData:
 class WebhookDeleteResponse:
     requestId: str
     data: Optional[WebhookDeleteData] = None
+
+
+@dataclass_json
+@dataclass
+class WebhookIpAddressesResponse:
+    ip_addresses: List[str]
+    updated_at: int
