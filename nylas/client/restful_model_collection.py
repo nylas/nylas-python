@@ -70,7 +70,8 @@ class RestfulModelCollection(object):
         Returns:
             int: The number of objects in the collection being queried
         """
-        self.filters["view"] = "count"
+        filters = self.filters.copy()
+        filters["view"] = "count"
         response = self.api._get_resource_raw(
             self.model_class, resource_id=None, **self.filters
         ).json()
