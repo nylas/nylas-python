@@ -26,11 +26,15 @@ def test_event_crud(mocked_responses, api_client):
     event1.master_event_id = "should not send"
     event1.original_start_time = "should not send"
     event1.visibility = "private"
+    event1.participants = [
+        {"email": "person1@email.com", "status": "yes"},
+    ]
     event1.save()
     request = mocked_responses.calls[0].request
     body = json.loads(request.body)
     assert event1.id == "cv4ei7syx10uvsxbs21ccsezf"
-    assert event1.visibility == "private"
+    assert body["participants"][0]["status"] == "yes"
+    assert body["visibility"] == "private"
     assert "title" in body
     assert "object" not in body
     assert "account_id" not in body
@@ -43,9 +47,13 @@ def test_event_crud(mocked_responses, api_client):
     assert "original_start_time" not in body
 
     event1.title = "blah"
+    assert "participants" in event1
+    event1["participants"][0]["status"] = "no"
     event1.save()
     request = mocked_responses.calls[1].request
     body = json.loads(request.body)
+    assert body["title"] == "blah"
+    assert "status" not in body["participants"][0]
     assert event1.title == "loaded from JSON"
     assert event1.get("ignored") is None
     assert "id" not in body
