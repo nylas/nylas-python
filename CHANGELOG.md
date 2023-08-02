@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v5.14.1
 ----------------
 * Fix error when trying to iterate on list after calling count
 * Fix error when setting participant status on create event
