@@ -25,23 +25,8 @@ class HttpClient(object):
         self.timeout = timeout
         self.session = requests.Session()
 
-    def get(self, path, headers=None, query_params=None) -> dict:
-        return self._execute("GET", path, headers, query_params)
-
-    def post(self, path, headers=None, query_params=None, request_body=None) -> dict:
-        return self._execute("POST", path, headers, query_params, request_body)
-
-    def put(self, path, headers=None, query_params=None, request_body=None) -> dict:
-        return self._execute("PUT", path, headers, query_params, request_body)
-
-    def patch(self, path, headers=None, query_params=None, request_body=None) -> dict:
-        return self._execute("PATCH", path, headers, query_params, request_body)
-
-    def delete(self, path, headers=None, query_params=None) -> dict:
-        return self._execute("DELETE", path, headers, query_params)
-
     def _execute(
-        self, method, path, headers: None, query_params=None, request_body=None
+        self, method, path, headers=None, query_params=None, request_body=None
     ) -> dict:
         request = self._build_request(method, path, headers, query_params)
         response = self.session.request(

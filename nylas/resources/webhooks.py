@@ -1,12 +1,13 @@
 import urllib.parse
 
-from nylas.handler.admin_api_resources import (
-    ListableAdminApiResource,
-    FindableAdminApiResource,
-    CreatableAdminApiResource,
-    UpdatableAdminApiResource,
-    DestroyableAdminApiResource,
+from nylas.handler.api_resources import (
+    ListableApiResource,
+    FindableApiResource,
+    CreatableApiResource,
+    UpdatableApiResource,
+    DestroyableApiResource,
 )
+from nylas.models.list_response import ListResponse
 from nylas.models.response import Response
 from nylas.models.webhooks import (
     Webhook,
@@ -17,14 +18,76 @@ from nylas.models.webhooks import (
 
 
 class Webhooks(
-    ListableAdminApiResource[Webhook],
-    FindableAdminApiResource[Webhook],
-    CreatableAdminApiResource[WebhookWithSecret],
-    UpdatableAdminApiResource[Webhook],
-    DestroyableAdminApiResource[WebhookDeleteResponse],
+    ListableApiResource[Webhook],
+    FindableApiResource[Webhook],
+    CreatableApiResource[WebhookWithSecret],
+    UpdatableApiResource[Webhook],
+    DestroyableApiResource[WebhookDeleteResponse],
 ):
     def __init__(self, http_client):
         super(Webhooks, self).__init__("webhooks", http_client)
+
+    def list(self) -> ListResponse[Webhook]:
+        """
+        List all webhook destinations
+
+        Returns:
+            Response[Webhook]: The list of webhook destinations
+        """
+        return super(Webhooks, self).list(path=f"/v3/webhooks")
+
+    def find(self, webhook_id: str) -> Response[Webhook]:
+        """
+        Get a webhook destination
+
+        Parameters:
+            webhook_id (str): The ID of the webhook destination to get
+
+        Returns:
+            Response[Webhook]: The webhook destination
+        """
+        return super(Webhooks, self).find(path=f"/v3/webhooks/{webhook_id}")
+
+    def create(self, request_body: dict) -> Response[WebhookWithSecret]:
+        """
+        Create a webhook destination
+
+        Parameters:
+            request_body (dict): The request body to create the webhook destination
+
+        Returns:
+            Response[WebhookWithSecret]: The created webhook destination
+        """
+        return super(Webhooks, self).create(
+            path=f"/v3/webhooks", request_body=request_body
+        )
+
+    def update(self, webhook_id: str, request_body: dict) -> Response[Webhook]:
+        """
+        Update a webhook destination
+
+        Parameters:
+            webhook_id (str): The ID of the webhook destination to update
+            request_body (dict): The request body to update the webhook destination
+
+        Returns:
+            Response[Webhook]: The updated webhook destination
+        """
+        return super(Webhooks, self).update(
+            path=f"/v3/webhooks/{webhook_id}", request_body=request_body
+        )
+
+    def destroy(self, webhook_id: str) -> WebhookDeleteResponse:
+        """
+        Delete a webhook destination
+
+        Parameters:
+            webhook_id (str): The ID of the webhook destination to delete
+
+        Returns:
+            WebhookDeleteResponse: The response from deleting the webhook destination
+        """
+        return super(Webhooks, self).destroy(path=f"/v3/webhooks/{webhook_id}")
 
     def rotate_secret(self, webhook_id: str) -> Response[Webhook]:
         """
@@ -36,8 +99,10 @@ class Webhooks(
         Returns:
             Response[Webhook]: The updated webhook destination
         """
-        res = self._http_client.put(
-            path=f"/v3/webhooks/{webhook_id}/rotate-secret", request_body={}
+        res = self._http_client._execute(
+            method="PUT",
+            path=f"/v3/webhooks/{webhook_id}/rotate-secret",
+            request_body={},
         )
         return Response.from_dict(res, Webhook)
 
@@ -48,7 +113,7 @@ class Webhooks(
         Returns:
             Response[WebhookIpAddressesResponse]: The list of IP addresses that Nylas sends webhooks from
         """
-        res = self._http_client.get(path="/v3/webhooks/ip-addresses")
+        res = self._http_client._execute(method="GET", path="/v3/webhooks/ip-addresses")
         return Response.from_dict(res, WebhookIpAddressesResponse)
 
 

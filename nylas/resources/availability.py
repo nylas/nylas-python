@@ -16,8 +16,9 @@ class Availability(Resource):
         Returns:
             Response: The availability response from the API.
         """
-        json_response = self._http_client.post(
-            "/v3/grants/{}/calendar/availability".format(identifier),
+        json_response = self._http_client._execute(
+            method="POST",
+            path="/v3/grants/{}/calendar/availability".format(identifier),
             request_body=request_body,
         )
 

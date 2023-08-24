@@ -177,8 +177,9 @@ class Auth(Resource):
         credentials = "{}:{}".format(self.client_id, self.client_secret)
         encoded_credentials = base64.b64encode(credentials.encode()).decode("utf-8")
 
-        json_response = self._http_client.post(
-            "/v3/connect/auth",
+        json_response = self._http_client._execute(
+            method="POST",
+            path="/v3/connect/auth",
             request_body=config,
             headers={"Authorization": "Basic {}".format(encoded_credentials)},
         )
@@ -194,8 +195,9 @@ class Auth(Resource):
         Returns:
             True: If the token was revoked successfully.
         """
-        self._http_client.post(
-            "/v3/connect/revoke",
+        self._http_client._execute(
+            method="POST",
+            path="/v3/connect/revoke",
             query_params={"token": token},
         )
 
@@ -253,13 +255,13 @@ class Auth(Resource):
         return params
 
     def _get_token(self, request_body: dict) -> Response[CodeExchangeResponse]:
-        json_response = self._http_client.post(
-            "/v3/connect/token", request_body=request_body
+        json_response = self._http_client._execute(
+            method="POST", path="/v3/connect/token", request_body=request_body
         )
         return Response.from_dict(json_response, CodeExchangeResponse)
 
     def _validate_token(self, query_params: dict) -> Response[OpenID]:
-        json_response = self._http_client.get(
-            "/v3/connect/tokeninfo", query_params=query_params
+        json_response = self._http_client._execute(
+            method="GET", path="/v3/connect/tokeninfo", query_params=query_params
         )
         return Response.from_dict(json_response, OpenID)
