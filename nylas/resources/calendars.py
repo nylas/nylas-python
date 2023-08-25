@@ -5,7 +5,7 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.calendar import Calendar
+from nylas.models.calendar import Calendar, CreateCalendarRequest, UpdateCalendarRequest
 from nylas.models.delete_response import DeleteResponse
 from nylas.models.list_response import ListResponse
 from nylas.models.response import Response
@@ -30,7 +30,9 @@ class Calendars(
             response_type=Calendar,
         )
 
-    def create(self, identifier: str, request_body: dict) -> Response[Calendar]:
+    def create(
+        self, identifier: str, request_body: CreateCalendarRequest
+    ) -> Response[Calendar]:
         return super(Calendars, self).create(
             path=f"/v3/grants/{identifier}/calendars",
             response_type=Calendar,
@@ -38,7 +40,7 @@ class Calendars(
         )
 
     def update(
-        self, identifier: str, calendar_id: str, request_body: dict
+        self, identifier: str, calendar_id: str, request_body: UpdateCalendarRequest
     ) -> Response[Calendar]:
         return super(Calendars, self).update(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
