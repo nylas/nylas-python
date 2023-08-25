@@ -18,9 +18,6 @@ class Grants(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def __init__(self, http_client):
-        super(Grants, self).__init__("grants", http_client)
-
     def list(self, query_params: dict) -> ListResponse[Grant]:
         return super(Grants, self).list(
             path=f"/v3/grants", response_type=Grant, query_params=query_params

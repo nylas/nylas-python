@@ -24,9 +24,6 @@ class Webhooks(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def __init__(self, http_client):
-        super(Webhooks, self).__init__("webhooks", http_client)
-
     def list(self) -> ListResponse[Webhook]:
         """
         List all webhook destinations

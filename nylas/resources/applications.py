@@ -6,9 +6,6 @@ from nylas.resources.resource import Resource
 
 
 class Applications(Resource):
-    def __init__(self, http_client: HttpClient):
-        super(Applications, self).__init__("auth", http_client)
-
     @property
     def redirect_uris(self) -> RedirectUris:
         return RedirectUris(self._http_client)

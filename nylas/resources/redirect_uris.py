@@ -18,9 +18,6 @@ class RedirectUris(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def __init__(self, http_client):
-        super(RedirectUris, self).__init__("redirect-uris", http_client)
-
     def list(self) -> ListResponse[RedirectUri]:
         return super(RedirectUris, self).list(
             path=f"/v3/redirect-uris", response_type=RedirectUri

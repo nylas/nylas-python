@@ -18,9 +18,6 @@ class Events(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def __init__(self, http_client):
-        super(Events, self).__init__("events", http_client)
-
     def list(self, identifier: str, query_params: dict) -> ListResponse[Event]:
         return super(Events, self).list(
             path=f"/v3/grants/{identifier}/events",

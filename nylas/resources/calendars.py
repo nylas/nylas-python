@@ -18,9 +18,6 @@ class Calendars(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def __init__(self, http_client):
-        super(Calendars, self).__init__("calendars", http_client)
-
     def list(self, identifier: str) -> ListResponse[Calendar]:
         return super(Calendars, self).list(
             path=f"/v3/grants/{identifier}/calendars",

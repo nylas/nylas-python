@@ -22,7 +22,7 @@ def _hash_pkce_secret(secret: str) -> str:
 
 class Auth(Resource):
     def __init__(self, http_client: HttpClient, client_id: str, client_secret: str):
-        super(Auth, self).__init__("auth", http_client)
+        super(Auth, self).__init__(http_client)
         self.client_id = client_id
         self.client_secret = client_secret
 
