@@ -1,73 +1,74 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar
-
-from nylas.handler.handler_utils import _get_generic_type
 from nylas.models.delete_response import DeleteResponse
 from nylas.models.list_response import ListResponse
 from nylas.models.response import Response
 from nylas.resources.resource import Resource
 
-T = TypeVar("T")
 
-
-class ListableApiResource(Resource, Generic[T]):
+class ListableApiResource(Resource):
     def list(
-        self, path, headers=None, query_params=None, request_body=None
-    ) -> ListResponse[T]:
-        generic_type = _get_generic_type(self, ListableApiResource)
+        self, path, response_type, headers=None, query_params=None, request_body=None
+    ) -> ListResponse:
         response_json = self._http_client._execute(
             "GET", path, headers, query_params, request_body
         )
 
-        return ListResponse.from_dict(response_json, generic_type)
+        return ListResponse.from_dict(response_json, response_type)
 
 
-class FindableApiResource(Resource, Generic[T]):
+class FindableApiResource(Resource):
     def find(
-        self, path, headers=None, query_params=None, request_body=None
-    ) -> Response[T]:
-        generic_type = _get_generic_type(self, FindableApiResource)
+        self, path, response_type, headers=None, query_params=None, request_body=None
+    ) -> Response:
         response_json = self._http_client._execute(
             "GET", path, headers, query_params, request_body
         )
 
-        return Response.from_dict(response_json, generic_type)
+        return Response.from_dict(response_json, response_type)
 
 
-class CreatableApiResource(Resource, Generic[T]):
+class CreatableApiResource(Resource):
     def create(
-        self, path, headers=None, query_params=None, request_body=None
-    ) -> Response[T]:
-        generic_type = _get_generic_type(self, CreatableApiResource)
+        self, path, response_type, headers=None, query_params=None, request_body=None
+    ) -> Response:
         response_json = self._http_client._execute(
             "POST", path, headers, query_params, request_body
         )
 
-        return Response.from_dict(response_json, generic_type)
+        return Response.from_dict(response_json, response_type)
 
 
-class UpdatableApiResource(Resource, Generic[T]):
+class UpdatableApiResource(Resource):
     def update(
-        self, path, headers=None, query_params=None, request_body=None, method="PUT"
-    ) -> Response[T]:
-        generic_type = _get_generic_type(self, UpdatableApiResource)
+        self,
+        path,
+        response_type,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        method="PUT",
+    ):
         response_json = self._http_client._execute(
             method, path, headers, query_params, request_body
         )
 
-        return Response.from_dict(response_json, generic_type)
+        return Response.from_dict(response_json, response_type)
 
 
-class DestroyableApiResource(Resource, Generic[T]):
+class DestroyableApiResource(Resource):
     def destroy(
-        self, path, headers=None, query_params=None, request_body=None
-    ) -> T | DeleteResponse:
-        generic_type = _get_generic_type(self, DestroyableApiResource)
-        if generic_type is None:
-            generic_type = DeleteResponse
+        self,
+        path,
+        response_type=None,
+        headers=None,
+        query_params=None,
+        request_body=None,
+    ):
+        if response_type is None:
+            response_type = DeleteResponse
 
         response_json = self._http_client._execute(
             "DELETE", path, headers, query_params, request_body
         )
-        return generic_type.from_dict(response_json)
+        return Response.from_dict(response_json, response_type)

@@ -18,11 +18,11 @@ from nylas.models.webhooks import (
 
 
 class Webhooks(
-    ListableApiResource[Webhook],
-    FindableApiResource[Webhook],
-    CreatableApiResource[WebhookWithSecret],
-    UpdatableApiResource[Webhook],
-    DestroyableApiResource[WebhookDeleteResponse],
+    ListableApiResource,
+    FindableApiResource,
+    CreatableApiResource,
+    UpdatableApiResource,
+    DestroyableApiResource,
 ):
     def __init__(self, http_client):
         super(Webhooks, self).__init__("webhooks", http_client)
@@ -34,7 +34,7 @@ class Webhooks(
         Returns:
             Response[Webhook]: The list of webhook destinations
         """
-        return super(Webhooks, self).list(path=f"/v3/webhooks")
+        return super(Webhooks, self).list(path=f"/v3/webhooks", response_type=Webhook)
 
     def find(self, webhook_id: str) -> Response[Webhook]:
         """
@@ -46,7 +46,9 @@ class Webhooks(
         Returns:
             Response[Webhook]: The webhook destination
         """
-        return super(Webhooks, self).find(path=f"/v3/webhooks/{webhook_id}")
+        return super(Webhooks, self).find(
+            path=f"/v3/webhooks/{webhook_id}", response_type=Webhook
+        )
 
     def create(self, request_body: dict) -> Response[WebhookWithSecret]:
         """
@@ -59,7 +61,9 @@ class Webhooks(
             Response[WebhookWithSecret]: The created webhook destination
         """
         return super(Webhooks, self).create(
-            path=f"/v3/webhooks", request_body=request_body
+            path=f"/v3/webhooks",
+            request_body=request_body,
+            response_type=WebhookWithSecret,
         )
 
     def update(self, webhook_id: str, request_body: dict) -> Response[Webhook]:
@@ -74,7 +78,9 @@ class Webhooks(
             Response[Webhook]: The updated webhook destination
         """
         return super(Webhooks, self).update(
-            path=f"/v3/webhooks/{webhook_id}", request_body=request_body
+            path=f"/v3/webhooks/{webhook_id}",
+            request_body=request_body,
+            response_type=Webhook,
         )
 
     def destroy(self, webhook_id: str) -> WebhookDeleteResponse:
@@ -87,7 +93,9 @@ class Webhooks(
         Returns:
             WebhookDeleteResponse: The response from deleting the webhook destination
         """
-        return super(Webhooks, self).destroy(path=f"/v3/webhooks/{webhook_id}")
+        return super(Webhooks, self).destroy(
+            path=f"/v3/webhooks/{webhook_id}", response_type=WebhookDeleteResponse
+        )
 
     def rotate_secret(self, webhook_id: str) -> Response[Webhook]:
         """

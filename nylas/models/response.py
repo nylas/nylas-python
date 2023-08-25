@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Type
+from typing import TypeVar, Generic
 
 from dataclasses_json import DataClassJsonMixin
 

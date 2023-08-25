@@ -12,31 +12,38 @@ from nylas.models.response import Response
 
 
 class RedirectUris(
-    ListableApiResource[RedirectUri],
-    FindableApiResource[RedirectUri],
-    CreatableApiResource[RedirectUri],
-    UpdatableApiResource[RedirectUri],
+    ListableApiResource,
+    FindableApiResource,
+    CreatableApiResource,
+    UpdatableApiResource,
     DestroyableApiResource,
 ):
     def __init__(self, http_client):
         super(RedirectUris, self).__init__("redirect-uris", http_client)
 
     def list(self) -> ListResponse[RedirectUri]:
-        return super(RedirectUris, self).list(path=f"/v3/redirect-uris")
+        return super(RedirectUris, self).list(
+            path=f"/v3/redirect-uris", response_type=RedirectUri
+        )
 
     def find(self, redirect_uri_id: str) -> Response[RedirectUri]:
         return super(RedirectUris, self).find(
-            path=f"/v3/redirect-uris/{redirect_uri_id}"
+            path=f"/v3/redirect-uris/{redirect_uri_id}",
+            response_type=RedirectUri,
         )
 
     def create(self, request_body: dict) -> Response[RedirectUri]:
         return super(RedirectUris, self).create(
-            path=f"/v3/redirect-uris", request_body=request_body
+            path=f"/v3/redirect-uris",
+            request_body=request_body,
+            response_type=RedirectUri,
         )
 
     def update(self, redirect_uri_id: str, request_body: dict) -> Response[RedirectUri]:
         return super(RedirectUris, self).update(
-            path=f"/v3/redirect-uris/{redirect_uri_id}", request_body=request_body
+            path=f"/v3/redirect-uris/{redirect_uri_id}",
+            request_body=request_body,
+            response_type=RedirectUri,
         )
 
     def destroy(self, redirect_uri_id: str) -> DeleteResponse:

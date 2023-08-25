@@ -1,4 +1,4 @@
-from typing import List, Optional, TypeVar, Generic, Type
+from typing import List, Optional, TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -18,7 +18,7 @@ class ListResponse(tuple, Generic[T]):
         return cls
 
     @classmethod
-    def from_dict(cls, resp: dict, generic_type: Type[T]):
+    def from_dict(cls, resp: dict, generic_type):
         converted_data = []
         for item in resp["data"]:
             converted_data.append(generic_type.from_dict(item))

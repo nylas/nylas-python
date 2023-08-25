@@ -12,10 +12,10 @@ from nylas.models.response import Response
 
 
 class Events(
-    ListableApiResource[Event],
-    FindableApiResource[Event],
-    CreatableApiResource[Event],
-    UpdatableApiResource[Event],
+    ListableApiResource,
+    FindableApiResource,
+    CreatableApiResource,
+    UpdatableApiResource,
     DestroyableApiResource,
 ):
     def __init__(self, http_client):
@@ -23,7 +23,9 @@ class Events(
 
     def list(self, identifier: str, query_params: dict) -> ListResponse[Event]:
         return super(Events, self).list(
-            path=f"/v3/grants/{identifier}/events", query_params=query_params
+            path=f"/v3/grants/{identifier}/events",
+            response_type=Event,
+            query_params=query_params,
         )
 
     def find(
@@ -31,6 +33,7 @@ class Events(
     ) -> Response[Event]:
         return super(Events, self).find(
             path=f"/v3/grants/{identifier}/events/{event_id}",
+            response_type=Event,
             query_params=query_params,
         )
 
@@ -39,6 +42,7 @@ class Events(
     ) -> Response[Event]:
         return super(Events, self).create(
             path=f"/v3/grants/{identifier}/events",
+            response_type=Event,
             request_body=request_body,
             query_params=query_params,
         )
@@ -48,6 +52,7 @@ class Events(
     ) -> Response[Event]:
         return super(Events, self).update(
             path=f"/v3/grants/{identifier}/events/{event_id}",
+            response_type=Event,
             request_body=request_body,
             query_params=query_params,
         )
