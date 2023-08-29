@@ -7,6 +7,7 @@ from typing_extensions import TypedDict, NotRequired
 Status = Literal["confirmed", "tentative", "cancelled"]
 Visibility = Literal["public", "private"]
 ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
+SendRsvpStatus = Literal["yes", "no", "maybe"]
 
 
 @dataclass_json
@@ -608,3 +609,25 @@ class FindEventQueryParams(TypedDict):
 
 UpdateEventQueryParams = CreateEventQueryParams
 DestroyEventQueryParams = CreateEventQueryParams
+
+
+class SendRsvpQueryParams(TypedDict):
+    """
+    Interface representing of the query parameters for an event.
+
+    Attributes:
+        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+    """
+
+    calendar_id: str
+
+
+class SendRsvpRequest(TypedDict):
+    """
+    Interface representing a request to send an RSVP.
+
+    Attributes:
+        status: The status of the RSVP.
+    """
+
+    status: SendRsvpStatus

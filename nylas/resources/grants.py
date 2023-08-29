@@ -6,7 +6,12 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.delete_response import DeleteResponse
-from nylas.models.grant import Grant
+from nylas.models.grant import (
+    Grant,
+    ListGrantsQueryParams,
+    CreateGrantRequest,
+    UpdateGrantRequest,
+)
 from nylas.models.list_response import ListResponse
 from nylas.models.response import Response
 
@@ -18,7 +23,7 @@ class Grants(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def list(self, query_params: dict) -> ListResponse[Grant]:
+    def list(self, query_params: ListGrantsQueryParams) -> ListResponse[Grant]:
         return super(Grants, self).list(
             path=f"/v3/grants", response_type=Grant, query_params=query_params
         )
@@ -28,12 +33,14 @@ class Grants(
             path=f"/v3/grants/{grant_id}", response_type=Grant
         )
 
-    def create(self, request_body: dict) -> Response[Grant]:
+    def create(self, request_body: CreateGrantRequest) -> Response[Grant]:
         return super(Grants, self).create(
             path=f"/v3/grants", response_type=Grant, request_body=request_body
         )
 
-    def update(self, grant_id: str, request_body: dict) -> Response[Grant]:
+    def update(
+        self, grant_id: str, request_body: UpdateGrantRequest
+    ) -> Response[Grant]:
         return super(Grants, self).update(
             path=f"/v3/grants/{grant_id}",
             response_type=Grant,

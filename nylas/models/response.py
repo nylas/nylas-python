@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 from typing import TypeVar, Generic
 
-from dataclasses_json import DataClassJsonMixin
+from dataclasses_json import DataClassJsonMixin, dataclass_json
 
 T = TypeVar("T", bound=DataClassJsonMixin)
 
@@ -23,3 +24,16 @@ class Response(tuple, Generic[T]):
             data=generic_type.from_dict(resp["data"]),
             request_id=resp["request_id"],
         )
+
+
+@dataclass_json
+@dataclass
+class RequestIdOnlyResponse:
+    """
+    Response object returned from the Nylas API that only contains a request ID.
+
+    Attributes:
+        request_id: The request ID returned from the API.
+    """
+
+    request_id: str

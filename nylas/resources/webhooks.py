@@ -14,6 +14,8 @@ from nylas.models.webhooks import (
     WebhookWithSecret,
     WebhookDeleteResponse,
     WebhookIpAddressesResponse,
+    CreateWebhookRequest,
+    UpdateWebhookRequest,
 )
 
 
@@ -29,7 +31,7 @@ class Webhooks(
         List all webhook destinations
 
         Returns:
-            Response[Webhook]: The list of webhook destinations
+            The list of webhook destinations
         """
         return super(Webhooks, self).list(path=f"/v3/webhooks", response_type=Webhook)
 
@@ -38,24 +40,24 @@ class Webhooks(
         Get a webhook destination
 
         Parameters:
-            webhook_id (str): The ID of the webhook destination to get
+            webhook_id: The ID of the webhook destination to get
 
         Returns:
-            Response[Webhook]: The webhook destination
+            The webhook destination
         """
         return super(Webhooks, self).find(
             path=f"/v3/webhooks/{webhook_id}", response_type=Webhook
         )
 
-    def create(self, request_body: dict) -> Response[WebhookWithSecret]:
+    def create(self, request_body: CreateWebhookRequest) -> Response[WebhookWithSecret]:
         """
         Create a webhook destination
 
         Parameters:
-            request_body (dict): The request body to create the webhook destination
+            request_body: The request body to create the webhook destination
 
         Returns:
-            Response[WebhookWithSecret]: The created webhook destination
+            The created webhook destination
         """
         return super(Webhooks, self).create(
             path=f"/v3/webhooks",
@@ -63,16 +65,18 @@ class Webhooks(
             response_type=WebhookWithSecret,
         )
 
-    def update(self, webhook_id: str, request_body: dict) -> Response[Webhook]:
+    def update(
+        self, webhook_id: str, request_body: UpdateWebhookRequest
+    ) -> Response[Webhook]:
         """
         Update a webhook destination
 
         Parameters:
-            webhook_id (str): The ID of the webhook destination to update
-            request_body (dict): The request body to update the webhook destination
+            webhook_id: The ID of the webhook destination to update
+            request_body: The request body to update the webhook destination
 
         Returns:
-            Response[Webhook]: The updated webhook destination
+            The updated webhook destination
         """
         return super(Webhooks, self).update(
             path=f"/v3/webhooks/{webhook_id}",
@@ -85,38 +89,38 @@ class Webhooks(
         Delete a webhook destination
 
         Parameters:
-            webhook_id (str): The ID of the webhook destination to delete
+            webhook_id: The ID of the webhook destination to delete
 
         Returns:
-            WebhookDeleteResponse: The response from deleting the webhook destination
+            The response from deleting the webhook destination
         """
         return super(Webhooks, self).destroy(
             path=f"/v3/webhooks/{webhook_id}", response_type=WebhookDeleteResponse
         )
 
-    def rotate_secret(self, webhook_id: str) -> Response[Webhook]:
+    def rotate_secret(self, webhook_id: str) -> Response[WebhookWithSecret]:
         """
         Update the webhook secret value for a destination
 
         Parameters:
-            webhook_id (str): The ID of the webhook destination to update
+            webhook_id: The ID of the webhook destination to update
 
         Returns:
-            Response[Webhook]: The updated webhook destination
+            The updated webhook destination
         """
         res = self._http_client._execute(
             method="PUT",
             path=f"/v3/webhooks/{webhook_id}/rotate-secret",
             request_body={},
         )
-        return Response.from_dict(res, Webhook)
+        return Response.from_dict(res, WebhookWithSecret)
 
     def ip_addresses(self) -> Response[WebhookIpAddressesResponse]:
         """
         Get the current list of IP addresses that Nylas sends webhooks from
 
         Returns:
-            Response[WebhookIpAddressesResponse]: The list of IP addresses that Nylas sends webhooks from
+            The list of IP addresses that Nylas sends webhooks from
         """
         res = self._http_client._execute(method="GET", path="/v3/webhooks/ip-addresses")
         return Response.from_dict(res, WebhookIpAddressesResponse)
@@ -127,10 +131,10 @@ def extract_challenge_parameter(url: str) -> str:
     Extract the challenge parameter from a URL
 
     Parameters:
-        url (str): The URL sent by Nylas containing the challenge parameter
+        url: The URL sent by Nylas containing the challenge parameter
 
     Returns:
-        str: The challenge parameter
+        The challenge parameter
     """
     url_object = urllib.parse.urlparse(url)
     query = urllib.parse.parse_qs(url_object.query)

@@ -5,6 +5,7 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
+from nylas.models.availability import GetAvailabilityResponse, GetAvailabilityRequest
 from nylas.models.calendar import Calendar, CreateCalendarRequest, UpdateCalendarRequest
 from nylas.models.delete_response import DeleteResponse
 from nylas.models.list_response import ListResponse
@@ -52,3 +53,23 @@ class Calendars(
         return super(Calendars, self).destroy(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}"
         )
+
+    def get_availability(
+        self, identifier: str, request_body: GetAvailabilityRequest
+    ) -> Response[GetAvailabilityResponse]:
+        """Get availability for a calendar.
+
+        Args:
+            identifier: The grant ID or email account to get availability for.
+            request_body: The request body to send to the API.
+
+        Returns:
+            Response: The availability response from the API.
+        """
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/grants/{identifier}/calendar/availability",
+            request_body=request_body,
+        )
+
+        return Response.from_dict(json_response, GetAvailabilityResponse)

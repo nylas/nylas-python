@@ -6,9 +6,20 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.delete_response import DeleteResponse
-from nylas.models.event import Event, UpdateEventRequest
+from nylas.models.event import (
+    Event,
+    UpdateEventRequest,
+    CreateEventRequest,
+    FindEventQueryParams,
+    ListEventQueryParams,
+    CreateEventQueryParams,
+    UpdateEventQueryParams,
+    DestroyEventQueryParams,
+    SendRsvpQueryParams,
+    SendRsvpRequest,
+)
 from nylas.models.list_response import ListResponse
-from nylas.models.response import Response
+from nylas.models.response import Response, RequestIdOnlyResponse
 
 
 class Events(
@@ -18,7 +29,9 @@ class Events(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def list(self, identifier: str, query_params: dict) -> ListResponse[Event]:
+    def list(
+        self, identifier: str, query_params: ListEventQueryParams
+    ) -> ListResponse[Event]:
         return super(Events, self).list(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
@@ -26,7 +39,7 @@ class Events(
         )
 
     def find(
-        self, identifier: str, event_id: str, query_params: dict
+        self, identifier: str, event_id: str, query_params: FindEventQueryParams
     ) -> Response[Event]:
         return super(Events, self).find(
             path=f"/v3/grants/{identifier}/events/{event_id}",
@@ -35,7 +48,10 @@ class Events(
         )
 
     def create(
-        self, identifier: str, request_body: dict, query_params: dict
+        self,
+        identifier: str,
+        request_body: CreateEventRequest,
+        query_params: CreateEventQueryParams,
     ) -> Response[Event]:
         return super(Events, self).create(
             path=f"/v3/grants/{identifier}/events",
@@ -49,7 +65,7 @@ class Events(
         identifier: str,
         event_id: str,
         request_body: UpdateEventRequest,
-        query_params: dict,
+        query_params: UpdateEventQueryParams,
     ) -> Response[Event]:
         return super(Events, self).update(
             path=f"/v3/grants/{identifier}/events/{event_id}",
@@ -59,7 +75,7 @@ class Events(
         )
 
     def destroy(
-        self, identifier: str, event_id: str, query_params: dict
+        self, identifier: str, event_id: str, query_params: DestroyEventQueryParams
     ) -> DeleteResponse:
         return super(Events, self).destroy(
             path=f"/v3/grants/{identifier}/events/{event_id}",
@@ -67,15 +83,19 @@ class Events(
         )
 
     def send_rsvp(
-        self, identifier: str, event_id: str, request_body: dict, query_params: dict
-    ) -> Response:
+        self,
+        identifier: str,
+        event_id: str,
+        request_body: SendRsvpRequest,
+        query_params: SendRsvpQueryParams,
+    ) -> RequestIdOnlyResponse:
         """Send RSVP for an event.
 
         Args:
-            identifier (str): The grant ID or email account to send RSVP for.
-            event_id (str): The event ID to send RSVP for.
-            query_params (dict): The query parameters to send to the API.
-            request_body (dict): The request body to send to the API.
+            identifier: The grant ID or email account to send RSVP for.
+            event_id: The event ID to send RSVP for.
+            query_params: The query parameters to send to the API.
+            request_body: The request body to send to the API.
 
         Returns:
             Response: The RSVP response from the API.
@@ -87,5 +107,4 @@ class Events(
             request_body=request_body,
         )
 
-        # TODO::Create model for RSVP response
-        return Response.from_dict(json_response)
+        return RequestIdOnlyResponse.from_dict(json_response)
