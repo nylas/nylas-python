@@ -5,7 +5,7 @@ from dataclasses_json import dataclass_json
 
 
 AccessType = Literal["online", "offline"]
-Provider = Literal["google", "imap", "microsoft", "yahoo"]
+Provider = Literal["google", "imap", "microsoft"]
 
 
 @dataclass_json

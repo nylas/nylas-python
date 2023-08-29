@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Optional, Literal
 
 from dataclasses_json import dataclass_json
-
+from typing_extensions import TypedDict, NotRequired
 
 WebhookStatus = Literal["active", "failing", "failed", "pause"]
 
@@ -29,23 +29,16 @@ class Webhook:
     id: str
     trigger_types: List[WebhookTriggers]
     callback_url: str
-    status: str
+    status: WebhookStatus
     notification_email_address: str
     status_updated_at: int
+    created_at: int
+    updated_at: int
     description: Optional[str] = None
 
 
-@dataclass_json
-@dataclass
-class WebhookWithSecret:
-    id: str
+class WebhookWithSecret(Webhook):
     webhook_secret: str
-    trigger_types: List[WebhookTriggers]
-    callback_url: str
-    status: str
-    notification_email_address: str
-    status_updated_at: int
-    description: Optional[str] = None
 
 
 @dataclass_json
@@ -66,3 +59,37 @@ class WebhookDeleteResponse:
 class WebhookIpAddressesResponse:
     ip_addresses: List[str]
     updated_at: int
+
+
+class CreateWebhookRequest(TypedDict):
+    """
+    Class representation of a Nylas create webhook request.
+
+    Attributes:
+        trigger_types: List of events that triggers the webhook.
+        callback_url: The url to send webhooks to.
+        description: A human-readable description of the webhook destination.
+        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+    """
+
+    trigger_types: List[WebhookTriggers]
+    callback_url: str
+    description: NotRequired[str]
+    notification_email_address: NotRequired[str]
+
+
+class UpdateWebhookRequest(TypedDict):
+    """
+    Class representation of a Nylas update webhook request.
+
+    Attributes:
+        trigger_types: List of events that triggers the webhook.
+        callback_url: The url to send webhooks to.
+        description: A human-readable description of the webhook destination.
+        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+    """
+
+    trigger_types: NotRequired[List[WebhookTriggers]]
+    callback_url: NotRequired[str]
+    description: NotRequired[str]
+    notification_email_address: NotRequired[str]

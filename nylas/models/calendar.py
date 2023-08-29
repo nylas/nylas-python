@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Dict, Any, Optional, TypedDict
+from typing import Dict, Any, Optional
 
 from dataclasses_json import dataclass_json
+from typing_extensions import TypedDict, NotRequired
 
 
 @dataclass_json
@@ -52,10 +53,10 @@ class CreateCalendarRequest(TypedDict):
     """
 
     name: str
-    description: Optional[str]
-    location: Optional[str]
-    timezone: Optional[str]
-    metadata: Optional[Dict[str, str]]
+    description: NotRequired[str]
+    location: NotRequired[str]
+    timezone: NotRequired[str]
+    metadata: NotRequired[Dict[str, str]]
 
 
 class UpdateCalendarRequest(CreateCalendarRequest):
@@ -69,5 +70,5 @@ class UpdateCalendarRequest(CreateCalendarRequest):
             Empty indicates default color. (Google only)
     """
 
-    hexColor: Optional[str]
-    hexForegroundColor: Optional[str]
+    hexColor: NotRequired[str]
+    hexForegroundColor: NotRequired[str]

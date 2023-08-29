@@ -6,7 +6,7 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.delete_response import DeleteResponse
-from nylas.models.event import Event
+from nylas.models.event import Event, UpdateEventRequest
 from nylas.models.list_response import ListResponse
 from nylas.models.response import Response
 
@@ -45,7 +45,11 @@ class Events(
         )
 
     def update(
-        self, identifier: str, event_id: str, request_body: dict, query_params: dict
+        self,
+        identifier: str,
+        event_id: str,
+        request_body: UpdateEventRequest,
+        query_params: dict,
     ) -> Response[Event]:
         return super(Events, self).update(
             path=f"/v3/grants/{identifier}/events/{event_id}",

@@ -4,7 +4,14 @@ T = TypeVar("T")
 
 
 class ListResponse(tuple, Generic[T]):
-    """List response object returned from the Nylas API."""
+    """
+    List response object returned from the Nylas API.
+
+    Attributes:
+        data: The list of requested data objects.
+        request_id: The request ID.
+        next_cursor: The cursor to use to get the next page of data.
+    """
 
     data: List[T]
     request_id: str
