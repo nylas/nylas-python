@@ -536,3 +536,75 @@ class UpdateEventRequest(TypedDict):
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
+
+
+class ListEventQueryParams(TypedDict):
+    """
+    Interface representing the query parameters for listing events.
+
+    Attributes:
+        show_cancelled: Return events that have a status of cancelled.
+            If an event is recurring, then it returns no matter the value set.
+            Different providers have different semantics for cancelled events.
+        calendar_id: Specify calendar ID of the event. "primary" is a supported value indicating the user's primary calendar.
+        title: Return events matching the specified title.
+        description: Return events matching the specified description.
+        location: Return events matching the specified location.
+        start: Return events starting after the specified unix timestamp.
+            Defaults to the current timestamp. Not respected by metadata filtering.
+        end: Return events ending before the specified unix timestamp.
+            Defaults to a month from now. Not respected by metadata filtering.
+        metadata_pair: Pass in your metadata key and value pair to search for metadata.
+        expand_recurring: If true, the response will include an event for each occurrence of a recurring event within the requested time range.
+            If false, only a single primary event will be returned for each recurring event.
+            Cannot be used when filtering on metadata.
+            Defaults to false.
+        busy: Returns events with a busy status of true.
+        order_by: Order results by the specified field.
+            Currently only start is supported.
+        limit: The maximum number of objects to return.
+            This field defaults to 50. The maximum allowed value is 200.
+        page_token: An identifier that specifies which page of data to return.
+    """
+
+    calendar_id: str
+    show_cancelled: NotRequired[bool]
+    title: NotRequired[str]
+    description: NotRequired[str]
+    location: NotRequired[str]
+    start: NotRequired[str]
+    end: NotRequired[str]
+    metadata_pair: NotRequired[Dict[str, Any]]
+    expand_recurring: NotRequired[bool]
+    busy: NotRequired[bool]
+    order_by: NotRequired[str]
+    limit: NotRequired[int]
+    page_token: NotRequired[str]
+
+
+class CreateEventQueryParams(TypedDict):
+    """
+    Interface representing of the query parameters for creating an event.
+
+    Attributes:
+        calendar_id: The ID of the calendar to create the event in.
+        notify_participants: Email notifications containing the calendar event is sent to all event participants.
+    """
+
+    calendar_id: str
+    notify_participants: NotRequired[bool]
+
+
+class FindEventQueryParams(TypedDict):
+    """
+    Interface representing of the query parameters for finding an event.
+
+    Attributes:
+        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+    """
+
+    calendar_id: str
+
+
+UpdateEventQueryParams = CreateEventQueryParams
+DestroyEventQueryParams = CreateEventQueryParams
