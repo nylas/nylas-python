@@ -11,12 +11,9 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
         r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
     ).group(1)
 
-RUN_DEPENDENCIES = [
-    "requests[security]>=2.31.0",
-    "urlobject>=2.4.3",
-]
+RUN_DEPENDENCIES = ["requests[security]>=2.31.0", "dataclasses-json>=0.5.9"]
 
-TEST_DEPENDENCIES = []
+TEST_DEPENDENCIES = ["pytest>=7.4.0"]
 
 RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
