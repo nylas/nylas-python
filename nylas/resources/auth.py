@@ -12,6 +12,8 @@ from nylas.models.auth import (
     TokenExchangeRequest,
     ProviderDetectResponse,
     ProviderDetectParams,
+    URLForAuthenticationConfig,
+    URLForAdminConsentConfig,
 )
 from nylas.models.response import Response
 from nylas.resources.grants import Grants
@@ -61,7 +63,7 @@ class Auth(Resource):
     def grants(self) -> Grants:
         return Grants(self._http_client)
 
-    def url_for_oauth_2(self, config: dict) -> str:
+    def url_for_oauth_2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.
 
@@ -145,7 +147,7 @@ class Auth(Resource):
 
         return self._validate_token(query_params)
 
-    def url_for_oauth_2_pkce(self, config: dict) -> PkceAuthUrl:
+    def url_for_oauth_2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
         """
         Build the URL for authenticating users to your application via Hosted Authentication with PKCE.
 
@@ -163,7 +165,7 @@ class Auth(Resource):
 
         return PkceAuthUrl(secret, secret_hash, self._url_auth_builder(query))
 
-    def url_for_admin_consent(self, config: dict) -> str:
+    def url_for_admin_consent(self, config: URLForAdminConsentConfig) -> str:
         """Build the URL for admin consent authentication for Microsoft.
 
         Args:
