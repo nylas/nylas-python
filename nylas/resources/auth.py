@@ -10,6 +10,8 @@ from nylas.models.auth import (
     OpenID,
     CodeExchangeRequest,
     TokenExchangeRequest,
+    ProviderDetectResponse,
+    ProviderDetectParams,
 )
 from nylas.models.response import Response
 from nylas.resources.grants import Grants
@@ -191,6 +193,26 @@ class Auth(Resource):
         )
 
         return True
+
+    def detect_provider(
+        self, params: ProviderDetectParams
+    ) -> Response[ProviderDetectResponse]:
+        """
+        Detect provider from email address.
+
+        Args:
+            params: The parameters to include in the request
+
+        Returns:
+            The detected provider, if found.
+        """
+
+        json_response = self._http_client._execute(
+            method="POST",
+            path="/v3/providers/detect",
+            query_params=params,
+        )
+        return Response.from_dict(json_response, ProviderDetectResponse)
 
     def _url_auth_builder(self, query: dict) -> str:
         return "{}/v3/connect/auth?{}".format(
