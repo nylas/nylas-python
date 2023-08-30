@@ -1,5 +1,5 @@
 import sys
-import urllib.parse
+from urllib.parse import urlparse, urlencode
 
 import requests
 from requests import Response
@@ -9,14 +9,21 @@ from nylas.models.errors import (
     NylasApiError,
     NylasApiErrorResponse,
     NylasSdkTimeoutError,
+    NylasOAuthError,
+    NylasOAuthErrorResponse,
 )
 
 
 def _validate_response(response: Response) -> dict:
     json = response.json()
     if response.status_code >= 400:
-        parsed_error = NylasApiErrorResponse.from_dict(json)
-        raise NylasApiError(parsed_error, response.status_code)
+        parsed_url = urlparse(response.url)
+        if "connect/token" in parsed_url.path or "connect/revoke" in parsed_url.path:
+            parsed_error = NylasOAuthErrorResponse.from_dict(json)
+            raise NylasOAuthError(parsed_error, response.status_code)
+        else:
+            parsed_error = NylasApiErrorResponse.from_dict(json)
+            raise NylasApiError(parsed_error, response.status_code)
 
     return json
 
@@ -52,7 +59,7 @@ class HttpClient(object):
     ) -> dict:
         url = "{}{}".format(self.api_server, path)
         if query_params:
-            url = "{}?{}".format(url, urllib.parse.urlencode(query_params))
+            url = "{}?{}".format(url, urlencode(query_params))
         headers = self._build_headers(headers)
 
         return {
