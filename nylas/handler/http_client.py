@@ -5,7 +5,11 @@ import requests
 from requests import Response
 
 from nylas._client_sdk_version import __VERSION__
-from nylas.models.errors import NylasApiError, NylasApiErrorResponse
+from nylas.models.errors import (
+    NylasApiError,
+    NylasApiErrorResponse,
+    NylasSdkTimeoutError,
+)
 
 
 def _validate_response(response: Response) -> dict:
@@ -30,13 +34,17 @@ class HttpClient(object):
         self, method, path, headers=None, query_params=None, request_body=None
     ) -> dict:
         request = self._build_request(method, path, headers, query_params)
-        response = self.session.request(
-            request["method"],
-            request["url"],
-            headers=request["headers"],
-            json=request_body,
-        )
-        # TODO::Also validate and parse response
+        try:
+            response = self.session.request(
+                request["method"],
+                request["url"],
+                headers=request["headers"],
+                json=request_body,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
+
         return _validate_response(response)
 
     def _build_request(
