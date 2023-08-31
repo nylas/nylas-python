@@ -63,5 +63,10 @@ local/
 pip-selfcheck.json
 tests/output
 local.env
-examples/test.py
+nylas/test.py
 .env
+
+# Documentation
+site
+docs/*
+!docs/generate-docs.py
