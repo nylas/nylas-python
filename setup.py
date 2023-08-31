@@ -74,7 +74,6 @@ def main():
             if not os.path.exists("docs"):
                 os.makedirs("docs")
             try:
-                subprocess.check_output(["python", "scripts/generate-docs.py"])
                 subprocess.check_output(["mkdocs", "build"])
             except FileNotFoundError as e:
                 print("Error encountered: {}.\n\n".format(e))
