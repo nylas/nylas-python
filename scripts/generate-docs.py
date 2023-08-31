@@ -6,7 +6,7 @@ import mkdocs_gen_files
 
 # Copy the README and other markdowns to the docs folder
 shutil.copy("README.md", "docs/index.md")
-shutil.copy("CONTRIBUTING.md", "docs/contributing.md")
+shutil.copy("Contributing.md", "docs/contributing.md")
 shutil.copy("LICENSE", "docs/license.md")
 
 # Set files to exclude from the docs
