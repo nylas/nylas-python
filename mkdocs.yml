@@ -1,0 +1,28 @@
+site_name: Nylas Python SDK Reference
+theme:
+   name: 'material'
+
+nav:
+  - Getting Started: index.md
+  - Code Reference: reference/
+
+exclude_docs: |
+  - generate-docs.py
+
+not_in_nav: |
+  - contributing.md
+  - license.md
+
+# Add plugins
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [ nylas ]
+  - gen-files:
+      scripts:
+        - docs/generate-docs.py
+  - literate-nav:
+        nav_file: SUMMARY.md
