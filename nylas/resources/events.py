@@ -17,7 +17,12 @@ from nylas.models.events import (
     SendRsvpQueryParams,
     SendRsvpRequest,
 )
-from nylas.models.response import Response, ListResponse, DeleteResponse, RequestIdOnlyResponse
+from nylas.models.response import (
+    Response,
+    ListResponse,
+    DeleteResponse,
+    RequestIdOnlyResponse,
+)
 
 
 class Events(
