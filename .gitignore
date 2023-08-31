@@ -68,5 +68,4 @@ nylas/test.py
 
 # Documentation
 site
-docs/*
-!docs/generate-docs.py
+docs

@@ -23,6 +23,6 @@ plugins:
           paths: [ nylas ]
   - gen-files:
       scripts:
-        - docs/generate-docs.py
+        - scripts/generate-docs.py
   - literate-nav:
         nav_file: SUMMARY.md
