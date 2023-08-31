@@ -1,17 +1,29 @@
 import sys
-import urllib.parse
+from urllib.parse import urlparse, urlencode
 
 import requests
 from requests import Response
 
 from nylas._client_sdk_version import __VERSION__
-from nylas.models.nylas_api_error_response import NylasApiErrorResponse
+from nylas.models.errors import (
+    NylasApiError,
+    NylasApiErrorResponse,
+    NylasSdkTimeoutError,
+    NylasOAuthError,
+    NylasOAuthErrorResponse,
+)
 
 
 def _validate_response(response: Response) -> dict:
     json = response.json()
     if response.status_code >= 400:
-        raise NylasApiErrorResponse(json["request_id"], json["error"])
+        parsed_url = urlparse(response.url)
+        if "connect/token" in parsed_url.path or "connect/revoke" in parsed_url.path:
+            parsed_error = NylasOAuthErrorResponse.from_dict(json)
+            raise NylasOAuthError(parsed_error, response.status_code)
+        else:
+            parsed_error = NylasApiErrorResponse.from_dict(json)
+            raise NylasApiError(parsed_error, response.status_code)
 
     return json
 
@@ -29,13 +41,17 @@ class HttpClient(object):
         self, method, path, headers=None, query_params=None, request_body=None
     ) -> dict:
         request = self._build_request(method, path, headers, query_params)
-        response = self.session.request(
-            request["method"],
-            request["url"],
-            headers=request["headers"],
-            json=request_body,
-        )
-        # TODO::Also validate and parse response
+        try:
+            response = self.session.request(
+                request["method"],
+                request["url"],
+                headers=request["headers"],
+                json=request_body,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
+
         return _validate_response(response)
 
     def _build_request(
@@ -43,7 +59,7 @@ class HttpClient(object):
     ) -> dict:
         url = "{}{}".format(self.api_server, path)
         if query_params:
-            url = "{}?{}".format(url, urllib.parse.urlencode(query_params))
+            url = "{}?{}".format(url, urlencode(query_params))
         headers = self._build_headers(headers)
 
         return {
