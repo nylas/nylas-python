@@ -7,8 +7,7 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.list_response import ListResponse
-from nylas.models.response import Response
+from nylas.models.response import Response, ListResponse
 from nylas.models.webhooks import (
     Webhook,
     WebhookWithSecret,

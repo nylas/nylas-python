@@ -3,7 +3,7 @@ from typing import Literal, Optional, List
 
 from dataclasses_json import dataclass_json
 
-from nylas.models.reditect_uri import RedirectUri
+from nylas.models.redirect_uri import RedirectUri
 
 Region = Literal["us", "eu"]
 Environment = Literal["production", "staging"]

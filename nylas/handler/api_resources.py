@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from nylas.models.delete_response import DeleteResponse
-from nylas.models.list_response import ListResponse
-from nylas.models.response import Response
+from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.resource import Resource
 
 

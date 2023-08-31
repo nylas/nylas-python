@@ -5,8 +5,7 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.delete_response import DeleteResponse
-from nylas.models.event import (
+from nylas.models.events import (
     Event,
     UpdateEventRequest,
     CreateEventRequest,
@@ -18,8 +17,7 @@ from nylas.models.event import (
     SendRsvpQueryParams,
     SendRsvpRequest,
 )
-from nylas.models.list_response import ListResponse
-from nylas.models.response import Response, RequestIdOnlyResponse
+from nylas.models.response import Response, ListResponse, DeleteResponse, RequestIdOnlyResponse
 
 
 class Events(
