@@ -56,11 +56,14 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
-    def __init__(self, http_client: HttpClient):
-        super(Auth, self).__init__(http_client)
-
     @property
     def grants(self) -> Grants:
+        """
+        Access the Grants API.
+
+        Returns:
+            The Grants API.
+        """
         return Grants(self._http_client)
 
     def url_for_oauth_2(self, config: URLForAuthenticationConfig) -> str:

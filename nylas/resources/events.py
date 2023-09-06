@@ -35,6 +35,17 @@ class Events(
     def list(
         self, identifier: str, query_params: ListEventQueryParams
     ) -> ListResponse[Event]:
+        """
+        Return all Events
+
+        Args:
+            identifier: The identifier of the grant to act upon
+            query_params: The query parameters to include in the request
+
+        Returns:
+            The list of Events
+        """
+
         return super(Events, self).list(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
@@ -44,6 +55,18 @@ class Events(
     def find(
         self, identifier: str, event_id: str, query_params: FindEventQueryParams
     ) -> Response[Event]:
+        """
+        Return an Event
+
+        Args:
+            identifier: The identifier of the grant to act upon
+            event_id: The id of the Event to retrieve.
+            query_params: The query parameters to include in the request
+
+        Returns:
+            The Event
+        """
+
         return super(Events, self).find(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             response_type=Event,
@@ -56,6 +79,18 @@ class Events(
         request_body: CreateEventRequest,
         query_params: CreateEventQueryParams,
     ) -> Response[Event]:
+        """
+        Create an Event
+
+        Args:
+            identifier: The identifier of the grant to act upon
+            request_body: The values to create the Event with
+            query_params: The query parameters to include in the request
+
+        Returns:
+            The created Event
+        """
+
         return super(Events, self).create(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
@@ -70,6 +105,19 @@ class Events(
         request_body: UpdateEventRequest,
         query_params: UpdateEventQueryParams,
     ) -> Response[Event]:
+        """
+        Update an Event
+
+        Args:
+            identifier: The identifier of the grant to act upon
+            event_id: The id of the Event to update.
+            request_body: The values to update the Event with
+            query_params: The query parameters to include in the request
+
+        Returns:
+            The updated Event
+        """
+
         return super(Events, self).update(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             response_type=Event,
@@ -80,6 +128,18 @@ class Events(
     def destroy(
         self, identifier: str, event_id: str, query_params: DestroyEventQueryParams
     ) -> DeleteResponse:
+        """
+        Delete an Event
+
+        Args:
+            identifier: The identifier of the grant to act upon
+            event_id: The id of the Event to delete.
+            query_params: The query parameters to include in the request
+
+        Returns:
+            The deletion response
+        """
+
         return super(Events, self).destroy(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             query_params=query_params,

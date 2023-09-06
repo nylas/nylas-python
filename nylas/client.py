@@ -4,6 +4,7 @@ from nylas.resources.applications import Applications
 from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
 from nylas.resources.events import Events
+from nylas.resources.webhooks import Webhooks
 
 
 class Client(object):
@@ -33,16 +34,50 @@ class Client(object):
 
     @property
     def auth(self) -> Auth:
+        """
+        Access the Auth API
+
+        Returns:
+            The Auth API.
+        """
         return Auth(self.http_client)
 
     @property
     def applications(self) -> Applications:
+        """
+        Access the Applications API.
+
+        Returns:
+            The Applications API.
+        """
         return Applications(self.http_client)
 
     @property
     def calendars(self) -> Calendars:
+        """
+        Access the Calendars API.
+
+        Returns:
+            The Calendars API.
+        """
         return Calendars(self.http_client)
 
     @property
     def events(self) -> Events:
+        """
+        Access the Events API.
+
+        Returns:
+            The Events API.
+        """
         return Events(self.http_client)
+
+    @property
+    def webhooks(self) -> Webhooks:
+        """
+        Access the Webhooks API.
+
+        Returns:
+            The Webhooks API.
+        """
+        return Webhooks(self.http_client)
