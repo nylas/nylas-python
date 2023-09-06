@@ -5,13 +5,8 @@ theme:
 nav:
   - Getting Started: index.md
   - Code Reference: reference/
-
-exclude_docs: |
-  - generate-docs.py
-
-not_in_nav: |
-  - contributing.md
-  - license.md
+  - Contributing: contributing.md
+  - License: license.md
 
 # Add plugins
 plugins:
