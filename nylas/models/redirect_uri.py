@@ -8,6 +8,18 @@ from typing_extensions import TypedDict, NotRequired
 @dataclass_json
 @dataclass
 class RedirectUriSettings:
+    """
+    Configuration settings for a Redirect URI object
+
+    Attributes:
+        origin: Related to JS platform.
+        bundle_id: Related to iOS platform.
+        app_store_id: Related to iOS platform.
+        team_id: Related to iOS platform.
+        package_name: Related to Android platform.
+        sha1_certificate_fingerprint: Related to Android platform.
+    """
+
     origin: Optional[str] = None
     bundle_id: Optional[str] = None
     app_store_id: Optional[str] = None
@@ -19,6 +31,15 @@ class RedirectUriSettings:
 @dataclass_json
 @dataclass
 class RedirectUri:
+    """
+    Class representing a Redirect URI object.
+
+    Attributes:
+        id: Globally unique object identifier.
+        url: Redirect URL.
+        platform: Platform identifier.
+        settings: Configuration settings.
+    """
     id: str
     url: str
     platform: str

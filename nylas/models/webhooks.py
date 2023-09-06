@@ -6,9 +6,13 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 WebhookStatus = Literal["active", "failing", "failed", "pause"]
+""" Literals representing the possible webhook statuses. """
 
 
 class WebhookTriggers(str, Enum):
+    """
+    Enum representing the available webhook triggers
+    """
     CALENDAR_CREATED = "calendar.created"
     CALENDAR_UPDATED = "calendar.updated"
     CALENDAR_DELETED = "calendar.deleted"
@@ -26,6 +30,21 @@ class WebhookTriggers(str, Enum):
 @dataclass_json
 @dataclass
 class Webhook:
+    """
+    Class representing a Nylas webhook.
+
+    Attributes:
+        id: Globally unique object identifier.
+        trigger_types: Select the event that triggers the webhook.
+        callback_url: The url to send webhooks to.
+        status: The status of the new destination.
+        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+        status_updated_at: The time the status field was last updated, represented as a Unix timestamp in seconds.
+        created_at: The time the status field was created, represented as a Unix timestamp in seconds.
+        updated_at: The time the status field was last updated, represented as a Unix timestamp in seconds.
+        description: A human-readable description of the webhook destination.
+    """
+
     id: str
     trigger_types: List[WebhookTriggers]
     callback_url: str
@@ -38,18 +57,40 @@ class Webhook:
 
 
 class WebhookWithSecret(Webhook):
+    """
+    Class representing a Nylas webhook with secret.
+
+    Attributes:
+        webhook_secret: A secret value used to encode the X-Nylas-Signature header on webhook requests.
+    """
+
     webhook_secret: str
 
 
 @dataclass_json
 @dataclass
 class WebhookDeleteData:
+    """
+    Class representing the object enclosing the webhook deletion status.
+
+    Attributes:
+        status: The status of the webhook deletion.
+    """
+
     status: str
 
 
 @dataclass_json
 @dataclass
 class WebhookDeleteResponse:
+    """
+    Class representing a Nylas webhook delete response
+
+    Attributes:
+        requestId: The id of the request.
+        data: Object containing the webhook deletion status.
+    """
+
     requestId: str
     data: Optional[WebhookDeleteData] = None
 
@@ -57,6 +98,14 @@ class WebhookDeleteResponse:
 @dataclass_json
 @dataclass
 class WebhookIpAddressesResponse:
+    """
+    Class representing the response for getting a list of webhook ip addresses
+
+    Attributes:
+        ip_addresses: The IP addresses that Nylas send you webhook from.
+        updated_at: UNIX timestamp when Nylas updated the list of IP addresses.
+    """
+
     ip_addresses: List[str]
     updated_at: int
 

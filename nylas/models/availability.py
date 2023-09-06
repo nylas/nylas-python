@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 AvailabilityMethod = Literal["max-fairness", "max-availability"]
+""" Literal representing the method used to determine availability for a meeting """
 
 
 @dataclass_json

@@ -5,7 +5,10 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 AccessType = Literal["online", "offline"]
+""" Literal for the access type of the authentication URL """
+
 Provider = Literal["google", "imap", "microsoft"]
+""" Literal for the different authentication providers """
 
 
 class URLForAuthenticationConfig(TypedDict):
@@ -89,6 +92,19 @@ class TokenExchangeRequest(TypedDict):
 @dataclass_json
 @dataclass
 class CodeExchangeResponse:
+    """
+    Class representation of a Nylas code exchange response
+
+    Attributes:
+        access_token: Supports exchanging the code for tokens, or refreshing an access token.
+        grant_id: Nylas grant ID that is now successfully created.
+        scope: List of scopes associated with this token.
+        expires_in: The remaining lifetime of the access token in seconds.
+        refresh_token: Only returned if the code was requested using access_type=offline.
+        id_token: A JWT that contains identity information about the user that is digitally signed by Nylas.
+        token_type: Currently always Bearer.
+    """
+
     access_token: str
     grant_id: str
     scope: str
@@ -100,27 +116,38 @@ class CodeExchangeResponse:
 
 @dataclass_json
 @dataclass
-class OpenID:
+class TokenInfoResponse:
+    """
+    Class representation of a Nylas token information response
+
+    Attributes:
+        iss: The issuer of the token.
+        aud: The audience of the token.
+        iat: The time the token was issued.
+        exp: The time the token expires.
+        sub: The subject of the token.
+        email: The email address of the grant that belongs to the user's token.
+    """
     iss: str
     aud: str
     iat: int
     exp: int
     sub: Optional[str] = None
     email: Optional[str] = None
-    email_verified: Optional[bool] = None
-    at_hash: Optional[str] = None
-    name: Optional[str] = None
-    given_name: Optional[str] = None
-    family_name: Optional[str] = None
-    nick_name: Optional[str] = None
-    picture_url: Optional[str] = None
-    genre: Optional[str] = None
-    locale: Optional[str] = None
 
 
 @dataclass_json
 @dataclass
 class PkceAuthUrl:
+    """
+    Class representing the object containing the OAuth 2.0 URL as well as the hashed secret
+
+    Attributes:
+        secret: Server-side challenge used in the OAuth 2.0 flow.
+        secret_hash: SHA-256 hash of the secret.
+        url: The URL for hosted authentication.
+    """
+
     secret: str
     secret_hash: str
     url: str

@@ -8,6 +8,27 @@ from typing_extensions import TypedDict, NotRequired
 @dataclass_json
 @dataclass
 class Calendar:
+    """
+    Class representation of a Nylas calendar object
+
+    Attributes:
+        id: Globally unique object identifier.
+        grant_id: Grant ID of the Nylas account.
+        name: Name of the calendar.
+        timezone: IANA time zone database formatted string (e.g. America/New_York).
+        read_only: If the event participants are able to edit the event.
+        is_owned_by_user: If the calendar is owned by the user account.
+        object: The type of object.
+        description: Description of the calendar.
+        location: Geographic location of the calendar as free-form text.
+        hex_color: The background color of the calendar in the hexadecimal format (e.g. #0099EE).
+            Empty indicates default color.
+        hex_foreground_color: The background color of the calendar in the hexadecimal format (e.g. #0099EE).
+            Empty indicates default color. (Google only)
+        is_primary: If the calendar is the primary calendar.
+        metadata: A list of key-value pairs storing additional data.
+    """
+
     id: str
     grant_id: str
     name: str

@@ -3,11 +3,10 @@ import hashlib
 import urllib.parse
 import uuid
 
-from nylas.handler.http_client import HttpClient
 from nylas.models.auth import (
     CodeExchangeResponse,
     PkceAuthUrl,
-    OpenID,
+    TokenInfoResponse,
     CodeExchangeRequest,
     TokenExchangeRequest,
     ProviderDetectResponse,
@@ -116,12 +115,12 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def validate_id_token(self, id_token: str) -> Response[OpenID]:
+    def id_token_info(self, id_token: str) -> Response[TokenInfoResponse]:
         """
-        Validate an ID token.
+        Get info about an ID token.
 
         Args:
-            id_token: The ID token to validate.
+            id_token: The ID token to query.
 
         Returns:
             The API response with the token information.
@@ -131,14 +130,14 @@ class Auth(Resource):
             "id_token": id_token,
         }
 
-        return self._validate_token(query_params)
+        return self._get_token_info(query_params)
 
-    def validate_access_token(self, access_token: str) -> Response[OpenID]:
+    def validate_access_token(self, access_token: str) -> Response[TokenInfoResponse]:
         """
-        Validate an access token.
+        Get info about an access token.
 
         Args:
-            access_token: The access token to validate.
+            access_token: The access token to query.
 
         Returns:
             The API response with the token information.
@@ -148,7 +147,7 @@ class Auth(Resource):
             "access_token": access_token,
         }
 
-        return self._validate_token(query_params)
+        return self._get_token_info(query_params)
 
     def url_for_oauth_2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
         """
@@ -230,7 +229,7 @@ class Auth(Resource):
         )
         return Response.from_dict(json_response, CodeExchangeResponse)
 
-    def _validate_token(self, query_params: dict) -> Response[OpenID]:
+    def _get_token_info(self, query_params: dict) -> Response[OpenID]:
         json_response = self._http_client._execute(
             method="GET", path="/v3/connect/tokeninfo", query_params=query_params
         )

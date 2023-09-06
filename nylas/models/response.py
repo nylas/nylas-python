@@ -7,12 +7,26 @@ T = TypeVar("T", bound=DataClassJsonMixin)
 
 
 class Response(tuple, Generic[T]):
-    """Response object returned from the Nylas API."""
+    """
+    Response object returned from the Nylas API.
+
+    Attributes:
+        data: The requested data object.
+        request_id: The request ID.
+    """
 
     data: T
     request_id: str
 
     def __new__(cls, data: T, request_id: str):
+        """
+        Initialize the response object.
+
+        Args:
+            data: The requested data object.
+            request_id: The request ID.
+        """
+        # Initialize the tuple for destructuring support
         cls = tuple.__new__(cls, (data, request_id))
         cls.data = data
         cls.request_id = request_id
@@ -20,6 +34,14 @@ class Response(tuple, Generic[T]):
 
     @classmethod
     def from_dict(cls, resp: dict, generic_type):
+        """
+        Convert a dictionary to a response object.
+
+        Args:
+            resp: The dictionary to convert.
+            generic_type: The type to deserialize the data object into.
+        """
+
         return cls(
             data=generic_type.from_dict(resp["data"]),
             request_id=resp["request_id"],
@@ -41,6 +63,15 @@ class ListResponse(tuple, Generic[T]):
     next_cursor: Optional[str] = None
 
     def __new__(cls, data: List[T], request_id: str, next_cursor: Optional[str] = None):
+        """
+        Initialize the response object.
+
+        Args:
+            data: The list of requested data objects.
+            request_id: The request ID.
+            next_cursor: The cursor to use to get the next page of data.
+        """
+        # Initialize the tuple for destructuring support
         cls = tuple.__new__(cls, (data, request_id, next_cursor))
         cls.data = data
         cls.request_id = request_id
@@ -49,6 +80,14 @@ class ListResponse(tuple, Generic[T]):
 
     @classmethod
     def from_dict(cls, resp: dict, generic_type):
+        """
+        Convert a dictionary to a response object.
+
+        Args:
+            resp: The dictionary to convert.
+            generic_type: The type to deserialize the data objects into.
+        """
+
         converted_data = []
         for item in resp["data"]:
             converted_data.append(generic_type.from_dict(item))
