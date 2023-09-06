@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import re
 import subprocess
@@ -74,6 +75,11 @@ def main():
             if not os.path.exists("docs"):
                 os.makedirs("docs")
             try:
+                # Copy the README and other markdowns to the docs folder
+                shutil.copy("README.md", "docs/index.md")
+                shutil.copy("Contributing.md", "docs/contributing.md")
+                shutil.copy("LICENSE", "docs/license.md")
+
                 subprocess.check_output(["mkdocs", "build"])
             except FileNotFoundError as e:
                 print("Error encountered: {}.\n\n".format(e))

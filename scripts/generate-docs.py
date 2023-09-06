@@ -1,13 +1,7 @@
 """Generate the code reference pages and navigation."""
 
 from pathlib import Path
-import shutil
 import mkdocs_gen_files
-
-# Copy the README and other markdowns to the docs folder
-shutil.copy("README.md", "docs/index.md")
-shutil.copy("Contributing.md", "docs/contributing.md")
-shutil.copy("LICENSE", "docs/license.md")
 
 # Set files to exclude from the docs
 excluded_files = [
