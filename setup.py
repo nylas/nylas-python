@@ -1,3 +1,4 @@
+import os
 import sys
 import re
 import subprocess
@@ -14,6 +15,14 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
 RUN_DEPENDENCIES = ["requests[security]>=2.31.0", "dataclasses-json>=0.5.9"]
 
 TEST_DEPENDENCIES = ["pytest>=7.4.0"]
+
+DOCS_DEPENDENCIES = [
+    "mkdocs>=1.5.2",
+    "mkdocstrings[python]>=0.22.0",
+    "mkdocs-material>=9.2.6",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-literate-nav>=0.6.0",
+]
 
 RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
@@ -61,6 +70,14 @@ def main():
             except FileNotFoundError as e:
                 print("Error encountered: {}.\n\n".format(e))
             sys.exit()
+        elif sys.argv[1] == "build-docs":
+            if not os.path.exists("docs"):
+                os.makedirs("docs")
+            try:
+                subprocess.check_output(["mkdocs", "build"])
+            except FileNotFoundError as e:
+                print("Error encountered: {}.\n\n".format(e))
+            sys.exit()
         elif sys.argv[1] == "release":
             if len(sys.argv) < 3:
                 type_ = "patch"
@@ -85,7 +102,11 @@ def main():
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
         tests_require=TEST_DEPENDENCIES,
-        extras_require={"test": TEST_DEPENDENCIES, "release": RELEASE_DEPENDENCIES},
+        extras_require={
+            "test": TEST_DEPENDENCIES,
+            "docs": DOCS_DEPENDENCIES,
+            "release": RELEASE_DEPENDENCIES,
+        },
         cmdclass={"test": PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",

@@ -5,14 +5,12 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.delete_response import DeleteResponse
-from nylas.models.list_response import ListResponse
-from nylas.models.reditect_uri import (
+from nylas.models.redirect_uri import (
     RedirectUri,
     CreateRedirectUriRequest,
     UpdateRedirectUriRequest,
 )
-from nylas.models.response import Response
+from nylas.models.response import Response, ListResponse, DeleteResponse
 
 
 class RedirectUris(

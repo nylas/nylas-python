@@ -31,6 +31,7 @@ class Client(object):
         self.api_uri = api_uri
         self.http_client = HttpClient(self.api_uri, self.api_key, timeout)
 
+    @property
     def auth(self) -> Auth:
         return Auth(self.http_client)
 

@@ -6,10 +6,12 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.availability import GetAvailabilityResponse, GetAvailabilityRequest
-from nylas.models.calendar import Calendar, CreateCalendarRequest, UpdateCalendarRequest
-from nylas.models.delete_response import DeleteResponse
-from nylas.models.list_response import ListResponse
-from nylas.models.response import Response
+from nylas.models.calendars import (
+    Calendar,
+    CreateCalendarRequest,
+    UpdateCalendarRequest,
+)
+from nylas.models.response import Response, ListResponse, DeleteResponse
 
 
 class Calendars(

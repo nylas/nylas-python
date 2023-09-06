@@ -5,15 +5,13 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.delete_response import DeleteResponse
-from nylas.models.grant import (
+from nylas.models.grants import (
     Grant,
     ListGrantsQueryParams,
     CreateGrantRequest,
     UpdateGrantRequest,
 )
-from nylas.models.list_response import ListResponse
-from nylas.models.response import Response
+from nylas.models.response import Response, ListResponse, DeleteResponse
 
 
 class Grants(
