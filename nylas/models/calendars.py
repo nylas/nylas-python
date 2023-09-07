@@ -51,14 +51,14 @@ class ListCalendersQueryParams(TypedDict):
     Attributes:
         limit: The maximum number of objects to return.
             This field defaults to 50. The maximum allowed value is 200.
-        pageToken: An identifier that specifies which page of data to return.
-            This value should be taken from the [ListResponse.nextCursor] response field.
-        metadataPair: Pass in your metadata key and value pair to search for metadata.
+        page_token: An identifier that specifies which page of data to return.
+            This value should be taken from the next_cursor field of a ListResponse.
+        metadata_pair: Pass in your metadata key and value pair to search for metadata.
     """
 
-    limit: Optional[int]
-    pageToken: Optional[str]
-    metadataPair: Optional[Dict[str, str]]
+    limit: NotRequired[int]
+    page_token: NotRequired[str]
+    metadata_pair: NotRequired[Dict[str, str]]
 
 
 class CreateCalendarRequest(TypedDict):
