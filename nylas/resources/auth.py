@@ -65,7 +65,7 @@ class Auth(Resource):
         """
         return Grants(self._http_client)
 
-    def url_for_oauth_2(self, config: URLForAuthenticationConfig) -> str:
+    def url_for_oauth2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.
 
@@ -81,7 +81,7 @@ class Auth(Resource):
 
     def exchange_code_for_token(
         self, request: CodeExchangeRequest
-    ) -> Response[CodeExchangeResponse]:
+    ) -> CodeExchangeResponse:
         """
         Exchange an authorization code for an access token.
 
@@ -99,7 +99,7 @@ class Auth(Resource):
 
     def refresh_access_token(
         self, request: TokenExchangeRequest
-    ) -> Response[CodeExchangeResponse]:
+    ) -> CodeExchangeResponse:
         """
         Refresh an access token.
 
@@ -115,7 +115,7 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def id_token_info(self, id_token: str) -> Response[TokenInfoResponse]:
+    def id_token_info(self, id_token: str) -> TokenInfoResponse:
         """
         Get info about an ID token.
 
@@ -132,7 +132,7 @@ class Auth(Resource):
 
         return self._get_token_info(query_params)
 
-    def validate_access_token(self, access_token: str) -> Response[TokenInfoResponse]:
+    def validate_access_token(self, access_token: str) -> TokenInfoResponse:
         """
         Get info about an access token.
 
@@ -149,7 +149,7 @@ class Auth(Resource):
 
         return self._get_token_info(query_params)
 
-    def url_for_oauth_2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
+    def url_for_oauth2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
         """
         Build the URL for authenticating users to your application via Hosted Authentication with PKCE.
 
@@ -223,14 +223,14 @@ class Auth(Resource):
             self._http_client.api_server, urllib.parse.urlencode(query)
         )
 
-    def _get_token(self, request_body: dict) -> Response[CodeExchangeResponse]:
+    def _get_token(self, request_body: dict) -> CodeExchangeResponse:
         json_response = self._http_client._execute(
             method="POST", path="/v3/connect/token", request_body=request_body
         )
-        return Response.from_dict(json_response, CodeExchangeResponse)
+        return CodeExchangeResponse.from_dict(json_response)
 
-    def _get_token_info(self, query_params: dict) -> Response[OpenID]:
+    def _get_token_info(self, query_params: dict) -> TokenInfoResponse:
         json_response = self._http_client._execute(
             method="GET", path="/v3/connect/tokeninfo", query_params=query_params
         )
-        return Response.from_dict(json_response, OpenID)
+        return TokenInfoResponse.from_dict(json_response)
