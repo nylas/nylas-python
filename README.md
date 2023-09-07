@@ -65,9 +65,9 @@ calendars = nylas.calendars.list("GRANT_ID")
 
 Nylas maintains a [reference guide for the Python SDK](https://nylas-python-sdk-reference.pages.dev/) to help you get familiar with the available functions and classes.
 
-## ✨ Upgrading from 1.x
+## ✨ Upgrading from 5.x
 
-See [UPGRADE.md](UPGRADING.md) for instructions on upgrading from 5.x to 6.x.
+See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from 5.x to 6.x.
 
 ## 💙 Contributing
 
