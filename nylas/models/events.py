@@ -5,9 +5,16 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 Status = Literal["confirmed", "tentative", "cancelled"]
+""" Literal representing the status of an Event. """
+
 Visibility = Literal["public", "private"]
+""" Literal representation of visibility of the Event. """
+
 ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
+""" Literal representing the status of an Event participant. """
+
 SendRsvpStatus = Literal["yes", "no", "maybe"]
+""" Literal representing the status of an RSVP. """
 
 
 @dataclass_json
@@ -21,14 +28,14 @@ class Participant:
         name: Participant's name.
         status: Participant's status.
         comment: Comment by the participant.
-        phoneNumber: Participant's phone number.
+        phone_number: Participant's phone number.
     """
 
     email: str
     status: ParticipantStatus
     name: Optional[str]
     comment: Optional[str]
-    phoneNumber: Optional[str]
+    phone_number: Optional[str]
 
 
 @dataclass_json
@@ -71,16 +78,16 @@ class Timespan:
     An hour lunch meeting would be represented as timespan subobjects.
 
     Attributes:
-        startTime: The start time of the event.
-        endTime: The end time of the event.
-        startTimezone: The timezone of the start time. Timezone using IANA formatted string. (e.g. "America/New_York")
-        endTimezone: The timezone of the end time. Timezone using IANA formatted string. (e.g. "America/New_York")
+        start_time: The Event's start time.
+        end_time: The Event's end time.
+        start_timezone: The timezone of the start time, represented by an IANA-formatted string (for example, "America/New_York").
+        end_timezone: The timezone of the end time, represented by an IANA-formatted string (for example, "America/New_York").
     """
 
-    startTime: int
-    endTime: int
-    startTimezone: Optional[str]
-    endTimezone: Optional[str]
+    start_time: int
+    end_time: int
+    start_timezone: Optional[str]
+    end_timezone: Optional[str]
 
 
 @dataclass_json
@@ -105,18 +112,21 @@ class Datespan:
     A business quarter or academic semester would be represented as datespan subobjects.
 
     Attributes:
-        startDate: The start date in ISO 8601 format.
-        endDate: The end date in ISO 8601 format.
+        start_date: The start date in ISO 8601 format.
+        end_date: The end date in ISO 8601 format.
     """
 
-    startDate: str
-    endDate: str
+    start_date: str
+    end_date: str
 
 
 When = Union[Time, Timespan, Date, Datespan]
+""" Union type representing the different types of Event time configurations. """
+
 ConferencingProvider = Literal[
     "Google Meet", "Zoom Meeting", "Microsoft Teams", "GoToMeeting", "WebEx"
 ]
+""" Literal for the different conferencing providers. """
 
 
 @dataclass_json
@@ -172,6 +182,7 @@ class Autocreate:
 
 
 Conferencing = Union[Details, Autocreate]
+""" Union type representing the different types of conferencing configurations. """
 
 
 @dataclass_json
@@ -181,18 +192,48 @@ class Reminder:
     Class representation of a reminder object.
 
     Attributes:
-        reminderMinutes: The number of minutes before the event start time when a user wants a reminder for this event.
+        reminder_minutes: The user's preferred Event reminder time, in minutes.
             Reminder minutes are in the following format: "[20]".
-        reminderMethod: Method to remind the user about the event. (Google only).
+        reminder_method: The user's preferred method for Event reminders (Google only).
     """
 
-    reminderMinutes: str
-    reminderMethod: str
+    reminder_minutes: str
+    reminder_method: str
 
 
 @dataclass_json
 @dataclass
 class Event:
+    """
+    Class representation of a Nylas Event object.
+
+    Attributes:
+        id: Globally unique object identifier.
+        grant_id: Grant ID representing the user's account.
+        calendar_id: The Event's Calendar ID.
+        busy: Whether to show this Event's time block as available on shared or public calendars.
+        read_only: If the Event's participants are able to edit the Event.
+        created_at: Unix timestamp representing the Event's creation time.
+        updated_at: Unix timestamp representing the time when the Event was last updated.
+        participants: List of participants invited to the Event. Participants may be people, rooms, or resources.
+        when: Representation of an Event's time and duration.
+        conferencing: Representation of an Event's conferencing details.
+        object: The type of object.
+        description: The Event's description.
+        location: The Event's location (for example, a physical address or a meeting room).
+        ical_uid: Unique ID for iCalendar standard, allowing you to identify events across calendaring systems.
+            Recurring events may share the same value. Can be "null" for events synced before the year 2020.
+        title: The Event's title.
+        html_link: A link to the Event in the provider's UI.
+        hide_participants: Whether participants of the Event should be hidden.
+        metadata: List of key-value pairs storing additional data.
+        creator: The user who created the Event.
+        organizer: The organizer of the Event.
+        recurrence: A list of RRULE and EXDATE strings.
+        reminders: List of reminders for the Event.
+        status: The Event's status.
+        visibility: The Event's visibility (private or public).
+    """
     id: str
     grant_id: str
     calendar_id: str
@@ -228,14 +269,14 @@ class CreateParticipant(TypedDict):
         name: Participant's name.
         status: Participant's status.
         comment: Comment by the participant.
-        phoneNumber: Participant's phone number.
+        phone_number: Participant's phone number.
     """
 
     email: str
     status: NotRequired[ParticipantStatus]
     name: NotRequired[str]
     comment: NotRequired[str]
-    phoneNumber: NotRequired[str]
+    phone_number: NotRequired[str]
 
 
 class UpdateParticipant(TypedDict):
@@ -329,7 +370,10 @@ class UpdateAutocreate(TypedDict):
 
 
 CreateConferencing = Union[CreateDetails, CreateAutocreate]
+""" Union type representing the different types of conferencing configurations for Event creation. """
+
 UpdateConferencing = Union[UpdateDetails, UpdateAutocreate]
+""" Union type representing the different types of conferencing configurations for updating an Event."""
 
 
 # When
@@ -452,7 +496,10 @@ class UpdateDatespan(TypedDict):
 
 
 CreateWhen = Union[CreateTime, CreateTimespan, CreateDate, CreateDatespan]
+""" Union type representing the different types of event time configurations for Event creation. """
+
 UpdateWhen = Union[UpdateTime, UpdateTimespan, UpdateDate, UpdateDatespan]
+""" Union type representing the different types of event time configurations for updating an Event."""
 
 
 class CreateEventRequest(TypedDict):
@@ -608,7 +655,10 @@ class FindEventQueryParams(TypedDict):
 
 
 UpdateEventQueryParams = CreateEventQueryParams
+""" Interface representing of the query parameters for updating an Event. """
+
 DestroyEventQueryParams = CreateEventQueryParams
+""" Interface representing of the query parameters for destroying an Event. """
 
 
 class SendRsvpQueryParams(TypedDict):

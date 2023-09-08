@@ -3,11 +3,10 @@ import hashlib
 import urllib.parse
 import uuid
 
-from nylas.handler.http_client import HttpClient
 from nylas.models.auth import (
     CodeExchangeResponse,
     PkceAuthUrl,
-    OpenID,
+    TokenInfoResponse,
     CodeExchangeRequest,
     TokenExchangeRequest,
     ProviderDetectResponse,
@@ -56,14 +55,17 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
-    def __init__(self, http_client: HttpClient):
-        super(Auth, self).__init__(http_client)
-
     @property
     def grants(self) -> Grants:
+        """
+        Access the Grants API.
+
+        Returns:
+            The Grants API.
+        """
         return Grants(self._http_client)
 
-    def url_for_oauth_2(self, config: URLForAuthenticationConfig) -> str:
+    def url_for_oauth2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.
 
@@ -79,7 +81,7 @@ class Auth(Resource):
 
     def exchange_code_for_token(
         self, request: CodeExchangeRequest
-    ) -> Response[CodeExchangeResponse]:
+    ) -> CodeExchangeResponse:
         """
         Exchange an authorization code for an access token.
 
@@ -97,7 +99,7 @@ class Auth(Resource):
 
     def refresh_access_token(
         self, request: TokenExchangeRequest
-    ) -> Response[CodeExchangeResponse]:
+    ) -> CodeExchangeResponse:
         """
         Refresh an access token.
 
@@ -113,12 +115,12 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def validate_id_token(self, id_token: str) -> Response[OpenID]:
+    def id_token_info(self, id_token: str) -> TokenInfoResponse:
         """
-        Validate an ID token.
+        Get info about an ID token.
 
         Args:
-            id_token: The ID token to validate.
+            id_token: The ID token to query.
 
         Returns:
             The API response with the token information.
@@ -128,14 +130,14 @@ class Auth(Resource):
             "id_token": id_token,
         }
 
-        return self._validate_token(query_params)
+        return self._get_token_info(query_params)
 
-    def validate_access_token(self, access_token: str) -> Response[OpenID]:
+    def validate_access_token(self, access_token: str) -> TokenInfoResponse:
         """
-        Validate an access token.
+        Get info about an access token.
 
         Args:
-            access_token: The access token to validate.
+            access_token: The access token to query.
 
         Returns:
             The API response with the token information.
@@ -145,9 +147,9 @@ class Auth(Resource):
             "access_token": access_token,
         }
 
-        return self._validate_token(query_params)
+        return self._get_token_info(query_params)
 
-    def url_for_oauth_2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
+    def url_for_oauth2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
         """
         Build the URL for authenticating users to your application via Hosted Authentication with PKCE.
 
@@ -221,14 +223,14 @@ class Auth(Resource):
             self._http_client.api_server, urllib.parse.urlencode(query)
         )
 
-    def _get_token(self, request_body: dict) -> Response[CodeExchangeResponse]:
+    def _get_token(self, request_body: dict) -> CodeExchangeResponse:
         json_response = self._http_client._execute(
             method="POST", path="/v3/connect/token", request_body=request_body
         )
-        return Response.from_dict(json_response, CodeExchangeResponse)
+        return CodeExchangeResponse.from_dict(json_response)
 
-    def _validate_token(self, query_params: dict) -> Response[OpenID]:
+    def _get_token_info(self, query_params: dict) -> TokenInfoResponse:
         json_response = self._http_client._execute(
             method="GET", path="/v3/connect/tokeninfo", query_params=query_params
         )
-        return Response.from_dict(json_response, OpenID)
+        return TokenInfoResponse.from_dict(json_response)

@@ -11,7 +11,8 @@ class Applications(Resource):
         return RedirectUris(self._http_client)
 
     def info(self) -> Response[ApplicationDetails]:
-        """Get the application information.
+        """
+        Get the application information.
 
         Returns:
             Response: The application information.

@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import re
 import subprocess
@@ -12,7 +13,11 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
         r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
     ).group(1)
 
-RUN_DEPENDENCIES = ["requests[security]>=2.31.0", "dataclasses-json>=0.5.9"]
+RUN_DEPENDENCIES = [
+    "requests[security]>=2.31.0",
+    "dataclasses-json>=0.5.9",
+    "typing_extensions>=4.7.1",
+]
 
 TEST_DEPENDENCIES = ["pytest>=7.4.0"]
 
@@ -74,6 +79,11 @@ def main():
             if not os.path.exists("docs"):
                 os.makedirs("docs")
             try:
+                # Copy the README and other markdowns to the docs folder
+                shutil.copy("README.md", "docs/index.md")
+                shutil.copy("Contributing.md", "docs/contributing.md")
+                shutil.copy("LICENSE", "docs/license.md")
+
                 subprocess.check_output(["mkdocs", "build"])
             except FileNotFoundError as e:
                 print("Error encountered: {}.\n\n".format(e))

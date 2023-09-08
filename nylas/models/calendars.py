@@ -8,6 +8,27 @@ from typing_extensions import TypedDict, NotRequired
 @dataclass_json
 @dataclass
 class Calendar:
+    """
+    Class representation of a Nylas Calendar object.
+
+    Attributes:
+        id: Globally unique object identifier.
+        grant_id: Grant ID representing the user's account.
+        name: Name of the Calendar.
+        timezone: IANA time zone database-formatted string (for example, "America/New_York").
+        read_only: If the event participants are able to edit the Event.
+        is_owned_by_user: If the Calendar is owned by the user account.
+        object: The type of object.
+        description: Description of the Calendar.
+        location: Geographic location of the Calendar as free-form text.
+        hex_color: The background color of the calendar in the hexadecimal format (for example, "#0099EE").
+            If not defined, the default color is used.
+        hex_foreground_color: The background color of the calendar in the hexadecimal format (for example, "#0099EE").
+            If not defined, the default color is used (Google only).
+        is_primary: If the Calendar is the account's primary calendar.
+        metadata: A list of key-value pairs storing additional data.
+    """
+
     id: str
     grant_id: str
     name: str
@@ -30,14 +51,14 @@ class ListCalendersQueryParams(TypedDict):
     Attributes:
         limit: The maximum number of objects to return.
             This field defaults to 50. The maximum allowed value is 200.
-        pageToken: An identifier that specifies which page of data to return.
-            This value should be taken from the [ListResponse.nextCursor] response field.
-        metadataPair: Pass in your metadata key and value pair to search for metadata.
+        page_token: An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
+        metadata_pair: Pass in your metadata key-value pair to search for metadata.
     """
 
-    limit: Optional[int]
-    pageToken: Optional[str]
-    metadataPair: Optional[Dict[str, str]]
+    limit: NotRequired[int]
+    page_token: NotRequired[str]
+    metadata_pair: NotRequired[Dict[str, str]]
 
 
 class CreateCalendarRequest(TypedDict):
