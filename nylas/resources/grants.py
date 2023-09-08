@@ -23,7 +23,7 @@ class Grants(
 ):
     def list(self, query_params: ListGrantsQueryParams) -> ListResponse[Grant]:
         """
-        Return all Grants
+        Return all Grants.
 
         Args:
             query_params: The query parameters to include in the request.
@@ -38,13 +38,13 @@ class Grants(
 
     def find(self, grant_id: str) -> Response[Grant]:
         """
-        Return a Grant
+        Return a Grant.
 
         Args:
-            grant_id: The id of the Grant to retrieve.
+            grant_id: The ID of the Grant to retrieve.
 
         Returns:
-            The Grant
+            The Grant.
         """
 
         return super(Grants, self).find(
@@ -53,13 +53,13 @@ class Grants(
 
     def create(self, request_body: CreateGrantRequest) -> Response[Grant]:
         """
-        Create a Grant
+        Create a Grant.
 
         Args:
             request_body: The values to create the Grant with.
 
         Returns:
-            The created Grant
+            The created Grant.
         """
 
         return super(Grants, self).create(
@@ -70,14 +70,14 @@ class Grants(
         self, grant_id: str, request_body: UpdateGrantRequest
     ) -> Response[Grant]:
         """
-        Update a Grant
+        Update a Grant.
 
         Args:
-            grant_id: The id of the Grant to update.
+            grant_id: The ID of the Grant to update.
             request_body: The values to update the Grant with.
 
         Returns:
-            The updated Grant
+            The updated Grant.
         """
 
         return super(Grants, self).update(
@@ -88,13 +88,13 @@ class Grants(
 
     def destroy(self, grant_id: str) -> DeleteResponse:
         """
-        Delete a Grant
+        Delete a Grant.
 
         Args:
-            grant_id: The id of the Grant to delete.
+            grant_id: The ID of the Grant to delete.
 
         Returns:
-            The deletion response
+            The deletion response.
         """
 
         return super(Grants, self).destroy(path=f"/v3/grants/{grant_id}")

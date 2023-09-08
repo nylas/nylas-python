@@ -5,10 +5,10 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 AccessType = Literal["online", "offline"]
-""" Literal for the access type of the authentication URL """
+""" Literal for the access type of the authentication URL. """
 
 Provider = Literal["google", "imap", "microsoft"]
-""" Literal for the different authentication providers """
+""" Literal for the different authentication providers. """
 
 
 class URLForAuthenticationConfig(TypedDict):
@@ -93,16 +93,16 @@ class TokenExchangeRequest(TypedDict):
 @dataclass
 class CodeExchangeResponse:
     """
-    Class representation of a Nylas code exchange response
+    Class representation of a Nylas code exchange response.
 
     Attributes:
-        access_token: Supports exchanging the code for tokens, or refreshing an access token.
-        grant_id: Nylas grant ID that is now successfully created.
-        scope: List of scopes associated with this token.
-        expires_in: The remaining lifetime of the access token in seconds.
-        refresh_token: Only returned if the code was requested using access_type=offline.
-        id_token: A JWT that contains identity information about the user that is digitally signed by Nylas.
-        token_type: Currently always Bearer.
+        access_token: Supports exchanging the Nylas code for an access token, or refreshing an access token.
+        grant_id: ID representing the new Grant.
+        scope: List of scopes associated with the token.
+        expires_in: The remaining lifetime of the access token, in seconds.
+        refresh_token: Returned only if the code is requested using "access_type=offline".
+        id_token: A JWT that contains identity information about the user. Digitally signed by Nylas.
+        token_type: Always "Bearer".
     """
 
     access_token: str
@@ -118,15 +118,15 @@ class CodeExchangeResponse:
 @dataclass
 class TokenInfoResponse:
     """
-    Class representation of a Nylas token information response
+    Class representation of a Nylas token information response.
 
     Attributes:
         iss: The issuer of the token.
-        aud: The audience of the token.
-        iat: The time the token was issued.
-        exp: The time the token expires.
-        sub: The subject of the token.
-        email: The email address of the grant that belongs to the user's token.
+        aud: The token's audience.
+        iat: The time that the token was issued.
+        exp: The time that the token expires.
+        sub: The token's subject.
+        email: The email address of the Grant belonging to the user's token.
     """
     iss: str
     aud: str
@@ -140,7 +140,7 @@ class TokenInfoResponse:
 @dataclass
 class PkceAuthUrl:
     """
-    Class representing the object containing the OAuth 2.0 URL as well as the hashed secret
+    Class representing the object containing the OAuth 2.0 URL and the hashed secret.
 
     Attributes:
         secret: Server-side challenge used in the OAuth 2.0 flow.

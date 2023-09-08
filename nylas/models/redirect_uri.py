@@ -9,7 +9,7 @@ from typing_extensions import TypedDict, NotRequired
 @dataclass
 class RedirectUriSettings:
     """
-    Configuration settings for a Redirect URI object
+    Configuration settings for a Redirect URI object.
 
     Attributes:
         origin: Related to JS platform.

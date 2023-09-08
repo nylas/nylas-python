@@ -26,10 +26,10 @@ class Calendars(
         self, identifier: str, query_params: ListCalendersQueryParams = None
     ) -> ListResponse[Calendar]:
         """
-        Return all Calendars
+        Return all Calendars.
 
         Args:
-            identifier: The identifier of the grant to act upon.
+            identifier: The identifier of the Grant to act upon.
             query_params: The query parameters to include in the request.
 
         Returns:
@@ -44,11 +44,11 @@ class Calendars(
 
     def find(self, identifier: str, calendar_id: str) -> Response[Calendar]:
         """
-        Return a Calendar
+        Return a Calendar.
 
         Args:
-            identifier: The identifier of the grant to act upon.
-            calendar_id: The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
+            identifier: The identifier of the Grant to act upon.
+            calendar_id: The ID of the Calendar to retrieve. Use "primary" to refer to the primary Calendar associated with the Grant.
 
         Returns:
             The Calendar.
@@ -62,10 +62,10 @@ class Calendars(
         self, identifier: str, request_body: CreateCalendarRequest
     ) -> Response[Calendar]:
         """
-        Create a Calendar
+        Create a Calendar.
 
         Args:
-            identifier: The identifier of the grant to act upon.
+            identifier: The identifier of the Grant to act upon.
             request_body: The values to create the Calendar with.
 
         Returns:
@@ -81,11 +81,11 @@ class Calendars(
         self, identifier: str, calendar_id: str, request_body: UpdateCalendarRequest
     ) -> Response[Calendar]:
         """
-        Update a Calendar
+        Update a Calendar.
 
         Args:
-            identifier: The identifier of the grant to act upon.
-            calendar_id: The id of the Calendar to update. Use "primary" to refer to the primary calendar associated with grant.
+            identifier: The identifier of the Grant to act upon.
+            calendar_id: The ID of the Calendar to update. Use "primary" to refer to the primary Calendar associated with the Grant.
             request_body: The values to update the Calendar with.
 
         Returns:
@@ -99,14 +99,14 @@ class Calendars(
 
     def destroy(self, identifier: str, calendar_id: str) -> DeleteResponse:
         """
-        Delete a Calendar
+        Delete a Calendar.
 
         Args:
-            identifier: The identifier of the grant to act upon.
-            calendar_id: The id of the Calendar to delete. Use "primary" to refer to the primary calendar associated with grant.
+            identifier: The identifier of the Grant to act upon.
+            calendar_id: The ID of the Calendar to delete. Use "primary" to refer to the primary Calendar associated with the Grant.
 
         Returns:
-            The deletion response
+            The deletion response.
         """
         return super(Calendars, self).destroy(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}"
@@ -116,7 +116,7 @@ class Calendars(
         self, identifier: str, request_body: GetAvailabilityRequest
     ) -> Response[GetAvailabilityResponse]:
         """
-        Get availability for a calendar.
+        Get availability for a Calendar.
 
         Args:
             identifier: The grant ID or email account to get availability for.

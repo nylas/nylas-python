@@ -22,7 +22,7 @@ class RedirectUris(
 ):
     def list(self) -> ListResponse[RedirectUri]:
         """
-        Return all Redirect URIs
+        Return all Redirect URIs.
 
         Returns:
             The list of Redirect URIs.
@@ -34,13 +34,13 @@ class RedirectUris(
 
     def find(self, redirect_uri_id: str) -> Response[RedirectUri]:
         """
-        Return a Redirect URI
+        Return a Redirect URI.
 
         Args:
-            redirect_uri_id: The id of the Redirect URI to retrieve.
+            redirect_uri_id: The ID of the Redirect URI to retrieve.
 
         Returns:
-            The Redirect URI
+            The Redirect URI.
         """
 
         return super(RedirectUris, self).find(
@@ -50,13 +50,13 @@ class RedirectUris(
 
     def create(self, request_body: CreateRedirectUriRequest) -> Response[RedirectUri]:
         """
-        Create a Redirect URI
+        Create a Redirect URI.
 
         Args:
-            request_body: The values to create the Redirect URI with
+            request_body: The values to create the Redirect URI with.
 
         Returns:
-            The created Redirect URI
+            The created Redirect URI.
         """
 
         return super(RedirectUris, self).create(
@@ -69,14 +69,14 @@ class RedirectUris(
         self, redirect_uri_id: str, request_body: UpdateRedirectUriRequest
     ) -> Response[RedirectUri]:
         """
-        Update a Redirect URI
+        Update a Redirect URI.
 
         Args:
-            redirect_uri_id: The id of the Redirect URI to update.
+            redirect_uri_id: The ID of the Redirect URI to update.
             request_body: The values to update the Redirect URI with.
 
         Returns:
-            The updated Redirect URI
+            The updated Redirect URI.
         """
 
         return super(RedirectUris, self).update(
@@ -87,13 +87,13 @@ class RedirectUris(
 
     def destroy(self, redirect_uri_id: str) -> DeleteResponse:
         """
-        Delete a Redirect URI
+        Delete a Redirect URI.
 
         Args:
-            redirect_uri_id: The id of the Redirect URI to delete.
+            redirect_uri_id: The ID of the Redirect URI to delete.
 
         Returns:
-            The deleted Redirect URI
+            The deletion response.
         """
 
         return super(RedirectUris, self).destroy(

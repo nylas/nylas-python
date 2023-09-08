@@ -10,9 +10,7 @@ WebhookStatus = Literal["active", "failing", "failed", "pause"]
 
 
 class WebhookTriggers(str, Enum):
-    """
-    Enum representing the available webhook triggers
-    """
+    """ Enum representing the available webhook triggers. """
     CALENDAR_CREATED = "calendar.created"
     CALENDAR_UPDATED = "calendar.updated"
     CALENDAR_DELETED = "calendar.deleted"
@@ -35,13 +33,13 @@ class Webhook:
 
     Attributes:
         id: Globally unique object identifier.
-        trigger_types: Select the event that triggers the webhook.
-        callback_url: The url to send webhooks to.
+        trigger_types: The event that triggers the webhook.
+        callback_url: The URL to send webhooks to.
         status: The status of the new destination.
         notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
-        status_updated_at: The time the status field was last updated, represented as a Unix timestamp in seconds.
-        created_at: The time the status field was created, represented as a Unix timestamp in seconds.
-        updated_at: The time the status field was last updated, represented as a Unix timestamp in seconds.
+        status_updated_at: The time when the status field was last updated, represented as a Unix timestamp in seconds.
+        created_at: The time when the status field was created, represented as a Unix timestamp in seconds.
+        updated_at: The time when the status field was last updated, represented as a Unix timestamp in seconds.
         description: A human-readable description of the webhook destination.
     """
 
@@ -84,10 +82,10 @@ class WebhookDeleteData:
 @dataclass
 class WebhookDeleteResponse:
     """
-    Class representing a Nylas webhook delete response
+    Class representing a Nylas webhook delete response.
 
     Attributes:
-        requestId: The id of the request.
+        requestId: The request's ID.
         data: Object containing the webhook deletion status.
     """
 
@@ -99,11 +97,11 @@ class WebhookDeleteResponse:
 @dataclass
 class WebhookIpAddressesResponse:
     """
-    Class representing the response for getting a list of webhook ip addresses
+    Class representing the response for getting a list of webhook IP addresses.
 
     Attributes:
-        ip_addresses: The IP addresses that Nylas send you webhook from.
-        updated_at: UNIX timestamp when Nylas updated the list of IP addresses.
+        ip_addresses: The IP addresses that Nylas send your webhook from.
+        updated_at: Unix timestamp representing the time when Nylas last updated the list of IP addresses.
     """
 
     ip_addresses: List[str]

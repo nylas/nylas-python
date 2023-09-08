@@ -7,19 +7,21 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/nylas)
 [![codecov](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg?token=HyxGAn5bJR)](https://codecov.io/gh/nylas/nylas-python)
 
-This is the GitHub repository for the Nylas Python SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Python to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Python SDK Quickstart Guide](https://docs.nylas.com/docs/quickstart-python).
+This is the GitHub repository for the Nylas Python SDK. The repo is primarily for anyone who wants to install the SDK from source or make contributions to it.
 
-The Nylas Communications Platform provides REST APIs for [Email](https://docs.nylas.com/docs/quickstart-email), [Calendar](https://docs.nylas.com/docs/quickstart-calendar), and [Contacts](https://docs.nylas.com/docs/quickstart-contacts), and the Python SDK is the quickest way to build your integration using Python.
+If you're looking to use Python to access the Nylas Email, Calendar, or Contacts APIs, see our [Python SDK Quickstart guide](https://docs.nylas.com/docs/quickstart-python).
+
+The Nylas platform provides REST APIs for [Email](https://docs.nylas.com/docs/quickstart-email), [Calendar](https://docs.nylas.com/docs/quickstart-calendar), and [Contacts](https://docs.nylas.com/docs/quickstart-contacts), and the Python SDK is the quickest way to build your integration using Python.
 
 Here are some resources to help you get started:
 
-- [Sign up for your free Nylas account](https://dashboard.nylas.com/register)
-- [Nylas API v3 Quickstart Guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/)
-- [Nylas SDK Reference](https://nylas-python-sdk-reference.pages.dev/)
-- [Nylas API Reference](https://developer.nylas.com/docs/api/)
-- [Nylas Samples repo for code samples and example applications](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python)
+- [Sign up for a free Nylas account](https://dashboard.nylas.com/register).
+- Follow the [Nylas API v3 Quickstart guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/).
+- Browse the [Nylas SDK reference docs](https://nylas-python-sdk-reference.pages.dev/).
+- Browse the [Nylas API reference docs](https://developer.nylas.com/docs/api/).
+- See our code samples in the [Nylas Samples repo](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python).
 
-If you have a question about the Nylas Communications Platform, please reach out to support@nylas.com to get help.
+If you have any questions about the Nylas platform, please reach out to support@nylas.com.
 
 ## ⚙️ Install
 
@@ -29,7 +31,7 @@ The Nylas Python SDK is available via pip:
 pip install nylas --pre
 ```
 
-To install the SDK from source, clone this repo and run the install script.
+To install the SDK from source, clone this repo and run the install script:
 
 ```bash
 git clone https://github.com/nylas/nylas-python.git && cd nylas-python
@@ -38,18 +40,15 @@ python setup.py install
 
 ## ⚡️ Usage
 
-To use this SDK, you must first [get a free Nylas account](https://dashboard.nylas.com/register).
+Before you use the Nylas Python SDK, you must first [create a Nylas account](https://dashboard.nylas.com/register). Then, follow our [API v3 Quickstart guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/) to set up your first app and get your API keys.
 
-Then, follow the Quickstart guide to [set up your first app and get your API keys](https://developer.nylas.com/docs/v3-beta/v3-quickstart/).
+For code samples and example applications, take a look at our [Python repos in the Nylas Samples collection](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python).
 
-For code examples that demonstrate how to use this SDK, take a look at our [Python repos in the Nylas Samples collection](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python).
+### 🚀 Make your first request
 
-### 🚀 Making Your First Request
+After you've installed and set up the Nylas Python SDK, you can make your first API request. To do so, use the `Client` class from the `nylas` package.
 
-You use the `Client` class from the `nylas` package, to make requests to the Nylas API. The SDK is organized into different resources, each of which has methods to make requests to the API. Each resource is available through the `Client` object configured with your API key.
-
-For example, to get a list of calendars, you can use the following code:
-
+The SDK is organized into different resources, each of which has methods to make requests to the Nylas API. Each resource is available through the `Client` object that you configured with your API key. For example, you can use this code to get a list of Calendars:
 
 ```python
 from nylas import Client
@@ -65,11 +64,11 @@ calendars = nylas.calendars.list("GRANT_ID")
 
 Nylas maintains a [reference guide for the Python SDK](https://nylas-python-sdk-reference.pages.dev/) to help you get familiar with the available functions and classes.
 
-## ✨ Upgrading from 5.x
+## ✨ Upgrade from v5.x
 
-See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from 5.x to 6.x.
+See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from v5.x to v6.x.
 
-## 💙 Contributing
+## 💙 Contribute
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 

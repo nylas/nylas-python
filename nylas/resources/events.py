@@ -36,14 +36,14 @@ class Events(
         self, identifier: str, query_params: ListEventQueryParams
     ) -> ListResponse[Event]:
         """
-        Return all Events
+        Return all Events.
 
         Args:
-            identifier: The identifier of the grant to act upon
-            query_params: The query parameters to include in the request
+            identifier: The identifier of the Grant to act upon.
+            query_params: The query parameters to include in the request.
 
         Returns:
-            The list of Events
+            The list of Events.
         """
 
         return super(Events, self).list(
@@ -56,15 +56,15 @@ class Events(
         self, identifier: str, event_id: str, query_params: FindEventQueryParams
     ) -> Response[Event]:
         """
-        Return an Event
+        Return an Event.
 
         Args:
-            identifier: The identifier of the grant to act upon
-            event_id: The id of the Event to retrieve.
-            query_params: The query parameters to include in the request
+            identifier: The identifier of the Grant to act upon.
+            event_id: The ID of the Event to retrieve.
+            query_params: The query parameters to include in the request.
 
         Returns:
-            The Event
+            The Event.
         """
 
         return super(Events, self).find(
@@ -80,15 +80,15 @@ class Events(
         query_params: CreateEventQueryParams,
     ) -> Response[Event]:
         """
-        Create an Event
+        Create an Event.
 
         Args:
-            identifier: The identifier of the grant to act upon
-            request_body: The values to create the Event with
-            query_params: The query parameters to include in the request
+            identifier: The identifier of the Grant to act upon.
+            request_body: The values to create the Event with.
+            query_params: The query parameters to include in the request.
 
         Returns:
-            The created Event
+            The created Event.
         """
 
         return super(Events, self).create(
@@ -106,16 +106,16 @@ class Events(
         query_params: UpdateEventQueryParams,
     ) -> Response[Event]:
         """
-        Update an Event
+        Update an Event.
 
         Args:
-            identifier: The identifier of the grant to act upon
-            event_id: The id of the Event to update.
-            request_body: The values to update the Event with
-            query_params: The query parameters to include in the request
+            identifier: The identifier of the Grant to act upon.
+            event_id: The ID of the Event to update.
+            request_body: The values to update the Event with.
+            query_params: The query parameters to include in the request.
 
         Returns:
-            The updated Event
+            The updated Event.
         """
 
         return super(Events, self).update(
@@ -129,15 +129,15 @@ class Events(
         self, identifier: str, event_id: str, query_params: DestroyEventQueryParams
     ) -> DeleteResponse:
         """
-        Delete an Event
+        Delete an Event.
 
         Args:
-            identifier: The identifier of the grant to act upon
-            event_id: The id of the Event to delete.
-            query_params: The query parameters to include in the request
+            identifier: The identifier of the Grant to act upon.
+            event_id: The ID of the Event to delete.
+            query_params: The query parameters to include in the request.
 
         Returns:
-            The deletion response
+            The deletion response.
         """
 
         return super(Events, self).destroy(

@@ -5,10 +5,10 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
 Status = Literal["confirmed", "tentative", "cancelled"]
-""" Literal representing the status of an event. """
+""" Literal representing the status of an Event. """
 
 Visibility = Literal["public", "private"]
-""" Literal representation of visibility of the event, if the event is private or public. """
+""" Literal representation of visibility of the Event. """
 
 ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
 """ Literal representing the status of an Event participant. """
@@ -78,10 +78,10 @@ class Timespan:
     An hour lunch meeting would be represented as timespan subobjects.
 
     Attributes:
-        start_time: The start time of the event.
-        end_time: The end time of the event.
-        start_timezone: The timezone of the start time. Timezone using IANA formatted string. (e.g. "America/New_York")
-        end_timezone: The timezone of the end time. Timezone using IANA formatted string. (e.g. "America/New_York")
+        start_time: The Event's start time.
+        end_time: The Event's end time.
+        start_timezone: The timezone of the start time, represented by an IANA-formatted string (for example, "America/New_York").
+        end_timezone: The timezone of the end time, represented by an IANA-formatted string (for example, "America/New_York").
     """
 
     start_time: int
@@ -121,7 +121,7 @@ class Datespan:
 
 
 When = Union[Time, Timespan, Date, Datespan]
-""" Union type representing the different types of event time configurations. """
+""" Union type representing the different types of Event time configurations. """
 
 ConferencingProvider = Literal[
     "Google Meet", "Zoom Meeting", "Microsoft Teams", "GoToMeeting", "WebEx"
@@ -192,9 +192,9 @@ class Reminder:
     Class representation of a reminder object.
 
     Attributes:
-        reminder_minutes: The number of minutes before the event start time when a user wants a reminder for this event.
+        reminder_minutes: The user's preferred Event reminder time, in minutes.
             Reminder minutes are in the following format: "[20]".
-        reminder_method: Method to remind the user about the event. (Google only).
+        reminder_method: The user's preferred method for Event reminders (Google only).
     """
 
     reminder_minutes: str
@@ -205,34 +205,34 @@ class Reminder:
 @dataclass
 class Event:
     """
-    representing a Nylas Event object.
+    Class representation of a Nylas Event object.
 
     Attributes:
         id: Globally unique object identifier.
-        grant_id: Grant ID of the Nylas account.
-        calendar_id: Calendar ID of the event.
-        busy: This value determines whether to show this event's time block as available on shared or public calendars.
-        read_only: If the event participants are able to edit the event.
-        created_at: Unix timestamp when the event was created.
-        updated_at: Unix timestamp when the event was last updated.
-        participants: List of participants invited to the event. Participants may also be rooms or resources.
-        when: Representation of time and duration for events.
-        conferencing: Representation of conferencing details for events.
+        grant_id: Grant ID representing the user's account.
+        calendar_id: The Event's Calendar ID.
+        busy: Whether to show this Event's time block as available on shared or public calendars.
+        read_only: If the Event's participants are able to edit the Event.
+        created_at: Unix timestamp representing the Event's creation time.
+        updated_at: Unix timestamp representing the time when the Event was last updated.
+        participants: List of participants invited to the Event. Participants may be people, rooms, or resources.
+        when: Representation of an Event's time and duration.
+        conferencing: Representation of an Event's conferencing details.
         object: The type of object.
-        description: The description of the event.
-        location: Location of the event, such as a physical address or meeting room name.
-        ical_uid: Unique id for iCalendar standard, for identifying events across calendaring systems.
-            Recurring events may share the same value. Can be null for events synced before the year 2020.
-        title: Title of the event.
-        html_link: A link to this event in the provider's UI.
-        hide_participants: Whether participants of the event should be hidden.
+        description: The Event's description.
+        location: The Event's location (for example, a physical address or a meeting room).
+        ical_uid: Unique ID for iCalendar standard, allowing you to identify events across calendaring systems.
+            Recurring events may share the same value. Can be "null" for events synced before the year 2020.
+        title: The Event's title.
+        html_link: A link to the Event in the provider's UI.
+        hide_participants: Whether participants of the Event should be hidden.
         metadata: List of key-value pairs storing additional data.
-        creator: User who created the event.
-        organizer: Organizer of the event.
+        creator: The user who created the Event.
+        organizer: The organizer of the Event.
         recurrence: A list of RRULE and EXDATE strings.
-        reminders: List of reminders for the event.
-        status: Status of the event.
-        visibility: Visibility of the event, if the event is private or public.
+        reminders: List of reminders for the Event.
+        status: The Event's status.
+        visibility: The Event's visibility (private or public).
     """
     id: str
     grant_id: str
@@ -370,10 +370,10 @@ class UpdateAutocreate(TypedDict):
 
 
 CreateConferencing = Union[CreateDetails, CreateAutocreate]
-""" Union type representing the different types of conferencing configurations for event creation. """
+""" Union type representing the different types of conferencing configurations for Event creation. """
 
 UpdateConferencing = Union[UpdateDetails, UpdateAutocreate]
-""" Union type representing the different types of conferencing configurations for updating an event."""
+""" Union type representing the different types of conferencing configurations for updating an Event."""
 
 
 # When
@@ -496,10 +496,10 @@ class UpdateDatespan(TypedDict):
 
 
 CreateWhen = Union[CreateTime, CreateTimespan, CreateDate, CreateDatespan]
-""" Union type representing the different types of event time configurations for event creation. """
+""" Union type representing the different types of event time configurations for Event creation. """
 
 UpdateWhen = Union[UpdateTime, UpdateTimespan, UpdateDate, UpdateDatespan]
-""" Union type representing the different types of event time configurations for updating an event."""
+""" Union type representing the different types of event time configurations for updating an Event."""
 
 
 class CreateEventRequest(TypedDict):
@@ -655,10 +655,10 @@ class FindEventQueryParams(TypedDict):
 
 
 UpdateEventQueryParams = CreateEventQueryParams
-""" Interface representing of the query parameters for updating an event. """
+""" Interface representing of the query parameters for updating an Event. """
 
 DestroyEventQueryParams = CreateEventQueryParams
-""" Interface representing of the query parameters for destroying an event. """
+""" Interface representing of the query parameters for destroying an Event. """
 
 
 class SendRsvpQueryParams(TypedDict):

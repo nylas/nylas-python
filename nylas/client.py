@@ -35,7 +35,7 @@ class Client(object):
     @property
     def auth(self) -> Auth:
         """
-        Access the Auth API
+        Access the Auth API.
 
         Returns:
             The Auth API.
