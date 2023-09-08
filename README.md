@@ -4,7 +4,7 @@
 
 # Nylas Python SDK
 
-![PyPI - Version](https://img.shields.io/pypi/v/nylas)
+[![PyPI - Version](https://img.shields.io/pypi/v/nylas)](https://pypi.org/project/nylas/)
 [![codecov](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg?token=HyxGAn5bJR)](https://codecov.io/gh/nylas/nylas-python)
 
 This is the GitHub repository for the Nylas Python SDK. The repo is primarily for anyone who wants to install the SDK from source or make contributions to it.

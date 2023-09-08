@@ -123,7 +123,7 @@ def main():
         cmdclass={"test": PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
-        description="Python bindings for Nylas, the next-generation email platform.",
+        description="Python bindings for the Nylas API platform.",
         license="MIT",
         keywords="inbox app appserver email nylas contacts calendar",
         url="https://github.com/nylas/nylas-python",
