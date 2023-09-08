@@ -1,7 +1,25 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.0.0b1
+----------------
+* **BREAKING CHANGE**: Python SDK v6 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3
+* **BREAKING CHANGE**: Drop support for Python < v3.8
+* **BREAKING CHANGE**: Dropped the use of 'Collections' in favor of 'Resources'
+* **BREAKING CHANGE**: Removed all REST calls from models and moved them directly into resources
+* **BREAKING CHANGE**: Models no longer inherit from `dict` but instead either are a `dataclass` or inherit from `TypedDict`
+* **BREAKING CHANGE**: Renamed the SDK entrypoint from `APIClient` to `Client`
+* **REMOVED**: Local Webhook development support is removed due to incompatibility
+* Rewrote the majority of SDK to be more intuitive, explicit, and efficient
+* Created models for all API resources and endpoints, for all HTTP methods to reduce confusion on which fields are available for each endpoint
+* Created error classes for the different API errors as well as SDK-specific errors
+
+v5.14.1
+----------------
+* Fix error when trying to iterate on list after calling count
+* Fix error when setting participant status on create event
+
+v5.14.0
 ----------------
 * Add support for verifying webhook signatures
 * Add optional parameter for token-info endpoint
