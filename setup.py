@@ -13,6 +13,9 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
         r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
     ).group(1)
 
+with open("README.md", "r", encoding="utf-8") as f:
+    README = f.read()
+
 RUN_DEPENDENCIES = [
     "requests[security]>=2.31.0",
     "dataclasses-json>=0.5.9",
@@ -125,17 +128,7 @@ def main():
         keywords="inbox app appserver email nylas contacts calendar",
         url="https://github.com/nylas/nylas-python",
         long_description_content_type="text/markdown",
-        long_description="""
-# Nylas REST API Python bindings
-![Build Status](https://github.com/nylas/nylas-python/workflows/Test/badge.svg)
-[![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
-
-Python bindings for the Nylas REST API. https://www.nylas.com/docs
-
-The Nylas APIs power applications with email, calendar, and contacts CRUD and bi-directional sync from any inbox in the world.
-
-Nylas is compatible with 100% of email service providers, so you only have to integrate once.
-No more headaches building unique integrations against archaic and outdated IMAP and SMTP protocols.""",
+        long_description=README,
     )
 
 
