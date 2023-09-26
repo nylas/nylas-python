@@ -208,9 +208,9 @@ class Reminder:
     Class representation of a reminder object.
 
     Attributes:
-        use_default: The user's preferred Event reminder time, in minutes.
-            Reminder minutes are in the following format: "[20]".
-        overrides: The user's preferred method for Event reminders (Google only).
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
     """
 
     use_default: Optional[bool] = None
