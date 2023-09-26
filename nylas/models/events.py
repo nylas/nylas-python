@@ -187,9 +187,9 @@ Conferencing = Union[Details, Autocreate]
 
 @dataclass_json
 @dataclass
-class Reminder:
+class ReminderOverride:
     """
-    Class representation of a reminder object.
+    Class representation of a reminder override object.
 
     Attributes:
         reminder_minutes: The user's preferred Event reminder time, in minutes.
@@ -197,8 +197,24 @@ class Reminder:
         reminder_method: The user's preferred method for Event reminders (Google only).
     """
 
-    reminder_minutes: str
-    reminder_method: str
+    reminder_minutes: Optional[str] = None
+    reminder_method: Optional[str] = None
+
+
+@dataclass_json
+@dataclass
+class Reminder:
+    """
+    Class representation of a reminder object.
+
+    Attributes:
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
+    """
+
+    use_default: Optional[bool] = None
+    overrides: Optional[List[ReminderOverride]] = None
 
 
 @dataclass_json
@@ -234,6 +250,7 @@ class Event:
         status: The Event's status.
         visibility: The Event's visibility (private or public).
     """
+
     id: str
     grant_id: str
     calendar_id: str
@@ -243,7 +260,6 @@ class Event:
     updated_at: int
     participants: List[Participant]
     when: When
-    conferencing: Conferencing
     object: str = "event"
     description: Optional[str] = None
     location: Optional[str] = None
@@ -255,9 +271,10 @@ class Event:
     creator: Optional[EmailName] = None
     organizer: Optional[EmailName] = None
     recurrence: Optional[List[str]] = None
-    reminders: Optional[List[Reminder]] = None
+    reminders: Optional[Reminder] = None
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
+    conferencing: Optional[Conferencing] = None
 
 
 class CreateParticipant(TypedDict):
