@@ -33,9 +33,9 @@ class Participant:
 
     email: str
     status: ParticipantStatus
-    name: Optional[str]
-    comment: Optional[str]
-    phone_number: Optional[str]
+    name: Optional[str] = None
+    comment: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 @dataclass_json
@@ -50,7 +50,7 @@ class EmailName:
     """
 
     email: str
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 @dataclass_json
@@ -86,8 +86,8 @@ class Timespan:
 
     start_time: int
     end_time: int
-    start_timezone: Optional[str]
-    end_timezone: Optional[str]
+    start_timezone: Optional[str] = None
+    end_timezone: Optional[str] = None
 
 
 @dataclass_json
