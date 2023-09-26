@@ -4,6 +4,7 @@ nylas-python Changelog
 v6.0.0b2
 ----------------
 * Fix inconsistency between Event model and API contract
+* Fix bug when deserializing Events with empty optional fields
 
 v6.0.0b1
 ----------------
