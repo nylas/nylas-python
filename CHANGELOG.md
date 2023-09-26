@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b2
+----------------
+* Fix inconsistency between Event model and API contract
+
 v6.0.0b1
 ----------------
 * **BREAKING CHANGE**: Python SDK v6 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3
