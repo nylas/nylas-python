@@ -63,7 +63,7 @@ local/
 pip-selfcheck.json
 tests/output
 local.env
-nylas/test.py
+test.py
 .env
 
 # Documentation

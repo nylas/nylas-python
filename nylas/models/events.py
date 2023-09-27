@@ -1,7 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional, Union, Literal
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, config
 from typing_extensions import TypedDict, NotRequired
 
 Status = Literal["confirmed", "tentative", "cancelled"]
@@ -67,7 +67,8 @@ class Time:
     """
 
     time: int
-    timezone: str
+    timezone: Optional[str] = None
+    object: str = "time"
 
 
 @dataclass_json
@@ -88,6 +89,7 @@ class Timespan:
     end_time: int
     start_timezone: Optional[str] = None
     end_timezone: Optional[str] = None
+    object: str = "timespan"
 
 
 @dataclass_json
@@ -102,6 +104,7 @@ class Date:
     """
 
     date: str
+    object: str = "date"
 
 
 @dataclass_json
@@ -118,10 +121,39 @@ class Datespan:
 
     start_date: str
     end_date: str
+    object: str = "datespan"
 
 
 When = Union[Time, Timespan, Date, Datespan]
 """ Union type representing the different types of Event time configurations. """
+
+
+def _decode_when(when: dict) -> When:
+    """
+    Decode a when object into a When object.
+
+    Args:
+        when: The when object to decode.
+
+    Returns:
+        The decoded When object.
+    """
+    if "object" not in when:
+        raise ValueError("Invalid when object, no 'object' field found.")
+
+    if when["object"] == "time":
+        return Time.from_dict(when)
+    elif when["object"] == "timespan":
+        return Timespan.from_dict(when)
+    elif when["object"] == "date":
+        return Date.from_dict(when)
+    elif when["object"] == "datespan":
+        return Datespan.from_dict(when)
+    else:
+        raise ValueError(
+            f"Invalid when object, unknown 'object' field found: {when['object']}"
+        )
+
 
 ConferencingProvider = Literal[
     "Google Meet", "Zoom Meeting", "Microsoft Teams", "GoToMeeting", "WebEx"
@@ -183,6 +215,29 @@ class Autocreate:
 
 Conferencing = Union[Details, Autocreate]
 """ Union type representing the different types of conferencing configurations. """
+
+
+def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
+    """
+    Decode a when object into a When object.
+
+    Args:
+        when: The when object to decode.
+
+    Returns:
+        The decoded When object.
+    """
+    if not conferencing:
+        return None
+
+    if "details" in conferencing:
+        return Details.from_dict(conferencing)
+    elif "autocreate" in conferencing:
+        return Autocreate.from_dict(conferencing)
+    else:
+        raise ValueError(
+            f"Invalid conferencing object, unknown type found: {conferencing}"
+        )
 
 
 @dataclass_json
@@ -259,7 +314,10 @@ class Event:
     created_at: int
     updated_at: int
     participants: List[Participant]
-    when: When
+    when: When = field(metadata=config(decoder=_decode_when))
+    conferencing: Optional[Conferencing] = field(
+        metadata=config(decoder=_decode_conferencing)
+    )
     object: str = "event"
     description: Optional[str] = None
     location: Optional[str] = None
@@ -274,7 +332,6 @@ class Event:
     reminders: Optional[Reminder] = None
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
-    conferencing: Optional[Conferencing] = None
 
 
 class CreateParticipant(TypedDict):

@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b3
+----------------
+* Fix bug when deserializing Union types
+
 v6.0.0b2
 ----------------
 * Fix inconsistency between Event model and API contract
