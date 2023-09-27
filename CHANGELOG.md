@@ -3,7 +3,7 @@ nylas-python Changelog
 
 v6.0.0b3
 ----------------
-* Fix bug when deserializing the `when` field of an Event
+* Fix bug when deserializing Union types
 
 v6.0.0b2
 ----------------
