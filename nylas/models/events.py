@@ -217,6 +217,29 @@ Conferencing = Union[Details, Autocreate]
 """ Union type representing the different types of conferencing configurations. """
 
 
+def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
+    """
+    Decode a when object into a When object.
+
+    Args:
+        when: The when object to decode.
+
+    Returns:
+        The decoded When object.
+    """
+    if not conferencing:
+        return None
+
+    if "details" in conferencing:
+        return Details.from_dict(conferencing)
+    elif "autocreate" in conferencing:
+        return Autocreate.from_dict(conferencing)
+    else:
+        raise ValueError(
+            f"Invalid conferencing object, unknown type found: {conferencing}"
+        )
+
+
 @dataclass_json
 @dataclass
 class ReminderOverride:
@@ -292,6 +315,9 @@ class Event:
     updated_at: int
     participants: List[Participant]
     when: When = field(metadata=config(decoder=_decode_when))
+    conferencing: Optional[Conferencing] = field(
+        metadata=config(decoder=_decode_conferencing)
+    )
     object: str = "event"
     description: Optional[str] = None
     location: Optional[str] = None
@@ -306,7 +332,6 @@ class Event:
     reminders: Optional[Reminder] = None
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
-    conferencing: Optional[Conferencing] = None
 
 
 class CreateParticipant(TypedDict):
