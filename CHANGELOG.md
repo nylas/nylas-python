@@ -4,6 +4,7 @@ nylas-python Changelog
 v6.0.0b3
 ----------------
 * Fix bug when deserializing Union types
+* Fix bug when deserializing delete response
 
 v6.0.0b2
 ----------------

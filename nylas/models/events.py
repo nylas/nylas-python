@@ -316,7 +316,7 @@ class Event:
     participants: List[Participant]
     when: When = field(metadata=config(decoder=_decode_when))
     conferencing: Optional[Conferencing] = field(
-        metadata=config(decoder=_decode_conferencing)
+        default=None, metadata=config(decoder=_decode_conferencing)
     )
     object: str = "event"
     description: Optional[str] = None
