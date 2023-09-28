@@ -69,4 +69,4 @@ class DestroyableApiResource(Resource):
         response_json = self._http_client._execute(
             "DELETE", path, headers, query_params, request_body
         )
-        return Response.from_dict(response_json, response_type)
+        return response_type.from_dict(response_json)
