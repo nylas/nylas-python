@@ -29,7 +29,7 @@ class TimeSlot:
     Attributes:
         start_time: Unix timestamp for the start of the slot.
         end_time: Unix timestamp for the end of the slot.
-        status: The status of the slot. Can be "free", "busy", or "tentative".
+        status: The status of the slot. Typically "busy"
     """
 
     start_time: int
