@@ -44,7 +44,7 @@ class GetFreeBusyResponse:
 
     """
 
-    data: List[Union[FreeBusy, Error]]
+    List[Union[FreeBusy, Error]]
 
 
 class GetFreeBusyRequest(TypedDict):
