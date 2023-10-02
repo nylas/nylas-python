@@ -8,6 +8,14 @@ from typing_extensions import TypedDict
 @dataclass_json
 @dataclass
 class Error:
+    """
+    Interface for a Nylas free/busy call error
+
+    Attributes:
+        email: The email address of the participant who had an error.
+        error: The provider's error message.
+    """
+
     email: str
     error: str
 
@@ -19,9 +27,9 @@ class TimeSlot:
     Interface for a Nylas free/busy time slot
 
     Attributes:
-        emails: The emails of the participants who are available for the time slot.
         start_time: Unix timestamp for the start of the slot.
         end_time: Unix timestamp for the end of the slot.
+        status: The status of the slot. Can be "free", "busy", or "tentative".
     """
 
     start_time: int
@@ -32,6 +40,14 @@ class TimeSlot:
 @dataclass_json
 @dataclass
 class FreeBusy:
+    """
+    Interface for an individual Nylas free/busy response
+
+    Attributes:
+        email: The email address of the participant.
+        time_slots: List of time slots for the participant.
+    """
+
     email: str
     time_slots: List[TimeSlot]
 
@@ -41,6 +57,8 @@ class FreeBusy:
 class GetFreeBusyResponse:
     """
     Interface for a Nylas get free/busy response
+
+    A list of FreeBusy objects and Error objects.
 
     """
 
