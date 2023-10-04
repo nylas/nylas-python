@@ -2,6 +2,7 @@ from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
 from nylas.resources.auth import Auth
+from nylas.resources.grants import Grants
 from nylas.resources.calendars import Calendars
 from nylas.resources.events import Events
 from nylas.resources.webhooks import Webhooks
@@ -41,6 +42,16 @@ class Client(object):
             The Auth API.
         """
         return Auth(self.http_client)
+
+    @property
+    def grants(self) -> Grants:
+        """
+        Access the Grants API.
+
+        Returns:
+            The Grants API.
+        """
+        return Grants(self.http_client)
 
     @property
     def applications(self) -> Applications:
