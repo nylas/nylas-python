@@ -57,12 +57,34 @@ nylas = Client(
     api_key="API_KEY",
 )
 
-calendars = nylas.calendars.list("GRANT_ID")
+calendars, request_id, next_cursor = nylas.calendars.list("GRANT_ID")
+
+event, request_id = nylas.events.create(
+    identifier="GRANT_ID",
+    request_body={
+        "title": "test title",
+        "description": "test description",
+        "when": {
+            "start_time": start_unix_timestamp,
+            "end_time": end_unix_timestamp,
+        }
+    },
+    query_params={"calendar_id": "primary", "notify_participants": True},
+    )
+)
+nylas.events.destroy("GRANT_ID", event.id, {"calendar_id": "primary"})
+
 ```
 
 ## 📚 Documentation
 
-Nylas maintains a [reference guide for the Python SDK](https://nylas-python-sdk-reference.pages.dev/) to help you get familiar with the available functions and classes.
+This SDK makes heavy use of [Python 3 dataclasses](https://realpython.com/python-data-classes/) to define the REST resources and request/response schemas of the Nylas APIs. The Client object is a wrapper around all of these resources and is used to interact with the corresponding APIs. Basic CRUD operations are handled by the `create()`, `find()`, `list()`, `update()`, and `destroy()` methods on each resource. Resources may also have other methods which are all detailed in the [reference guide for the Python SDK](https://nylas-python-sdk-reference.pages.dev/). In the code reference, start at `client`, and then `resources` will give more info on available API call methods. `models` is the place to find schemas for requests, responses, and all Nylas object types.
+
+While most resources are accessed via the top-level Client object, note that `auth` contains the sub-resource `grants` as well as a collection of other auth-related API calls.
+
+You'll want to catch `nylas.models.errors.NylasAPIError` to handle errors.
+
+Have fun!!
 
 ## ✨ Upgrade from v5.x
 
