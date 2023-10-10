@@ -7,7 +7,7 @@ from typing_extensions import TypedDict
 
 @dataclass_json
 @dataclass
-class Error:
+class FreeBusyError:
     """
     Interface for a Nylas free/busy call error
 
@@ -58,11 +58,11 @@ class GetFreeBusyResponse:
     """
     Interface for a Nylas get free/busy response
 
-    A list of FreeBusy objects and Error objects.
+    A list of FreeBusy objects and FreeBusyError objects.
 
     """
 
-    List[Union[FreeBusy, Error]]
+    List[Union[FreeBusy, FreeBusyError]]
 
 
 class GetFreeBusyRequest(TypedDict):
