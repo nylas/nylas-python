@@ -27,10 +27,10 @@ def _hash_pkce_secret(secret: str) -> str:
 def _build_query(config: dict) -> dict:
     config["response_type"] = "code"
 
-    if not config["access_type"]:
+    if "access_type" not in config:
         config["access_type"] = "online"
 
-    if config["scope"]:
+    if "scope" in config:
         config["scope"] = " ".join(config["scope"])
 
     return config
@@ -49,7 +49,9 @@ def _build_query_with_admin_consent(config: dict) -> dict:
     params = _build_query(config)
 
     params["response_type"] = "adminconsent"
-    params["credential_id"] = config["credentialId"]
+
+    if "credential_id" in config:
+        params["credential_id"] = config["credential_id"]
 
     return params
 
