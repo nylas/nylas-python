@@ -49,7 +49,9 @@ def _build_query_with_admin_consent(config: dict) -> dict:
     params = _build_query(config)
 
     params["response_type"] = "adminconsent"
-    params["credential_id"] = config["credentialId"]
+
+    if "credential_id" in config:
+        params["credential_id"] = config["credential_id"]
 
     return params
 
