@@ -30,8 +30,8 @@ def _build_query(config: dict) -> dict:
     if not config["access_type"]:
         config["access_type"] = "online"
 
-    if config["scopes"]:
-        config["scopes"] = " ".join(config["scopes"])
+    if config["scope"]:
+        config["scope"] = " ".join(config["scope"])
 
     return config
 
