@@ -27,10 +27,10 @@ def _hash_pkce_secret(secret: str) -> str:
 def _build_query(config: dict) -> dict:
     config["response_type"] = "code"
 
-    if not config["access_type"]:
+    if "access_type" not in config:
         config["access_type"] = "online"
 
-    if config["scope"]:
+    if "scope" in config:
         config["scope"] = " ".join(config["scope"])
 
     return config
