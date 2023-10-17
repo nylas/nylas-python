@@ -4,6 +4,8 @@ from typing import Dict, Any, List, Optional, Union, Literal
 from dataclasses_json import dataclass_json, config
 from typing_extensions import TypedDict, NotRequired
 
+from nylas.models.list_query_params import ListQueryParams
+
 Status = Literal["confirmed", "tentative", "cancelled"]
 """ Literal representing the status of an Event. """
 
@@ -660,7 +662,7 @@ class UpdateEventRequest(TypedDict):
     hide_participants: NotRequired[bool]
 
 
-class ListEventQueryParams(TypedDict):
+class ListEventQueryParams(ListQueryParams):
     """
     Interface representing the query parameters for listing events.
 
@@ -684,9 +686,10 @@ class ListEventQueryParams(TypedDict):
         busy: Returns events with a busy status of true.
         order_by: Order results by the specified field.
             Currently only start is supported.
-        limit: The maximum number of objects to return.
+        limit (NotRequired[int]): The maximum number of objects to return.
             This field defaults to 50. The maximum allowed value is 200.
-        page_token: An identifier that specifies which page of data to return.
+        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
     """
 
     calendar_id: str
@@ -700,8 +703,6 @@ class ListEventQueryParams(TypedDict):
     expand_recurring: NotRequired[bool]
     busy: NotRequired[bool]
     order_by: NotRequired[str]
-    limit: NotRequired[int]
-    page_token: NotRequired[str]
 
 
 class CreateEventQueryParams(TypedDict):
