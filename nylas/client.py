@@ -3,6 +3,7 @@ from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
 from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
+from nylas.resources.connectors import Connectors
 from nylas.resources.events import Events
 from nylas.resources.webhooks import Webhooks
 
@@ -51,6 +52,16 @@ class Client(object):
             The Applications API.
         """
         return Applications(self.http_client)
+
+    @property
+    def connectors(self) -> Connectors:
+        """
+        Access the Connectors API.
+
+        Returns:
+            The Connectors API.
+        """
+        return Connectors(self.http_client)
 
     @property
     def calendars(self) -> Calendars:
