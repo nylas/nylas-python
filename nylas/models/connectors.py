@@ -81,7 +81,7 @@ class GoogleCreateConnectorRequest(BaseCreateConnectorRequest):
         scope: The Google OAuth scopes
     """
 
-    settings: NotRequired[GoogleCreateConnectorSettings]
+    settings: GoogleCreateConnectorSettings
     scope: NotRequired[List[str]]
 
 
@@ -96,7 +96,7 @@ class MicrosoftCreateConnectorRequest(BaseCreateConnectorRequest):
         scope: The Microsoft OAuth scopes
     """
 
-    settings: NotRequired[MicrosoftCreateConnectorSettings]
+    settings: MicrosoftCreateConnectorSettings
     scope: NotRequired[List[str]]
 
 
