@@ -3,7 +3,6 @@ from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
 from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
-from nylas.resources.credentials import Credentials
 from nylas.resources.events import Events
 from nylas.resources.webhooks import Webhooks
 
@@ -52,16 +51,6 @@ class Client(object):
             The Applications API.
         """
         return Applications(self.http_client)
-
-    @property
-    def credentials(self) -> Credentials:
-        """
-        Access the Credentials API.
-
-        Returns:
-            The Credentials API.
-        """
-        return Credentials(self.http_client)
 
     @property
     def calendars(self) -> Calendars:

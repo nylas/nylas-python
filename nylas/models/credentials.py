@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from type import List, Any, Dict, Optional, Literal, Union, NotRequired
 
 from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict
-
+from typing_extensions import TypedDict, Protocol
 
 CredentialType = Literal["adminconsent", "serviceaccount", "connector"]
+
 
 @dataclass_json
 @dataclass
@@ -28,36 +28,32 @@ class Credential:
     updated_at: Optional[int] = None
 
 
-class MicrosoftAdminConsentSettings(TypedDict):
+class MicrosoftAdminConsentSettings(Protocol):
     client_id: str
     client_secret: str
 
 
-class CreateCredentialBaseRequest(TypedDict):
+class GoogleServiceAccountCredential(Protocol):
+    private_key_id: str
+    private_key: str
+    client_email: str
+
+
+CredentialData = Union[MicrosoftAdminConsentSettings, GoogleServiceAccountCredential, Dict[str, any]]
+
+
+class CredentialRequest(TypedDict):
     """
         Interface representing a request to create a credential.
 
         Attributes:
-            provider: OAuth provider.
             settings: Settings required to create a credential
             credential_type: Type of credential you want to create.
             credential_data: The data required to successfully create the credential object
     """
-    provider: str
     name: Optional[str]
     credential_type: CredentialType
-
-
-class GoogleServiceAccountCredential(CreateCredentialBaseRequest):
-    credential_data: Dict[str, any]
-
-
-class AdminConsentCredential(CreateCredentialBaseRequest):
-    credential_data: MicrosoftAdminConsentSettings
-
-
-class ConnectorOverrideCredential(CreateCredentialBaseRequest):
-    credential_data: Dict[str, any]
+    credential_data: CredentialData
 
 
 class ListCredentialQueryParams(TypedDict):
@@ -77,6 +73,3 @@ class ListCredentialQueryParams(TypedDict):
     offset: NotRequired[int]
     order_by: NotRequired[str]
     sort_by: NotRequired[str]
-
-
-CredentialRequest = Union[AdminConsentCredential, GoogleServiceAccountCredential, ConnectorOverrideCredential]

@@ -51,11 +51,12 @@ class Credentials(
             path=f"/v3/connectors/{provider}/creds/{credential_id}", response_type=Credential
         )
 
-    def create(self, request_body: CredentialRequest) -> Response[Credential]:
+    def create(self, provider: Provider, request_body: CredentialRequest) -> Response[Credential]:
         """
         Create a credential for a particular provider.
 
         Args:
+            provider: The provider.
             request_body: The values to create the Credential with.
 
         Returns:
@@ -63,14 +64,15 @@ class Credentials(
         """
 
         return super(Credentials, self).create(
-            path=f"/v3/connectors/{request_body.get('provider')}/creds", response_type=Credential, request_body=request_body
+            path=f"/v3/connectors/{provider}/creds", response_type=Credential, request_body=request_body
         )
 
-    def update(self, credential_id: str, request_body: CredentialRequest) -> Response[Credential]:
+    def update(self, provider: Provider, credential_id: str, request_body: CredentialRequest) -> Response[Credential]:
         """
         Update a credential.
 
         Args:
+            provider: The provider.
             credential_id: The ID of the credential to update.
             request_body: The values to update the credential with.
 
@@ -79,7 +81,7 @@ class Credentials(
         """
 
         return super(Credentials, self).update(
-            path=f"/v3/connectors/{request_body.get('provider')}/creds/{credential_id}", response_type=Credential,
+            path=f"/v3/connectors/{provider}/creds/{credential_id}", response_type=Credential,
             request_body=request_body
         )
 

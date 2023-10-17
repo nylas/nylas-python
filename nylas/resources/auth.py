@@ -15,6 +15,7 @@ from nylas.models.auth import (
     URLForAdminConsentConfig,
 )
 from nylas.models.response import Response
+from nylas.resources.credentials import Credentials
 from nylas.resources.grants import Grants
 from nylas.resources.resource import Resource
 
@@ -57,6 +58,17 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
+
+    @property
+    def credentials(self) -> Credentials:
+        """
+        Access the Credentials API.
+
+        Returns:
+            The Credentials API.
+        """
+        return Credentials(self.http_client)
+
     @property
     def grants(self) -> Grants:
         """
