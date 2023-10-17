@@ -67,7 +67,7 @@ class Auth(Resource):
         Returns:
             The Credentials API.
         """
-        return Credentials(self.http_client)
+        return Credentials(self._http_client)
 
     @property
     def grants(self) -> Grants:
