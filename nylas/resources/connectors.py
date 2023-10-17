@@ -1,3 +1,5 @@
+from nylas.resources.credentials import Credentials
+
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -22,6 +24,15 @@ class Connectors(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    @property
+    def credentials(self) -> Credentials:
+        """
+        Access the Credentials API.
+
+        Returns:
+            The Credentials API.
+        """
+        return Credentials(self._http_client)
     def list(self, query_params: ListConnectorQueryParams) -> ListResponse[Connector]:
         """
         Return all Connectors.
