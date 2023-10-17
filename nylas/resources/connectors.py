@@ -10,6 +10,7 @@ from nylas.models.connectors import (
     ListConnectorQueryParams,
     Connector,
     CreateConnectorRequest,
+    UpdateConnectorRequest,
 )
 from nylas.models.response import ListResponse, Response, DeleteResponse
 
@@ -68,7 +69,7 @@ class Connectors(
         )
 
     def update(
-        self, provider: Provider, request_body: CreateConnectorRequest
+        self, provider: Provider, request_body: UpdateConnectorRequest
     ) -> Response[Connector]:
         """
         Create a connector.
