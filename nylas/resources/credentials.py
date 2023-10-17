@@ -8,7 +8,7 @@ from nylas.handler.api_resources import (
 from nylas.models.auth import Provider
 from nylas.models.credentials import (
     Credential,
-    CredentialRequest, ListCredentialQueryParams
+    CredentialRequest, ListCredentialQueryParams, UpdateCredentialRequest
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -20,7 +20,7 @@ class Credentials(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def list(self, provider: Provider, query_params: ListCredentialQueryParams) -> ListResponse[Credential]:
+    def list(self, provider: Provider, query_params: ListCredentialQueryParams = None) -> ListResponse[Credential]:
         """
         Return all credentials for a particular provider.
 
@@ -67,7 +67,7 @@ class Credentials(
             path=f"/v3/connectors/{provider}/creds", response_type=Credential, request_body=request_body
         )
 
-    def update(self, provider: Provider, credential_id: str, request_body: CredentialRequest) -> Response[Credential]:
+    def update(self, provider: Provider, credential_id: str, request_body: UpdateCredentialRequest) -> Response[Credential]:
         """
         Update a credential.
 
@@ -82,10 +82,11 @@ class Credentials(
 
         return super(Credentials, self).update(
             path=f"/v3/connectors/{provider}/creds/{credential_id}", response_type=Credential,
-            request_body=request_body
+            request_body=request_body,
+            method="PATCH"
         )
 
-    def destroy(self, provider: Provider, credential_id: str) -> DeleteResponse[Credential]:
+    def destroy(self, provider: Provider, credential_id: str) -> DeleteResponse:
         """
         Delete a credential.
 

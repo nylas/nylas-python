@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from type import List, Any, Dict, Optional, Literal, Union, NotRequired
+from typing import Dict, Optional, Literal, Union
 
 from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict, Protocol
+from typing_extensions import TypedDict, Protocol, NotRequired
 
 CredentialType = Literal["adminconsent", "serviceaccount", "connector"]
 
@@ -22,7 +22,7 @@ class Credential:
     """
     id: str
     name: str
-    credential_type: Optional[CredentialType]
+    credential_type: Optional[CredentialType] = None
     hashed_data: Optional[str] = None
     created_at: Optional[int] = None
     updated_at: Optional[int] = None
@@ -47,7 +47,7 @@ class CredentialRequest(TypedDict):
         Interface representing a request to create a credential.
 
         Attributes:
-            settings: Settings required to create a credential
+            name: Name of the credential
             credential_type: Type of credential you want to create.
             credential_data: The data required to successfully create the credential object
     """
@@ -55,6 +55,16 @@ class CredentialRequest(TypedDict):
     credential_type: CredentialType
     credential_data: CredentialData
 
+class UpdateCredentialRequest(TypedDict):
+    """
+    Interface representing a request to update a credential.
+
+    Attributes:
+        name: Name of the credential
+        credential_data: The data required to successfully create the credential object
+    """
+    name: Optional[str]
+    credential_data: Optional[CredentialData]
 
 class ListCredentialQueryParams(TypedDict):
     """
