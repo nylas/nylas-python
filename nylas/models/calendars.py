@@ -4,6 +4,8 @@ from typing import Dict, Any, Optional
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
+from nylas.models.list_query_params import ListQueryParams
+
 
 @dataclass_json
 @dataclass
@@ -44,20 +46,18 @@ class Calendar:
     metadata: Optional[Dict[str, Any]] = None
 
 
-class ListCalendersQueryParams(TypedDict):
+class ListCalendersQueryParams(ListQueryParams):
     """
     Interface of the query parameters for listing calendars.
 
     Attributes:
-        limit: The maximum number of objects to return.
+        limit (NotRequired[int]): The maximum number of objects to return.
             This field defaults to 50. The maximum allowed value is 200.
-        page_token: An identifier that specifies which page of data to return.
+        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
             This value should be taken from a ListResponse object's next_cursor parameter.
         metadata_pair: Pass in your metadata key-value pair to search for metadata.
     """
 
-    limit: NotRequired[int]
-    page_token: NotRequired[str]
     metadata_pair: NotRequired[Dict[str, str]]
 
 
