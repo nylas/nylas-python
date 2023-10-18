@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b4
+----------------
+* Add support for the free-busy endpoint
+* Add support for Connectors and Credentials APIs
+* Fix errors when building the authentication URL
+
 v6.0.0b3
 ----------------
 * Fix bug when deserializing Union types
