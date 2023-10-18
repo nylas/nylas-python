@@ -57,6 +57,7 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
+
     @property
     def grants(self) -> Grants:
         """
