@@ -53,7 +53,7 @@ class Grants(
 
     def create(self, request_body: CreateGrantRequest) -> Response[Grant]:
         """
-        Create a Grant.
+        Create a Grant via Custom Authentication.
 
         Args:
             request_body: The values to create the Grant with.
@@ -63,7 +63,7 @@ class Grants(
         """
 
         return super(Grants, self).create(
-            path=f"/v3/grants", response_type=Grant, request_body=request_body
+            path=f"/v3/connect/custom", response_type=Grant, request_body=request_body
         )
 
     def update(
