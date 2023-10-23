@@ -128,11 +128,11 @@ class Calendars(
         """
         json_response = self._http_client._execute(
             method="POST",
-            path=f"/v3/grants/{identifier}/calendar/availability",
+            path=f"/v3/calendar/availability",
             request_body=request_body,
         )
 
-        return Response.from_dict(json_response, GetAvailabilityResponse)
+        return Response(json_response, GetAvailabilityResponse)
 
     def get_free_busy(
         self, identifier: str, request_body: GetFreeBusyRequest
