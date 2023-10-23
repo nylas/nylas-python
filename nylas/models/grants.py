@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Any, Dict, Optional
 
 from dataclasses_json import dataclass_json
@@ -30,8 +30,8 @@ class Grant:
 
     id: str
     provider: str
-    scope: List[str]
     created_at: int
+    scope: List[str] = field(default_factory=list)
     grant_status: Optional[str] = None
     email: Optional[str] = None
     user_agent: Optional[str] = None
