@@ -114,13 +114,12 @@ class Calendars(
         )
 
     def get_availability(
-        self, identifier: str, request_body: GetAvailabilityRequest
+        self, request_body: GetAvailabilityRequest
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.
 
         Args:
-            identifier: The grant ID or email account to get availability for.
             request_body: The request body to send to the API.
 
         Returns:
