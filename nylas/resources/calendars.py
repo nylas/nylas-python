@@ -127,7 +127,7 @@ class Calendars(
         """
         json_response = self._http_client._execute(
             method="POST",
-            path=f"/v3/calendar/availability",
+            path="/v3/calendars/availability",
             request_body=request_body,
         )
 
