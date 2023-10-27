@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json, config
 from typing import List, Literal, Optional
-from typing_extensions import TypedDict, NotRequired
+from typing_extensions import TypedDict, NotRequired, get_type_hints
 from datetime import datetime
 
 from nylas.models.list_query_params import ListQueryParams
@@ -95,54 +95,53 @@ class Message:
     headers: Optional[List[str]] = None
 
 
-class ListMessagesQueryParams(ListQueryParams):
-    """
-    Query parameters for listing messages.
+# Need to use Functional typed dicts because "from" and "in" are Python
+# keywords, and can't be declared using the declarative syntax
+ListMessagesQueryParams = TypedDict(
+    "ListMessagesQueryParams",
+    {
+        **get_type_hints(ListQueryParams),  # Inherit fields from ListQueryParams
+        "subject": NotRequired[str],
+        "any_email": NotRequired[str],
+        "from": NotRequired[str],
+        "to": NotRequired[str],
+        "cc": NotRequired[str],
+        "bcc": NotRequired[str],
+        "in": NotRequired[str],
+        "unread": NotRequired[bool],
+        "starred": NotRequired[bool],
+        "thread_id": NotRequired[str],
+        "received_before": NotRequired[int],
+        "received_after": NotRequired[int],
+        "has_attachment": NotRequired[bool],
+        "fields": NotRequired[Fields],
+        "search_query_native": NotRequired[str],
+    },
+)
+"""
+Query parameters for listing messages.
 
-    Attributes:
-        subject: Return messages with matching subject.
-        any_email: Return messages that have been sent or received by this comma-separated list of email addresses.
-        from_: Return messages sent from this email address.
-        to: Return messages sent to this email address.
-        cc: Return messages cc'd to this email address.
-        bcc: Return messages bcc'd to this email address.
-        in_: Return messages in this specific folder or label, specified by ID.
-        unread: Filter messages by unread status.
-        starred: Filter messages by starred status.
-        thread_id: Filter messages by thread_id.
-        received_before: Return messages with received dates before received_before.
-        received_after: Return messages with received dates after received_after.
-        has_attachment: Filter messages by whether they have an attachment.
-        fields: Specify "include_headers" to include headers in the response. "standard" is the default.
-        search_query_native: A native provider search query for Google or Microsoft.
-        limit (NotRequired[int]): The maximum number of objects to return.
-            This field defaults to 50. The maximum allowed value is 200.
-        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
-            This value should be taken from a ListResponse object's next_cursor parameter.
-    """
-
-    subject: NotRequired[str]
-    any_email: NotRequired[str]
-    from_: NotRequired[str] = field(
-        metadata={"dataclasses_json": {"field_name": "from"}}
-    )
-    to: NotRequired[str]
-    cc: NotRequired[str]
-    bcc: NotRequired[str]
-    in_: NotRequired[str]
-
-    unread: NotRequired[bool]
-    starred: NotRequired[bool]
-
-    thread_id: NotRequired[str]
-
-    received_before: NotRequired[int]
-    received_after: NotRequired[int]
-
-    has_attachment: NotRequired[bool]
-
-    fields: NotRequired[Fields]
-    search_query_native: NotRequired[str]
+Attributes:
+    subject: Return messages with matching subject.
+    any_email: Return messages that have been sent or received by this comma-separated list of email addresses.
+    from: Return messages sent from this email address.
+    to: Return messages sent to this email address.
+    cc: Return messages cc'd to this email address.
+    bcc: Return messages bcc'd to this email address.
+    in: Return messages in this specific folder or label, specified by ID.
+    unread: Filter messages by unread status.
+    starred: Filter messages by starred status.
+    thread_id: Filter messages by thread_id.
+    received_before: Return messages with received dates before received_before.
+    received_after: Return messages with received dates after received_after.
+    has_attachment: Filter messages by whether they have an attachment.
+    fields: Specify "include_headers" to include headers in the response. "standard" is the default.
+    search_query_native: A native provider search query for Google or Microsoft.
+    limit (NotRequired[int]): The maximum number of objects to return.
+        This field defaults to 50. The maximum allowed value is 200.
+    page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+        This value should be taken from a ListResponse object's next_cursor parameter.
+"""
 
 
 class FindMessageQueryParams(TypedDict):
