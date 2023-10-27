@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b5
+----------------
+* Fix function parameters for `Calendars.get_availability` and `Grants.list`
+* Fix creating a grant by supporting custom authentication
+
 v6.0.0b4
 ----------------
 * Add support for the free-busy endpoint
