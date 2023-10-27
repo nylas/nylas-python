@@ -122,7 +122,6 @@ class ListMessagesQueryParams(ListQueryParams):
     """
 
     subject: NotRequired[str]
-    # TODO: maybe do some smart parsing with any_email to not require caller to comma separate
     any_email: NotRequired[str]
     from_: NotRequired[str] = field(
         metadata={"dataclasses_json": {"field_name": "from"}}
