@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json
-from typing import List, Optional, Literal
+from dataclasses_json import dataclass_json, config
+from typing import List, Literal, Optional
 from typing_extensions import TypedDict, NotRequired
 from datetime import datetime
 
@@ -22,8 +22,8 @@ class Participant:
         email: Participant's email
     """
 
-    name: NotRequired[str]
     email: str
+    name: Optional[str] = None
 
 
 @dataclass_json
@@ -41,8 +41,8 @@ class Attachment:
 
     id: str
     size: int
-    filename: NotRequired[str]
-    content_type: NotRequired[str]
+    filename: Optional[str] = None
+    content_type: Optional[str] = None
 
 
 @dataclass_json
@@ -76,14 +76,9 @@ class Message:
     thread_id: str
     subject: str
 
-    from_: List[Participant] = field(
-        metadata={"dataclasses_json": {"field_name": "from"}}
-    )
+    from_: List[Participant] = field(metadata=config(field_name="from"))
     to: List[Participant]
-    cc: List[Participant]
-    bcc: List[Participant]
 
-    reply_to: Optional[List[Participant]]
     date: datetime
 
     unread: bool
@@ -92,9 +87,12 @@ class Message:
     snippet: str
     body: str
 
-    attachments: List[Attachment]
-    folders: NotRequired[List[str]]
-    headers: NotRequired[List[str]]
+    bcc: Optional[List[Participant]] = None
+    cc: Optional[List[Participant]] = None
+    reply_to: Optional[List[Participant]] = None
+    attachments: Optional[List[Attachment]] = None
+    folders: Optional[List[str]] = None
+    headers: Optional[List[str]] = None
 
 
 class ListMessagesQueryParams(ListQueryParams):
