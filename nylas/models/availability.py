@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Literal
 
 from dataclasses_json import dataclass_json
@@ -37,8 +37,8 @@ class GetAvailabilityResponse:
         time_slots: The available time slots where a new meeting can be created for the requested preferences.
     """
 
-    order: List[str]
     time_slots: List[TimeSlot]
+    order: List[str] = field(default_factory=list)
 
 
 class MeetingBuffer(TypedDict):
@@ -74,7 +74,7 @@ class OpenHours(TypedDict):
     timezone: str
     start: str
     end: str
-    extdates: List[str]
+    exdates: NotRequired[List[str]]
 
 
 class AvailabilityRules(TypedDict):

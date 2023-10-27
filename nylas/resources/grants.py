@@ -21,7 +21,7 @@ class Grants(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
-    def list(self, query_params: ListGrantsQueryParams) -> ListResponse[Grant]:
+    def list(self, query_params: ListGrantsQueryParams = None) -> ListResponse[Grant]:
         """
         Return all Grants.
 
