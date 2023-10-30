@@ -1,4 +1,3 @@
-from nylas.handler.http_client import HttpClient
 from nylas.models.application_details import ApplicationDetails
 from nylas.models.response import Response
 from nylas.resources.redirect_uris import RedirectUris
