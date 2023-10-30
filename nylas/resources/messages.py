@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -40,7 +40,10 @@ class Messages(
         )
 
     def find(
-        self, identifier: str, message_id: str, query_params: FindMessageQueryParams
+        self,
+        identifier: str,
+        message_id: str,
+        query_params: Optional[FindMessageQueryParams] = None,
     ) -> Response[Message]:
         """
         Return a Message.
