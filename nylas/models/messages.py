@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json, config
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Dict, Any
 from typing_extensions import TypedDict, NotRequired, get_type_hints
 from datetime import datetime
 
@@ -160,7 +160,7 @@ class UpdateMessageRequest(TypedDict):
 
     """
     Request payload for updating a message.
-    
+
     Attributes:
         starred: The message's starred status
         unread: The message's unread status
