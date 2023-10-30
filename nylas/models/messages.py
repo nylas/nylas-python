@@ -5,25 +5,11 @@ from typing_extensions import TypedDict, NotRequired, get_type_hints
 from datetime import datetime
 
 from nylas.models.list_query_params import ListQueryParams
+from nylas.models.events import EmailName
 
 
 Fields = Literal["standard", "include_headers"]
 """ Literal representing which headers to include with a message. """
-
-
-@dataclass_json
-@dataclass
-class Participant:
-    """
-    A participant in a message.
-
-    Attributes:
-        name: Participant's name
-        email: Participant's email
-    """
-
-    email: str
-    name: Optional[str] = None
 
 
 @dataclass_json
@@ -76,8 +62,8 @@ class Message:
     thread_id: str
     subject: str
 
-    from_: List[Participant] = field(metadata=config(field_name="from"))
-    to: List[Participant]
+    from_: List[EmailName] = field(metadata=config(field_name="from"))
+    to: List[EmailName]
 
     date: datetime
 
@@ -87,9 +73,9 @@ class Message:
     snippet: str
     body: str
 
-    bcc: Optional[List[Participant]] = None
-    cc: Optional[List[Participant]] = None
-    reply_to: Optional[List[Participant]] = None
+    bcc: Optional[List[EmailName]] = None
+    cc: Optional[List[EmailName]] = None
+    reply_to: Optional[List[EmailName]] = None
     attachments: Optional[List[Attachment]] = None
     folders: Optional[List[str]] = None
     headers: Optional[List[str]] = None
