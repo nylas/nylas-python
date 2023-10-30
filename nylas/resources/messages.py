@@ -67,7 +67,7 @@ class Messages(
         identifier: str,
         message_id: str,
         request_body: UpdateMessageRequest,
-        query_params: Dict,
+        query_params: Optional[Dict] = None,
     ) -> Response[Message]:
         """
         Update a Message.
@@ -89,7 +89,7 @@ class Messages(
         )
 
     def destroy(
-        self, identifier: str, message_id: str, query_params: Dict
+        self, identifier: str, message_id: str, query_params: Optional[Dict] = None
     ) -> DeleteResponse:
         """
         Delete a Message.
