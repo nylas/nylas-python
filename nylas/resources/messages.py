@@ -65,7 +65,7 @@ class Messages(
         identifier: str,
         message_id: str,
         request_body: UpdateMessageRequest,
-        query_params: UpdateMessageQueryParams,
+        query_params: Dict,
     ) -> Response[Message]:
         """
         Update a Message.
