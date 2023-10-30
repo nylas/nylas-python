@@ -155,25 +155,19 @@ class FindMessageQueryParams(TypedDict):
     fields: NotRequired[Fields]
 
 
-class UpdateMessageQueryParams(TypedDict):
+class UpdateMessageRequest(TypedDict):
 
-    """Query parameters for updating a message.
-
+    """
+    Request payload for updating a message.
+    
     Attributes:
         starred: The message's starred status
         unread: The message's unread status
         folders: The message's folders
+        metadata: A list of key-value pairs storing additional data
     """
-
-    starred: NotRequired[bool]
-    unread: NotRequired[bool]
-    folders: NotRequired[List[str]]
-
-
-class UpdateMessageRequest:
-
-    """Request payload for updating a message."""
 
     unread: NotRequired[bool]
     starred: NotRequired[bool]
     folder: NotRequired[List[str]]
+    metadata: NotRequired[Dict[str, Any]]
