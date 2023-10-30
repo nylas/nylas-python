@@ -94,6 +94,21 @@ See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from v5.x to v6.x.
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 
+## 🛠️  Debugging
+
+It can sometimes be helpful to turn on request logging during development. Adding the following snippet to your code that calls the SDK should get you sorted:
+
+```
+import logging
+import requests
+
+# Set up logging to print out HTTP request information
+logging.basicConfig(level=logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
+```
+
 ## 📝 License
 
 This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms.
