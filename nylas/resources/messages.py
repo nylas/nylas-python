@@ -9,7 +9,6 @@ from nylas.models.messages import (
     Message,
     ListMessagesQueryParams,
     FindMessageQueryParams,
-    UpdateMessageQueryParams,
     UpdateMessageRequest,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
