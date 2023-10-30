@@ -14,6 +14,21 @@ Fields = Literal["standard", "include_headers"]
 
 @dataclass_json
 @dataclass
+class MessageHeader:
+    """
+    A message header.
+
+    Attributes:
+        name: The header name.
+        value: The header value.
+    """
+
+    name: str
+    value: str
+
+
+@dataclass_json
+@dataclass
 class Attachment:
     """
     An attachment on a message.
@@ -78,7 +93,7 @@ class Message:
     reply_to: Optional[List[EmailName]] = None
     attachments: Optional[List[Attachment]] = None
     folders: Optional[List[str]] = None
-    headers: Optional[List[str]] = None
+    headers: Optional[List[MessageHeader]] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
