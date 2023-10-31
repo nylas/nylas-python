@@ -30,13 +30,13 @@ class Grant:
 
     id: str
     provider: str
-    created_at: int
     scope: List[str] = field(default_factory=list)
     grant_status: Optional[str] = None
     email: Optional[str] = None
     user_agent: Optional[str] = None
     ip: Optional[str] = None
     state: Optional[str] = None
+    created_at: Optional[int] = None
     updated_at: Optional[int] = None
     provider_user_id: Optional[str] = None
     settings: Optional[Dict[str, Any]] = None
