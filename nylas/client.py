@@ -5,6 +5,7 @@ from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
 from nylas.resources.events import Events
+from nylas.resources.messages import Messages
 from nylas.resources.webhooks import Webhooks
 
 
@@ -82,6 +83,16 @@ class Client(object):
             The Events API.
         """
         return Events(self.http_client)
+
+    @property
+    def messages(self) -> Messages:
+        """
+        Access the Messages API.
+
+        Returns:
+            The Messages API.
+        """
+        return Messages(self.http_client)
 
     @property
     def webhooks(self) -> Webhooks:
