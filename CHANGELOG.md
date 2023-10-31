@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b6
+----------------
+* Add support for Read, Update, and Delete for Messages API
+* Fix required fields for `Calendar` and `Grant` models
+
 v6.0.0b5
 ----------------
 * Fix function parameters for `Calendars.get_availability` and `Grants.list`
