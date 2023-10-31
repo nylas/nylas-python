@@ -72,6 +72,15 @@ event, request_id = nylas.events.create(
     query_params={"calendar_id": "primary", "notify_participants": True},
     )
 )
+
+event, request_id = nylas.events.find(
+    identifier="GRANT_ID",
+    event_id=event.id,
+    query_params={
+        "calendar_id": "primary",
+    },
+)
+
 nylas.events.destroy("GRANT_ID", event.id, {"calendar_id": "primary"})
 
 ```
