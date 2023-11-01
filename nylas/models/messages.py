@@ -147,7 +147,8 @@ Attributes:
 
 class FindMessageQueryParams(TypedDict):
 
-    """Query parameters for finding a message.
+    """
+    Query parameters for finding a message.
 
     Attributes:
         fields: Specify "include_headers" to include headers in the response. "standard" is the default.
@@ -164,7 +165,7 @@ class UpdateMessageRequest(TypedDict):
     Attributes:
         starred: The message's starred status
         unread: The message's unread status
-        folders: The message's folders
+        folder: The message's folders
         metadata: A list of key-value pairs storing additional data
     """
 
@@ -172,3 +173,61 @@ class UpdateMessageRequest(TypedDict):
     starred: NotRequired[bool]
     folder: NotRequired[List[str]]
     metadata: NotRequired[Dict[str, Any]]
+
+
+@dataclass_json
+@dataclass
+class ScheduledMessageStatus:
+    """
+    The status of a scheduled message.
+
+    Attributes:
+        code: The status code the describes the state of the scheduled message.
+        description: A description of the status of the scheduled message.
+    """
+
+    code: str
+    description: str
+
+
+@dataclass_json
+@dataclass
+class ScheduledMessage:
+    """
+    A scheduled message.
+
+    Attributes:
+        schedule_id: The unique identifier for the scheduled message.
+        status: The status of the scheduled message.
+        close_time: The time the message was sent or failed to send, in epoch time.
+    """
+
+    schedule_id: int
+    status: ScheduledMessageStatus
+    close_time: Optional[int] = None
+
+
+@dataclass_json
+@dataclass
+class ScheduledMessagesList:
+    """
+    A list of scheduled messages.
+
+    Attributes:
+        schedules: The list of scheduled messages.
+    """
+
+    schedules: List[ScheduledMessage]
+
+
+@dataclass_json
+@dataclass
+class StopScheduledMessageResponse:
+    """
+    The response from stopping a scheduled message.
+
+    Attributes:
+        message: A message describing the result of the request.
+    """
+
+    message: str

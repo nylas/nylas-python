@@ -152,4 +152,4 @@ class Calendars(
             request_body=request_body,
         )
 
-        return Response(json_response, GetFreeBusyResponse)
+        return Response.from_dict(json_response, GetFreeBusyResponse)

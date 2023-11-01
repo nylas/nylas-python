@@ -10,6 +10,9 @@ from nylas.models.messages import (
     ListMessagesQueryParams,
     FindMessageQueryParams,
     UpdateMessageRequest,
+    ScheduledMessagesList,
+    ScheduledMessage,
+    StopScheduledMessageResponse,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -106,3 +109,62 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             query_params=query_params,
         )
+
+    def list_scheduled_messages(
+        self, identifier: str
+    ) -> Response[ScheduledMessagesList]:
+        """
+        Retrieve your scheduled messages.
+
+        Args:
+            identifier: The identifier of the grant to delete the message for.
+
+        Returns:
+            Response: The list of scheduled messages.
+        """
+        json_response = self._http_client._execute(
+            method="GET",
+            path=f"/v3/grants/{identifier}/messages/schedules",
+        )
+
+        return Response.from_dict(json_response, ScheduledMessagesList)
+
+    def find_scheduled_messages(
+        self, identifier: str, schedule_id: str
+    ) -> Response[ScheduledMessage]:
+        """
+        Retrieve your scheduled messages.
+
+        Args:
+            identifier: The identifier of the grant to delete the message for.
+            schedule_id: The id of the scheduled message to retrieve.
+
+        Returns:
+            Response: The scheduled message.
+        """
+        json_response = self._http_client._execute(
+            method="GET",
+            path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
+        )
+
+        return Response.from_dict(json_response, ScheduledMessage)
+
+    def stop_scheduled_messages(
+        self, identifier: str, schedule_id: str
+    ) -> Response[StopScheduledMessageResponse]:
+        """
+        Stop a scheduled message.
+
+        Args:
+            identifier: The identifier of the grant to delete the message for.
+            schedule_id: The id of the scheduled message to stop.
+
+        Returns:
+            Response: The confirmation of the stopped scheduled message.
+        """
+        json_response = self._http_client._execute(
+            method="DELETE",
+            path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
+        )
+
+        return Response.from_dict(json_response, StopScheduledMessageResponse)
