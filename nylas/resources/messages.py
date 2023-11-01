@@ -15,6 +15,7 @@ from nylas.models.messages import (
     StopScheduledMessageResponse,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
+from nylas.resources.smart_compose import SmartCompose
 
 
 class Messages(
@@ -23,6 +24,16 @@ class Messages(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    @property
+    def smart_compose(self) -> SmartCompose:
+        """
+        Access the Smart Compose collection of endpoints.
+
+        Returns:
+            The Smart Compose collection of endpoints.
+        """
+        return SmartCompose(self._http_client)
+
     def list(
         self, identifier: str, query_params: ListMessagesQueryParams
     ) -> ListResponse[Message]:
