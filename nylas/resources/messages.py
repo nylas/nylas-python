@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -70,7 +70,6 @@ class Messages(
         identifier: str,
         message_id: str,
         request_body: UpdateMessageRequest,
-        query_params: Optional[Dict] = None,
     ) -> Response[Message]:
         """
         Update a Message.
@@ -88,26 +87,21 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             response_type=Message,
             request_body=request_body,
-            query_params=query_params,
         )
 
-    def destroy(
-        self, identifier: str, message_id: str, query_params: Optional[Dict] = None
-    ) -> DeleteResponse:
+    def destroy(self, identifier: str, message_id: str) -> DeleteResponse:
         """
         Delete a Message.
 
         Args:
             identifier: The identifier of the grant to delete the message for.
             message_id: The identifier of the message to delete.
-            query_params: The query parameters to include in the request.
 
         Returns:
             The deletion response.
         """
         return super(Messages, self).destroy(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
-            query_params=query_params,
         )
 
     def list_scheduled_messages(
