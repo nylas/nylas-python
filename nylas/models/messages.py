@@ -4,6 +4,7 @@ from typing import List, Literal, Optional, Dict, Any
 from typing_extensions import TypedDict, NotRequired, get_type_hints
 from datetime import datetime
 
+from nylas.models.attachments import Attachment
 from nylas.models.list_query_params import ListQueryParams
 from nylas.models.events import EmailName
 
@@ -25,25 +26,6 @@ class MessageHeader:
 
     name: str
     value: str
-
-
-@dataclass_json
-@dataclass
-class Attachment:
-    """
-    An attachment on a message.
-
-    Attributes:
-        id: Globally unique object identifier.
-        size: Size of the attachment in bytes.
-        filename: Name of the attachment.
-        content_type: MIME type of the attachment.
-    """
-
-    id: str
-    size: int
-    filename: Optional[str] = None
-    content_type: Optional[str] = None
 
 
 @dataclass_json
