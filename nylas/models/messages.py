@@ -40,6 +40,7 @@ class Message:
         thread_id: The thread that this message belongs to.
         subject: The subject of the message.
         from_: The sender of the message.
+        object: The type of object.
         to: The recipients of the message.
         cc: The CC recipients of the message.
         bcc: The BCC recipients of the message.
@@ -52,12 +53,14 @@ class Message:
         attachments: The attachments on the message.
         folders: The folders that the message is in.
         headers: The headers of the message.
+        created_at: Unix timestamp of when the message was created.
     """
 
     id: str
     grant_id: str
     from_: List[EmailName] = field(metadata=config(field_name="from"))
     date: datetime
+    object: str = "messages"
     body: Optional[str] = None
     thread_id: Optional[str] = None
     subject: Optional[str] = None
@@ -71,6 +74,7 @@ class Message:
     headers: Optional[List[MessageHeader]] = None
     unread: Optional[bool] = None
     starred: Optional[bool] = None
+    created_at: Optional[int] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
@@ -80,12 +84,12 @@ ListMessagesQueryParams = TypedDict(
     {
         **get_type_hints(ListQueryParams),  # Inherit fields from ListQueryParams
         "subject": NotRequired[str],
-        "any_email": NotRequired[str],
-        "from": NotRequired[str],
-        "to": NotRequired[str],
-        "cc": NotRequired[str],
-        "bcc": NotRequired[str],
-        "in": NotRequired[str],
+        "any_email": NotRequired[List[str]],
+        "from": NotRequired[List[str]],
+        "to": NotRequired[List[str]],
+        "cc": NotRequired[List[str]],
+        "bcc": NotRequired[List[str]],
+        "in": NotRequired[List[str]],
         "unread": NotRequired[bool],
         "starred": NotRequired[bool],
         "thread_id": NotRequired[str],
