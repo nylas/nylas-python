@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional, TypedDict, NotRequired, get_type_hints
+from typing import List, Optional, get_type_hints
+from typing_extensions import TypedDict, NotRequired
 
 from dataclasses_json import dataclass_json
 from nylas.models.events import EmailName
