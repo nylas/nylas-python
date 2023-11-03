@@ -74,19 +74,12 @@ class Message:
 
     id: str
     grant_id: str
-    thread_id: str
-    subject: str
-
     from_: List[EmailName] = field(metadata=config(field_name="from"))
-
     date: datetime
-
-    unread: bool
-    starred: bool
-
-    snippet: str
-    body: str
-
+    body: Optional[str] = None
+    thread_id: Optional[str] = None
+    subject: Optional[str] = None
+    snippet: Optional[str] = None
     to: Optional[List[EmailName]] = None
     bcc: Optional[List[EmailName]] = None
     cc: Optional[List[EmailName]] = None
@@ -94,6 +87,8 @@ class Message:
     attachments: Optional[List[Attachment]] = None
     folders: Optional[List[str]] = None
     headers: Optional[List[MessageHeader]] = None
+    unread: Optional[bool] = None
+    starred: Optional[bool] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python

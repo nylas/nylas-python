@@ -35,7 +35,7 @@ class Messages(
         return SmartCompose(self._http_client)
 
     def list(
-        self, identifier: str, query_params: ListMessagesQueryParams
+        self, identifier: str, query_params: Optional[ListMessagesQueryParams] = None
     ) -> ListResponse[Message]:
         """
         Return all Messages.
