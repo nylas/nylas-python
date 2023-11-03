@@ -78,7 +78,6 @@ class Message:
     subject: str
 
     from_: List[EmailName] = field(metadata=config(field_name="from"))
-    to: List[EmailName]
 
     date: datetime
 
@@ -88,6 +87,7 @@ class Message:
     snippet: str
     body: str
 
+    to: Optional[List[EmailName]] = None
     bcc: Optional[List[EmailName]] = None
     cc: Optional[List[EmailName]] = None
     reply_to: Optional[List[EmailName]] = None
