@@ -38,7 +38,13 @@ class HttpClient(object):
         self.session = requests.Session()
 
     def _execute(
-        self, method, path, headers=None, query_params=None, request_body=None
+        self,
+        method,
+        path,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        data=None,
     ) -> dict:
         request = self._build_request(method, path, headers, query_params)
         try:
@@ -48,6 +54,7 @@ class HttpClient(object):
                 headers=request["headers"],
                 json=request_body,
                 timeout=self.timeout,
+                data=data,
             )
         except requests.exceptions.Timeout:
             raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)

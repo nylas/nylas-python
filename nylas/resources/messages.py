@@ -1,10 +1,15 @@
+import json
 from typing import Optional
+
+from requests_toolbelt import MultipartEncoder
+
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
     UpdatableApiResource,
     DestroyableApiResource,
 )
+from nylas.models.drafts import SendMessageRequest
 from nylas.models.messages import (
     Message,
     ListMessagesQueryParams,
@@ -16,6 +21,26 @@ from nylas.models.messages import (
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
+
+
+def _build_form_request(request_body: dict) -> MultipartEncoder:
+    attachments = request_body.get("attachments", [])
+    request_body.pop("attachments", None)
+    message_payload = json.dumps(request_body)
+
+    # Create the multipart/form-data encoder
+    return MultipartEncoder(
+        fields={
+            "message": ("message", message_payload, "application/json"),
+            **{
+                f"file{index}": {
+                    "filename": attachment.filename,
+                    "content_type": attachment.content_type,
+                }
+                for index, attachment in enumerate(attachments)
+            },
+        }
+    )
 
 
 class Messages(
@@ -114,6 +139,27 @@ class Messages(
         return super(Messages, self).destroy(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
         )
+
+    def send(
+        self, identifier: str, request_body: SendMessageRequest
+    ) -> Response[Message]:
+        """
+        Send a Message.
+
+        Args:
+            identifier: The identifier of the grant to send the message for.
+            request_body: The request body to send the message with.
+
+        Returns:
+            The sent message.
+        """
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/grants/{identifier}/messages/send",
+            data=_build_form_request(request_body),
+        )
+
+        return Response.from_dict(json_response, Message)
 
     def list_scheduled_messages(
         self, identifier: str

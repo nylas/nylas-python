@@ -74,6 +74,9 @@ class CreateDraftRequest(TypedDict):
         snippet: A snippet of the message body.
         body: The body of the message.
         attachments: The attachments on the message.
+        send_at: Unix timestamp to send the message at.
+        reply_to_message_id: The ID of the message that you are replying to.
+        tracking_options: Options for tracking opens, links, and thread replies.
     """
 
     body: NotRequired[str]
@@ -89,7 +92,7 @@ class CreateDraftRequest(TypedDict):
     starred: NotRequired[bool]
     send_at: NotRequired[int]
     reply_to_message_id: NotRequired[str]
-    tracking_options: NotRequired[dict]
+    tracking_options: NotRequired[TrackingOptions]
 
 
 UpdateDraftRequest = CreateDraftRequest
@@ -132,3 +135,28 @@ Attributes:
     page_token (NotRequired[str]): An identifier that specifies which page of data to return.
         This value should be taken from a ListResponse object's next_cursor parameter.
 """
+
+
+class SendMessageRequest(CreateDraftRequest):
+    """
+    A request to send a message.
+
+    Attributes:
+        thread_id (NotRequired[str]): The thread that this message belongs to.
+        subject (NotRequired[str]): The subject of the message.
+        to (NotRequired[List[EmailName]]): The recipients of the message.
+        cc (NotRequired[List[EmailName]]): The CC recipients of the message.
+        bcc (NotRequired[List[EmailName]]): The BCC recipients of the message.
+        reply_to (NotRequired[List[EmailName]]): The reply-to recipients of the message.
+        unread (NotRequired[bool]): Whether the message is unread.
+        starred (NotRequired[bool]): Whether the message is starred.
+        snippet (NotRequired[str]): A snippet of the message body.
+        body (NotRequired[str]): The body of the message.
+        attachments (NotRequired[List[CreateAttachmentRequest]]): The attachments on the message.
+        send_at (NotRequired[int]): Unix timestamp to send the message at.
+        reply_to_message_id (NotRequired[str]): The ID of the message that you are replying to.
+        tracking_options (NotRequired[TrackingOptions]): Options for tracking opens, links, and thread replies.
+        use_draft: Whether or not to use draft support. This is primarily used when dealing with large attachments.
+    """
+
+    use_draft: NotRequired[bool]

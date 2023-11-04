@@ -18,6 +18,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 RUN_DEPENDENCIES = [
     "requests[security]>=2.31.0",
+    "requests-toolbelt>=1.0.0",
     "dataclasses-json>=0.5.9",
     "typing_extensions>=4.7.1",
 ]

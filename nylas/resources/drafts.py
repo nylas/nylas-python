@@ -5,14 +5,22 @@ from nylas.handler.api_resources import (
     FindableApiResource,
     UpdatableApiResource,
     DestroyableApiResource,
+    CreatableApiResource,
 )
-from nylas.models.drafts import ListDraftsQueryParams, Draft, UpdateDraftRequest
+from nylas.models.drafts import (
+    ListDraftsQueryParams,
+    Draft,
+    UpdateDraftRequest,
+    CreateDraftRequest,
+)
 from nylas.models.response import ListResponse, Response, DeleteResponse
+from nylas.resources.messages import _build_form_request
 
 
 class Drafts(
     ListableApiResource,
     FindableApiResource,
+    CreatableApiResource,
     UpdatableApiResource,
     DestroyableApiResource,
 ):
@@ -55,6 +63,27 @@ class Drafts(
             response_type=Draft,
         )
 
+    def create(
+        self, identifier: str, request_body: CreateDraftRequest
+    ) -> Response[Draft]:
+        """
+        Create a Draft.
+
+        Args:
+            identifier: The identifier of the grant to send the message for.
+            request_body: The request body to create a draft with.
+
+        Returns:
+            The newly created Draft.
+        """
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/grants/{identifier}/drafts",
+            data=_build_form_request(request_body),
+        )
+
+        return Response.from_dict(json_response, Draft)
+
     def update(
         self,
         identifier: str,
@@ -72,11 +101,13 @@ class Drafts(
         Returns:
             The updated Draft.
         """
-        return super(Drafts, self).update(
+        json_response = self._http_client._execute(
+            method="PUT",
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
-            response_type=Draft,
-            request_body=request_body,
+            data=_build_form_request(request_body),
         )
+
+        return Response.from_dict(json_response, Draft)
 
     def destroy(self, identifier: str, draft_id: str) -> DeleteResponse:
         """
