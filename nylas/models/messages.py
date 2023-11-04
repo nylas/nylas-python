@@ -146,13 +146,13 @@ class UpdateMessageRequest(TypedDict):
     Attributes:
         starred: The message's starred status
         unread: The message's unread status
-        folder: The message's folders
+        folders: The message's folders
         metadata: A list of key-value pairs storing additional data
     """
 
     unread: NotRequired[bool]
     starred: NotRequired[bool]
-    folder: NotRequired[List[str]]
+    folders: NotRequired[List[str]]
     metadata: NotRequired[Dict[str, Any]]
 
 

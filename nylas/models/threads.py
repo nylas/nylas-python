@@ -62,12 +62,12 @@ class UpdateThreadRequest(TypedDict):
     Attributes:
         starred: Sets all messages in the thread as starred or unstarred.
         unread: Sets all messages in the thread as read or unread.
-        folder: The IDs of the folders to apply, overwriting all previous folders for all messages in the thread.
+        folders: The IDs of the folders to apply, overwriting all previous folders for all messages in the thread.
     """
 
     starred: NotRequired[bool]
     unread: NotRequired[bool]
-    folder: NotRequired[str]
+    folders: NotRequired[str]
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
