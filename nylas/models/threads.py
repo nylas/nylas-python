@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import List, Optional, get_type_hints
+from typing import List, Optional, get_type_hints, Union
 from typing_extensions import TypedDict, NotRequired
 
 from dataclasses_json import dataclass_json
+
+from nylas.models.drafts import Draft
 from nylas.models.events import EmailName
 from nylas.models.list_query_params import ListQueryParams
 
@@ -38,7 +40,7 @@ class Thread:
 
     id: str
     grant_id: str
-    latest_draft_or_message: Message
+    latest_draft_or_message: Union[Message, Draft]
     has_attachment: bool
     has_drafts: bool
     starred: bool
