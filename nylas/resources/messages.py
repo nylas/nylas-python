@@ -180,7 +180,7 @@ class Messages(
 
         return Response.from_dict(json_response, ScheduledMessagesList)
 
-    def find_scheduled_messages(
+    def find_scheduled_message(
         self, identifier: str, schedule_id: str
     ) -> Response[ScheduledMessage]:
         """
@@ -200,7 +200,7 @@ class Messages(
 
         return Response.from_dict(json_response, ScheduledMessage)
 
-    def stop_scheduled_messages(
+    def stop_scheduled_message(
         self, identifier: str, schedule_id: str
     ) -> Response[StopScheduledMessageResponse]:
         """

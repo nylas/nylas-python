@@ -60,7 +60,7 @@ class Message:
     grant_id: str
     from_: List[EmailName] = field(metadata=config(field_name="from"))
     date: datetime
-    object: str = "messages"
+    object: str = "message"
     body: Optional[str] = None
     thread_id: Optional[str] = None
     subject: Optional[str] = None
