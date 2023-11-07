@@ -99,6 +99,8 @@ UpdateDraftRequest = CreateDraftRequest
 """ A request to update a draft. """
 
 
+# Need to use Functional typed dicts because "from" and "in" are Python
+# keywords, and can't be declared using the declarative syntax
 ListDraftsQueryParams = TypedDict(
     "ListDraftsQueryParams",
     {
