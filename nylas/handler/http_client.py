@@ -38,7 +38,13 @@ class HttpClient(object):
         self.session = requests.Session()
 
     def _execute(
-        self, method, path, headers=None, query_params=None, request_body=None
+        self,
+        method,
+        path,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        data=None,
     ) -> dict:
         request = self._build_request(method, path, headers, query_params)
         try:
@@ -48,6 +54,7 @@ class HttpClient(object):
                 headers=request["headers"],
                 json=request_body,
                 timeout=self.timeout,
+                data=data,
             )
         except requests.exceptions.Timeout:
             raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
@@ -59,7 +66,12 @@ class HttpClient(object):
     ) -> dict:
         url = "{}{}".format(self.api_server, path)
         if query_params:
-            url = "{}?{}".format(url, urlencode(query_params))
+            # Convert list of values to comma separated string first
+            process_query_params = {
+                k: ",".join(v) if isinstance(v, list) else v
+                for k, v in query_params.items()
+            }
+            url = "{}?{}".format(url, urlencode(process_query_params))
         headers = self._build_headers(headers)
 
         return {
