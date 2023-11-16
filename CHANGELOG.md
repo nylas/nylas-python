@@ -4,6 +4,7 @@ nylas-python Changelog
 v6.0.0b6
 ----------------
 * Add support for Read, Update, and Delete for Messages API
+* Add support for folders API
 * Fix required fields for `Calendar` and `Grant` models
 
 v6.0.0b5

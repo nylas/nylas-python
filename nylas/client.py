@@ -5,6 +5,7 @@ from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
 from nylas.resources.events import Events
+from nylas.resources.folders import Folders
 from nylas.resources.messages import Messages
 from nylas.resources.threads import Threads
 from nylas.resources.webhooks import Webhooks
@@ -84,6 +85,16 @@ class Client(object):
             The Events API.
         """
         return Events(self.http_client)
+
+    @property
+    def folders(self) -> Folders:
+        """
+        Access the Folders API.
+
+        Returns:
+            The Folders API.
+        """
+        return Folders(self.http_client)
 
     @property
     def messages(self) -> Messages:
