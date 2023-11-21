@@ -1,6 +1,7 @@
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
+from nylas.resources.attachments import Attachments
 from nylas.resources.auth import Auth
 from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
@@ -55,6 +56,16 @@ class Client(object):
             The Applications API.
         """
         return Applications(self.http_client)
+
+    @property
+    def attachments(self) -> Attachments:
+        """
+        Access the Attachments API.
+
+        Returns:
+            The Attachments API.
+        """
+        return Attachments(self.http_client)
 
     @property
     def connectors(self) -> Connectors:
