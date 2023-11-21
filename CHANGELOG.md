@@ -3,7 +3,7 @@ nylas-python Changelog
 
 v6.0.0b7
 ----------------
-* Add support for Read, Update, and Delete for Messages API
+* Add Message Send, Drafts, Threads, and Smart Compose APIs support
 * Add support for folders API
 * Add support for attachments API
 * Fix required field for the `Message` model
