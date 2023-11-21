@@ -45,3 +45,14 @@ class CreateAttachmentRequest(TypedDict):
     content_id: NotRequired[str]
     content_disposition: NotRequired[str]
     is_inline: NotRequired[bool]
+
+
+class FindAttachmentQueryParams(TypedDict):
+    """
+    Interface of the query parameters for finding an attachment.
+
+    Attributes:
+        message_id: Message ID to find the attachment in.
+    """
+
+    message_id: str
