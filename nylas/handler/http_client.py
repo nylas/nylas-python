@@ -1,4 +1,5 @@
 import sys
+from typing import Union
 from urllib.parse import urlparse, urlencode
 
 import requests
@@ -60,6 +61,31 @@ class HttpClient(object):
             raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
 
         return _validate_response(response)
+
+    def _execute_download_request(
+        self,
+        path,
+        headers=None,
+        query_params=None,
+        stream=False,
+    ) -> Union[bytes, Response]:
+        request = self._build_request("GET", path, headers, query_params)
+        try:
+            response = self.session.request(
+                request["method"],
+                request["url"],
+                headers=request["headers"],
+                timeout=self.timeout,
+                stream=stream,
+            )
+
+            # If we stream an iterator for streaming the content, otherwise return the entire byte array
+            if stream:
+                return response
+            else:
+                return response.content if response.content else None
+        except requests.exceptions.Timeout:
+            raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
 
     def _build_request(
         self, method: str, path: str, headers: dict = None, query_params: dict = None
