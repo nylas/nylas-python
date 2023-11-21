@@ -40,6 +40,7 @@ class RedirectUri:
         platform: Platform identifier.
         settings: Configuration settings.
     """
+
     id: str
     url: str
     platform: str

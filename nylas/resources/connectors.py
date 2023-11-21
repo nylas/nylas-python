@@ -33,6 +33,7 @@ class Connectors(
             The Credentials API.
         """
         return Credentials(self._http_client)
+
     def list(self, query_params: ListConnectorQueryParams) -> ListResponse[Connector]:
         """
         Return all Connectors.
