@@ -10,7 +10,8 @@ WebhookStatus = Literal["active", "failing", "failed", "pause"]
 
 
 class WebhookTriggers(str, Enum):
-    """ Enum representing the available webhook triggers. """
+    """Enum representing the available webhook triggers."""
+
     CALENDAR_CREATED = "calendar.created"
     CALENDAR_UPDATED = "calendar.updated"
     CALENDAR_DELETED = "calendar.deleted"

@@ -20,6 +20,7 @@ class Credential:
     created_at: Timestamp of when the credential was created
     updated_at: Timestamp of when the credential was updated;
     """
+
     id: str
     name: str
     credential_type: Optional[CredentialType] = None
@@ -39,21 +40,25 @@ class GoogleServiceAccountCredential(Protocol):
     client_email: str
 
 
-CredentialData = Union[MicrosoftAdminConsentSettings, GoogleServiceAccountCredential, Dict[str, any]]
+CredentialData = Union[
+    MicrosoftAdminConsentSettings, GoogleServiceAccountCredential, Dict[str, any]
+]
 
 
 class CredentialRequest(TypedDict):
     """
-        Interface representing a request to create a credential.
+    Interface representing a request to create a credential.
 
-        Attributes:
-            name: Name of the credential
-            credential_type: Type of credential you want to create.
-            credential_data: The data required to successfully create the credential object
+    Attributes:
+        name: Name of the credential
+        credential_type: Type of credential you want to create.
+        credential_data: The data required to successfully create the credential object
     """
+
     name: Optional[str]
     credential_type: CredentialType
     credential_data: CredentialData
+
 
 class UpdateCredentialRequest(TypedDict):
     """
@@ -63,8 +68,10 @@ class UpdateCredentialRequest(TypedDict):
         name: Name of the credential
         credential_data: The data required to successfully create the credential object
     """
+
     name: Optional[str]
     credential_data: Optional[CredentialData]
+
 
 class ListCredentialQueryParams(TypedDict):
     """
