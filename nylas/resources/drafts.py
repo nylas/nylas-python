@@ -14,7 +14,7 @@ from nylas.models.drafts import (
     CreateDraftRequest,
 )
 from nylas.models.response import ListResponse, Response, DeleteResponse
-from nylas.resources.messages import _build_form_request
+from nylas.utils.file_utils import _build_form_request
 
 
 class Drafts(
