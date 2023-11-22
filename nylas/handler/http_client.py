@@ -64,7 +64,9 @@ class HttpClient(object):
         request_body=None,
         data=None,
     ) -> dict:
-        request = self._build_request(method, path, headers, query_params)
+        request = self._build_request(
+            method, path, headers, query_params, request_body, data
+        )
         try:
             response = self.session.request(
                 request["method"],
@@ -105,7 +107,13 @@ class HttpClient(object):
             raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
 
     def _build_request(
-        self, method: str, path: str, headers: dict = None, query_params: dict = None
+        self,
+        method: str,
+        path: str,
+        headers: dict = None,
+        query_params: dict = None,
+        request_body=None,
+        data=None,
     ) -> dict:
         url = "{}{}".format(self.api_server, path)
         if query_params:
@@ -115,7 +123,7 @@ class HttpClient(object):
                 for k, v in query_params.items()
             }
             url = "{}?{}".format(url, urlencode(process_query_params))
-        headers = self._build_headers(headers)
+        headers = self._build_headers(headers, request_body, data)
 
         return {
             "method": method,
@@ -123,7 +131,9 @@ class HttpClient(object):
             "headers": headers,
         }
 
-    def _build_headers(self, extra_headers: dict = None) -> dict:
+    def _build_headers(
+        self, extra_headers: dict = None, response_body=None, data=None
+    ) -> dict:
         if extra_headers is None:
             extra_headers = {}
 
@@ -134,8 +144,11 @@ class HttpClient(object):
         headers = {
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
-            "Content-type": "application/json",
             "Authorization": "Bearer {}".format(self.api_key),
         }
+        if data is not None and data.content_type is not None:
+            headers["Content-type"] = data.content_type
+        elif response_body is not None:
+            headers["Content-type"] = "application/json"
 
         return {**headers, **extra_headers}
