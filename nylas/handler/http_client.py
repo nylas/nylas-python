@@ -12,6 +12,7 @@ from nylas.models.errors import (
     NylasSdkTimeoutError,
     NylasOAuthError,
     NylasOAuthErrorResponse,
+    NylasApiErrorResponseData,
 )
 
 
@@ -19,12 +20,28 @@ def _validate_response(response: Response) -> dict:
     json = response.json()
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
-        if "connect/token" in parsed_url.path or "connect/revoke" in parsed_url.path:
-            parsed_error = NylasOAuthErrorResponse.from_dict(json)
-            raise NylasOAuthError(parsed_error, response.status_code)
-        else:
-            parsed_error = NylasApiErrorResponse.from_dict(json)
-            raise NylasApiError(parsed_error, response.status_code)
+        try:
+            if (
+                "connect/token" in parsed_url.path
+                or "connect/revoke" in parsed_url.path
+            ):
+                parsed_error = NylasOAuthErrorResponse.from_dict(json)
+                raise NylasOAuthError(parsed_error, response.status_code)
+            else:
+                parsed_error = NylasApiErrorResponse.from_dict(json)
+                raise NylasApiError(parsed_error, response.status_code)
+        except (KeyError, TypeError):
+            request_id = json.get("request_id", None)
+            raise NylasApiError(
+                NylasApiErrorResponse(
+                    request_id,
+                    NylasApiErrorResponseData(
+                        type="unknown",
+                        message=json,
+                    ),
+                ),
+                status_code=response.status_code,
+            )
 
     return json
 
