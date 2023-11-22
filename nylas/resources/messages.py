@@ -31,7 +31,7 @@ def _build_form_request(request_body: dict) -> MultipartEncoder:
     # Create the multipart/form-data encoder
     return MultipartEncoder(
         fields={
-            "message": ("message", message_payload, "application/json"),
+            "message": message_payload,
             **{
                 f"file{index}": {
                     "filename": attachment.filename,
