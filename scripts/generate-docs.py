@@ -12,6 +12,7 @@ excluded_files = [
     "handler/http_client",
     "models/__init__",
     "resources/__init__",
+    "utils/__init__",
 ]
 
 # Prepare Navigation
