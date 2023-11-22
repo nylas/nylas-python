@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b8
+----------------
+* Added helper function for attaching files to messages
+* Fixed issues with sending messages and creating drafts
+
 v6.0.0b7
 ----------------
 * Add Message Send, Drafts, Threads, and Smart Compose APIs support

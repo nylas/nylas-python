@@ -28,6 +28,8 @@ class CreateAttachmentRequest(TypedDict):
     """
     A request to create an attachment.
 
+    You can use `attach_file_request_builder()` to build this request.
+
     Attributes:
         filename: Name of the attachment.
         content_type: MIME type of the attachment.
