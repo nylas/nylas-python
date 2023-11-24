@@ -40,9 +40,7 @@ class Participant:
     phone_number: Optional[str] = None
 
 
-@dataclass_json
-@dataclass
-class EmailName:
+class EmailName(TypedDict):
     """
     Interface representing an email address and optional name.
 
@@ -52,7 +50,7 @@ class EmailName:
     """
 
     email: str
-    name: Optional[str] = None
+    name: NotRequired[str]
 
 
 @dataclass_json

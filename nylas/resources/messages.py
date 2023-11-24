@@ -1,7 +1,4 @@
-import json
 from typing import Optional
-
-from requests_toolbelt import MultipartEncoder
 
 from nylas.handler.api_resources import (
     ListableApiResource,
@@ -21,26 +18,7 @@ from nylas.models.messages import (
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
-
-
-def _build_form_request(request_body: dict) -> MultipartEncoder:
-    attachments = request_body.get("attachments", [])
-    request_body.pop("attachments", None)
-    message_payload = json.dumps(request_body)
-
-    # Create the multipart/form-data encoder
-    return MultipartEncoder(
-        fields={
-            "message": ("message", message_payload, "application/json"),
-            **{
-                f"file{index}": {
-                    "filename": attachment.filename,
-                    "content_type": attachment.content_type,
-                }
-                for index, attachment in enumerate(attachments)
-            },
-        }
-    )
+from nylas.utils.file_utils import _build_form_request
 
 
 class Messages(

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union, BinaryIO
 
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
@@ -28,10 +28,12 @@ class CreateAttachmentRequest(TypedDict):
     """
     A request to create an attachment.
 
+    You can use `attach_file_request_builder()` to build this request.
+
     Attributes:
         filename: Name of the attachment.
         content_type: MIME type of the attachment.
-        content: Base64 encoded content of the attachment.
+        content: Either a Base64 encoded content of the attachment or a pointer to a file.
         size: Size of the attachment in bytes.
         content_id: The content ID of the attachment.
         content_disposition: The content disposition of the attachment.
@@ -40,7 +42,7 @@ class CreateAttachmentRequest(TypedDict):
 
     filename: str
     content_type: str
-    content: str
+    content: Union[str, BinaryIO]
     size: int
     content_id: NotRequired[str]
     content_disposition: NotRequired[str]

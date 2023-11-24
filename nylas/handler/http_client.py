@@ -12,6 +12,7 @@ from nylas.models.errors import (
     NylasSdkTimeoutError,
     NylasOAuthError,
     NylasOAuthErrorResponse,
+    NylasApiErrorResponseData,
 )
 
 
@@ -19,12 +20,28 @@ def _validate_response(response: Response) -> dict:
     json = response.json()
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
-        if "connect/token" in parsed_url.path or "connect/revoke" in parsed_url.path:
-            parsed_error = NylasOAuthErrorResponse.from_dict(json)
-            raise NylasOAuthError(parsed_error, response.status_code)
-        else:
-            parsed_error = NylasApiErrorResponse.from_dict(json)
-            raise NylasApiError(parsed_error, response.status_code)
+        try:
+            if (
+                "connect/token" in parsed_url.path
+                or "connect/revoke" in parsed_url.path
+            ):
+                parsed_error = NylasOAuthErrorResponse.from_dict(json)
+                raise NylasOAuthError(parsed_error, response.status_code)
+            else:
+                parsed_error = NylasApiErrorResponse.from_dict(json)
+                raise NylasApiError(parsed_error, response.status_code)
+        except (KeyError, TypeError):
+            request_id = json.get("request_id", None)
+            raise NylasApiError(
+                NylasApiErrorResponse(
+                    request_id,
+                    NylasApiErrorResponseData(
+                        type="unknown",
+                        message=json,
+                    ),
+                ),
+                status_code=response.status_code,
+            )
 
     return json
 
@@ -47,7 +64,9 @@ class HttpClient(object):
         request_body=None,
         data=None,
     ) -> dict:
-        request = self._build_request(method, path, headers, query_params)
+        request = self._build_request(
+            method, path, headers, query_params, request_body, data
+        )
         try:
             response = self.session.request(
                 request["method"],
@@ -88,7 +107,13 @@ class HttpClient(object):
             raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
 
     def _build_request(
-        self, method: str, path: str, headers: dict = None, query_params: dict = None
+        self,
+        method: str,
+        path: str,
+        headers: dict = None,
+        query_params: dict = None,
+        request_body=None,
+        data=None,
     ) -> dict:
         url = "{}{}".format(self.api_server, path)
         if query_params:
@@ -98,7 +123,7 @@ class HttpClient(object):
                 for k, v in query_params.items()
             }
             url = "{}?{}".format(url, urlencode(process_query_params))
-        headers = self._build_headers(headers)
+        headers = self._build_headers(headers, request_body, data)
 
         return {
             "method": method,
@@ -106,7 +131,9 @@ class HttpClient(object):
             "headers": headers,
         }
 
-    def _build_headers(self, extra_headers: dict = None) -> dict:
+    def _build_headers(
+        self, extra_headers: dict = None, response_body=None, data=None
+    ) -> dict:
         if extra_headers is None:
             extra_headers = {}
 
@@ -117,8 +144,11 @@ class HttpClient(object):
         headers = {
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
-            "Content-type": "application/json",
             "Authorization": "Bearer {}".format(self.api_key),
         }
+        if data is not None and data.content_type is not None:
+            headers["Content-type"] = data.content_type
+        elif response_body is not None:
+            headers["Content-type"] = "application/json"
 
         return {**headers, **extra_headers}
