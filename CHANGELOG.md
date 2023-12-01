@@ -3,8 +3,9 @@ nylas-python Changelog
 
 v6.0.0b8
 ----------------
-* Added helper function for attaching files to messages
-* Fixed issues with sending messages and creating drafts
+* Add helper function for attaching files to messages
+* Fix issues with sending messages and creating drafts
+* Fix inaccuracies with Event models
 
 v6.0.0b7
 ----------------
