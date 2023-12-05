@@ -24,6 +24,20 @@ def test_search_messages_with_limit_offset(mocked_responses, api_client):
 
 
 @pytest.mark.usefixtures("mock_message_search_response")
+def test_search_messages_with_view_should_not_appear(mocked_responses, api_client):
+    api_client.messages.search("Pinot", view="expanded")
+    request = mocked_responses.calls[0].request
+    assert request.path_url == "/messages/search?q=Pinot"
+
+
+@pytest.mark.usefixtures("mock_thread_search_response")
+def test_search_messages_with_view_should_appear(mocked_responses, api_client):
+    api_client.threads.search("Helena", view="expanded")
+    request = mocked_responses.calls[0].request
+    assert request.path_url == "/threads/search?q=Helena&view=expanded"
+
+
+@pytest.mark.usefixtures("mock_message_search_response")
 def test_search_drafts(api_client):
     with pytest.raises(Exception):
         api_client.drafts.search("Pinot")
