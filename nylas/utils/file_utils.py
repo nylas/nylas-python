@@ -47,16 +47,12 @@ def _build_form_request(request_body: dict) -> MultipartEncoder:
     message_payload = json.dumps(request_body)
 
     # Create the multipart/form-data encoder
-    return MultipartEncoder(
-        fields={
-            "message": message_payload,
-            **{
-                f"file{index}": {
-                    "filename": attachment.filename,
-                    "content_type": attachment.content_type,
-                    "content": attachment.content,
-                }
-                for index, attachment in enumerate(attachments)
-            },
-        }
-    )
+    fields = {"message": ("", message_payload, "application/json")}
+    for index, attachment in enumerate(attachments):
+        fields[f"file{index}"] = (
+            attachment["filename"],
+            attachment["content"],
+            attachment["content_type"],
+        )
+
+    return MultipartEncoder(fields=fields)
