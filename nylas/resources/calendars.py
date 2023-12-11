@@ -11,7 +11,7 @@ from nylas.models.calendars import (
     Calendar,
     CreateCalendarRequest,
     UpdateCalendarRequest,
-    ListCalendersQueryParams,
+    ListCalendarsQueryParams,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -24,7 +24,7 @@ class Calendars(
     DestroyableApiResource,
 ):
     def list(
-        self, identifier: str, query_params: ListCalendersQueryParams = None
+        self, identifier: str, query_params: ListCalendarsQueryParams = None
     ) -> ListResponse[Calendar]:
         """
         Return all Calendars.
