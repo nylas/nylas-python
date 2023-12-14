@@ -1,6 +1,6 @@
 import sys
 from typing import Union
-from urllib.parse import urlparse, urlencode
+from urllib.parse import urlparse, quote
 
 import requests
 from requests import Response
@@ -44,6 +44,22 @@ def _validate_response(response: Response) -> dict:
             )
 
     return json
+
+
+def _build_query_params(base_url: str, query_params: dict = None) -> str:
+    query_param_parts = []
+    for key, value in query_params.items():
+        if isinstance(value, list):
+            for item in value:
+                query_param_parts.append(f"{key}={quote(str(item))}")
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                query_param_parts.append(f"{key}={k}:{quote(str(v))}")
+        else:
+            query_param_parts.append(f"{key}={quote(str(value))}")
+
+    query_string = "&".join(query_param_parts)
+    return f"{base_url}?{query_string}"
 
 
 class HttpClient(object):
@@ -115,14 +131,8 @@ class HttpClient(object):
         request_body=None,
         data=None,
     ) -> dict:
-        url = "{}{}".format(self.api_server, path)
-        if query_params:
-            # Convert list of values to comma separated string first
-            process_query_params = {
-                k: ",".join(v) if isinstance(v, list) else v
-                for k, v in query_params.items()
-            }
-            url = "{}?{}".format(url, urlencode(process_query_params))
+        base_url = f"{self.api_server}{path}"
+        url = _build_query_params(base_url, query_params) if query_params else base_url
         headers = self._build_headers(headers, request_body, data)
 
         return {
