@@ -364,7 +364,8 @@ class UpdateParticipant(TypedDict):
         phoneNumber: Participant's phone number.
     """
 
-    email: NotRequired[str]
+    email: str
+    status: NotRequired[ParticipantStatus]
     name: NotRequired[str]
     comment: NotRequired[str]
     phoneNumber: NotRequired[str]
