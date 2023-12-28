@@ -3,6 +3,8 @@ nylas-python Changelog
 
 v6.0.0b8
 ----------------
+* **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
+* **BREAKING CHANGES**: Moved `Grants.create()` to `Auth.customAuthentication()`
 * Added helper function for attaching files to messages
 * Fixed issues with sending messages and creating drafts
 
