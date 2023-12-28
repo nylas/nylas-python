@@ -3,6 +3,8 @@ import hashlib
 import urllib.parse
 import uuid
 
+from nylas.models.grant import CreateGrantRequest, Grant
+
 from nylas.models.auth import (
     CodeExchangeResponse,
     PkceAuthUrl,
@@ -98,6 +100,26 @@ class Auth(Resource):
         request_body["grant_type"] = "authorization_code"
 
         return self._get_token(request_body)
+
+    def custom_authentication(
+        self, request_body: CreateGrantRequest
+    ) -> Response[Grant]:
+        """
+        Create a Grant via Custom Authentication.
+
+        Args:
+            request_body: The values to create the Grant with.
+
+        Returns:
+            The created Grant.
+        """
+
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/connect/custom",
+            request_body=request_body,
+        )
+        return Response.from_dict(json_response, Grant)
 
     def refresh_access_token(
         self, request: TokenExchangeRequest
