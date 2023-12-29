@@ -1,14 +1,12 @@
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
-    CreatableApiResource,
     UpdatableApiResource,
     DestroyableApiResource,
 )
 from nylas.models.grants import (
     Grant,
     ListGrantsQueryParams,
-    CreateGrantRequest,
     UpdateGrantRequest,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
@@ -17,7 +15,6 @@ from nylas.models.response import Response, ListResponse, DeleteResponse
 class Grants(
     ListableApiResource,
     FindableApiResource,
-    CreatableApiResource,
     UpdatableApiResource,
     DestroyableApiResource,
 ):
@@ -49,21 +46,6 @@ class Grants(
 
         return super(Grants, self).find(
             path=f"/v3/grants/{grant_id}", response_type=Grant
-        )
-
-    def create(self, request_body: CreateGrantRequest) -> Response[Grant]:
-        """
-        Create a Grant via Custom Authentication.
-
-        Args:
-            request_body: The values to create the Grant with.
-
-        Returns:
-            The created Grant.
-        """
-
-        return super(Grants, self).create(
-            path=f"/v3/connect/custom", response_type=Grant, request_body=request_body
         )
 
     def update(
