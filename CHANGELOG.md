@@ -3,8 +3,11 @@ nylas-python Changelog
 
 v6.0.0b8
 ----------------
-* Add helper function for attaching files to messages
+* **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
+* **BREAKING CHANGES**: Moved `Grants.create()` to `Auth.customAuthentication()`
+* Added helper function for attaching files to messages
 * Fix issues with sending messages and creating drafts
+* Fix issue where an error was raised when trying to attach a file to a message
 * Fix inaccuracies with Event models
 
 v6.0.0b7

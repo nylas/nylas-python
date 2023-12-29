@@ -1,3 +1,5 @@
+from nylas.resources.grants import Grants
+
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
@@ -106,6 +108,16 @@ class Client(object):
             The Folders API.
         """
         return Folders(self.http_client)
+
+    @property
+    def grants(self) -> Grants:
+        """
+        Access the Grants API.
+
+        Returns:
+            The Grants API.
+        """
+        return Grants(self.http_client)
 
     @property
     def messages(self) -> Messages:
