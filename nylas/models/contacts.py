@@ -184,3 +184,23 @@ class ListContactsQueryParams(ListQueryParams):
 
 class FindContactQueryParams(TypedDict):
     profile_picture: NotRequired[bool]
+
+
+class GroupType(str, Enum):
+    user = "user"
+    system = "system"
+    other = "other"
+
+
+@dataclass_json
+@dataclass
+class ContactGroup:
+    id: str
+    grant_id: str
+    object: str = "contact_group"
+    group_type: Optional[GroupType] = None
+    name: Optional[str] = None
+    path: Optional[str] = None
+
+
+ListContactGroupsQueryParams = ListQueryParams

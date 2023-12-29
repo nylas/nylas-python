@@ -11,6 +11,8 @@ from nylas.models.contacts import (
     UpdateContactRequest,
     ListContactsQueryParams,
     FindContactQueryParams,
+    ListContactGroupsQueryParams,
+    ContactGroup,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -28,7 +30,7 @@ class Contacts(
         """
         Return all Contacts.
 
-        Args:
+        Attributes:
             identifier: The identifier of the Grant to act upon.
             query_params: The query parameters to include in the request.
 
@@ -51,7 +53,7 @@ class Contacts(
         """
         Return a Contact.
 
-        Args:
+        Attributes:
             identifier: The identifier of the Grant to act upon.
             contact_id: The ID of the contact to retrieve.
             query_params: The query parameters to include in the request.
@@ -71,7 +73,7 @@ class Contacts(
         """
         Create a Contact.
 
-        Args:
+        Attributes:
             identifier: The identifier of the Grant to act upon.
             request_body: The values to create the Contact with.
 
@@ -90,7 +92,7 @@ class Contacts(
         """
         Update a Contact.
 
-        Args:
+        Attributes:
             identifier: The identifier of the Grant to act upon.
             contact_id: The ID of the Contact to update. Use "primary" to refer to the primary Contact associated with the Grant.
             request_body: The values to update the Contact with.
@@ -108,7 +110,7 @@ class Contacts(
         """
         Delete a Contact.
 
-        Args:
+        Attributes:
             identifier: The identifier of the Grant to act upon.
             contact_id: The ID of the Contact to delete. Use "primary" to refer to the primary Contact associated with the Grant.
 
@@ -118,3 +120,24 @@ class Contacts(
         return super(Contacts, self).destroy(
             path=f"/v3/grants/{identifier}/contacts/{contact_id}"
         )
+
+    def list_groups(
+        self, identifier: str, query_params: ListContactGroupsQueryParams = None
+    ) -> ListResponse[ContactGroup]:
+        """
+        Return all contact groups.
+
+        Attributes:
+            identifier: The identifier of the Grant to act upon.
+            query_params: The query parameters to include in the request.
+
+        Returns:
+            The list of contact groups.
+        """
+        json_response = self._http_client._execute(
+            method="GET",
+            path=f"/v3/grants/{identifier}/contacts/groups",
+            query_params=query_params,
+        )
+
+        return ListResponse.from_dict(json_response, ContactGroup)
