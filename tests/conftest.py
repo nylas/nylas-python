@@ -1005,7 +1005,7 @@ def mock_thread_search_response(mocked_responses, api_url):
 
     mocked_responses.add(
         responses.GET,
-        api_url + "/threads/search?q=Helena",
+        re.compile(api_url + "/threads/search\?q=Helena.*"),
         body=response_body,
         status=200,
         content_type="application/json",

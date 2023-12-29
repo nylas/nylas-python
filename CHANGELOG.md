@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add support for `view` parameter in `Threads.search()`
+
 v5.14.1
 ----------------
 * Fix error when trying to iterate on list after calling count
