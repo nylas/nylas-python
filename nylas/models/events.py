@@ -341,13 +341,11 @@ class CreateParticipant(TypedDict):
     Attributes:
         email: Participant's email address.
         name: Participant's name.
-        status: Participant's status.
         comment: Comment by the participant.
         phone_number: Participant's phone number.
     """
 
     email: str
-    status: NotRequired[ParticipantStatus]
     name: NotRequired[str]
     comment: NotRequired[str]
     phone_number: NotRequired[str]
@@ -593,8 +591,6 @@ class CreateEventRequest(TypedDict):
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
-        calendar_id: The ID of the calendar to create the event in.
-        read_only: Whether the event is read-only.
         visibility: The visibility of the event.
         capacity: The capacity of the event.
         hide_participants: Whether to hide participants of the event.
@@ -611,8 +607,6 @@ class CreateEventRequest(TypedDict):
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[CreateParticipant]]
     recurrence: NotRequired[List[str]]
-    calendar_id: NotRequired[str]
-    read_only: NotRequired[bool]
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
@@ -635,8 +629,6 @@ class UpdateEventRequest(TypedDict):
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
-        calendar_id: The ID of the calendar to create the event in.
-        read_only: Whether the event is read-only.
         visibility: The visibility of the event.
         capacity: The capacity of the event.
         hide_participants: Whether to hide participants of the event.
@@ -653,8 +645,6 @@ class UpdateEventRequest(TypedDict):
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[UpdateParticipant]]
     recurrence: NotRequired[List[str]]
-    calendar_id: NotRequired[str]
-    read_only: NotRequired[bool]
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
@@ -695,8 +685,8 @@ class ListEventQueryParams(ListQueryParams):
     title: NotRequired[str]
     description: NotRequired[str]
     location: NotRequired[str]
-    start: NotRequired[str]
-    end: NotRequired[str]
+    start: NotRequired[int]
+    end: NotRequired[int]
     metadata_pair: NotRequired[Dict[str, Any]]
     expand_recurring: NotRequired[bool]
     busy: NotRequired[bool]
