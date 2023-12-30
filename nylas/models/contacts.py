@@ -11,6 +11,7 @@ from nylas.models.list_query_params import ListQueryParams
 class ContactType(str, Enum):
     work = "work"
     home = "home"
+    mobile = "mobile"
     other = "other"
 
 
