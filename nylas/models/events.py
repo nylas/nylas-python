@@ -310,7 +310,6 @@ class Event:
     grant_id: str
     calendar_id: str
     busy: bool
-    read_only: bool
     created_at: int
     updated_at: int
     participants: List[Participant]
@@ -319,6 +318,7 @@ class Event:
         default=None, metadata=config(decoder=_decode_conferencing)
     )
     object: str = "event"
+    read_only: Optional[bool] = None
     description: Optional[str] = None
     location: Optional[str] = None
     ical_uid: Optional[str] = None

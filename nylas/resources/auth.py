@@ -3,7 +3,7 @@ import hashlib
 import urllib.parse
 import uuid
 
-from nylas.models.grant import CreateGrantRequest, Grant
+from nylas.models.grants import CreateGrantRequest, Grant
 
 from nylas.models.auth import (
     CodeExchangeResponse,
