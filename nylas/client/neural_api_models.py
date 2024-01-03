@@ -165,7 +165,7 @@ class NeuralCleanConversation(Message):
         RestfulModel.__init__(self, NeuralCleanConversation, api)
 
     def extract_images(self):
-        pattern = "[\(']cid:(.*?)[\)']"
+        pattern = r"[\(']cid:(.*?)[\)']"
         file_ids = re.findall(pattern, self.conversation)
         files = []
         for match in file_ids:
