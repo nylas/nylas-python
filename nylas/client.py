@@ -14,6 +14,7 @@ from nylas.resources.threads import Threads
 from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
 
+
 class Client(object):
     """
     API client for the Nylas API.
@@ -148,7 +149,7 @@ class Client(object):
             The Webhooks API.
         """
         return Webhooks(self.http_client)
-        
+
     @property
     def contacts(self) -> Contacts:
         """
@@ -157,4 +158,4 @@ class Client(object):
         Returns:
             The Contacts API.
         """
-        return Contacts(self.http_client)        
+        return Contacts(self.http_client)
