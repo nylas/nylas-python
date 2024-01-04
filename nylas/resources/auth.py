@@ -17,13 +17,12 @@ from nylas.models.auth import (
     URLForAdminConsentConfig,
 )
 from nylas.models.response import Response
-from nylas.resources.grants import Grants
 from nylas.resources.resource import Resource
 
 
 def _hash_pkce_secret(secret: str) -> str:
-    sha256_hash = hashlib.sha256(secret.encode()).digest()
-    return base64.b64encode(sha256_hash).decode()
+    sha256_hash = hashlib.sha256(secret.encode()).hexdigest()
+    return base64.b64encode(sha256_hash.encode()).decode().rstrip("=")
 
 
 def _build_query(config: dict) -> dict:
