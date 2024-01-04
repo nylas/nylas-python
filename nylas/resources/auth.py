@@ -17,7 +17,6 @@ from nylas.models.auth import (
     URLForAdminConsentConfig,
 )
 from nylas.models.response import Response
-from nylas.resources.grants import Grants
 from nylas.resources.resource import Resource
 
 
