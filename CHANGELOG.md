@@ -9,6 +9,7 @@ v6.0.0b8
 * Fix issues with sending messages and creating drafts
 * Fix issue where an error was raised when trying to attach a file to a message
 * Fix inaccuracies with Event models
+* Fix incorrect PKCE code challenge generation
 
 v6.0.0b7
 ----------------
