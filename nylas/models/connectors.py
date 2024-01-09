@@ -15,13 +15,11 @@ class Connector:
     Interface representing the Nylas connector response.
 
     Attributes:
-        name: Custom name of the connector
         provider: The provider type
         settings: Optional settings from provider
         scope: Default scopes for the connector
     """
 
-    name: str
     provider: Provider
     settings: Optional[Dict[str, Any]] = None
     scope: Optional[List[str]] = None
