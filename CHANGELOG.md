@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b9
+----------------
+* Fix deserialization issue with `Connector` model
+
 v6.0.0b8
 ----------------
 * **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
