@@ -41,20 +41,20 @@ class Thread:
     id: str
     grant_id: str
     latest_draft_or_message: Union[Message, Draft]
-    has_attachment: bool
     has_drafts: bool
     starred: bool
     unread: bool
     earliest_message_date: int
-    latest_message_received_date: int
-    latest_message_sent_date: int
-    participant: List[EmailName]
     message_ids: List[str]
-    draft_ids: List[str]
     folders: List[str]
     object: str = "thread"
+    latest_message_received_date: Optional[int] = None
+    draft_ids: Optional[List[str]] = None
     snippet: Optional[str] = None
     subject: Optional[str] = None
+    participant: Optional[List[EmailName]] = None
+    latest_message_sent_date: Optional[int] = None
+    has_attachment: Optional[bool] = None
 
 
 class UpdateThreadRequest(TypedDict):

@@ -47,7 +47,7 @@ class Calendar:
     metadata: Optional[Dict[str, Any]] = None
 
 
-class ListCalendersQueryParams(ListQueryParams):
+class ListCalendarsQueryParams(ListQueryParams):
     """
     Interface of the query parameters for listing calendars.
 

@@ -3,8 +3,15 @@ nylas-python Changelog
 
 v6.0.0b8
 ----------------
+* **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
+* **BREAKING CHANGES**: Moved `Grants.create()` to `Auth.customAuthentication()`
+* Added support for the contacts API
 * Added helper function for attaching files to messages
-* Fixed issues with sending messages and creating drafts
+* Fix issues with sending messages and creating drafts
+* Fix issue where an error was raised when trying to attach a file to a message
+* Fix inaccuracies with Event models
+* Fix inaccuracies with Thread model
+* Fix incorrect PKCE code challenge generation
 
 v6.0.0b7
 ----------------

@@ -1,3 +1,5 @@
+from nylas.resources.grants import Grants
+
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
@@ -10,6 +12,7 @@ from nylas.resources.folders import Folders
 from nylas.resources.messages import Messages
 from nylas.resources.threads import Threads
 from nylas.resources.webhooks import Webhooks
+from nylas.resources.contacts import Contacts
 
 
 class Client(object):
@@ -108,6 +111,16 @@ class Client(object):
         return Folders(self.http_client)
 
     @property
+    def grants(self) -> Grants:
+        """
+        Access the Grants API.
+
+        Returns:
+            The Grants API.
+        """
+        return Grants(self.http_client)
+
+    @property
     def messages(self) -> Messages:
         """
         Access the Messages API.
@@ -136,3 +149,23 @@ class Client(object):
             The Webhooks API.
         """
         return Webhooks(self.http_client)
+
+    @property
+    def contacts(self) -> Contacts:
+        """
+        Access the Contacts API.
+
+        Returns:
+            The Contacts API.
+        """
+        return Contacts(self.http_client)
+
+    @property
+    def drafts(self) -> Drafts:
+        """
+        Access the Drafts API.
+
+        Returns:
+            The Drafts API.
+        """
+        return Contacts(self.http_client)

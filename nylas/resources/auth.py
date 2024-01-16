@@ -3,6 +3,8 @@ import hashlib
 import urllib.parse
 import uuid
 
+from nylas.models.grants import CreateGrantRequest, Grant
+
 from nylas.models.auth import (
     CodeExchangeResponse,
     PkceAuthUrl,
@@ -15,13 +17,12 @@ from nylas.models.auth import (
     URLForAdminConsentConfig,
 )
 from nylas.models.response import Response
-from nylas.resources.grants import Grants
 from nylas.resources.resource import Resource
 
 
 def _hash_pkce_secret(secret: str) -> str:
-    sha256_hash = hashlib.sha256(secret.encode()).digest()
-    return base64.b64encode(sha256_hash).decode()
+    sha256_hash = hashlib.sha256(secret.encode()).hexdigest()
+    return base64.b64encode(sha256_hash.encode()).decode().rstrip("=")
 
 
 def _build_query(config: dict) -> dict:
@@ -57,16 +58,6 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
-    @property
-    def grants(self) -> Grants:
-        """
-        Access the Grants API.
-
-        Returns:
-            The Grants API.
-        """
-        return Grants(self._http_client)
-
     def url_for_oauth2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.
@@ -98,6 +89,26 @@ class Auth(Resource):
         request_body["grant_type"] = "authorization_code"
 
         return self._get_token(request_body)
+
+    def custom_authentication(
+        self, request_body: CreateGrantRequest
+    ) -> Response[Grant]:
+        """
+        Create a Grant via Custom Authentication.
+
+        Args:
+            request_body: The values to create the Grant with.
+
+        Returns:
+            The created Grant.
+        """
+
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/connect/custom",
+            request_body=request_body,
+        )
+        return Response.from_dict(json_response, Grant)
 
     def refresh_access_token(
         self, request: TokenExchangeRequest
