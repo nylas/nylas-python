@@ -159,3 +159,13 @@ class Client(object):
             The Contacts API.
         """
         return Contacts(self.http_client)
+
+    @property
+    def drafts(self) -> Drafts:
+        """
+        Access the Drafts API.
+
+        Returns:
+            The Drafts API.
+        """
+        return Contacts(self.http_client)
