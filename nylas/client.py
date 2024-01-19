@@ -1,3 +1,4 @@
+from nylas.resources.drafts import Drafts
 from nylas.resources.grants import Grants
 
 from nylas.config import DEFAULT_SERVER_URL
@@ -91,6 +92,26 @@ class Client(object):
         return Calendars(self.http_client)
 
     @property
+    def contacts(self) -> Contacts:
+        """
+        Access the Contacts API.
+
+        Returns:
+            The Contacts API.
+        """
+        return Contacts(self.http_client)
+
+    @property
+    def drafts(self) -> Drafts:
+        """
+        Access the Drafts API.
+
+        Returns:
+            The Drafts API.
+        """
+        return Drafts(self.http_client)
+
+    @property
     def events(self) -> Events:
         """
         Access the Events API.
@@ -149,23 +170,3 @@ class Client(object):
             The Webhooks API.
         """
         return Webhooks(self.http_client)
-
-    @property
-    def contacts(self) -> Contacts:
-        """
-        Access the Contacts API.
-
-        Returns:
-            The Contacts API.
-        """
-        return Contacts(self.http_client)
-
-    @property
-    def drafts(self) -> Drafts:
-        """
-        Access the Drafts API.
-
-        Returns:
-            The Drafts API.
-        """
-        return Contacts(self.http_client)
