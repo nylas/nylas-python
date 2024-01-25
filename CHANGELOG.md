@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b9
+----------------
+* Changed `client_secret` to optional for token exchange methods; defaults to API Key now
+
 v6.0.0b8
 ----------------
 * **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
