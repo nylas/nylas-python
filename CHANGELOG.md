@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.0.0b9
+----------------
+* Add support for sending drafts
+
 v6.0.0b8
 ----------------
 * **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
