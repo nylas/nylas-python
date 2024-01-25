@@ -282,7 +282,6 @@ class Event:
         id: Globally unique object identifier.
         grant_id: Grant ID representing the user's account.
         calendar_id: The Event's Calendar ID.
-        capacity: Sets the maximum number of participants that may attend the event.
         busy: Whether to show this Event's time block as available on shared or public calendars.
         read_only: If the Event's participants are able to edit the Event.
         created_at: Unix timestamp representing the Event's creation time.
@@ -305,12 +304,12 @@ class Event:
         reminders: List of reminders for the Event.
         status: The Event's status.
         visibility: The Event's visibility (private or public).
+        capacity: Sets the maximum number of participants that may attend the event.        
     """
 
     id: str
     grant_id: str
     calendar_id: str
-    capacity: int
     busy: bool
     created_at: int
     updated_at: int
@@ -334,7 +333,7 @@ class Event:
     reminders: Optional[Reminder] = None
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
-
+    capacity: Optional[int] = None
 
 class CreateParticipant(TypedDict):
     """
