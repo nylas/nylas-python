@@ -32,48 +32,6 @@ class MockResource(
 
 
 class TestApiResource:
-    @pytest.fixture
-    def http_client_list_response(self):
-        mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
-            "request_id": "abc-123",
-            "data": [
-                {
-                    "id": "calendar-123",
-                    "grant_id": "grant-123",
-                    "name": "Mock Calendar",
-                    "read_only": False,
-                    "is_owned_by_user": True,
-                    "object": "calendar",
-                }
-            ],
-        }
-        return mock_http_client
-
-    @pytest.fixture
-    def http_client_response(self):
-        mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
-            "request_id": "abc-123",
-            "data": {
-                "id": "calendar-123",
-                "grant_id": "grant-123",
-                "name": "Mock Calendar",
-                "read_only": False,
-                "is_owned_by_user": True,
-                "object": "calendar",
-            },
-        }
-        return mock_http_client
-
-    @pytest.fixture
-    def http_client_delete_response(self):
-        mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
-            "request_id": "abc-123",
-        }
-        return mock_http_client
-
     def test_list_resource(self, http_client_list_response):
         resource = MockResource(http_client_list_response)
 

@@ -18,12 +18,6 @@ from nylas.resources.threads import Threads
 
 
 class TestClient:
-    @pytest.fixture
-    def client(self):
-        return Client(
-            api_key="test-key",
-        )
-
     def test_client_init(self):
         client = Client(
             api_key="test-key",

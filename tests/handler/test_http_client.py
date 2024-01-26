@@ -17,38 +17,6 @@ class TestData:
 
 
 class TestHttpClient:
-    @pytest.fixture
-    def http_client(self):
-        return HttpClient(
-            api_server="https://test.nylas.com",
-            api_key="test-key",
-            timeout=30,
-        )
-
-    @pytest.fixture
-    def patched_version_and_sys(self):
-        with patch("sys.version_info", (1, 2, 3, "final", 5)), patch(
-            "nylas.handler.http_client.__VERSION__", "2.0.0"
-        ):
-            yield
-
-    @pytest.fixture
-    def patched_session_request(self):
-        mock_response = Mock()
-        mock_response.content = b"mock data"
-        mock_response.json.return_value = {"foo": "bar"}
-        mock_response.status_code = 200
-
-        with patch(
-            "requests.Session.request", return_value=mock_response
-        ) as mock_request:
-            yield mock_request
-
-    @pytest.fixture
-    def mock_session_timeout(self):
-        with patch("requests.Session.request", side_effect=requests.exceptions.Timeout):
-            yield
-
     def test_http_client_init(self):
         http_client = HttpClient(
             api_server="https://test.nylas.com",
