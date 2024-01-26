@@ -1,15 +1,14 @@
-from unittest import mock
 from unittest.mock import patch, Mock
 
 import pytest
 import requests
-from nylas.models.errors import NylasApiError, NylasOAuthError
 
 from nylas.handler.http_client import (
     HttpClient,
     _build_query_params,
     _validate_response,
 )
+from nylas.models.errors import NylasApiError, NylasOAuthError
 
 
 class TestData:
@@ -37,9 +36,13 @@ class TestHttpClient:
     def patched_session_request(self):
         mock_response = Mock()
         mock_response.content = b"mock data"
+        mock_response.json.return_value = {"foo": "bar"}
+        mock_response.status_code = 200
 
-        with patch("requests.Session.request", return_value=mock_response):
-            yield mock
+        with patch(
+            "requests.Session.request", return_value=mock_response
+        ) as mock_request:
+            yield mock_request
 
     @pytest.fixture
     def mock_session_timeout(self):
@@ -234,3 +237,44 @@ class TestHttpClient:
         assert e.value.type == "unknown"
         assert e.value.request_id == "123"
         assert e.value.status_code == 400
+
+    def test_execute(
+        self, http_client, patched_version_and_sys, patched_session_request
+    ):
+        response = http_client._execute(
+            method="GET",
+            path="/foo",
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response == {"foo": "bar"}
+        patched_session_request.assert_called_once_with(
+            "GET",
+            "https://test.nylas.com/foo?query=param",
+            headers={
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+                "Content-type": "application/json",
+                "test": "header",
+            },
+            json={"foo": "bar"},
+            timeout=30,
+            data=None,
+        )
+
+    def test_execute_timeout(self, http_client, mock_session_timeout):
+        with pytest.raises(Exception) as e:
+            http_client._execute(
+                method="GET",
+                path="/foo",
+                headers={"test": "header"},
+                query_params={"query": "param"},
+                request_body={"foo": "bar"},
+            )
+        assert (
+            str(e.value)
+            == "Nylas SDK timed out before receiving a response from the server."
+        )
