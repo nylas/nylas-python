@@ -2,6 +2,7 @@ from unittest.mock import patch, Mock
 
 import pytest
 import requests
+from nylas.models.response import Response, ListResponse
 
 from nylas.handler.http_client import HttpClient
 
@@ -51,38 +52,45 @@ def mock_session_timeout():
 
 @pytest.fixture
 def http_client_list_response():
-    mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
-        "request_id": "abc-123",
-        "data": [
-            {
+    with patch(
+        "nylas.models.response.ListResponse.from_dict",
+        return_value=ListResponse([], "bar"),
+    ):
+        mock_http_client = Mock()
+        mock_http_client._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [
+                {
+                    "id": "calendar-123",
+                    "grant_id": "grant-123",
+                    "name": "Mock Calendar",
+                    "read_only": False,
+                    "is_owned_by_user": True,
+                    "object": "calendar",
+                }
+            ],
+        }
+        yield mock_http_client
+
+
+@pytest.fixture
+def http_client_response():
+    with patch(
+        "nylas.models.response.Response.from_dict", return_value=Response({}, "bar")
+    ):
+        mock_http_client = Mock()
+        mock_http_client._execute.return_value = {
+            "request_id": "abc-123",
+            "data": {
                 "id": "calendar-123",
                 "grant_id": "grant-123",
                 "name": "Mock Calendar",
                 "read_only": False,
                 "is_owned_by_user": True,
                 "object": "calendar",
-            }
-        ],
-    }
-    return mock_http_client
-
-
-@pytest.fixture
-def http_client_response():
-    mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
-        "request_id": "abc-123",
-        "data": {
-            "id": "calendar-123",
-            "grant_id": "grant-123",
-            "name": "Mock Calendar",
-            "read_only": False,
-            "is_owned_by_user": True,
-            "object": "calendar",
-        },
-    }
-    return mock_http_client
+            },
+        }
+        yield mock_http_client
 
 
 @pytest.fixture
