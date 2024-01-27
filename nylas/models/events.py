@@ -252,7 +252,7 @@ class ReminderOverride:
         reminder_method: The user's preferred method for Event reminders (Google only).
     """
 
-    reminder_minutes: Optional[str] = None
+    reminder_minutes: Optional[int] = None
     reminder_method: Optional[str] = None
 
 
