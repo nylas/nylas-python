@@ -9,16 +9,16 @@ from nylas.models.list_query_params import ListQueryParams
 
 
 class ContactType(str, Enum):
-    work = "work"
-    home = "home"
-    mobile = "mobile"
-    other = "other"
+    WORK = "work"
+    HOME = "home"
+    MOBILE = "mobile"
+    OTHER = "other"
 
 
 class SourceType(str, Enum):
-    address_book = "address_book"
-    inbox = "inbox"
-    domain = "domain"
+    ADDRESS_BOOK = "address_book"
+    INBOX = "inbox"
+    DOMAIN = "domain"
 
 
 @dataclass_json
@@ -188,9 +188,9 @@ class FindContactQueryParams(TypedDict):
 
 
 class GroupType(str, Enum):
-    user = "user"
-    system = "system"
-    other = "other"
+    USER = "user"
+    SYSTEM = "system"
+    OTHER = "other"
 
 
 @dataclass_json
