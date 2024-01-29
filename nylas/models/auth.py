@@ -112,7 +112,6 @@ class CodeExchangeResponse:
 
     access_token: str
     grant_id: str
-    email: str
     scope: str
     expires_in: int
     refresh_token: Optional[str] = None
