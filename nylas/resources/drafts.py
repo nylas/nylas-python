@@ -13,6 +13,7 @@ from nylas.models.drafts import (
     UpdateDraftRequest,
     CreateDraftRequest,
 )
+from nylas.models.messages import Message
 from nylas.models.response import ListResponse, Response, DeleteResponse
 from nylas.utils.file_utils import _build_form_request
 
@@ -123,3 +124,18 @@ class Drafts(
         return super(Drafts, self).destroy(
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
         )
+
+    def send(self, identifier: str, draft_id: str) -> Response[Message]:
+        """
+        Send a Draft.
+
+        Args:
+            identifier: The identifier of the grant to send the draft for.
+            draft_id: The identifier of the draft to send.
+        """
+        json_response = self._http_client._execute(
+            method="POST",
+            path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+        )
+
+        return Response.from_dict(json_response, Message)
