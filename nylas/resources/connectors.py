@@ -34,7 +34,9 @@ class Connectors(
         """
         return Credentials(self._http_client)
 
-    def list(self, query_params: ListConnectorQueryParams) -> ListResponse[Connector]:
+    def list(
+        self, query_params: ListConnectorQueryParams = None
+    ) -> ListResponse[Connector]:
         """
         Return all Connectors.
 
@@ -110,7 +112,4 @@ class Connectors(
         Returns:
             The deleted connector.
         """
-        return super(Connectors, self).destroy(
-            path=f"/v3/connectors/{provider}",
-            response_type=Connector,
-        )
+        return super(Connectors, self).destroy(path=f"/v3/connectors/{provider}")
