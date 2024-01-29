@@ -4,6 +4,7 @@ nylas-python Changelog
 v6.0.0b9
 ----------------
 * Add support for sending drafts
+* Changed `client_secret` to optional for token exchange methods; defaults to API Key now
 
 v6.0.0b8
 ----------------

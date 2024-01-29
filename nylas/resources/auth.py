@@ -84,6 +84,8 @@ class Auth(Resource):
         Returns:
             Information about the Nylas application
         """
+        if "client_secret" not in request:
+            request["client_secret"] = self._http_client.api_key
 
         request_body = dict(request)
         request_body["grant_type"] = "authorization_code"
@@ -122,6 +124,8 @@ class Auth(Resource):
         Returns:
             The response containing the new access token.
         """
+        if "client_secret" not in request:
+            request["client_secret"] = self._http_client.api_key
 
         request_body = dict(request)
         request_body["grant_type"] = "refresh_token"

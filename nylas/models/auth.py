@@ -61,14 +61,14 @@ class CodeExchangeRequest(TypedDict):
         redirect_uri: Should match the same redirect URI that was used for getting the code during the initial authorization request.
         code: OAuth 2.0 code fetched from the previous step.
         client_id: Client ID of the application.
-        client_secret: Client secret of the application.
+        client_secret: Client secret of the application. If not provided, the API Key will be used instead.
         code_verifier: The original plain text code verifier (code_challenge) used in the initial authorization request (PKCE).
     """
 
     redirect_uri: str
     code: str
     client_id: str
-    client_secret: str
+    client_secret: NotRequired[str]
     code_verifier: NotRequired[str]
 
 
@@ -80,13 +80,13 @@ class TokenExchangeRequest(TypedDict):
         redirect_uri: Should match the same redirect URI that was used for getting the code during the initial authorization request.
         refresh_token: Token to refresh/request your short-lived access token
         client_id: Client ID of the application.
-        client_secret: Client secret of the application.
+        client_secret: Client secret of the application. If not provided, the API Key will be used instead.
     """
 
     redirect_uri: str
     refresh_token: str
     client_id: str
-    client_secret: str
+    client_secret: NotRequired[str]
 
 
 @dataclass_json
