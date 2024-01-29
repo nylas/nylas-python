@@ -1,14 +1,37 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional, get_type_hints, Union
 from typing_extensions import TypedDict, NotRequired
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, config
 
 from nylas.models.drafts import Draft
 from nylas.models.events import EmailName
 from nylas.models.list_query_params import ListQueryParams
 
 from nylas.models.messages import Message
+
+
+def _decode_draft_or_message(json: dict) -> Union[Message, Draft]:
+    """
+    Decode a message/draft object into a python object.
+
+    Args:
+        json: The message/draft object to decode.
+
+    Returns:
+        The decoded message/draft object.
+    """
+    if "object" not in json:
+        raise ValueError("Invalid when object, no 'object' field found.")
+
+    if json["object"] == "draft":
+        return Draft.from_dict(json)
+    elif json["object"] == "message":
+        return Message.from_dict(json)
+    else:
+        raise ValueError(
+            f"Invalid object, unknown 'object' field found: {json['object']}"
+        )
 
 
 @dataclass_json
@@ -40,13 +63,15 @@ class Thread:
 
     id: str
     grant_id: str
-    latest_draft_or_message: Union[Message, Draft]
     has_drafts: bool
     starred: bool
     unread: bool
     earliest_message_date: int
     message_ids: List[str]
     folders: List[str]
+    latest_draft_or_message: Union[Message, Draft] = field(
+        metadata=config(decoder=_decode_draft_or_message)
+    )
     object: str = "thread"
     latest_message_received_date: Optional[int] = None
     draft_ids: Optional[List[str]] = None
