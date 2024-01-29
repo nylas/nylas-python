@@ -56,11 +56,11 @@ class Message:
         created_at: Unix timestamp of when the message was created.
     """
 
-    id: str
     grant_id: str
     from_: List[EmailName] = field(metadata=config(field_name="from"))
     date: int
     object: str = "message"
+    id: Optional[str] = None
     body: Optional[str] = None
     thread_id: Optional[str] = None
     subject: Optional[str] = None
@@ -75,6 +75,7 @@ class Message:
     unread: Optional[bool] = None
     starred: Optional[bool] = None
     created_at: Optional[int] = None
+    date: Optional[datetime] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
