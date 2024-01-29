@@ -100,3 +100,32 @@ def http_client_delete_response():
         "request_id": "abc-123",
     }
     return mock_http_client
+
+
+@pytest.fixture
+def http_client_token_exchange():
+    mock_http_client = Mock()
+    mock_http_client._execute.return_value = {
+        "access_token": "nylas_access_token",
+        "expires_in": 3600,
+        "id_token": "jwt_token",
+        "refresh_token": "nylas_refresh_token",
+        "scope": "https://www.googleapis.com/auth/gmail.readonly profile",
+        "token_type": "Bearer",
+        "grant_id": "grant_123",
+    }
+    return mock_http_client
+
+
+@pytest.fixture
+def http_client_token_info():
+    mock_http_client = Mock()
+    mock_http_client._execute.return_value = {
+        "iss": "https://nylas.com",
+        "aud": "http://localhost:3030",
+        "sub": "Jaf84d88-£274-46cc-bbc9-aed7dac061c7",
+        "email": "user@example.com",
+        "iat": 1692094848,
+        "exp": 1692095173,
+    }
+    return mock_http_client
