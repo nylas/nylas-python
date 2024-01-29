@@ -15,7 +15,7 @@ class Threads(
     DestroyableApiResource,
 ):
     def list(
-        self, identifier: str, query_params: ListThreadsQueryParams
+        self, identifier: str, query_params: ListThreadsQueryParams = None
     ) -> ListResponse[Thread]:
         """
         Return all Threads.

@@ -77,9 +77,9 @@ class Thread:
     draft_ids: Optional[List[str]] = None
     snippet: Optional[str] = None
     subject: Optional[str] = None
-    participant: Optional[List[EmailName]] = None
+    participants: Optional[List[EmailName]] = None
     latest_message_sent_date: Optional[int] = None
-    has_attachment: Optional[bool] = None
+    has_attachments: Optional[bool] = None
 
 
 class UpdateThreadRequest(TypedDict):
@@ -94,7 +94,7 @@ class UpdateThreadRequest(TypedDict):
 
     starred: NotRequired[bool]
     unread: NotRequired[bool]
-    folders: NotRequired[str]
+    folders: NotRequired[List[str]]
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
