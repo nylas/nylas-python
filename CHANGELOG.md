@@ -5,6 +5,13 @@ v6.0.0b9
 ----------------
 * Add support for sending drafts
 * Changed `client_secret` to optional for token exchange methods; defaults to API Key now
+* Changed references to `callback_url` to `webhook_url` to match API
+* Fix deserialization issue with `Connector` model
+* Fix serialization of query parameters
+* Fix typos in folders, threads, code exchange, smart compose, webhook and attachment models
+* Fix types in reminder and messages models
+* Fix message/draft deserialization in thread model
+* Standardized casing for enums
 
 v6.0.0b8
 ----------------

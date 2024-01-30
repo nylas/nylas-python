@@ -92,7 +92,6 @@ class Messages(
             identifier: The identifier of the grant to update the message for.
             message_id: The identifier of the message to update.
             request_body: The request body to update the message with.
-            query_params: The query parameters to include in the request.
 
         Returns:
             The updated Message.

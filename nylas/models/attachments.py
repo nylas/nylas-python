@@ -13,15 +13,23 @@ class Attachment:
 
     Attributes:
         id: Globally unique object identifier.
+        grant_id: The grant ID of the attachment.
         size: Size of the attachment in bytes.
         filename: Name of the attachment.
         content_type: MIME type of the attachment.
+        content_id: The content ID of the attachment.
+        content_disposition: The content disposition of the attachment.
+        is_inline: Whether the attachment is inline.
     """
 
     id: str
-    size: int
+    grant_id: Optional[str] = None
     filename: Optional[str] = None
     content_type: Optional[str] = None
+    size: Optional[int] = None
+    content_id: Optional[str] = None
+    content_disposition: Optional[str] = None
+    is_inline: Optional[bool] = None
 
 
 class CreateAttachmentRequest(TypedDict):

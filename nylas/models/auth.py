@@ -10,6 +10,11 @@ AccessType = Literal["online", "offline"]
 Provider = Literal["google", "imap", "microsoft", "virtual-calendar"]
 """ Literal for the different authentication providers. """
 
+Prompt = Literal[
+    "select_provider", "detect", "select_provider,detect", "detect,select_provider"
+]
+""" Literal for the different supported OAuth prompts. """
+
 
 class URLForAuthenticationConfig(TypedDict):
     """
@@ -35,7 +40,7 @@ class URLForAuthenticationConfig(TypedDict):
     redirect_uri: str
     provider: NotRequired[Provider]
     access_type: NotRequired[AccessType]
-    prompt: NotRequired[str]
+    prompt: NotRequired[Prompt]
     scope: NotRequired[List[str]]
     include_grant_scopes: NotRequired[bool]
     state: NotRequired[str]
@@ -107,7 +112,6 @@ class CodeExchangeResponse:
 
     access_token: str
     grant_id: str
-    email: str
     scope: str
     expires_in: int
     refresh_token: Optional[str] = None

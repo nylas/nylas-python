@@ -46,13 +46,13 @@ class CreateFolderRequest(TypedDict):
         name: The name of the folder.
         parent_id: The parent ID of the folder. (Microsoft only)
         background_color: The background color of the folder. (Google only)
-        tex_color: The text color of the folder. (Google only)
+        text_color: The text color of the folder. (Google only)
     """
 
     name: str
     parent_id: NotRequired[str]
     background_color: NotRequired[str]
-    tex_color: NotRequired[str]
+    text_color: NotRequired[str]
 
 
 class UpdateFolderRequest(TypedDict):
@@ -63,10 +63,10 @@ class UpdateFolderRequest(TypedDict):
         name: The name of the folder.
         parent_id: The parent ID of the folder. (Microsoft only)
         background_color: The background color of the folder. (Google only)
-        tex_color: The text color of the folder. (Google only)
+        text_color: The text color of the folder. (Google only)
     """
 
     name: NotRequired[str]
     parent_id: NotRequired[str]
     background_color: NotRequired[str]
-    tex_color: NotRequired[str]
+    text_color: NotRequired[str]

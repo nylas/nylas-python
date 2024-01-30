@@ -74,7 +74,7 @@ class Message:
     unread: Optional[bool] = None
     starred: Optional[bool] = None
     created_at: Optional[int] = None
-    date: Optional[datetime] = None
+    date: Optional[int] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python

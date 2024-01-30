@@ -3,6 +3,7 @@ import hashlib
 import urllib.parse
 import uuid
 
+from nylas.handler.http_client import _build_query_params
 from nylas.models.grants import CreateGrantRequest, Grant
 
 from nylas.models.auth import (
@@ -236,9 +237,8 @@ class Auth(Resource):
         return Response.from_dict(json_response, ProviderDetectResponse)
 
     def _url_auth_builder(self, query: dict) -> str:
-        return "{}/v3/connect/auth?{}".format(
-            self._http_client.api_server, urllib.parse.urlencode(query)
-        )
+        base = "{}/v3/connect/auth".format(self._http_client.api_server)
+        return _build_query_params(base, query)
 
     def _get_token(self, request_body: dict) -> CodeExchangeResponse:
         json_response = self._http_client._execute(

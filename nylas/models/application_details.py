@@ -71,7 +71,7 @@ class ApplicationDetails:
         environment: Environment identifier.
         branding: Branding details for the application.
         hosted_authentication: Hosted authentication branding details.
-        redirect_uris: List of redirect URIs.
+        callback_uris: List of redirect URIs.
     """
 
     application_id: str
@@ -80,4 +80,4 @@ class ApplicationDetails:
     environment: Environment
     branding: Branding
     hosted_authentication: Optional[HostedAuthentication] = None
-    redirect_uris: List[RedirectUri] = None
+    callback_uris: List[RedirectUri] = None

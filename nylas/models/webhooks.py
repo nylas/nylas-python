@@ -35,9 +35,9 @@ class Webhook:
     Attributes:
         id: Globally unique object identifier.
         trigger_types: The event that triggers the webhook.
-        callback_url: The URL to send webhooks to.
+        webhook_url: The URL to send webhooks to.
         status: The status of the new destination.
-        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+        notification_email_addresses: The email addresses that Nylas notifies when a webhook is down for a while.
         status_updated_at: The time when the status field was last updated, represented as a Unix timestamp in seconds.
         created_at: The time when the status field was created, represented as a Unix timestamp in seconds.
         updated_at: The time when the status field was last updated, represented as a Unix timestamp in seconds.
@@ -46,9 +46,9 @@ class Webhook:
 
     id: str
     trigger_types: List[WebhookTriggers]
-    callback_url: str
+    webhook_url: str
     status: WebhookStatus
-    notification_email_address: str
+    notification_email_addresses: List[str]
     status_updated_at: int
     created_at: int
     updated_at: int
@@ -86,11 +86,11 @@ class WebhookDeleteResponse:
     Class representing a Nylas webhook delete response.
 
     Attributes:
-        requestId: The request's ID.
+        request_id: The request's ID.
         data: Object containing the webhook deletion status.
     """
 
-    requestId: str
+    request_id: str
     data: Optional[WebhookDeleteData] = None
 
 
@@ -115,15 +115,15 @@ class CreateWebhookRequest(TypedDict):
 
     Attributes:
         trigger_types: List of events that triggers the webhook.
-        callback_url: The url to send webhooks to.
+        webhook_url: The url to send webhooks to.
         description: A human-readable description of the webhook destination.
-        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+        notification_email_addresses: The email addresses that Nylas notifies when a webhook is down for a while.
     """
 
     trigger_types: List[WebhookTriggers]
-    callback_url: str
+    webhook_url: str
     description: NotRequired[str]
-    notification_email_address: NotRequired[str]
+    notification_email_addresses: NotRequired[List[str]]
 
 
 class UpdateWebhookRequest(TypedDict):
@@ -132,12 +132,12 @@ class UpdateWebhookRequest(TypedDict):
 
     Attributes:
         trigger_types: List of events that triggers the webhook.
-        callback_url: The url to send webhooks to.
+        webhook_url: The url to send webhooks to.
         description: A human-readable description of the webhook destination.
-        notification_email_address: The email addresses that Nylas notifies when a webhook is down for a while.
+        notification_email_addresses: The email addresses that Nylas notifies when a webhook is down for a while.
     """
 
     trigger_types: NotRequired[List[WebhookTriggers]]
-    callback_url: NotRequired[str]
+    webhook_url: NotRequired[str]
     description: NotRequired[str]
-    notification_email_address: NotRequired[str]
+    notification_email_addresses: NotRequired[List[str]]

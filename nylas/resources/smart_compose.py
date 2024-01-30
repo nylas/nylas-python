@@ -1,3 +1,5 @@
+from nylas.models.response import Response
+
 from nylas.models.smart_compose import ComposeMessageRequest, ComposeMessageResponse
 from nylas.resources.resource import Resource
 
@@ -11,7 +13,7 @@ class SmartCompose(Resource):
 
     def compose_message(
         self, identifier: str, request_body: ComposeMessageRequest
-    ) -> ComposeMessageResponse:
+    ) -> Response[ComposeMessageResponse]:
         """
         Compose a message.
 
@@ -22,12 +24,13 @@ class SmartCompose(Resource):
         Returns:
             The generated message.
         """
-        return self._http_client.execute(
+        res = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/messages/smart-compose",
             request_body=request_body,
-            response_type=ComposeMessageResponse,
         )
+
+        return Response.from_dict(res, ComposeMessageResponse)
 
     def compose_message_reply(
         self, identifier: str, message_id: str, request_body: ComposeMessageRequest
@@ -43,9 +46,10 @@ class SmartCompose(Resource):
         Returns:
             The generated message reply.
         """
-        return self._http_client.execute(
+        res = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/messages/{message_id}/smart-compose",
             request_body=request_body,
-            response_type=ComposeMessageResponse,
         )
+
+        return Response.from_dict(res, ComposeMessageResponse)
