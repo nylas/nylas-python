@@ -1,20 +1,17 @@
-import pytest
-from nylas.resources.webhooks import Webhooks
-
-from nylas.resources.events import Events
-
-from nylas.resources.calendars import Calendars
-
+from nylas import Client
 from nylas.resources.applications import Applications
 from nylas.resources.attachments import Attachments
-
 from nylas.resources.auth import Auth
-
-from nylas import Client
+from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
+from nylas.resources.contacts import Contacts
+from nylas.resources.drafts import Drafts
+from nylas.resources.events import Events
 from nylas.resources.folders import Folders
+from nylas.resources.grants import Grants
 from nylas.resources.messages import Messages
 from nylas.resources.threads import Threads
+from nylas.resources.webhooks import Webhooks
 
 
 class TestClient:
@@ -54,9 +51,17 @@ class TestClient:
         assert client.calendars is not None
         assert type(client.calendars) is Calendars
 
+    def test_client_contacts_property(self, client):
+        assert client.contacts is not None
+        assert type(client.contacts) is Contacts
+
     def test_client_connectors_property(self, client):
         assert client.connectors is not None
         assert type(client.connectors) is Connectors
+
+    def test_client_drafts_property(self, client):
+        assert client.drafts is not None
+        assert type(client.drafts) is Drafts
 
     def test_client_events_property(self, client):
         assert client.events is not None
@@ -65,6 +70,10 @@ class TestClient:
     def test_client_folders_property(self, client):
         assert client.folders is not None
         assert type(client.folders) is Folders
+
+    def test_client_grants_property(self, client):
+        assert client.grants is not None
+        assert type(client.grants) is Grants
 
     def test_client_messages_property(self, client):
         assert client.messages is not None
