@@ -157,7 +157,7 @@ class TestDraft:
             None,
         )
 
-    def test_get_free_busy(self, http_client_response):
+    def test_send_draft(self, http_client_response):
         drafts = Drafts(http_client_response)
 
         drafts.send(identifier="abc-123", draft_id="draft-123")
