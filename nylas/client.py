@@ -1,6 +1,3 @@
-from nylas.resources.drafts import Drafts
-from nylas.resources.grants import Grants
-
 from nylas.config import DEFAULT_SERVER_URL
 from nylas.handler.http_client import HttpClient
 from nylas.resources.applications import Applications
@@ -14,6 +11,8 @@ from nylas.resources.messages import Messages
 from nylas.resources.threads import Threads
 from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
+from nylas.resources.drafts import Drafts
+from nylas.resources.grants import Grants
 
 
 class Client(object):
