@@ -81,8 +81,10 @@ class Timespan:
     Attributes:
         start_time: The Event's start time.
         end_time: The Event's end time.
-        start_timezone: The timezone of the start time, represented by an IANA-formatted string (for example, "America/New_York").
-        end_timezone: The timezone of the end time, represented by an IANA-formatted string (for example, "America/New_York").
+        start_timezone: The timezone of the start time, represented by an IANA-formatted string
+            (for example, "America/New_York").
+        end_timezone: The timezone of the end time, represented by an IANA-formatted string
+            (for example, "America/New_York").
     """
 
     start_time: int
@@ -143,16 +145,19 @@ def _decode_when(when: dict) -> When:
 
     if when["object"] == "time":
         return Time.from_dict(when)
-    elif when["object"] == "timespan":
+
+    if when["object"] == "timespan":
         return Timespan.from_dict(when)
-    elif when["object"] == "date":
+
+    if when["object"] == "date":
         return Date.from_dict(when)
-    elif when["object"] == "datespan":
+
+    if when["object"] == "datespan":
         return Datespan.from_dict(when)
-    else:
-        raise ValueError(
-            f"Invalid when object, unknown 'object' field found: {when['object']}"
-        )
+
+    raise ValueError(
+        f"Invalid when object, unknown 'object' field found: {when['object']}"
+    )
 
 
 ConferencingProvider = Literal[
@@ -232,12 +237,11 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
 
     if "details" in conferencing:
         return Details.from_dict(conferencing)
-    elif "autocreate" in conferencing:
+
+    if "autocreate" in conferencing:
         return Autocreate.from_dict(conferencing)
-    else:
-        raise ValueError(
-            f"Invalid conferencing object, unknown type found: {conferencing}"
-        )
+
+    raise ValueError(f"Invalid conferencing object, unknown type found: {conferencing}")
 
 
 @dataclass_json
@@ -660,7 +664,8 @@ class ListEventQueryParams(ListQueryParams):
         show_cancelled: Return events that have a status of cancelled.
             If an event is recurring, then it returns no matter the value set.
             Different providers have different semantics for cancelled events.
-        calendar_id: Specify calendar ID of the event. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Specify calendar ID of the event. "primary" is a supported value
+            indicating the user's primary calendar.
         title: Return events matching the specified title.
         description: Return events matching the specified description.
         location: Return events matching the specified location.
@@ -669,10 +674,10 @@ class ListEventQueryParams(ListQueryParams):
         end: Return events ending before the specified unix timestamp.
             Defaults to a month from now. Not respected by metadata filtering.
         metadata_pair: Pass in your metadata key and value pair to search for metadata.
-        expand_recurring: If true, the response will include an event for each occurrence of a recurring event within the requested time range.
+        expand_recurring: If true, the response will include an event for each occurrence of a recurring event within
+            the requested time range.
             If false, only a single primary event will be returned for each recurring event.
-            Cannot be used when filtering on metadata.
-            Defaults to false.
+            Cannot be used when filtering on metadata. Defaults to false.
         busy: Returns events with a busy status of true.
         order_by: Order results by the specified field.
             Currently only start is supported.
@@ -713,7 +718,8 @@ class FindEventQueryParams(TypedDict):
     Interface representing of the query parameters for finding an event.
 
     Attributes:
-        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Calendar ID to find the event in.
+            "primary" is a supported value indicating the user's primary calendar.
     """
 
     calendar_id: str
@@ -731,7 +737,8 @@ class SendRsvpQueryParams(TypedDict):
     Interface representing of the query parameters for an event.
 
     Attributes:
-        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Calendar ID to find the event in.
+            "primary" is a supported value indicating the user's primary calendar.
     """
 
     calendar_id: str

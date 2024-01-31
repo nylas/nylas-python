@@ -27,10 +27,12 @@ class Response(tuple, Generic[T]):
             request_id: The request ID.
         """
         # Initialize the tuple for destructuring support
-        cls = tuple.__new__(cls, (data, request_id))
-        cls.data = data
-        cls.request_id = request_id
-        return cls
+        instance = super().__new__(cls, (data, request_id))
+
+        instance.data = data
+        instance.request_id = request_id
+
+        return instance
 
     @classmethod
     def from_dict(cls, resp: dict, generic_type):
@@ -72,11 +74,13 @@ class ListResponse(tuple, Generic[T]):
             next_cursor: The cursor to use to get the next page of data.
         """
         # Initialize the tuple for destructuring support
-        cls = tuple.__new__(cls, (data, request_id, next_cursor))
-        cls.data = data
-        cls.request_id = request_id
-        cls.next_cursor = next_cursor
-        return cls
+        instance = super().__new__(cls, (data, request_id, next_cursor))
+
+        instance.data = data
+        instance.request_id = request_id
+        instance.next_cursor = next_cursor
+
+        return instance
 
     @classmethod
     def from_dict(cls, resp: dict, generic_type):

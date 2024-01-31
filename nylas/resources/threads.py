@@ -27,7 +27,7 @@ class Threads(
         Returns:
             A list of Threads.
         """
-        return super(Threads, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/threads",
             response_type=Thread,
             query_params=query_params,
@@ -44,7 +44,7 @@ class Threads(
         Returns:
             The requested Thread.
         """
-        return super(Threads, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/threads/{thread_id}",
             response_type=Thread,
         )
@@ -66,7 +66,7 @@ class Threads(
         Returns:
             The updated Thread.
         """
-        return super(Threads, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/threads/{thread_id}",
             response_type=Thread,
             request_body=request_body,
@@ -83,6 +83,6 @@ class Threads(
         Returns:
             The deletion response.
         """
-        return super(Threads, self).destroy(
+        return super().destroy(
             path=f"/v3/grants/{identifier}/threads/{thread_id}",
         )

@@ -38,7 +38,7 @@ class Drafts(
         Returns:
             A list of Drafts.
         """
-        return super(Drafts, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/drafts",
             response_type=Draft,
             query_params=query_params,
@@ -59,7 +59,7 @@ class Drafts(
         Returns:
             The requested Draft.
         """
-        return super(Drafts, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
             response_type=Draft,
         )
@@ -121,7 +121,7 @@ class Drafts(
         Returns:
             The deletion response.
         """
-        return super(Drafts, self).destroy(
+        return super().destroy(
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
         )
 

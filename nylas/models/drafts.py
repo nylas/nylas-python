@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List, Optional, get_type_hints
+from typing import List, get_type_hints
 
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
-from nylas.models.attachments import CreateAttachmentRequest, Attachment
+from nylas.models.attachments import CreateAttachmentRequest
 from nylas.models.events import EmailName
 from nylas.models.list_query_params import ListQueryParams
 from nylas.models.messages import Message
@@ -21,7 +20,7 @@ class Draft(Message):
         id (str): Globally unique object identifier.
         grant_id (str): The grant that this message belongs to.
         from_ (List[EmailName]): The sender of the message.
-        date (datetime): The date the message was received.
+        date (int): The date the message was received.
         object: The type of object.
         thread_id (Optional[str]): The thread that this message belongs to.
         subject (Optional[str]): The subject of the message.

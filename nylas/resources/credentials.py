@@ -36,7 +36,7 @@ class Credentials(
             The list of credentials.
         """
 
-        return super(Credentials, self).list(
+        return super().list(
             path=f"/v3/connectors/{provider}/creds",
             response_type=Credential,
             query_params=query_params,
@@ -54,7 +54,7 @@ class Credentials(
             The Credential.
         """
 
-        return super(Credentials, self).find(
+        return super().find(
             path=f"/v3/connectors/{provider}/creds/{credential_id}",
             response_type=Credential,
         )
@@ -73,7 +73,7 @@ class Credentials(
             The created Credential.
         """
 
-        return super(Credentials, self).create(
+        return super().create(
             path=f"/v3/connectors/{provider}/creds",
             response_type=Credential,
             request_body=request_body,
@@ -97,7 +97,7 @@ class Credentials(
             The updated credential.
         """
 
-        return super(Credentials, self).update(
+        return super().update(
             path=f"/v3/connectors/{provider}/creds/{credential_id}",
             response_type=Credential,
             request_body=request_body,
@@ -116,6 +116,4 @@ class Credentials(
             The deletion response.
         """
 
-        return super(Credentials, self).destroy(
-            path=f"/v3/connectors/{provider}/creds/{credential_id}"
-        )
+        return super().destroy(path=f"/v3/connectors/{provider}/creds/{credential_id}")

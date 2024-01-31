@@ -27,7 +27,7 @@ class Attachments(
         Returns:
             The attachment metadata.
         """
-        return super(Attachments, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/attachments/{attachment_id}",
             response_type=Attachment,
             query_params=query_params,

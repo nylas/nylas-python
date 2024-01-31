@@ -87,7 +87,8 @@ class AvailabilityRules(TypedDict):
         default_open_hours: A default set of open hours to apply to all participants.
             You can overwrite these open hours for individual participants by specifying open_hours on
             the participant object.
-        round_robin_event_id: The ID on events that Nylas considers when calculating the order of round-robin participants.
+        round_robin_event_id: The ID on events that Nylas considers when calculating the order of
+            round-robin participants.
             This is used for both max-fairness and max-availability methods.
     """
 

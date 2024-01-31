@@ -29,8 +29,8 @@ class Grants(
             A list of Grants.
         """
 
-        return super(Grants, self).list(
-            path=f"/v3/grants", response_type=Grant, query_params=query_params
+        return super().list(
+            path="/v3/grants", response_type=Grant, query_params=query_params
         )
 
     def find(self, grant_id: str) -> Response[Grant]:
@@ -44,9 +44,7 @@ class Grants(
             The Grant.
         """
 
-        return super(Grants, self).find(
-            path=f"/v3/grants/{grant_id}", response_type=Grant
-        )
+        return super().find(path=f"/v3/grants/{grant_id}", response_type=Grant)
 
     def update(
         self, grant_id: str, request_body: UpdateGrantRequest
@@ -62,7 +60,7 @@ class Grants(
             The updated Grant.
         """
 
-        return super(Grants, self).update(
+        return super().update(
             path=f"/v3/grants/{grant_id}",
             response_type=Grant,
             request_body=request_body,
@@ -79,4 +77,4 @@ class Grants(
             The deletion response.
         """
 
-        return super(Grants, self).destroy(path=f"/v3/grants/{grant_id}")
+        return super().destroy(path=f"/v3/grants/{grant_id}")

@@ -50,7 +50,7 @@ class Messages(
         Returns:
             A list of Messages.
         """
-        return super(Messages, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/messages",
             response_type=Message,
             query_params=query_params,
@@ -73,7 +73,7 @@ class Messages(
         Returns:
             The requested Message.
         """
-        return super(Messages, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             response_type=Message,
             query_params=query_params,
@@ -96,7 +96,7 @@ class Messages(
         Returns:
             The updated Message.
         """
-        return super(Messages, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             response_type=Message,
             request_body=request_body,
@@ -113,7 +113,7 @@ class Messages(
         Returns:
             The deletion response.
         """
-        return super(Messages, self).destroy(
+        return super().destroy(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
         )
 

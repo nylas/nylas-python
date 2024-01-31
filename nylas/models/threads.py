@@ -26,12 +26,11 @@ def _decode_draft_or_message(json: dict) -> Union[Message, Draft]:
 
     if json["object"] == "draft":
         return Draft.from_dict(json)
-    elif json["object"] == "message":
+
+    if json["object"] == "message":
         return Message.from_dict(json)
-    else:
-        raise ValueError(
-            f"Invalid object, unknown 'object' field found: {json['object']}"
-        )
+
+    raise ValueError(f"Invalid object, unknown 'object' field found: {json['object']}")
 
 
 @dataclass_json

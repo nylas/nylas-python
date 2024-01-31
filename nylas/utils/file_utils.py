@@ -22,7 +22,7 @@ def attach_file_request_builder(file_path) -> CreateAttachmentRequest:
     filename = path.name
     size = os.path.getsize(file_path)
     content_type = mimetypes.guess_type(file_path)[0]
-    file_stream = open(file_path, "rb")
+    file_stream = open(file_path, "rb")  # pylint: disable=consider-using-with
 
     return {
         "filename": filename,

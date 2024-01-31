@@ -38,7 +38,7 @@ class Contacts(
             The list of contacts.
         """
 
-        return super(Contacts, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/contacts",
             query_params=query_params,
             response_type=Contact,
@@ -59,9 +59,9 @@ class Contacts(
             query_params: The query parameters to include in the request.
 
         Returns:
-            The Contact.
+            The contact.
         """
-        return super(Contacts, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/contacts/{contact_id}",
             response_type=Contact,
             query_params=query_params,
@@ -78,9 +78,9 @@ class Contacts(
             request_body: The values to create the Contact with.
 
         Returns:
-            The created Contact.
+            The created contact.
         """
-        return super(Contacts, self).create(
+        return super().create(
             path=f"/v3/grants/{identifier}/contacts",
             response_type=Contact,
             request_body=request_body,
@@ -94,13 +94,14 @@ class Contacts(
 
         Attributes:
             identifier: The identifier of the Grant to act upon.
-            contact_id: The ID of the Contact to update. Use "primary" to refer to the primary Contact associated with the Grant.
+            contact_id: The ID of the Contact to update.
+                Use "primary" to refer to the primary Contact associated with the Grant.
             request_body: The values to update the Contact with.
 
         Returns:
-            The updated Contact.
+            The updated contact.
         """
-        return super(Contacts, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/contacts/{contact_id}",
             response_type=Contact,
             request_body=request_body,
@@ -112,14 +113,13 @@ class Contacts(
 
         Attributes:
             identifier: The identifier of the Grant to act upon.
-            contact_id: The ID of the Contact to delete. Use "primary" to refer to the primary Contact associated with the Grant.
+            contact_id: The ID of the Contact to delete.
+                Use "primary" to refer to the primary Contact associated with the Grant.
 
         Returns:
             The deletion response.
         """
-        return super(Contacts, self).destroy(
-            path=f"/v3/grants/{identifier}/contacts/{contact_id}"
-        )
+        return super().destroy(path=f"/v3/grants/{identifier}/contacts/{contact_id}")
 
     def list_groups(
         self, identifier: str, query_params: ListContactGroupsQueryParams = None

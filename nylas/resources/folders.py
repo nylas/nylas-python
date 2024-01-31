@@ -31,7 +31,7 @@ class Folders(
             The list of Folders.
         """
 
-        return super(Folders, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/folders",
             response_type=Folder,
         )
@@ -47,7 +47,7 @@ class Folders(
         Returns:
             The Folder.
         """
-        return super(Folders, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/folders/{folder_id}",
             response_type=Folder,
         )
@@ -65,7 +65,7 @@ class Folders(
         Returns:
             The created Folder.
         """
-        return super(Folders, self).create(
+        return super().create(
             path=f"/v3/grants/{identifier}/folders",
             response_type=Folder,
             request_body=request_body,
@@ -85,7 +85,7 @@ class Folders(
         Returns:
             The updated Folder.
         """
-        return super(Folders, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/folders/{folder_id}",
             response_type=Folder,
             request_body=request_body,
@@ -102,6 +102,4 @@ class Folders(
         Returns:
             The deletion response.
         """
-        return super(Folders, self).destroy(
-            path=f"/v3/grants/{identifier}/folders/{folder_id}"
-        )
+        return super().destroy(path=f"/v3/grants/{identifier}/folders/{folder_id}")

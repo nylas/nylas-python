@@ -27,10 +27,10 @@ def _validate_response(response: Response) -> dict:
             ):
                 parsed_error = NylasOAuthErrorResponse.from_dict(json)
                 raise NylasOAuthError(parsed_error, response.status_code)
-            else:
-                parsed_error = NylasApiErrorResponse.from_dict(json)
-                raise NylasApiError(parsed_error, response.status_code)
-        except (KeyError, TypeError):
+
+            parsed_error = NylasApiErrorResponse.from_dict(json)
+            raise NylasApiError(parsed_error, response.status_code)
+        except (KeyError, TypeError) as exc:
             request_id = json.get("request_id", None)
             raise NylasApiError(
                 NylasApiErrorResponse(
@@ -41,7 +41,7 @@ def _validate_response(response: Response) -> dict:
                     ),
                 ),
                 status_code=response.status_code,
-            )
+            ) from exc
 
     return json
 
@@ -62,7 +62,8 @@ def _build_query_params(base_url: str, query_params: dict = None) -> str:
     return f"{base_url}?{query_string}"
 
 
-class HttpClient(object):
+# pylint: disable=too-few-public-methods
+class HttpClient:
     """HTTP client for the Nylas API."""
 
     def __init__(self, api_server, api_key, timeout):
@@ -92,8 +93,10 @@ class HttpClient(object):
                 timeout=self.timeout,
                 data=data,
             )
-        except requests.exceptions.Timeout:
-            raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
+        except requests.exceptions.Timeout as exc:
+            raise NylasSdkTimeoutError(
+                url=request["url"], timeout=self.timeout
+            ) from exc
 
         return _validate_response(response)
 
@@ -117,10 +120,12 @@ class HttpClient(object):
             # If we stream an iterator for streaming the content, otherwise return the entire byte array
             if stream:
                 return response
-            else:
-                return response.content if response.content else None
-        except requests.exceptions.Timeout:
-            raise NylasSdkTimeoutError(url=request["url"], timeout=self.timeout)
+
+            return response.content if response.content else None
+        except requests.exceptions.Timeout as exc:
+            raise NylasSdkTimeoutError(
+                url=request["url"], timeout=self.timeout
+            ) from exc
 
     def _build_request(
         self,
@@ -148,13 +153,13 @@ class HttpClient(object):
             extra_headers = {}
 
         major, minor, revision, _, __ = sys.version_info
-        user_agent_header = "Nylas Python SDK {} - {}.{}.{}".format(
-            __VERSION__, major, minor, revision
+        user_agent_header = (
+            f"Nylas Python SDK {__VERSION__} - {major}.{minor}.{revision}"
         )
         headers = {
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
-            "Authorization": "Bearer {}".format(self.api_key),
+            "Authorization": f"Bearer {self.api_key}",
         }
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type

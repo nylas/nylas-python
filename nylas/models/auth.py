@@ -27,8 +27,10 @@ class URLForAuthenticationConfig(TypedDict):
             If not set, the user is directed to the Hosted Login screen and prompted to select a provider.
         access_type: If the exchange token should return a refresh token too.
             Not suitable for client side or JavaScript apps.
-        prompt: The prompt parameter is used to force the consent screen to be displayed even if the user has already given consent to your application.
-        scope: A space-delimited list of scopes that identify the resources that your application could access on the user's behalf.
+        prompt: The prompt parameter is used to force the consent screen to be displayed even if the user
+            has already given consent to your application.
+        scope: A space-delimited list of scopes that identify the resources that your application
+            could access on the user's behalf.
             If no scope is given, all of the default integration's scopes are used.
         include_grant_scopes: If set to true, the scopes granted to the application will be included in the response.
         state: Optional state to be returned after authentication
@@ -63,11 +65,13 @@ class CodeExchangeRequest(TypedDict):
     Interface of a Nylas code exchange request
 
     Attributes:
-        redirect_uri: Should match the same redirect URI that was used for getting the code during the initial authorization request.
+        redirect_uri: Should match the same redirect URI that was used for getting the code during the initial
+            authorization request.
         code: OAuth 2.0 code fetched from the previous step.
         client_id: Client ID of the application.
         client_secret: Client secret of the application. If not provided, the API Key will be used instead.
-        code_verifier: The original plain text code verifier (code_challenge) used in the initial authorization request (PKCE).
+        code_verifier: The original plain text code verifier (code_challenge) used in the initial
+            authorization request (PKCE).
     """
 
     redirect_uri: str
@@ -82,7 +86,8 @@ class TokenExchangeRequest(TypedDict):
     Interface of a Nylas token exchange request
 
     Attributes:
-        redirect_uri: Should match the same redirect URI that was used for getting the code during the initial authorization request.
+        redirect_uri: Should match the same redirect URI that was used for getting the code during the initial
+            authorization request.
         refresh_token: Token to refresh/request your short-lived access token
         client_id: Client ID of the application.
         client_secret: Client secret of the application. If not provided, the API Key will be used instead.
