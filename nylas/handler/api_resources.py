@@ -3,7 +3,7 @@ from __future__ import annotations
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.resource import Resource
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,missing-class-docstring,missing-function-docstring
 
 
 class ListableApiResource(Resource):

@@ -24,6 +24,12 @@ class Contacts(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Contacts API
+
+    The Contacts API allows you to manage contacts and contact groups for a user.
+    """
+
     def list(
         self, identifier: str, query_params: ListContactsQueryParams = None
     ) -> ListResponse[Contact]:

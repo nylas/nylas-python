@@ -14,6 +14,12 @@ class Threads(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Threads API
+
+    The threads API allows you to find, update, and delete threads.
+    """
+
     def list(
         self, identifier: str, query_params: ListThreadsQueryParams = None
     ) -> ListResponse[Thread]:

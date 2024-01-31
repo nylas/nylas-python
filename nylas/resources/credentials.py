@@ -22,6 +22,14 @@ class Credentials(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Credentials API
+
+
+    A Nylas connector credential is a special type of record that securely stores information
+    that allows you to connect using an administrator account
+    """
+
     def list(
         self, provider: Provider, query_params: ListCredentialQueryParams = None
     ) -> ListResponse[Credential]:

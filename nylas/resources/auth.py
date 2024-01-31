@@ -58,6 +58,12 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
+    """
+    A collection of authentication related API endpoints
+
+    These endpoints allow for various functionality related to authentication.
+    """
+
     def url_for_oauth2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.

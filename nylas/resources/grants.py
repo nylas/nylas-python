@@ -18,6 +18,15 @@ class Grants(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Grants API
+
+    The Grants API allows you to find and manage existing grants for your Nylas application.
+
+    Grants represent a specific set of permissions ("scopes") that a specific end user granted Nylas
+    for a specific service provider
+    """
+
     def list(self, query_params: ListGrantsQueryParams = None) -> ListResponse[Grant]:
         """
         Return all Grants.

@@ -10,6 +10,12 @@ from nylas.models.response import Response as NylasResponse
 class Attachments(
     FindableApiResource,
 ):
+    """
+    Nylas Attachments API
+
+    The Nylas Attachments API allows you to get metadata ot, and download attachments from messages.
+    """
+
     def find(
         self,
         identifier: str,

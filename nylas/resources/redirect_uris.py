@@ -20,6 +20,12 @@ class RedirectUris(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Manage Redirect URIs for your Nylas Application.
+
+    These endpoints allow you to create, update, and delete Redirect URIs for your Nylas Application.
+    """
+
     def list(self) -> ListResponse[RedirectUri]:
         """
         Return all Redirect URIs.

@@ -25,6 +25,12 @@ class Drafts(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Draft API
+
+    The Drafts API allows you to create, read, update, and delete drafts and send them as messages.
+    """
+
     def list(
         self, identifier: str, query_params: Optional[ListDraftsQueryParams] = None
     ) -> ListResponse[Draft]:

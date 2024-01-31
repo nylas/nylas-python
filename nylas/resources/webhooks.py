@@ -25,6 +25,12 @@ class Webhooks(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Webhooks API
+
+    The Nylas webhooks API allows you to manage webhook destinations for your Nylas application.
+    """
+
     def list(self) -> ListResponse[Webhook]:
         """
         List all webhook destinations

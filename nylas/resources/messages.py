@@ -27,6 +27,14 @@ class Messages(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Messages API
+
+    The messages API allows you to send, find, update, and delete messages.
+    You can also use the messages API to schedule messages to be sent at a later time.
+    The Smart Compose API, allowing you to generate email content using machine learning, is also available.
+    """
+
     @property
     def smart_compose(self) -> SmartCompose:
         """

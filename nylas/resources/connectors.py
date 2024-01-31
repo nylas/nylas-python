@@ -24,6 +24,14 @@ class Connectors(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Connectors API
+
+    The Nylas Connectors API allows you to create new connectors or manage existing ones.
+    In Nylas, a connector (formerly called an "integration") stores information that allows your Nylas application
+    to connect to a third party services
+    """
+
     @property
     def credentials(self) -> Credentials:
         """

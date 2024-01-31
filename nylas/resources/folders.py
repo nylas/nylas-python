@@ -20,6 +20,12 @@ class Folders(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Folders API
+
+    The Nylas folders API allows you to create new folders or manage existing ones.
+    """
+
     def list(self, identifier: str) -> ListResponse[Folder]:
         """
         Return all Folders.

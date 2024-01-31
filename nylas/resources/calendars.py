@@ -23,6 +23,15 @@ class Calendars(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Calendar API
+
+    The Nylas calendar API allows you to create new calendars or manage existing ones, as well as getting
+    free/busy information for a calendar and getting availability for a calendar.
+
+    A calendar can be accessed by one, or several people, and can contain events.
+    """
+
     def list(
         self, identifier: str, query_params: ListCalendarsQueryParams = None
     ) -> ListResponse[Calendar]:

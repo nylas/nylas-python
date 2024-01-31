@@ -32,6 +32,12 @@ class Events(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Events API
+
+    The Events API allows you to find, create, update, and delete events on any calendar on your Nylas account.
+    """
+
     def list(
         self, identifier: str, query_params: ListEventQueryParams
     ) -> ListResponse[Event]:
