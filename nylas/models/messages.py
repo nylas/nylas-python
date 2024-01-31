@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json, config
 from typing import List, Literal, Optional, Dict, Any
 from typing_extensions import TypedDict, NotRequired, get_type_hints
-from datetime import datetime
 
 from nylas.models.attachments import Attachment
 from nylas.models.list_query_params import ListQueryParams
