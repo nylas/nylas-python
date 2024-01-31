@@ -63,15 +63,12 @@ class CreateDraftRequest(TypedDict):
     A request to create a draft.
 
     Attributes:
-        thread_id: The thread that this message belongs to.
         subject: The subject of the message.
         to: The recipients of the message.
         cc: The CC recipients of the message.
         bcc: The BCC recipients of the message.
         reply_to: The reply-to recipients of the message.
-        unread: Whether the message is unread.
         starred: Whether the message is starred.
-        snippet: A snippet of the message body.
         body: The body of the message.
         attachments: The attachments on the message.
         send_at: Unix timestamp to send the message at.
@@ -80,15 +77,12 @@ class CreateDraftRequest(TypedDict):
     """
 
     body: NotRequired[str]
-    thread_id: NotRequired[str]
     subject: NotRequired[str]
-    snippet: NotRequired[str]
     to: NotRequired[List[EmailName]]
     bcc: NotRequired[List[EmailName]]
     cc: NotRequired[List[EmailName]]
     reply_to: NotRequired[List[EmailName]]
     attachments: NotRequired[List[CreateAttachmentRequest]]
-    unread: NotRequired[bool]
     starred: NotRequired[bool]
     send_at: NotRequired[int]
     reply_to_message_id: NotRequired[str]
@@ -144,15 +138,12 @@ class SendMessageRequest(CreateDraftRequest):
     A request to send a message.
 
     Attributes:
-        thread_id (NotRequired[str]): The thread that this message belongs to.
         subject (NotRequired[str]): The subject of the message.
         to (NotRequired[List[EmailName]]): The recipients of the message.
         cc (NotRequired[List[EmailName]]): The CC recipients of the message.
         bcc (NotRequired[List[EmailName]]): The BCC recipients of the message.
         reply_to (NotRequired[List[EmailName]]): The reply-to recipients of the message.
-        unread (NotRequired[bool]): Whether the message is unread.
         starred (NotRequired[bool]): Whether the message is starred.
-        snippet (NotRequired[str]): A snippet of the message body.
         body (NotRequired[str]): The body of the message.
         attachments (NotRequired[List[CreateAttachmentRequest]]): The attachments on the message.
         send_at (NotRequired[int]): Unix timestamp to send the message at.
