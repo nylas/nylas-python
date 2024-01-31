@@ -23,7 +23,7 @@ RUN_DEPENDENCIES = [
     "typing_extensions>=4.7.1",
 ]
 
-TEST_DEPENDENCIES = ["pytest>=7.4.0"]
+TEST_DEPENDENCIES = ["pytest>=7.4.0", "pytest-cov>=4.1.0"]
 
 DOCS_DEPENDENCIES = [
     "mkdocs>=1.5.2",
