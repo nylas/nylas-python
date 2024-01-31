@@ -1,0 +1,33 @@
+[FORMAT]
+good-names=id,k,v,cc,to,ip
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=
+    missing-class-docstring,
+    missing-module-docstring,
+    missing-function-docstring,
+    arguments-differ,
+    protected-access,
+    duplicate-code,
+    too-many-instance-attributes,
+    unnecessary-pass,
+    too-many-arguments,
+    too-few-public-methods,
+
+[TYPECHECK]
+
+generated-members=
+    Message.from_dict,
+    Draft.from_dict,
+    Time.from_dict,
+    Timespan.from_dict,
+    Date.from_dict,
+    Datespan.from_dict,
+    Details.from_dict,
+    Autocreate.from_dict,
+    RequestIdOnlyResponse.from_dict,
+    TokenInfoResponse.from_dict,
+    CodeExchangeResponse.from_dict,
+    NylasApiErrorResponse.from_dict,
+    NylasOAuthErrorResponse.from_dict,
