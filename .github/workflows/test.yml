@@ -51,4 +51,4 @@ jobs:
         run: pylint nylas
 
       - name: Run black
-        run: black --check --extend-exclude="/examples" .
+        run: black .
