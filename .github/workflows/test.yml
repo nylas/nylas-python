@@ -44,6 +44,9 @@ jobs:
         with:
           python-version: "3.8"
 
+      - name: Install dependencies
+        run: pip install .
+
       - name: Install pylint and black
         run: pip install pylint black
 
