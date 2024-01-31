@@ -304,7 +304,7 @@ class Event:
         reminders: List of reminders for the Event.
         status: The Event's status.
         visibility: The Event's visibility (private or public).
-        capacity: Sets the maximum number of participants that may attend the event.        
+        capacity: Sets the maximum number of participants that may attend the event.
     """
 
     id: str
@@ -334,6 +334,7 @@ class Event:
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
     capacity: Optional[int] = None
+
 
 class CreateParticipant(TypedDict):
     """
