@@ -8,16 +8,6 @@ from dataclasses_json import dataclass_json
 from nylas.models.list_query_params import ListQueryParams
 
 
-class ContactType(str, Enum):
-    """Enum representing the different types of contacts."""
-
-    WORK = "work"
-    HOME = "home"
-    MOBILE = "mobile"
-    PERSONAL = "personal"
-    OTHER = "other"
-
-
 class SourceType(str, Enum):
     """Enum representing the different types of sources for a contact."""
 
@@ -38,7 +28,7 @@ class PhoneNumber:
     """
 
     number: Optional[str] = None
-    type: Optional[ContactType] = None
+    type: Optional[str] = None
 
 
 @dataclass_json
@@ -63,7 +53,7 @@ class PhysicalAddress:
     postal_code: Optional[str] = None
     state: Optional[str] = None
     country: Optional[str] = None
-    type: Optional[ContactType] = None
+    type: Optional[str] = None
 
 
 @dataclass_json
@@ -78,7 +68,7 @@ class WebPage:
     """
 
     url: Optional[str] = None
-    type: Optional[ContactType] = None
+    type: Optional[str] = None
 
 
 @dataclass_json
@@ -93,7 +83,7 @@ class ContactEmail:
     """
 
     email: Optional[str] = None
-    type: Optional[ContactType] = None
+    type: Optional[str] = None
 
 
 @dataclass_json
@@ -121,7 +111,7 @@ class InstantMessagingAddress:
     """
 
     im_address: Optional[str] = None
-    type: Optional[ContactType] = None
+    type: Optional[str] = None
 
 
 @dataclass_json
@@ -193,7 +183,7 @@ class WriteablePhoneNumber(TypedDict):
     """
 
     number: NotRequired[str]
-    type: NotRequired[ContactType]
+    type: NotRequired[str]
 
 
 class WriteablePhysicalAddress(TypedDict):
@@ -216,7 +206,7 @@ class WriteablePhysicalAddress(TypedDict):
     postal_code: NotRequired[str]
     state: NotRequired[str]
     country: NotRequired[str]
-    type: NotRequired[ContactType]
+    type: NotRequired[str]
 
 
 class WriteableWebPage(TypedDict):
@@ -229,7 +219,7 @@ class WriteableWebPage(TypedDict):
     """
 
     url: NotRequired[str]
-    type: NotRequired[ContactType]
+    type: NotRequired[str]
 
 
 class WriteableContactEmail(TypedDict):
@@ -242,7 +232,7 @@ class WriteableContactEmail(TypedDict):
     """
 
     email: NotRequired[str]
-    type: NotRequired[ContactType]
+    type: NotRequired[str]
 
 
 class WriteableContactGroupId(TypedDict):
@@ -266,7 +256,7 @@ class WriteableInstantMessagingAddress(TypedDict):
     """
 
     im_address: NotRequired[str]
-    type: NotRequired[ContactType]
+    type: NotRequired[str]
 
 
 class CreateContactRequest(TypedDict):
