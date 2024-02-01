@@ -272,7 +272,7 @@ class Reminder:
             If left empty or omitted while use_default is set to false, the event will have no reminders.
     """
 
-    use_default: Optional[bool] = None
+    use_default: bool
     overrides: Optional[List[ReminderOverride]] = None
 
 
@@ -391,6 +391,48 @@ class WritableDetailsConfig(TypedDict):
     url: NotRequired[str]
     pin: NotRequired[str]
     phone: NotRequired[List[str]]
+
+
+class WriteableReminderOverride(TypedDict):
+    """
+    Interface representing a writable reminder override object.
+
+    Attributes:
+        reminder_minutes: The user's preferred Event reminder time, in minutes.
+            Reminder minutes are in the following format: "[20]".
+        reminder_method: The user's preferred method for Event reminders (Google only).
+    """
+
+    reminder_minutes: NotRequired[int]
+    reminder_method: NotRequired[str]
+
+
+class CreateReminder(TypedDict):
+    """
+    Interface representing a reminder object for event creation.
+
+    Attributes:
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
+    """
+
+    use_default: bool
+    overrides: NotRequired[List[WriteableReminderOverride]]
+
+
+class UpdateReminder(TypedDict):
+    """
+    Interface representing a reminder object for updating an event.
+
+    Attributes:
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
+    """
+
+    use_default: NotRequired[bool]
+    overrides: NotRequired[List[WriteableReminderOverride]]
 
 
 class CreateDetails(TypedDict):
@@ -591,9 +633,8 @@ class CreateEventRequest(TypedDict):
         description: The description of the event.
         location: The location of the event.
         conferencing: The conferencing details of the event.
-        reminder_minutes: The number of minutes before the event start time when a user wants a reminder for this event.
-            Reminder minutes are in the following format: "[20]".
-        reminder_method: Method to remind the user about the event. (Google only).
+        reminders: A list of reminders to send for the event.
+            If left empty or omitted, the event uses the provider defaults.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
@@ -608,8 +649,7 @@ class CreateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[CreateConferencing]
-    reminder_minutes: NotRequired[str]
-    reminder_method: NotRequired[str]
+    reminders: NotRequired[CreateReminder]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[CreateParticipant]]
     recurrence: NotRequired[List[str]]
@@ -629,9 +669,7 @@ class UpdateEventRequest(TypedDict):
         description: The description of the event.
         location: The location of the event.
         conferencing: The conferencing details of the event.
-        reminder_minutes: The number of minutes before the event start time when a user wants a reminder for this event.
-            Reminder minutes are in the following format: "[20]".
-        reminder_method: Method to remind the user about the event. (Google only).
+        reminders: A list of reminders to send for the event.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
@@ -646,8 +684,7 @@ class UpdateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[UpdateConferencing]
-    reminder_minutes: NotRequired[str]
-    reminder_method: NotRequired[str]
+    reminders: NotRequired[UpdateReminder]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[UpdateParticipant]]
     recurrence: NotRequired[List[str]]
