@@ -9,7 +9,7 @@ from nylas.models.list_query_params import ListQueryParams
 Status = Literal["confirmed", "tentative", "cancelled"]
 """ Literal representing the status of an Event. """
 
-Visibility = Literal["public", "private"]
+Visibility = Literal["default", "public", "private"]
 """ Literal representation of visibility of the Event. """
 
 ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
@@ -318,6 +318,7 @@ class Event:
     created_at: int
     updated_at: int
     participants: List[Participant]
+    visibility: Visibility
     when: When = field(metadata=config(decoder=_decode_when))
     conferencing: Optional[Conferencing] = field(
         default=None, metadata=config(decoder=_decode_conferencing)
@@ -336,7 +337,6 @@ class Event:
     recurrence: Optional[List[str]] = None
     reminders: Optional[Reminder] = None
     status: Optional[Status] = None
-    visibility: Optional[Visibility] = None
     capacity: Optional[int] = None
 
 
