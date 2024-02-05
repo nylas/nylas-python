@@ -8,7 +8,6 @@ on:
   pull_request:
     branches:
       - main
-      - v6.0.0-beta
 
 jobs:
   pytest:
@@ -20,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup python
-        uses: MatteoH2O1999/setup-python@v1.4.1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
