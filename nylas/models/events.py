@@ -262,7 +262,7 @@ class ReminderOverride:
 
 @dataclass_json
 @dataclass
-class Reminder:
+class Reminders:
     """
     Class representation of a reminder object.
 
@@ -335,7 +335,7 @@ class Event:
     creator: Optional[EmailName] = None
     organizer: Optional[EmailName] = None
     recurrence: Optional[List[str]] = None
-    reminders: Optional[Reminder] = None
+    reminders: Optional[Reminders] = None
     status: Optional[Status] = None
     capacity: Optional[int] = None
 
@@ -407,7 +407,7 @@ class WriteableReminderOverride(TypedDict):
     reminder_method: NotRequired[str]
 
 
-class CreateReminder(TypedDict):
+class CreateReminders(TypedDict):
     """
     Interface representing a reminder object for event creation.
 
@@ -421,7 +421,7 @@ class CreateReminder(TypedDict):
     overrides: NotRequired[List[WriteableReminderOverride]]
 
 
-class UpdateReminder(TypedDict):
+class UpdateReminders(TypedDict):
     """
     Interface representing a reminder object for updating an event.
 
@@ -649,7 +649,7 @@ class CreateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[CreateConferencing]
-    reminders: NotRequired[CreateReminder]
+    reminders: NotRequired[CreateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[CreateParticipant]]
     recurrence: NotRequired[List[str]]
@@ -684,7 +684,7 @@ class UpdateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[UpdateConferencing]
-    reminders: NotRequired[UpdateReminder]
+    reminders: NotRequired[UpdateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[UpdateParticipant]]
     recurrence: NotRequired[List[str]]
