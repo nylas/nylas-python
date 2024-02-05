@@ -1,0 +1,43 @@
+name: sdk-reference
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    environment:
+      name: sdk-reference
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Nodejs
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies and build
+        run: pip install .[docs]
+      - name: Build docs
+        run: python setup.py build-docs
+      - name: Set env BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+      - name: Set env CLOUDFLARE_BRANCH
+        run: |
+          if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
+              echo "CLOUDFLARE_BRANCH=main" >> "$GITHUB_ENV"
+          else
+              echo "CLOUDFLARE_BRANCH=$BRANCH" >> "$GITHUB_ENV"
+          fi
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        id: deploy
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: nylas-python-sdk-reference
+          directory: site
+          wranglerVersion: "3"
+          branch: ${{ env.CLOUDFLARE_BRANCH }}

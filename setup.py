@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 import re
 import subprocess
@@ -11,26 +13,27 @@ with open("nylas/_client_sdk_version.py", "r") as fd:
         r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
     ).group(1)
 
+with open("README.md", "r", encoding="utf-8") as f:
+    README = f.read()
+
 RUN_DEPENDENCIES = [
-    "requests[security]>=2.4.2",
-    "six>=1.4.1",
-    "urlobject",
-    "enum34>=1.1.10; python_version<='3.4'",
-    "websocket-client==0.59.0",
+    "requests[security]>=2.31.0",
+    "requests-toolbelt>=1.0.0",
+    "dataclasses-json>=0.5.9",
+    "typing_extensions>=4.7.1",
 ]
 
-TEST_DEPENDENCIES = [
-    "pytest",
-    "pytest-cov",
-    "pytest-timeout",
-    "pytest-mock",
-    "responses==0.10.5",
-    "twine",
-    "pytz",
-    "mock; python_version<'3.3'",
+TEST_DEPENDENCIES = ["pytest>=7.4.0", "pytest-cov>=4.1.0", "setuptools>=69.0.3"]
+
+DOCS_DEPENDENCIES = [
+    "mkdocs>=1.5.2",
+    "mkdocstrings[python]>=0.22.0",
+    "mkdocs-material>=9.2.6",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-literate-nav>=0.6.0",
 ]
 
-RELEASE_DEPENDENCIES = ["bumpversion>=0.5.0", "twine>=3.4.2"]
+RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
 
 class PyTest(TestCommand):
@@ -76,6 +79,19 @@ def main():
             except FileNotFoundError as e:
                 print("Error encountered: {}.\n\n".format(e))
             sys.exit()
+        elif sys.argv[1] == "build-docs":
+            if not os.path.exists("docs"):
+                os.makedirs("docs")
+            try:
+                # Copy the README and other markdowns to the docs folder
+                shutil.copy("README.md", "docs/index.md")
+                shutil.copy("Contributing.md", "docs/contributing.md")
+                shutil.copy("LICENSE", "docs/license.md")
+
+                subprocess.check_output(["mkdocs", "build"])
+            except FileNotFoundError as e:
+                print("Error encountered: {}.\n\n".format(e))
+            sys.exit()
         elif sys.argv[1] == "release":
             if len(sys.argv) < 3:
                 type_ = "patch"
@@ -95,30 +111,25 @@ def main():
     setup(
         name="nylas",
         version=VERSION,
+        python_requires=">=3.8",
         packages=find_packages(),
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
         tests_require=TEST_DEPENDENCIES,
-        extras_require={"test": TEST_DEPENDENCIES, "release": RELEASE_DEPENDENCIES},
+        extras_require={
+            "test": TEST_DEPENDENCIES,
+            "docs": DOCS_DEPENDENCIES,
+            "release": RELEASE_DEPENDENCIES,
+        },
         cmdclass={"test": PyTest},
         author="Nylas Team",
         author_email="support@nylas.com",
-        description="Python bindings for Nylas, the next-generation email platform.",
+        description="Python bindings for the Nylas API platform.",
         license="MIT",
         keywords="inbox app appserver email nylas contacts calendar",
         url="https://github.com/nylas/nylas-python",
         long_description_content_type="text/markdown",
-        long_description="""
-# Nylas REST API Python bindings
-![Build Status](https://github.com/nylas/nylas-python/workflows/Test/badge.svg)
-[![Code Coverage](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg)](https://codecov.io/gh/nylas/nylas-python)
-
-Python bindings for the Nylas REST API. https://www.nylas.com/docs
-
-The Nylas APIs power applications with email, calendar, and contacts CRUD and bi-directional sync from any inbox in the world.
-
-Nylas is compatible with 100% of email service providers, so you only have to integrate once.
-No more headaches building unique integrations against archaic and outdated IMAP and SMTP protocols.""",
+        long_description=README,
     )
 
 

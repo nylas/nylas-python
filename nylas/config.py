@@ -7,7 +7,21 @@ class Region(str, Enum):
     """
 
     US = "us"
-    IRELAND = "ireland"
+    EU = "eu"
 
 
 DEFAULT_REGION = Region.US
+""" The default Nylas API region. """
+
+REGION_CONFIG = {
+    Region.US: {
+        "nylasApiUrl": "https://api.us.nylas.com",
+    },
+    Region.EU: {
+        "nylasApiUrl": "https://api.eu.nylas.com",
+    },
+}
+""" The available preset configuration values for each Nylas API region. """
+
+DEFAULT_SERVER_URL = REGION_CONFIG[DEFAULT_REGION]["nylasApiUrl"]
+""" The default Nylas API URL. """
