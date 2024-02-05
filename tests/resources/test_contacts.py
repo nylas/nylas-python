@@ -3,7 +3,6 @@ from nylas.resources.contacts import Contacts
 from nylas.models.contacts import (
     Contact,
     ContactEmail,
-    ContactType,
     ContactGroupId,
     InstantMessagingAddress,
     PhoneNumber,
@@ -54,16 +53,14 @@ class TestContact:
         assert contact.birthday == "1960-12-31"
         assert contact.company_name == "Nylas"
         assert contact.emails == [
-            ContactEmail(email="john-work@example.com", type=ContactType.WORK)
+            ContactEmail(email="john-work@example.com", type="work")
         ]
         assert contact.given_name == "John"
         assert contact.grant_id == "41009df5-bf11-4c97-aa18-b285b5f2e386"
         assert contact.groups == [ContactGroupId(id="starred")]
         assert contact.id == "5d3qmne77v32r8l4phyuksl2x"
         assert contact.im_addresses == [
-            InstantMessagingAddress(
-                type=ContactType.OTHER, im_address="myjabberaddress"
-            )
+            InstantMessagingAddress(type="other", im_address="myjabberaddress")
         ]
         assert contact.job_title == "Software Engineer"
         assert contact.manager_name == "Bill"
@@ -73,11 +70,11 @@ class TestContact:
         assert contact.object == "contact"
         assert contact.office_location == "123 Main Street"
         assert contact.phone_numbers == [
-            PhoneNumber(type=ContactType.WORK, number="+1-555-555-5555")
+            PhoneNumber(type="work", number="+1-555-555-5555")
         ]
         assert contact.physical_addresses == [
             PhysicalAddress(
-                type=ContactType.WORK,
+                type="work",
                 street_address="123 Main Street",
                 postal_code="94107",
                 state="CA",
@@ -89,7 +86,7 @@ class TestContact:
         assert contact.suffix == "Jr."
         assert contact.surname == "Doe"
         assert contact.web_pages == [
-            WebPage(type=ContactType.WORK, url="http://www.linkedin.com/in/johndoe")
+            WebPage(type="work", url="http://www.linkedin.com/in/johndoe")
         ]
 
     def test_list_contacts(self, http_client_list_response):

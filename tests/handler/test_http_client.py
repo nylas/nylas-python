@@ -1,7 +1,6 @@
-from unittest.mock import patch, Mock
+from unittest.mock import Mock
 
 import pytest
-import requests
 
 from nylas.handler.http_client import (
     HttpClient,

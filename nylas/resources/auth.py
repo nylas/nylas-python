@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import urllib.parse
 import uuid
 
 from nylas.handler.http_client import _build_query_params
@@ -59,6 +58,12 @@ def _build_query_with_admin_consent(config: dict) -> dict:
 
 
 class Auth(Resource):
+    """
+    A collection of authentication related API endpoints
+
+    These endpoints allow for various functionality related to authentication.
+    """
+
     def url_for_oauth2(self, config: URLForAuthenticationConfig) -> str:
         """
         Build the URL for authenticating users to your application via Hosted Authentication.
@@ -108,7 +113,7 @@ class Auth(Resource):
 
         json_response = self._http_client._execute(
             method="POST",
-            path=f"/v3/connect/custom",
+            path="/v3/connect/custom",
             request_body=request_body,
         )
         return Response.from_dict(json_response, Grant)
@@ -237,7 +242,7 @@ class Auth(Resource):
         return Response.from_dict(json_response, ProviderDetectResponse)
 
     def _url_auth_builder(self, query: dict) -> str:
-        base = "{}/v3/connect/auth".format(self._http_client.api_server)
+        base = f"{self._http_client.api_server}/v3/connect/auth"
         return _build_query_params(base, query)
 
     def _get_token(self, request_body: dict) -> CodeExchangeResponse:

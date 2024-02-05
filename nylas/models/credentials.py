@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, Protocol, NotRequired
 
 CredentialType = Literal["adminconsent", "serviceaccount", "connector"]
+"""The alias for the different types of credentials that can be created."""
 
 
 @dataclass_json
@@ -30,11 +31,28 @@ class Credential:
 
 
 class MicrosoftAdminConsentSettings(Protocol):
+    """
+    Interface representing the data required to create a Microsoft Admin Consent credential.
+
+    Attributes:
+        client_id: The client ID of the Azure AD application
+        client_secret: The client secret of the Azure AD application
+    """
+
     client_id: str
     client_secret: str
 
 
 class GoogleServiceAccountCredential(Protocol):
+    """
+    Interface representing the data required to create a Google Service Account credential.
+
+    Attributes:
+        private_key_id: The private key ID of the service account
+        private_key: The private key of the service account
+        client_email: The client email of the service account
+    """
+
     private_key_id: str
     private_key: str
     client_email: str
@@ -43,6 +61,7 @@ class GoogleServiceAccountCredential(Protocol):
 CredentialData = Union[
     MicrosoftAdminConsentSettings, GoogleServiceAccountCredential, Dict[str, any]
 ]
+"""The alias for the different types of credential data that can be used to create a credential."""
 
 
 class CredentialRequest(TypedDict):

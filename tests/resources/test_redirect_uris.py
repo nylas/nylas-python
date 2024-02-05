@@ -37,7 +37,7 @@ class TestRedirectUri:
         redirect_uris.list()
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/redirect-uris", None, None, None
+            "GET", "/v3/applications/redirect-uris", None, None, None
         )
 
     def test_find_redirect_uri(self, http_client_response):
@@ -46,7 +46,7 @@ class TestRedirectUri:
         redirect_uris.find(redirect_uri_id="redirect_uri-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/redirect-uris/redirect_uri-123", None, None, None
+            "GET", "/v3/applications/redirect-uris/redirect_uri-123", None, None, None
         )
 
     def test_create_redirect_uri(self, http_client_response):
@@ -68,7 +68,7 @@ class TestRedirectUri:
 
         http_client_response._execute.assert_called_once_with(
             "POST",
-            "/v3/redirect-uris",
+            "/v3/applications/redirect-uris",
             None,
             None,
             request_body,
@@ -96,7 +96,7 @@ class TestRedirectUri:
 
         http_client_response._execute.assert_called_once_with(
             "PUT",
-            "/v3/redirect-uris/redirect_uri-123",
+            "/v3/applications/redirect-uris/redirect_uri-123",
             None,
             None,
             request_body,
@@ -109,7 +109,7 @@ class TestRedirectUri:
 
         http_client_delete_response._execute.assert_called_once_with(
             "DELETE",
-            "/v3/redirect-uris/redirect_uri-123",
+            "/v3/applications/redirect-uris/redirect_uri-123",
             None,
             None,
             None,

@@ -52,17 +52,8 @@ class FreeBusy:
     time_slots: List[TimeSlot]
 
 
-@dataclass_json
-@dataclass
-class GetFreeBusyResponse:
-    """
-    Interface for a Nylas get free/busy response
-
-    A list of FreeBusy objects and FreeBusyError objects.
-
-    """
-
-    List[Union[FreeBusy, FreeBusyError]]
+GetFreeBusyResponse = List[Union[FreeBusy, FreeBusyError]]
+""" Interface for a Nylas get free/busy response """
 
 
 class GetFreeBusyRequest(TypedDict):

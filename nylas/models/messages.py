@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json, config
 from typing import List, Literal, Optional, Dict, Any
+from dataclasses_json import dataclass_json, config
 from typing_extensions import TypedDict, NotRequired, get_type_hints
 
 from nylas.models.attachments import Attachment

@@ -32,6 +32,12 @@ class Events(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Events API
+
+    The Events API allows you to find, create, update, and delete events on any calendar on your Nylas account.
+    """
+
     def list(
         self, identifier: str, query_params: ListEventQueryParams
     ) -> ListResponse[Event]:
@@ -46,7 +52,7 @@ class Events(
             The list of Events.
         """
 
-        return super(Events, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
             query_params=query_params,
@@ -67,7 +73,7 @@ class Events(
             The Event.
         """
 
-        return super(Events, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             response_type=Event,
             query_params=query_params,
@@ -91,7 +97,7 @@ class Events(
             The created Event.
         """
 
-        return super(Events, self).create(
+        return super().create(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
             request_body=request_body,
@@ -118,7 +124,7 @@ class Events(
             The updated Event.
         """
 
-        return super(Events, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             response_type=Event,
             request_body=request_body,
@@ -140,7 +146,7 @@ class Events(
             The deletion response.
         """
 
-        return super(Events, self).destroy(
+        return super().destroy(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             query_params=query_params,
         )

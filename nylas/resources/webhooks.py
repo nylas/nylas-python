@@ -25,6 +25,12 @@ class Webhooks(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Webhooks API
+
+    The Nylas webhooks API allows you to manage webhook destinations for your Nylas application.
+    """
+
     def list(self) -> ListResponse[Webhook]:
         """
         List all webhook destinations
@@ -32,7 +38,7 @@ class Webhooks(
         Returns:
             The list of webhook destinations
         """
-        return super(Webhooks, self).list(path=f"/v3/webhooks", response_type=Webhook)
+        return super().list(path="/v3/webhooks", response_type=Webhook)
 
     def find(self, webhook_id: str) -> Response[Webhook]:
         """
@@ -44,9 +50,7 @@ class Webhooks(
         Returns:
             The webhook destination
         """
-        return super(Webhooks, self).find(
-            path=f"/v3/webhooks/{webhook_id}", response_type=Webhook
-        )
+        return super().find(path=f"/v3/webhooks/{webhook_id}", response_type=Webhook)
 
     def create(self, request_body: CreateWebhookRequest) -> Response[WebhookWithSecret]:
         """
@@ -58,8 +62,8 @@ class Webhooks(
         Returns:
             The created webhook destination
         """
-        return super(Webhooks, self).create(
-            path=f"/v3/webhooks",
+        return super().create(
+            path="/v3/webhooks",
             request_body=request_body,
             response_type=WebhookWithSecret,
         )
@@ -77,7 +81,7 @@ class Webhooks(
         Returns:
             The updated webhook destination
         """
-        return super(Webhooks, self).update(
+        return super().update(
             path=f"/v3/webhooks/{webhook_id}",
             request_body=request_body,
             response_type=Webhook,
@@ -93,7 +97,7 @@ class Webhooks(
         Returns:
             The response from deleting the webhook destination
         """
-        return super(Webhooks, self).destroy(
+        return super().destroy(
             path=f"/v3/webhooks/{webhook_id}", response_type=WebhookDeleteResponse
         )
 

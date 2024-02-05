@@ -20,6 +20,12 @@ class RedirectUris(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Manage Redirect URIs for your Nylas Application.
+
+    These endpoints allow you to create, update, and delete Redirect URIs for your Nylas Application.
+    """
+
     def list(self) -> ListResponse[RedirectUri]:
         """
         Return all Redirect URIs.
@@ -28,8 +34,8 @@ class RedirectUris(
             The list of Redirect URIs.
         """
 
-        return super(RedirectUris, self).list(
-            path=f"/v3/redirect-uris", response_type=RedirectUri
+        return super().list(
+            path="/v3/applications/redirect-uris", response_type=RedirectUri
         )
 
     def find(self, redirect_uri_id: str) -> Response[RedirectUri]:
@@ -43,8 +49,8 @@ class RedirectUris(
             The Redirect URI.
         """
 
-        return super(RedirectUris, self).find(
-            path=f"/v3/redirect-uris/{redirect_uri_id}",
+        return super().find(
+            path=f"/v3/applications/redirect-uris/{redirect_uri_id}",
             response_type=RedirectUri,
         )
 
@@ -59,8 +65,8 @@ class RedirectUris(
             The created Redirect URI.
         """
 
-        return super(RedirectUris, self).create(
-            path=f"/v3/redirect-uris",
+        return super().create(
+            path="/v3/applications/redirect-uris",
             request_body=request_body,
             response_type=RedirectUri,
         )
@@ -79,8 +85,8 @@ class RedirectUris(
             The updated Redirect URI.
         """
 
-        return super(RedirectUris, self).update(
-            path=f"/v3/redirect-uris/{redirect_uri_id}",
+        return super().update(
+            path=f"/v3/applications/redirect-uris/{redirect_uri_id}",
             request_body=request_body,
             response_type=RedirectUri,
         )
@@ -96,6 +102,4 @@ class RedirectUris(
             The deletion response.
         """
 
-        return super(RedirectUris, self).destroy(
-            path=f"/v3/redirect-uris/{redirect_uri_id}"
-        )
+        return super().destroy(path=f"/v3/applications/redirect-uris/{redirect_uri_id}")

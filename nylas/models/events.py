@@ -9,7 +9,7 @@ from nylas.models.list_query_params import ListQueryParams
 Status = Literal["confirmed", "tentative", "cancelled"]
 """ Literal representing the status of an Event. """
 
-Visibility = Literal["public", "private"]
+Visibility = Literal["default", "public", "private"]
 """ Literal representation of visibility of the Event. """
 
 ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
@@ -81,8 +81,10 @@ class Timespan:
     Attributes:
         start_time: The Event's start time.
         end_time: The Event's end time.
-        start_timezone: The timezone of the start time, represented by an IANA-formatted string (for example, "America/New_York").
-        end_timezone: The timezone of the end time, represented by an IANA-formatted string (for example, "America/New_York").
+        start_timezone: The timezone of the start time, represented by an IANA-formatted string
+            (for example, "America/New_York").
+        end_timezone: The timezone of the end time, represented by an IANA-formatted string
+            (for example, "America/New_York").
     """
 
     start_time: int
@@ -143,16 +145,19 @@ def _decode_when(when: dict) -> When:
 
     if when["object"] == "time":
         return Time.from_dict(when)
-    elif when["object"] == "timespan":
+
+    if when["object"] == "timespan":
         return Timespan.from_dict(when)
-    elif when["object"] == "date":
+
+    if when["object"] == "date":
         return Date.from_dict(when)
-    elif when["object"] == "datespan":
+
+    if when["object"] == "datespan":
         return Datespan.from_dict(when)
-    else:
-        raise ValueError(
-            f"Invalid when object, unknown 'object' field found: {when['object']}"
-        )
+
+    raise ValueError(
+        f"Invalid when object, unknown 'object' field found: {when['object']}"
+    )
 
 
 ConferencingProvider = Literal[
@@ -232,12 +237,11 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
 
     if "details" in conferencing:
         return Details.from_dict(conferencing)
-    elif "autocreate" in conferencing:
+
+    if "autocreate" in conferencing:
         return Autocreate.from_dict(conferencing)
-    else:
-        raise ValueError(
-            f"Invalid conferencing object, unknown type found: {conferencing}"
-        )
+
+    raise ValueError(f"Invalid conferencing object, unknown type found: {conferencing}")
 
 
 @dataclass_json
@@ -258,7 +262,7 @@ class ReminderOverride:
 
 @dataclass_json
 @dataclass
-class Reminder:
+class Reminders:
     """
     Class representation of a reminder object.
 
@@ -268,7 +272,7 @@ class Reminder:
             If left empty or omitted while use_default is set to false, the event will have no reminders.
     """
 
-    use_default: Optional[bool] = None
+    use_default: bool
     overrides: Optional[List[ReminderOverride]] = None
 
 
@@ -314,6 +318,7 @@ class Event:
     created_at: int
     updated_at: int
     participants: List[Participant]
+    visibility: Visibility
     when: When = field(metadata=config(decoder=_decode_when))
     conferencing: Optional[Conferencing] = field(
         default=None, metadata=config(decoder=_decode_conferencing)
@@ -330,9 +335,8 @@ class Event:
     creator: Optional[EmailName] = None
     organizer: Optional[EmailName] = None
     recurrence: Optional[List[str]] = None
-    reminders: Optional[Reminder] = None
+    reminders: Optional[Reminders] = None
     status: Optional[Status] = None
-    visibility: Optional[Visibility] = None
     capacity: Optional[int] = None
 
 
@@ -387,6 +391,48 @@ class WritableDetailsConfig(TypedDict):
     url: NotRequired[str]
     pin: NotRequired[str]
     phone: NotRequired[List[str]]
+
+
+class WriteableReminderOverride(TypedDict):
+    """
+    Interface representing a writable reminder override object.
+
+    Attributes:
+        reminder_minutes: The user's preferred Event reminder time, in minutes.
+            Reminder minutes are in the following format: "[20]".
+        reminder_method: The user's preferred method for Event reminders (Google only).
+    """
+
+    reminder_minutes: NotRequired[int]
+    reminder_method: NotRequired[str]
+
+
+class CreateReminders(TypedDict):
+    """
+    Interface representing a reminder object for event creation.
+
+    Attributes:
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
+    """
+
+    use_default: bool
+    overrides: NotRequired[List[WriteableReminderOverride]]
+
+
+class UpdateReminders(TypedDict):
+    """
+    Interface representing a reminder object for updating an event.
+
+    Attributes:
+        use_default: Whether to use the default reminder settings for the calendar.
+        overrides: A list of reminders for the event if use_default is set to false.
+            If left empty or omitted while use_default is set to false, the event will have no reminders.
+    """
+
+    use_default: NotRequired[bool]
+    overrides: NotRequired[List[WriteableReminderOverride]]
 
 
 class CreateDetails(TypedDict):
@@ -587,9 +633,8 @@ class CreateEventRequest(TypedDict):
         description: The description of the event.
         location: The location of the event.
         conferencing: The conferencing details of the event.
-        reminder_minutes: The number of minutes before the event start time when a user wants a reminder for this event.
-            Reminder minutes are in the following format: "[20]".
-        reminder_method: Method to remind the user about the event. (Google only).
+        reminders: A list of reminders to send for the event.
+            If left empty or omitted, the event uses the provider defaults.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
@@ -604,8 +649,7 @@ class CreateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[CreateConferencing]
-    reminder_minutes: NotRequired[str]
-    reminder_method: NotRequired[str]
+    reminders: NotRequired[CreateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[CreateParticipant]]
     recurrence: NotRequired[List[str]]
@@ -625,9 +669,7 @@ class UpdateEventRequest(TypedDict):
         description: The description of the event.
         location: The location of the event.
         conferencing: The conferencing details of the event.
-        reminder_minutes: The number of minutes before the event start time when a user wants a reminder for this event.
-            Reminder minutes are in the following format: "[20]".
-        reminder_method: Method to remind the user about the event. (Google only).
+        reminders: A list of reminders to send for the event.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
         recurrence: The recurrence rules of the event.
@@ -642,8 +684,7 @@ class UpdateEventRequest(TypedDict):
     description: NotRequired[str]
     location: NotRequired[str]
     conferencing: NotRequired[UpdateConferencing]
-    reminder_minutes: NotRequired[str]
-    reminder_method: NotRequired[str]
+    reminders: NotRequired[UpdateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[UpdateParticipant]]
     recurrence: NotRequired[List[str]]
@@ -660,7 +701,8 @@ class ListEventQueryParams(ListQueryParams):
         show_cancelled: Return events that have a status of cancelled.
             If an event is recurring, then it returns no matter the value set.
             Different providers have different semantics for cancelled events.
-        calendar_id: Specify calendar ID of the event. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Specify calendar ID of the event. "primary" is a supported value
+            indicating the user's primary calendar.
         title: Return events matching the specified title.
         description: Return events matching the specified description.
         location: Return events matching the specified location.
@@ -669,10 +711,10 @@ class ListEventQueryParams(ListQueryParams):
         end: Return events ending before the specified unix timestamp.
             Defaults to a month from now. Not respected by metadata filtering.
         metadata_pair: Pass in your metadata key and value pair to search for metadata.
-        expand_recurring: If true, the response will include an event for each occurrence of a recurring event within the requested time range.
+        expand_recurring: If true, the response will include an event for each occurrence of a recurring event within
+            the requested time range.
             If false, only a single primary event will be returned for each recurring event.
-            Cannot be used when filtering on metadata.
-            Defaults to false.
+            Cannot be used when filtering on metadata. Defaults to false.
         busy: Returns events with a busy status of true.
         order_by: Order results by the specified field.
             Currently only start is supported.
@@ -713,7 +755,8 @@ class FindEventQueryParams(TypedDict):
     Interface representing of the query parameters for finding an event.
 
     Attributes:
-        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Calendar ID to find the event in.
+            "primary" is a supported value indicating the user's primary calendar.
     """
 
     calendar_id: str
@@ -731,7 +774,8 @@ class SendRsvpQueryParams(TypedDict):
     Interface representing of the query parameters for an event.
 
     Attributes:
-        calendar_id: Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
+        calendar_id: Calendar ID to find the event in.
+            "primary" is a supported value indicating the user's primary calendar.
     """
 
     calendar_id: str

@@ -36,7 +36,7 @@ jobs:
 
   black:
     runs-on: ubuntu-latest
-    name: Black
+    name: Pylint and Black
     steps:
       - uses: actions/checkout@v2
       - name: Setup python
@@ -44,8 +44,14 @@ jobs:
         with:
           python-version: "3.8"
 
-      - name: Install black
-        run: pip install black
+      - name: Install dependencies
+        run: pip install .
+
+      - name: Install pylint and black
+        run: pip install pylint black
+
+      - name: Run pylint
+        run: pylint nylas
 
       - name: Run black
         run: black .

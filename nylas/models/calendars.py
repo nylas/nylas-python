@@ -17,8 +17,8 @@ class Calendar:
         id: Globally unique object identifier.
         grant_id: Grant ID representing the user's account.
         name: Name of the Calendar.
-        timezone: IANA time zone database-formatted string (for example, "America/New_York"). This value is only supported
-            for Google and Virtual Calendars.
+        timezone: IANA time zone database-formatted string (for example, "America/New_York").
+            This value is only supported for Google and Virtual Calendars.
         read_only: If the event participants are able to edit the Event.
         is_owned_by_user: If the Calendar is owned by the user account.
         object: The type of object.

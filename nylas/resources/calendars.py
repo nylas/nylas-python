@@ -23,6 +23,15 @@ class Calendars(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Calendar API
+
+    The Nylas calendar API allows you to create new calendars or manage existing ones, as well as getting
+    free/busy information for a calendar and getting availability for a calendar.
+
+    A calendar can be accessed by one, or several people, and can contain events.
+    """
+
     def list(
         self, identifier: str, query_params: ListCalendarsQueryParams = None
     ) -> ListResponse[Calendar]:
@@ -37,7 +46,7 @@ class Calendars(
             The list of Calendars.
         """
 
-        return super(Calendars, self).list(
+        return super().list(
             path=f"/v3/grants/{identifier}/calendars",
             query_params=query_params,
             response_type=Calendar,
@@ -49,12 +58,13 @@ class Calendars(
 
         Args:
             identifier: The identifier of the Grant to act upon.
-            calendar_id: The ID of the Calendar to retrieve. Use "primary" to refer to the primary Calendar associated with the Grant.
+            calendar_id: The ID of the Calendar to retrieve.
+                Use "primary" to refer to the primary Calendar associated with the Grant.
 
         Returns:
             The Calendar.
         """
-        return super(Calendars, self).find(
+        return super().find(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
             response_type=Calendar,
         )
@@ -72,7 +82,7 @@ class Calendars(
         Returns:
             The created Calendar.
         """
-        return super(Calendars, self).create(
+        return super().create(
             path=f"/v3/grants/{identifier}/calendars",
             response_type=Calendar,
             request_body=request_body,
@@ -86,13 +96,14 @@ class Calendars(
 
         Args:
             identifier: The identifier of the Grant to act upon.
-            calendar_id: The ID of the Calendar to update. Use "primary" to refer to the primary Calendar associated with the Grant.
+            calendar_id: The ID of the Calendar to update.
+                Use "primary" to refer to the primary Calendar associated with the Grant.
             request_body: The values to update the Calendar with.
 
         Returns:
             The updated Calendar.
         """
-        return super(Calendars, self).update(
+        return super().update(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
             response_type=Calendar,
             request_body=request_body,
@@ -104,14 +115,13 @@ class Calendars(
 
         Args:
             identifier: The identifier of the Grant to act upon.
-            calendar_id: The ID of the Calendar to delete. Use "primary" to refer to the primary Calendar associated with the Grant.
+            calendar_id: The ID of the Calendar to delete.
+                Use "primary" to refer to the primary Calendar associated with the Grant.
 
         Returns:
             The deletion response.
         """
-        return super(Calendars, self).destroy(
-            path=f"/v3/grants/{identifier}/calendars/{calendar_id}"
-        )
+        return super().destroy(path=f"/v3/grants/{identifier}/calendars/{calendar_id}")
 
     def get_availability(
         self, request_body: GetAvailabilityRequest

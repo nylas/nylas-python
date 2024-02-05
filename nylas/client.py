@@ -15,7 +15,7 @@ from nylas.resources.drafts import Drafts
 from nylas.resources.grants import Grants
 
 
-class Client(object):
+class Client:
     """
     API client for the Nylas API.
 

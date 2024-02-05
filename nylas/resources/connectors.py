@@ -24,6 +24,14 @@ class Connectors(
     UpdatableApiResource,
     DestroyableApiResource,
 ):
+    """
+    Nylas Connectors API
+
+    The Nylas Connectors API allows you to create new connectors or manage existing ones.
+    In Nylas, a connector (formerly called an "integration") stores information that allows your Nylas application
+    to connect to a third party services
+    """
+
     @property
     def credentials(self) -> Credentials:
         """
@@ -47,7 +55,7 @@ class Connectors(
             The list of Connectors.
         """
 
-        return super(Connectors, self).list(
+        return super().list(
             path="/v3/connectors", response_type=Connector, query_params=query_params
         )
 
@@ -61,7 +69,7 @@ class Connectors(
         Returns:
             The Connector.
         """
-        return super(Connectors, self).find(
+        return super().find(
             path=f"/v3/connectors/{provider}",
             response_type=Connector,
         )
@@ -76,8 +84,8 @@ class Connectors(
         Returns:
             The created connector.
         """
-        return super(Connectors, self).create(
-            path=f"/v3/connectors",
+        return super().create(
+            path="/v3/connectors",
             request_body=request_body,
             response_type=Connector,
         )
@@ -95,7 +103,7 @@ class Connectors(
         Returns:
             The created connector.
         """
-        return super(Connectors, self).update(
+        return super().update(
             path=f"/v3/connectors/{provider}",
             request_body=request_body,
             response_type=Connector,
@@ -112,4 +120,4 @@ class Connectors(
         Returns:
             The deleted connector.
         """
-        return super(Connectors, self).destroy(path=f"/v3/connectors/{provider}")
+        return super().destroy(path=f"/v3/connectors/{provider}")
