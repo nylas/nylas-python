@@ -21,6 +21,15 @@ v5.14.1
 
 v5.14.0
 ----------------
+* Add support for `view` parameter in `Threads.search()`
+
+v5.14.1
+----------------
+* Fix error when trying to iterate on list after calling count
+* Fix error when setting participant status on create event
+
+v5.14.0
+----------------
 * Add support for verifying webhook signatures
 * Add optional parameter for token-info endpoint
 
