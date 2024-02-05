@@ -1,64 +1,7 @@
 nylas-python Changelog
 ======================
 
-v6.0.0b9
-----------------
-* Add support for sending drafts
-* Changed `client_secret` to optional for token exchange methods; defaults to API Key now
-* Changed references to `callback_url` to `webhook_url` to match API
-* Fix deserialization issue with `Connector` model
-* Fix serialization of query parameters
-* Fix typos in folders, threads, code exchange, smart compose, webhook and attachment models
-* Fix types in reminder and messages models
-* Fix message/draft deserialization in thread model
-* Standardized casing for enums
-
-v6.0.0b8
-----------------
-* **BREAKING CHANGES**: Moved grants API out of `Auth` to `NylasClient`
-* **BREAKING CHANGES**: Moved `Grants.create()` to `Auth.customAuthentication()`
-* Added support for the contacts API
-* Added helper function for attaching files to messages
-* Fix issues with sending messages and creating drafts
-* Fix issue where an error was raised when trying to attach a file to a message
-* Fix inaccuracies with Event models
-* Fix inaccuracies with Thread model
-* Fix incorrect PKCE code challenge generation
-
-v6.0.0b7
-----------------
-* Add Message Send, Drafts, Threads, and Smart Compose APIs support
-* Add support for folders API
-* Add support for attachments API
-* Fix required field for the `Message` model
-
-v6.0.0b6
-----------------
-* Add support for Read, Update, and Delete for Messages API
-* Fix required fields for `Calendar` and `Grant` models
-
-v6.0.0b5
-----------------
-* Fix function parameters for `Calendars.get_availability` and `Grants.list`
-* Fix creating a grant by supporting custom authentication
-
-v6.0.0b4
-----------------
-* Add support for the free-busy endpoint
-* Add support for Connectors and Credentials APIs
-* Fix errors when building the authentication URL
-
-v6.0.0b3
-----------------
-* Fix bug when deserializing Union types
-* Fix bug when deserializing delete response
-
-v6.0.0b2
-----------------
-* Fix inconsistency between Event model and API contract
-* Fix bug when deserializing Events with empty optional fields
-
-v6.0.0b1
+v6.0.0
 ----------------
 * **BREAKING CHANGE**: Python SDK v6 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3
 * **BREAKING CHANGE**: Drop support for Python < v3.8
