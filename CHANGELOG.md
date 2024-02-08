@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Fix deserialization error when getting token info or verifying access token
+* Fix schema issue in the `Event` model
 
 v6.0.0
 ----------------

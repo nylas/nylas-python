@@ -315,8 +315,6 @@ class Event:
     grant_id: str
     calendar_id: str
     busy: bool
-    created_at: int
-    updated_at: int
     participants: List[Participant]
     visibility: Visibility
     when: When = field(metadata=config(decoder=_decode_when))
@@ -338,6 +336,8 @@ class Event:
     reminders: Optional[Reminders] = None
     status: Optional[Status] = None
     capacity: Optional[int] = None
+    created_at: Optional[int] = None
+    updated_at: Optional[int] = None
 
 
 class CreateParticipant(TypedDict):
