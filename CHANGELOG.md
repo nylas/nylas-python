@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Fix deserialization error when getting token info or verifying access token
+
 v6.0.0
 ----------------
 * **BREAKING CHANGE**: Python SDK v6 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3

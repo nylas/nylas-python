@@ -113,13 +113,13 @@ class TestAuth:
             path="/v3/connect/tokeninfo",
             query_params=req,
         )
-        assert type(res) is TokenInfoResponse
-        assert res.iss == "https://nylas.com"
-        assert res.aud == "http://localhost:3030"
-        assert res.sub == "Jaf84d88-£274-46cc-bbc9-aed7dac061c7"
-        assert res.email == "user@example.com"
-        assert res.iat == 1692094848
-        assert res.exp == 1692095173
+        assert type(res.data) is TokenInfoResponse
+        assert res.data.iss == "https://nylas.com"
+        assert res.data.aud == "http://localhost:3030"
+        assert res.data.sub == "Jaf84d88-£274-46cc-bbc9-aed7dac061c7"
+        assert res.data.email == "user@example.com"
+        assert res.data.iat == 1692094848
+        assert res.data.exp == 1692095173
 
     def test_url_for_oauth2(self, http_client):
         auth = Auth(http_client)

@@ -138,7 +138,7 @@ class Auth(Resource):
 
         return self._get_token(request_body)
 
-    def id_token_info(self, id_token: str) -> TokenInfoResponse:
+    def id_token_info(self, id_token: str) -> Response[TokenInfoResponse]:
         """
         Get info about an ID token.
 
@@ -155,7 +155,7 @@ class Auth(Resource):
 
         return self._get_token_info(query_params)
 
-    def validate_access_token(self, access_token: str) -> TokenInfoResponse:
+    def validate_access_token(self, access_token: str) -> Response[TokenInfoResponse]:
         """
         Get info about an access token.
 
@@ -251,8 +251,8 @@ class Auth(Resource):
         )
         return CodeExchangeResponse.from_dict(json_response)
 
-    def _get_token_info(self, query_params: dict) -> TokenInfoResponse:
+    def _get_token_info(self, query_params: dict) -> Response[TokenInfoResponse]:
         json_response = self._http_client._execute(
             method="GET", path="/v3/connect/tokeninfo", query_params=query_params
         )
-        return TokenInfoResponse.from_dict(json_response)
+        return Response.from_dict(json_response, TokenInfoResponse)
