@@ -4,7 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Fix deserialization error when getting token info or verifying access token
-* Fix schema issue in the `Event` model
+* Fix schemas issue in the `Event` and `CodeExchangeResponse` models
 
 v6.0.0
 ----------------
