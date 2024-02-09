@@ -110,6 +110,7 @@ class CodeExchangeResponse:
         grant_id: ID representing the new Grant.
         scope: List of scopes associated with the token.
         expires_in: The remaining lifetime of the access token, in seconds.
+        email: Email address of the grant that is created.
         refresh_token: Returned only if the code is requested using "access_type=offline".
         id_token: A JWT that contains identity information about the user. Digitally signed by Nylas.
         token_type: Always "Bearer".
@@ -119,6 +120,7 @@ class CodeExchangeResponse:
     grant_id: str
     scope: str
     expires_in: int
+    email: Optional[str] = None
     refresh_token: Optional[str] = None
     id_token: Optional[str] = None
     token_type: Optional[str] = None
