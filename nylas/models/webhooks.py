@@ -47,6 +47,7 @@ class Webhook:
     id: str
     trigger_types: List[WebhookTriggers]
     webhook_url: str
+    webhook_secret: str
     status: WebhookStatus
     notification_email_addresses: List[str]
     status_updated_at: int
