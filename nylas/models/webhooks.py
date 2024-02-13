@@ -55,7 +55,8 @@ class Webhook:
     updated_at: int
     description: Optional[str] = None
 
-
+@dataclass_json
+@dataclass
 class WebhookWithSecret(Webhook):
     """
     Class representing a Nylas webhook with secret.
@@ -64,7 +65,7 @@ class WebhookWithSecret(Webhook):
         webhook_secret: A secret value used to encode the X-Nylas-Signature header on webhook requests.
     """
 
-    webhook_secret: str
+    webhook_secret: str = ""
 
 
 @dataclass_json
