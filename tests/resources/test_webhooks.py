@@ -11,6 +11,7 @@ class TestWebhooks:
             "description": "Production webhook destination",
             "trigger_types": ["calendar.created"],
             "webhook_url": "https://example.com/webhooks",
+            "webhook_secret": "sXYzyozuXhqGXeklWFCy",
             "status": "active",
             "notification_email_addresses": ["jane@example.com", "joe@example.com"],
             "status_updated_at": 1234567890,
@@ -24,6 +25,7 @@ class TestWebhooks:
         assert webhook.description == "Production webhook destination"
         assert webhook.trigger_types == ["calendar.created"]
         assert webhook.webhook_url == "https://example.com/webhooks"
+        assert webhook.webhook_secret == "sXYzyozuXhqGXeklWFCy"
         assert webhook.status == "active"
         assert webhook.notification_email_addresses == [
             "jane@example.com",
