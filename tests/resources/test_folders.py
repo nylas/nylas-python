@@ -17,6 +17,7 @@ class TestFolder:
             "background_color": "#039BE5",
             "text_color": "#039BE5",
             "total_count": 0,
+            "attributes": ["\\Sent"],
         }
 
         folder = Folder.from_dict(folder_json)
@@ -32,6 +33,7 @@ class TestFolder:
         assert folder.background_color == "#039BE5"
         assert folder.text_color == "#039BE5"
         assert folder.total_count == 0
+        assert folder.attributes == "['\\\\Sent']"
 
     def test_list_folders(self, http_client_list_response):
         folders = Folders(http_client_list_response)

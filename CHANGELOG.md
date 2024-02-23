@@ -1,6 +1,13 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for `round_to` field in availability response
+* Added support for `attributes` field in folder model
+* Added support for icloud as an auth provider
+* Removed `client_id` from `detect_provider()`
+
 v6.0.1
 ----------------
 * Fix deserialization error when getting token info or verifying access token

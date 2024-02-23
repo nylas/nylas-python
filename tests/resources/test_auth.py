@@ -365,7 +365,6 @@ class TestAuth:
         auth = Auth(mock_http_client)
         req = {
             "email": "test@gmail.com",
-            "client_id": "client-123",
             "all_provider_types": True,
         }
 

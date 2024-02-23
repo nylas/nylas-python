@@ -128,7 +128,12 @@ class GetAvailabilityRequest(TypedDict):
             If you have a meeting starting at 9:59, the API returns times starting at 10:00. 10:00-10:30, 10:15-10:45.
         round_to_30_minutes: When set to true, the availability time slots will start at 30 minutes past or on the hour.
             For example, a free slot starting at 16:10 is considered available only from 16:30.
+            Note: This field is deprecated, use round_to instead.
         availability_rules: The rules to apply when checking availability.
+        round_to: The number of minutes to round the time slots to.
+            This allows for rounding to any multiple of 5 minutes, up to a maximum of 60 minutes.
+            The default value is set to 15 minutes.
+            When this variable is assigned a value, it overrides the behavior of the roundTo30Minutes flag,if it was set
     """
 
     start_time: int
@@ -138,3 +143,4 @@ class GetAvailabilityRequest(TypedDict):
     interval_minutes: NotRequired[int]
     round_to_30_minutes: NotRequired[bool]
     availability_rules: NotRequired[AvailabilityRules]
+    round_to: NotRequired[int]

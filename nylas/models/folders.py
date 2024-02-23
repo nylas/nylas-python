@@ -23,6 +23,10 @@ class Folder:
         child_count: The number of immediate child folders in the current folder. (Microsoft only)
         unread_count: The number of unread items inside of a folder.
         total_count: The number of items inside of a folder.
+        attributes: Common attribute descriptors shared by system folders across providers.
+            For example, Sent email folders have the `["\\Sent"]` attribute.
+            For IMAP grants, IMAP providers provide the attributes.
+            For Google and Microsoft Graph, Nylas matches system folders to a set of common attributes.
     """
 
     id: str
@@ -36,6 +40,7 @@ class Folder:
     child_count: Optional[int] = None
     unread_count: Optional[int] = None
     total_count: Optional[int] = None
+    attributes: Optional[str] = None
 
 
 class CreateFolderRequest(TypedDict):
