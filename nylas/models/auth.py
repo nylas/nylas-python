@@ -172,12 +172,10 @@ class ProviderDetectParams(TypedDict):
 
     Attributes:
         email: Email address to detect the provider for.
-        client_id: Client ID of the Nylas application.
         all_provider_types: Search by all providers regardless of created integrations. If unset, defaults to false.
     """
 
     email: str
-    client_id: str
     all_provider_types: NotRequired[bool]
 
 
