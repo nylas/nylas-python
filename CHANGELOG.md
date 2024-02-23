@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Added support for `round_to` field in availability response
+* Added support for `attributes` field in folder model
 
 v6.0.1
 ----------------
