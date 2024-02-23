@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for `round_to` field in availability response
+
 v6.0.1
 ----------------
 * Fix deserialization error when getting token info or verifying access token
