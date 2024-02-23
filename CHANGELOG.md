@@ -5,6 +5,7 @@ Unreleased
 ----------------
 * Added support for `round_to` field in availability response
 * Added support for `attributes` field in folder model
+* Added support for icloud as an auth provider
 
 v6.0.1
 ----------------
