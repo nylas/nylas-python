@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from nylas.handler.api_resources import (
     ListableApiResource,
@@ -12,7 +12,6 @@ from nylas.models.messages import (
     ListMessagesQueryParams,
     FindMessageQueryParams,
     UpdateMessageRequest,
-    ScheduledMessagesList,
     ScheduledMessage,
     StopScheduledMessageResponse,
 )
@@ -148,7 +147,7 @@ class Messages(
 
     def list_scheduled_messages(
         self, identifier: str
-    ) -> Response[ScheduledMessagesList]:
+    ) -> Response[List[ScheduledMessage]]:
         """
         Retrieve your scheduled messages.
 
@@ -163,7 +162,12 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages/schedules",
         )
 
-        return Response.from_dict(json_response, ScheduledMessagesList)
+        data = []
+        request_id = json_response["request_id"]
+        for item in json_response["data"]:
+            data.append(ScheduledMessage.from_dict(item))
+
+        return Response(data, request_id)
 
     def find_scheduled_message(
         self, identifier: str, schedule_id: str

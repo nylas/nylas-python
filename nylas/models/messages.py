@@ -182,22 +182,9 @@ class ScheduledMessage:
         close_time: The time the message was sent or failed to send, in epoch time.
     """
 
-    schedule_id: int
+    schedule_id: str
     status: ScheduledMessageStatus
     close_time: Optional[int] = None
-
-
-@dataclass_json
-@dataclass
-class ScheduledMessagesList:
-    """
-    A list of scheduled messages.
-
-    Attributes:
-        schedules: The list of scheduled messages.
-    """
-
-    schedules: List[ScheduledMessage]
 
 
 @dataclass_json
