@@ -132,3 +132,37 @@ def http_client_token_info():
         },
     }
     return mock_http_client
+
+
+@pytest.fixture
+def http_client_free_busy():
+    mock_http_client = Mock()
+    mock_http_client._execute.return_value = {
+        "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
+        "data": [
+            {
+                "email": "user1@example.com",
+                "time_slots": [
+                    {
+                        "start_time": 1690898400,
+                        "end_time": 1690902000,
+                        "status": "busy",
+                        "object": "time_slot",
+                    },
+                    {
+                        "start_time": 1691064000,
+                        "end_time": 1691067600,
+                        "status": "busy",
+                        "object": "time_slot",
+                    },
+                ],
+                "object": "free_busy",
+            },
+            {
+                "email": "user2@example.com",
+                "error": "Unable to resolve e-mail address user2@example.com to an Active Directory object.",
+                "object": "error",
+            },
+        ],
+    }
+    return mock_http_client

@@ -166,18 +166,35 @@ class TestCalendar:
             request_body=request_body,
         )
 
-    def test_get_free_busy(self, http_client_response):
-        calendars = Calendars(http_client_response)
+    def test_get_free_busy(self, http_client_free_busy):
+        calendars = Calendars(http_client_free_busy)
         request_body = {
             "start_time": 1614556800,
             "end_time": 1614643200,
             "emails": ["test@gmail.com"],
         }
 
-        calendars.get_free_busy(identifier="abc-123", request_body=request_body)
+        response = calendars.get_free_busy(
+            identifier="abc-123", request_body=request_body
+        )
 
-        http_client_response._execute.assert_called_once_with(
+        http_client_free_busy._execute.assert_called_once_with(
             method="POST",
             path="/v3/grants/abc-123/calendars/free-busy",
             request_body=request_body,
+        )
+        assert len(response.data) == 2
+        assert response.request_id == "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5"
+        assert response.data[0].email == "user1@example.com"
+        assert len(response.data[0].time_slots) == 2
+        assert response.data[0].time_slots[0].start_time == 1690898400
+        assert response.data[0].time_slots[0].end_time == 1690902000
+        assert response.data[0].time_slots[0].status == "busy"
+        assert response.data[0].time_slots[1].start_time == 1691064000
+        assert response.data[0].time_slots[1].end_time == 1691067600
+        assert response.data[0].time_slots[1].status == "busy"
+        assert response.data[1].email == "user2@example.com"
+        assert (
+            response.data[1].error
+            == "Unable to resolve e-mail address user2@example.com to an Active Directory object."
         )
