@@ -177,15 +177,24 @@ class TestMessage:
                 data=mock_encoder,
             )
 
-    def test_list_scheduled_messages(self, http_client_response):
-        messages = Messages(http_client_response)
+    def test_list_scheduled_messages(self, http_client_list_scheduled_messages):
+        messages = Messages(http_client_list_scheduled_messages)
 
-        messages.list_scheduled_messages(identifier="abc-123")
+        res = messages.list_scheduled_messages(identifier="abc-123")
 
-        http_client_response._execute.assert_called_once_with(
+        http_client_list_scheduled_messages._execute.assert_called_once_with(
             method="GET",
             path="/v3/grants/abc-123/messages/schedules",
         )
+        assert res.request_id == "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5"
+        assert len(res.data) == 2
+        assert res.data[0].schedule_id == "8cd56334-6d95-432c-86d1-c5dab0ce98be"
+        assert res.data[0].status.code == "pending"
+        assert res.data[0].status.description == "schedule send awaiting send at time"
+        assert res.data[1].schedule_id == "rb856334-6d95-432c-86d1-c5dab0ce98be"
+        assert res.data[1].status.code == "sucess"
+        assert res.data[1].status.description == "schedule send succeeded"
+        assert res.data[1].close_time == 1690579819
 
     def test_find_scheduled_message(self, http_client_response):
         messages = Messages(http_client_response)

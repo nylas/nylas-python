@@ -1,3 +1,5 @@
+from typing import List
+
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -6,7 +8,12 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.availability import GetAvailabilityResponse, GetAvailabilityRequest
-from nylas.models.free_busy import GetFreeBusyResponse, GetFreeBusyRequest
+from nylas.models.free_busy import (
+    GetFreeBusyResponse,
+    GetFreeBusyRequest,
+    FreeBusyError,
+    FreeBusy,
+)
 from nylas.models.calendars import (
     Calendar,
     CreateCalendarRequest,
@@ -145,7 +152,7 @@ class Calendars(
 
     def get_free_busy(
         self, identifier: str, request_body: GetFreeBusyRequest
-    ) -> Response[GetFreeBusyResponse]:
+    ) -> Response[List[GetFreeBusyResponse]]:
         """
         Get free/busy info for a Calendar.
 
@@ -162,4 +169,12 @@ class Calendars(
             request_body=request_body,
         )
 
-        return Response.from_dict(json_response, GetFreeBusyResponse)
+        data = []
+        request_id = json_response["request_id"]
+        for item in json_response["data"]:
+            if item.get("object") == "error":
+                data.append(FreeBusyError.from_dict(item))
+            else:
+                data.append(FreeBusy.from_dict(item))
+
+        return Response(data, request_id)
