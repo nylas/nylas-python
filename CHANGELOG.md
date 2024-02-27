@@ -1,11 +1,12 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.1.0
 ----------------
 * Added support for `round_to` field in availability response
 * Added support for `attributes` field in folder model
 * Added support for icloud as an auth provider
+* Fixed webhook secret not returning on creation of webhook
 * Fixed issue with free busy and scheduled message responses not being deserialized correctly
 * Removed `client_id` from `detect_provider()`
 
