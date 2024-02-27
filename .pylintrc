@@ -29,3 +29,6 @@ generated-members=
     CodeExchangeResponse.from_dict,
     NylasApiErrorResponse.from_dict,
     NylasOAuthErrorResponse.from_dict,
+    FreeBusyError.from_dict,
+    FreeBusy.from_dict,
+    ScheduledMessage.from_dict,
