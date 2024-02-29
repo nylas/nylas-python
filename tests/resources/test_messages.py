@@ -158,12 +158,64 @@ class TestMessage:
 
     def test_send_message(self, http_client_response):
         messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+        )
+
+    def test_send_message_small_attachment(self, http_client_response):
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3,
+                },
+            ],
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+        )
+
+    def test_send_message_large_attachment(self, http_client_response):
+        messages = Messages(http_client_response)
         mock_encoder = Mock()
         request_body = {
             "subject": "Hello from Nylas!",
             "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
             "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
             "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3 * 1024 * 1024,
+                },
+            ],
         }
 
         with patch(
@@ -174,6 +226,7 @@ class TestMessage:
             http_client_response._execute.assert_called_once_with(
                 method="POST",
                 path="/v3/grants/abc-123/messages/send",
+                request_body=None,
                 data=mock_encoder,
             )
 

@@ -102,12 +102,58 @@ class TestDraft:
 
     def test_create_draft(self, http_client_response):
         drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST", "/v3/grants/abc-123/drafts", None, None, request_body
+        )
+
+    def test_create_draft_small_attachment(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3,
+                },
+            ],
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST", "/v3/grants/abc-123/drafts", None, None, request_body
+        )
+
+    def test_create_draft_large_attachment(self, http_client_response):
+        drafts = Drafts(http_client_response)
         mock_encoder = Mock()
         request_body = {
             "subject": "Hello from Nylas!",
             "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
             "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
             "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3 * 1024 * 1024,
+                },
+            ],
         }
 
         with patch(
@@ -123,12 +169,70 @@ class TestDraft:
 
     def test_update_draft(self, http_client_response):
         drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+        }
+
+        drafts.update(
+            identifier="abc-123", draft_id="draft-123", request_body=request_body
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/drafts/draft-123",
+            None,
+            None,
+            request_body,
+        )
+
+    def test_update_draft_small_attachment(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3,
+                },
+            ],
+        }
+
+        drafts.update(
+            identifier="abc-123", draft_id="draft-123", request_body=request_body
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/drafts/draft-123",
+            None,
+            None,
+            request_body,
+        )
+
+    def test_update_draft_large_attachment(self, http_client_response):
+        drafts = Drafts(http_client_response)
         mock_encoder = Mock()
         request_body = {
             "subject": "Hello from Nylas!",
             "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
             "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
             "body": "This is the body of my draft message.",
+            "attachments": [
+                {
+                    "filename": "file1.txt",
+                    "content_type": "text/plain",
+                    "content": "this is a file",
+                    "size": 3 * 1024 * 1024,
+                },
+            ],
         }
 
         with patch(
