@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Improved message sending and draft create/update performance
+
 v6.1.0
 ----------------
 * Added support for `round_to` field in availability response
