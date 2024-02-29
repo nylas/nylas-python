@@ -15,7 +15,7 @@ from nylas.models.drafts import (
 )
 from nylas.models.messages import Message
 from nylas.models.response import ListResponse, Response, DeleteResponse
-from nylas.utils.file_utils import _build_form_request
+from nylas.utils.file_utils import _build_form_request, MAXIMUM_JSON_ATTACHMENT_SIZE
 
 
 class Drafts(
@@ -83,13 +83,27 @@ class Drafts(
         Returns:
             The newly created Draft.
         """
-        json_response = self._http_client._execute(
-            method="POST",
-            path=f"/v3/grants/{identifier}/drafts",
-            data=_build_form_request(request_body),
-        )
+        path = f"/v3/grants/{identifier}/drafts"
 
-        return Response.from_dict(json_response, Draft)
+        # Use form data only if the attachment size is greater than 3mb
+        attachment_size = sum(
+            attachment.get("size", 0)
+            for attachment in request_body.get("attachments", [])
+        )
+        if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
+            json_response = self._http_client._execute(
+                method="POST",
+                path=path,
+                data=_build_form_request(request_body),
+            )
+
+            return Response.from_dict(json_response, Draft)
+
+        return super().create(
+            path=path,
+            response_type=Draft,
+            request_body=request_body,
+        )
 
     def update(
         self,
@@ -108,13 +122,27 @@ class Drafts(
         Returns:
             The updated Draft.
         """
-        json_response = self._http_client._execute(
-            method="PUT",
-            path=f"/v3/grants/{identifier}/drafts/{draft_id}",
-            data=_build_form_request(request_body),
-        )
+        path = f"/v3/grants/{identifier}/drafts/{draft_id}"
 
-        return Response.from_dict(json_response, Draft)
+        # Use form data only if the attachment size is greater than 3mb
+        attachment_size = sum(
+            attachment.get("size", 0)
+            for attachment in request_body.get("attachments", [])
+        )
+        if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
+            json_response = self._http_client._execute(
+                method="PUT",
+                path=path,
+                data=_build_form_request(request_body),
+            )
+
+            return Response.from_dict(json_response, Draft)
+
+        return super().update(
+            path=path,
+            response_type=Draft,
+            request_body=request_body,
+        )
 
     def destroy(self, identifier: str, draft_id: str) -> DeleteResponse:
         """

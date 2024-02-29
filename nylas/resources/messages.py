@@ -17,7 +17,7 @@ from nylas.models.messages import (
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
-from nylas.utils.file_utils import _build_form_request
+from nylas.utils.file_utils import _build_form_request, MAXIMUM_JSON_ATTACHMENT_SIZE
 
 
 class Messages(
@@ -137,10 +137,25 @@ class Messages(
         Returns:
             The sent message.
         """
+        path = f"/v3/grants/{identifier}/messages/send"
+        form_data = None
+        json_body = None
+
+        # Use form data only if the attachment size is greater than 3mb
+        attachment_size = sum(
+            attachment.get("size", 0)
+            for attachment in request_body.get("attachments", [])
+        )
+        if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
+            form_data = _build_form_request(request_body)
+        else:
+            json_body = request_body
+
         json_response = self._http_client._execute(
             method="POST",
-            path=f"/v3/grants/{identifier}/messages/send",
-            data=_build_form_request(request_body),
+            path=path,
+            request_body=json_body,
+            data=form_data,
         )
 
         return Response.from_dict(json_response, Message)
