@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Change default timeout to match API (90 seconds)
+
 v6.1.0
 ----------------
 * Added support for `round_to` field in availability response
