@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.1.1
 ----------------
 * Improved message sending and draft create/update performance
 * Change default timeout to match API (90 seconds)
