@@ -54,6 +54,7 @@ class Webhook:
     updated_at: int
     description: Optional[str] = None
 
+
 @dataclass_json
 @dataclass
 class WebhookWithSecret(Webhook):

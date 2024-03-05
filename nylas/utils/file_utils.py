@@ -8,6 +8,10 @@ from requests_toolbelt import MultipartEncoder
 from nylas.models.attachments import CreateAttachmentRequest
 
 
+MAXIMUM_JSON_ATTACHMENT_SIZE = 3 * 1024 * 1024
+"""The maximum size of an attachment that can be sent using json."""
+
+
 def attach_file_request_builder(file_path) -> CreateAttachmentRequest:
     """
     Build a request to attach a file.
