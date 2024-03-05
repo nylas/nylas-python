@@ -217,6 +217,27 @@ class APIClient(json.JSONEncoder):
         self.access_token = results["access_token"]
         return results
 
+    def detect_provider(self, email):
+        """
+        Detect the provider for a given email address.
+
+        Args:
+            email (str): The email address you want to check
+
+        Returns:
+            dict: The response from the API containing the provider, if found
+        """
+        url = "{api_server}/connect/detect-provider".format(api_server=self.api_server)
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "email_address": email,
+        }
+
+        resp = self._request(HttpMethod.POST, url, json=data)
+        _validate(resp)
+        return resp.json()
+
     def token_for_code(self, code):
         """
         Exchange an authorization code for an access token
@@ -593,7 +614,7 @@ class APIClient(json.JSONEncoder):
         stream=False,
         path=None,
         stream_timeout=None,
-        **filters
+        **filters,
     ):
         """Get an individual REST resource"""
         if path is None:
