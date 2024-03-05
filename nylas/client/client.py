@@ -614,7 +614,7 @@ class APIClient(json.JSONEncoder):
         stream=False,
         path=None,
         stream_timeout=None,
-        **filters,
+        **filters
     ):
         """Get an individual REST resource"""
         if path is None:
