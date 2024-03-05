@@ -26,7 +26,7 @@ class Client:
     """
 
     def __init__(
-        self, api_key: str, api_uri: str = DEFAULT_SERVER_URL, timeout: int = 30
+        self, api_key: str, api_uri: str = DEFAULT_SERVER_URL, timeout: int = 90
     ):
         """
         Initialize the Nylas API client.

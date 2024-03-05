@@ -33,7 +33,7 @@ class TestClient:
 
         assert client.api_key == "test-key"
         assert client.api_uri == "https://api.us.nylas.com"
-        assert client.http_client.timeout == 30
+        assert client.http_client.timeout == 90
 
     def test_client_auth_property(self, client):
         assert client.auth is not None
