@@ -239,7 +239,7 @@ class Message(NylasAPIObject):
         return []
 
     def update_folder(self, folder_id):
-        update = {"folder": folder_id}
+        update = {"folder_id": folder_id}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
@@ -248,7 +248,7 @@ class Message(NylasAPIObject):
 
     def update_labels(self, label_ids=None):
         label_ids = label_ids or []
-        update = {"labels": label_ids}
+        update = {"label_ids": label_ids}
         new_obj = self.api._update_resource(self.cls, self.id, update)
         for attr in self.cls.attrs:
             if hasattr(new_obj, attr):
