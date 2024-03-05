@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add support for `view` parameter in `Threads.search()`
+* Fix error when attempting to update labels or folders on a message
 
 v5.14.1
 ----------------
