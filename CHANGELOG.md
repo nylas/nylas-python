@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Add support for `view` parameter in `Threads.search()`
+* Add support for detect_provider endpoint
 
 v5.14.1
 ----------------

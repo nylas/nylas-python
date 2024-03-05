@@ -90,6 +90,7 @@ app.register_blueprint(google_bp, url_prefix="/login")
 # Teach Flask how to find out that it's behind an ngrok proxy
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
+
 # Define what Flask should do when someone visits the root URL of this website.
 @app.route("/")
 def index():

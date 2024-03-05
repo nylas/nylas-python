@@ -217,6 +217,27 @@ class APIClient(json.JSONEncoder):
         self.access_token = results["access_token"]
         return results
 
+    def detect_provider(self, email):
+        """
+        Detect the provider for a given email address.
+
+        Args:
+            email (str): The email address you want to check
+
+        Returns:
+            dict: The response from the API containing the provider, if found
+        """
+        url = "{api_server}/connect/detect-provider".format(api_server=self.api_server)
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "email_address": email,
+        }
+
+        resp = self._request(HttpMethod.POST, url, json=data)
+        _validate(resp)
+        return resp.json()
+
     def token_for_code(self, code):
         """
         Exchange an authorization code for an access token
@@ -643,9 +664,9 @@ class APIClient(json.JSONEncoder):
 
     def _create_resource(self, cls, data, **kwargs):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = (
@@ -675,9 +696,9 @@ class APIClient(json.JSONEncoder):
 
     def _create_resources(self, cls, data):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = URLObject(self.api_server).with_path("{name}".format(name=name))
@@ -698,9 +719,9 @@ class APIClient(json.JSONEncoder):
 
     def _delete_resource(self, cls, resource_id, data=None, **kwargs):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = (
@@ -719,9 +740,9 @@ class APIClient(json.JSONEncoder):
         if path is None:
             path = cls.collection_name
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(path) if path else "",
         )
 
