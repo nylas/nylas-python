@@ -664,9 +664,9 @@ class APIClient(json.JSONEncoder):
 
     def _create_resource(self, cls, data, **kwargs):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = (
@@ -696,9 +696,9 @@ class APIClient(json.JSONEncoder):
 
     def _create_resources(self, cls, data):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = URLObject(self.api_server).with_path("{name}".format(name=name))
@@ -719,9 +719,9 @@ class APIClient(json.JSONEncoder):
 
     def _delete_resource(self, cls, resource_id, data=None, **kwargs):
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(cls.collection_name) if cls.collection_name else "",
         )
         url = (
@@ -740,9 +740,9 @@ class APIClient(json.JSONEncoder):
         if path is None:
             path = cls.collection_name
         name = "{prefix}{path}".format(
-            prefix="/{}/{}".format(cls.api_root, self.client_id)
-            if cls.api_root
-            else "",
+            prefix=(
+                "/{}/{}".format(cls.api_root, self.client_id) if cls.api_root else ""
+            ),
             path="/{}".format(path) if path else "",
         )
 
