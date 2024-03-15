@@ -30,8 +30,6 @@ class WebhookTriggers(str, Enum):
     MESSAGE_OPENED = "message.opened"
     MESSAGE_LINK_CLICKED = "message.link_clicked"
     THREAD_REPLIED = "thread.replied"
-    
-    
 
 
 @dataclass_json
