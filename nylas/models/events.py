@@ -316,12 +316,12 @@ class Event:
     calendar_id: str
     busy: bool
     participants: List[Participant]
-    visibility: Visibility
     when: When = field(metadata=config(decoder=_decode_when))
     conferencing: Optional[Conferencing] = field(
         default=None, metadata=config(decoder=_decode_conferencing)
     )
     object: str = "event"
+    visibility: Optional[Visibility] = None
     read_only: Optional[bool] = None
     description: Optional[str] = None
     location: Optional[str] = None
