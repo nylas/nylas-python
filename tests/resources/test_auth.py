@@ -99,6 +99,7 @@ class TestAuth:
         assert res.scope == "https://www.googleapis.com/auth/gmail.readonly profile"
         assert res.token_type == "Bearer"
         assert res.grant_id == "grant_123"
+        assert res.provider == "google"
 
     def test_get_token_info(self, http_client_token_info):
         auth = Auth(http_client_token_info)
