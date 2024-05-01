@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Add clean messages support
+
 v6.1.1
 ----------------
 * Improved message sending and draft create/update performance
