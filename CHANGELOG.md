@@ -1,6 +1,11 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for adding custom headers to outgoing requests
+* Added support for `provider` field in code exchange response
+
 v6.1.1
 ----------------
 * Improved message sending and draft create/update performance
