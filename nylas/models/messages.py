@@ -209,7 +209,8 @@ class CleanMessagesRequest(TypedDict):
         ignore_links: If true, removes link-related tags (<a>) from the email message while keeping the text.
         ignore_images: If true, removes images from the email message.
         images_as_markdown: If true, converts images in the email message to Markdown.
-        ignore_tables: If true, removes table-related tags (<table>, <th>, <td>, <tr>) from the email message while keeping rows.
+        ignore_tables: If true, removes table-related tags (<table>, <th>, <td>, <tr>) from the email message while
+            keeping rows.
         remove_conclusion_phrases: If true, removes phrases such as "Best" and "Regards" in the email message signature.
     """
 
