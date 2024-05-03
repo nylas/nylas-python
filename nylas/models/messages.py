@@ -198,3 +198,56 @@ class StopScheduledMessageResponse:
     """
 
     message: str
+
+
+class CleanMessagesRequest(TypedDict):
+    """
+    Request to clean a list of messages.
+
+    Attributes:
+        message_id: IDs of the email messages to clean.
+        ignore_links: If true, removes link-related tags (<a>) from the email message while keeping the text.
+        ignore_images: If true, removes images from the email message.
+        images_as_markdown: If true, converts images in the email message to Markdown.
+        ignore_tables: If true, removes table-related tags (<table>, <th>, <td>, <tr>) from the email message while
+            keeping rows.
+        remove_conclusion_phrases: If true, removes phrases such as "Best" and "Regards" in the email message signature.
+    """
+
+    message_id: List[str]
+    ignore_links: NotRequired[bool]
+    ignore_images: NotRequired[bool]
+    images_as_markdown: NotRequired[bool]
+    ignore_tables: NotRequired[bool]
+    remove_conclusion_phrases: NotRequired[bool]
+
+
+@dataclass_json
+@dataclass
+class CleanMessagesResponse(Message):
+    """
+    Message object with the cleaned HTML message body.
+
+    Attributes:
+        id (str): Globally unique object identifier.
+        grant_id (str): The grant that this message belongs to.
+        from_ (List[EmailName]): The sender of the message.
+        date (int): The date the message was received.
+        object: The type of object.
+        thread_id (Optional[str]): The thread that this message belongs to.
+        subject (Optional[str]): The subject of the message.
+        to (Optional[List[EmailName]]): The recipients of the message.
+        cc (Optional[List[EmailName]]): The CC recipients of the message.
+        bcc (Optional[List[EmailName]]): The BCC recipients of the message.
+        reply_to (Optional[List[EmailName]]): The reply-to recipients of the message.
+        unread (Optional[bool]): Whether the message is unread.
+        starred (Optional[bool]): Whether the message is starred.
+        snippet (Optional[str]): A snippet of the message body.
+        body (Optional[str]): The body of the message.
+        attachments (Optional[List[Attachment]]): The attachments on the message.
+        folders (Optional[List[str]]): The folders that the message is in.
+        created_at (Optional[int]): Unix timestamp of when the message was created.
+        conversation (str): The cleaned HTML message body.
+    """
+
+    conversation: str = ""

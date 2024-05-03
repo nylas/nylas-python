@@ -14,6 +14,8 @@ from nylas.models.messages import (
     UpdateMessageRequest,
     ScheduledMessage,
     StopScheduledMessageResponse,
+    CleanMessagesRequest,
+    CleanMessagesResponse,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
@@ -223,3 +225,24 @@ class Messages(
         )
 
         return Response.from_dict(json_response, StopScheduledMessageResponse)
+
+    def clean_messages(
+        self, identifier: str, request_body: CleanMessagesRequest
+    ) -> ListResponse[CleanMessagesResponse]:
+        """
+        Remove extra information from a list of messages.
+
+        Args:
+            identifier: The identifier of the grant to clean the message for.
+            request_body: The values to clean the message with.
+
+        Returns:
+            The list of cleaned messages.
+        """
+        json_resposne = self._http_client._execute(
+            method="PUT",
+            path=f"/v3/grants/{identifier}/messages/clean",
+            request_body=request_body,
+        )
+
+        return ListResponse.from_dict(json_resposne, CleanMessagesResponse)

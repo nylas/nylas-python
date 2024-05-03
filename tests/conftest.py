@@ -189,3 +189,32 @@ def http_client_list_scheduled_messages():
         ],
     }
     return mock_http_client
+
+
+@pytest.fixture
+def http_client_clean_messages():
+    mock_http_client = Mock()
+    mock_http_client._execute.return_value = {
+        "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
+        "data": [
+            {
+                "body": "Hello, I just sent a message using Nylas!",
+                "from": [
+                    {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
+                ],
+                "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
+                "id": "message-1",
+                "object": "message",
+                "conversation": "cleaned example",
+            },
+            {
+                "body": "Hello, this is a test message!",
+                "from": [{"name": "Michael Scott", "email": "m.scott@email.com"}],
+                "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
+                "id": "message-2",
+                "object": "message",
+                "conversation": "another example",
+            },
+        ],
+    }
+    return mock_http_client
