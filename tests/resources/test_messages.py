@@ -272,3 +272,37 @@ class TestMessage:
             method="DELETE",
             path="/v3/grants/abc-123/messages/schedules/schedule-123",
         )
+
+    def test_clean_messages(self, http_client_clean_messages):
+        messages = Messages(http_client_clean_messages)
+        request_body = {
+            "message_id": ["message-1", "message-2"],
+            "ignore_images": True,
+            "ignore_links": True,
+            "ignore_tables": True,
+            "images_as_markdown": True,
+            "remove_conclusion_phrases": True,
+        }
+
+        response = messages.clean_messages(
+            identifier="abc-123",
+            request_body=request_body,
+        )
+
+        http_client_clean_messages._execute.assert_called_once_with(
+            method="PUT",
+            path="/v3/grants/abc-123/messages/clean",
+            request_body=request_body,
+        )
+
+        # Assert the conversation field, and the typical message fields serialize properly
+        assert len(response.data) == 2
+        assert response.data[0].body == "Hello, I just sent a message using Nylas!"
+        assert response.data[0].from_ == [
+            {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
+        ]
+        assert response.data[0].object == "message"
+        assert response.data[0].id == "message-1"
+        assert response.data[0].grant_id == "41009df5-bf11-4c97-aa18-b285b5f2e386"
+        assert response.data[0].conversation == "cleaned example"
+        assert response.data[1].conversation == "another example"
