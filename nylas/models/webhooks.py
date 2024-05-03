@@ -24,6 +24,12 @@ class WebhookTriggers(str, Enum):
     GRANT_EXPIRED = "grant.expired"
     MESSAGE_SEND_SUCCESS = "message.send_success"
     MESSAGE_SEND_FAILED = "message.send_failed"
+    MESSAGE_BOUNCE_DETECTED = "message.bounce_detected"
+    MESSAGE_CREATED = "message.created"
+    MESSAGE_UPDATED = "message.updated"
+    MESSAGE_OPENED = "message.opened"
+    MESSAGE_LINK_CLICKED = "message.link_clicked"
+    THREAD_REPLIED = "thread.replied"
 
 
 @dataclass_json
