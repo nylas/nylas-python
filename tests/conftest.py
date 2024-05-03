@@ -113,6 +113,7 @@ def http_client_token_exchange():
         "scope": "https://www.googleapis.com/auth/gmail.readonly profile",
         "token_type": "Bearer",
         "grant_id": "grant_123",
+        "provider": "google",
     }
     return mock_http_client
 

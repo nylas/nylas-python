@@ -3,7 +3,11 @@ nylas-python Changelog
 
 Unreleased
 ----------------
-* Add clean messages support
+* Added support for adding custom headers to outgoing requests
+* Added support for `provider` field in code exchange response
+* Added clean messages support
+* Added additional webhook triggers
+* Made event visibility optional to support iCloud events
 
 v6.1.1
 ----------------

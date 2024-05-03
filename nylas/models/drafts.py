@@ -57,6 +57,19 @@ class TrackingOptions(TypedDict):
     thread_replies: NotRequired[bool]
 
 
+class CustomHeader(TypedDict):
+    """
+    A key-value pair representing a header that can be added to drafts and outgoing messages.
+
+    Attributes:
+        name: The name of the custom header.
+        value: The value of the custom header.
+    """
+
+    name: str
+    value: str
+
+
 class CreateDraftRequest(TypedDict):
     """
     A request to create a draft.
@@ -73,6 +86,7 @@ class CreateDraftRequest(TypedDict):
         send_at: Unix timestamp to send the message at.
         reply_to_message_id: The ID of the message that you are replying to.
         tracking_options: Options for tracking opens, links, and thread replies.
+        custom_headers: Custom headers to add to the message.
     """
 
     body: NotRequired[str]
@@ -86,6 +100,7 @@ class CreateDraftRequest(TypedDict):
     send_at: NotRequired[int]
     reply_to_message_id: NotRequired[str]
     tracking_options: NotRequired[TrackingOptions]
+    custom_headers: NotRequired[List[CustomHeader]]
 
 
 UpdateDraftRequest = CreateDraftRequest
@@ -148,6 +163,7 @@ class SendMessageRequest(CreateDraftRequest):
         send_at (NotRequired[int]): Unix timestamp to send the message at.
         reply_to_message_id (NotRequired[str]): The ID of the message that you are replying to.
         tracking_options (NotRequired[TrackingOptions]): Options for tracking opens, links, and thread replies.
+        custom_headers(NotRequired[List[CustomHeader]]): Custom headers to add to the message.
         use_draft: Whether or not to use draft support. This is primarily used when dealing with large attachments.
     """
 
