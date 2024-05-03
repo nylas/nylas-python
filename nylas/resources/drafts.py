@@ -1,3 +1,4 @@
+import io
 from typing import Optional
 
 from nylas.handler.api_resources import (
@@ -15,7 +16,11 @@ from nylas.models.drafts import (
 )
 from nylas.models.messages import Message
 from nylas.models.response import ListResponse, Response, DeleteResponse
-from nylas.utils.file_utils import _build_form_request, MAXIMUM_JSON_ATTACHMENT_SIZE
+from nylas.utils.file_utils import (
+    _build_form_request,
+    MAXIMUM_JSON_ATTACHMENT_SIZE,
+    encode_stream_to_base64,
+)
 
 
 class Drafts(
@@ -99,6 +104,11 @@ class Drafts(
 
             return Response.from_dict(json_response, Draft)
 
+        # Encode the content of the attachments to base64
+        for attachment in request_body.get("attachments", []):
+            if issubclass(type(attachment["content"]), io.IOBase):
+                attachment["content"] = encode_stream_to_base64(attachment["content"])
+
         return super().create(
             path=path,
             response_type=Draft,
@@ -137,6 +147,11 @@ class Drafts(
             )
 
             return Response.from_dict(json_response, Draft)
+
+        # Encode the content of the attachments to base64
+        for attachment in request_body.get("attachments", []):
+            if issubclass(type(attachment["content"]), io.IOBase):
+                attachment["content"] = encode_stream_to_base64(attachment["content"])
 
         return super().update(
             path=path,

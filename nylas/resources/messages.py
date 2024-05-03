@@ -1,3 +1,4 @@
+import io
 from typing import Optional, List
 
 from nylas.handler.api_resources import (
@@ -19,7 +20,11 @@ from nylas.models.messages import (
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
-from nylas.utils.file_utils import _build_form_request, MAXIMUM_JSON_ATTACHMENT_SIZE
+from nylas.utils.file_utils import (
+    _build_form_request,
+    MAXIMUM_JSON_ATTACHMENT_SIZE,
+    encode_stream_to_base64,
+)
 
 
 class Messages(
@@ -151,6 +156,13 @@ class Messages(
         if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
             form_data = _build_form_request(request_body)
         else:
+            # Encode the content of the attachments to base64
+            for attachment in request_body.get("attachments", []):
+                if issubclass(type(attachment["content"]), io.IOBase):
+                    attachment["content"] = encode_stream_to_base64(
+                        attachment["content"]
+                    )
+
             json_body = request_body
 
         json_response = self._http_client._execute(
