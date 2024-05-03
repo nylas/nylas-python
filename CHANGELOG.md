@@ -8,6 +8,7 @@ Unreleased
 * Added clean messages support
 * Added additional webhook triggers
 * Made event visibility optional to support iCloud events
+* Fixed issue where attachments < 3mb were not being encoded correctly
 
 v6.1.1
 ----------------
