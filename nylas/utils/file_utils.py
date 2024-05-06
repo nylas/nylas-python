@@ -1,7 +1,9 @@
+import base64
 import json
 import mimetypes
 import os
 from pathlib import Path
+from typing import BinaryIO
 
 from requests_toolbelt import MultipartEncoder
 
@@ -34,6 +36,21 @@ def attach_file_request_builder(file_path) -> CreateAttachmentRequest:
         "content": file_stream,
         "size": size,
     }
+
+
+def encode_stream_to_base64(binary_stream: BinaryIO) -> str:
+    """
+    Encode the content of a binary stream to a base64 string.
+
+    Attributes:
+        binary_stream: The binary stream to encode.
+
+    Returns:
+        The base64 encoded content of the binary stream.
+    """
+    binary_stream.seek(0)
+    binary_content = binary_stream.read()
+    return base64.b64encode(binary_content).decode("utf-8")
 
 
 def _build_form_request(request_body: dict) -> MultipartEncoder:
