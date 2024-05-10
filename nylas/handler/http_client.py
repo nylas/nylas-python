@@ -80,6 +80,7 @@ class HttpClient:
         query_params=None,
         request_body=None,
         data=None,
+        overrides=None,
     ) -> dict:
         request = self._build_request(
             method, path, headers, query_params, request_body, data
@@ -135,10 +136,15 @@ class HttpClient:
         query_params: dict = None,
         request_body=None,
         data=None,
+        overrides=None,
     ) -> dict:
-        base_url = f"{self.api_server}{path}"
+        api_server = self.api_server
+        if overrides and overrides.get("api_uri"):
+            api_server = overrides["api_uri"]
+
+        base_url = f"{api_server}{path}"
         url = _build_query_params(base_url, query_params) if query_params else base_url
-        headers = self._build_headers(headers, request_body, data)
+        headers = self._build_headers(headers, request_body, data, overrides)
 
         return {
             "method": method,
@@ -147,8 +153,12 @@ class HttpClient:
         }
 
     def _build_headers(
-        self, extra_headers: dict = None, response_body=None, data=None
+        self, extra_headers: dict = None, response_body=None, data=None, overrides=None
     ) -> dict:
+        override_headers = {}
+        if overrides and overrides.get("headers"):
+            override_headers = overrides["headers"]
+
         if extra_headers is None:
             extra_headers = {}
 
@@ -156,14 +166,19 @@ class HttpClient:
         user_agent_header = (
             f"Nylas Python SDK {__VERSION__} - {major}.{minor}.{revision}"
         )
+
+        api_key = self.api_key
+        if overrides and overrides.get("api_key"):
+            api_key = overrides["api_key"]
+
         headers = {
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key}",
         }
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
         elif response_body is not None:
             headers["Content-type"] = "application/json"
 
-        return {**headers, **extra_headers}
+        return {**headers, **extra_headers, **override_headers}
