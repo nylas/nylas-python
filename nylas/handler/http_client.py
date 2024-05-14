@@ -85,19 +85,21 @@ class HttpClient:
         request = self._build_request(
             method, path, headers, query_params, request_body, data, overrides
         )
+
+        timeout = self.timeout
+        if overrides and overrides.get("timeout"):
+            timeout = overrides["timeout"]
         try:
             response = self.session.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
                 json=request_body,
-                timeout=self.timeout,
+                timeout=timeout,
                 data=data,
             )
         except requests.exceptions.Timeout as exc:
-            raise NylasSdkTimeoutError(
-                url=request["url"], timeout=self.timeout
-            ) from exc
+            raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
 
         return _validate_response(response)
 
@@ -110,12 +112,16 @@ class HttpClient:
         overrides=None,
     ) -> Union[bytes, Response]:
         request = self._build_request("GET", path, headers, query_params, overrides)
+
+        timeout = self.timeout
+        if overrides and overrides.get("timeout"):
+            timeout = overrides["timeout"]
         try:
             response = self.session.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
-                timeout=self.timeout,
+                timeout=timeout,
                 stream=stream,
             )
 
@@ -125,9 +131,7 @@ class HttpClient:
 
             return response.content if response.content else None
         except requests.exceptions.Timeout as exc:
-            raise NylasSdkTimeoutError(
-                url=request["url"], timeout=self.timeout
-            ) from exc
+            raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
 
     def _build_request(
         self,
