@@ -83,7 +83,7 @@ class HttpClient:
         overrides=None,
     ) -> dict:
         request = self._build_request(
-            method, path, headers, query_params, request_body, data
+            method, path, headers, query_params, request_body, data, overrides
         )
         try:
             response = self.session.request(
@@ -107,8 +107,9 @@ class HttpClient:
         headers=None,
         query_params=None,
         stream=False,
+        overrides=None,
     ) -> Union[bytes, Response]:
-        request = self._build_request("GET", path, headers, query_params)
+        request = self._build_request("GET", path, headers, query_params, overrides)
         try:
             response = self.session.request(
                 request["method"],

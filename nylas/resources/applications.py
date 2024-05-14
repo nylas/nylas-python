@@ -1,3 +1,4 @@
+from nylas.config import RequestOverrides
 from nylas.models.application_details import ApplicationDetails
 from nylas.models.response import Response
 from nylas.resources.redirect_uris import RedirectUris
@@ -22,15 +23,18 @@ class Applications(Resource):
         """
         return RedirectUris(self._http_client)
 
-    def info(self) -> Response[ApplicationDetails]:
+    def info(self, overrides: RequestOverrides = None) -> Response[ApplicationDetails]:
         """
         Get the application information.
+
+        Args:
+            overrides: The query parameters to include in the request.
 
         Returns:
             Response: The application information.
         """
 
         json_response = self._http_client._execute(
-            method="GET", path="/v3/applications"
+            method="GET", path="/v3/applications", overrides=overrides
         )
         return Response.from_dict(json_response, ApplicationDetails)

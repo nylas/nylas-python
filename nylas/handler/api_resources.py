@@ -8,10 +8,16 @@ from nylas.resources.resource import Resource
 
 class ListableApiResource(Resource):
     def list(
-        self, path, response_type, headers=None, query_params=None, request_body=None
+        self,
+        path,
+        response_type,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        overrides=None,
     ) -> ListResponse:
         response_json = self._http_client._execute(
-            "GET", path, headers, query_params, request_body
+            "GET", path, headers, query_params, request_body, overrides=overrides
         )
 
         return ListResponse.from_dict(response_json, response_type)
@@ -19,10 +25,16 @@ class ListableApiResource(Resource):
 
 class FindableApiResource(Resource):
     def find(
-        self, path, response_type, headers=None, query_params=None, request_body=None
+        self,
+        path,
+        response_type,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        overrides=None,
     ) -> Response:
         response_json = self._http_client._execute(
-            "GET", path, headers, query_params, request_body
+            "GET", path, headers, query_params, request_body, overrides=overrides
         )
 
         return Response.from_dict(response_json, response_type)
@@ -30,10 +42,16 @@ class FindableApiResource(Resource):
 
 class CreatableApiResource(Resource):
     def create(
-        self, path, response_type, headers=None, query_params=None, request_body=None
+        self,
+        path,
+        response_type,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        overrides=None,
     ) -> Response:
         response_json = self._http_client._execute(
-            "POST", path, headers, query_params, request_body
+            "POST", path, headers, query_params, request_body, overrides=overrides
         )
 
         return Response.from_dict(response_json, response_type)
@@ -48,9 +66,10 @@ class UpdatableApiResource(Resource):
         query_params=None,
         request_body=None,
         method="PUT",
+        overrides=None,
     ):
         response_json = self._http_client._execute(
-            method, path, headers, query_params, request_body
+            method, path, headers, query_params, request_body, overrides=overrides
         )
 
         return Response.from_dict(response_json, response_type)
@@ -64,11 +83,12 @@ class DestroyableApiResource(Resource):
         headers=None,
         query_params=None,
         request_body=None,
+        overrides=None,
     ):
         if response_type is None:
             response_type = DeleteResponse
 
         response_json = self._http_client._execute(
-            "DELETE", path, headers, query_params, request_body
+            "DELETE", path, headers, query_params, request_body, overrides=overrides
         )
         return response_type.from_dict(response_json)

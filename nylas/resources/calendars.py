@@ -1,5 +1,6 @@
 from typing import List
 
+from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -40,7 +41,10 @@ class Calendars(
     """
 
     def list(
-        self, identifier: str, query_params: ListCalendarsQueryParams = None
+        self,
+        identifier: str,
+        query_params: ListCalendarsQueryParams = None,
+        overrides: RequestOverrides = None,
     ) -> ListResponse[Calendar]:
         """
         Return all Calendars.
@@ -48,6 +52,7 @@ class Calendars(
         Args:
             identifier: The identifier of the Grant to act upon.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The list of Calendars.
@@ -57,9 +62,12 @@ class Calendars(
             path=f"/v3/grants/{identifier}/calendars",
             query_params=query_params,
             response_type=Calendar,
+            overrides=overrides,
         )
 
-    def find(self, identifier: str, calendar_id: str) -> Response[Calendar]:
+    def find(
+        self, identifier: str, calendar_id: str, overrides: RequestOverrides = None
+    ) -> Response[Calendar]:
         """
         Return a Calendar.
 
@@ -67,6 +75,7 @@ class Calendars(
             identifier: The identifier of the Grant to act upon.
             calendar_id: The ID of the Calendar to retrieve.
                 Use "primary" to refer to the primary Calendar associated with the Grant.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The Calendar.
@@ -74,10 +83,14 @@ class Calendars(
         return super().find(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
             response_type=Calendar,
+            overrides=overrides,
         )
 
     def create(
-        self, identifier: str, request_body: CreateCalendarRequest
+        self,
+        identifier: str,
+        request_body: CreateCalendarRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Calendar]:
         """
         Create a Calendar.
@@ -85,6 +98,7 @@ class Calendars(
         Args:
             identifier: The identifier of the Grant to act upon.
             request_body: The values to create the Calendar with.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The created Calendar.
@@ -93,10 +107,15 @@ class Calendars(
             path=f"/v3/grants/{identifier}/calendars",
             response_type=Calendar,
             request_body=request_body,
+            overrides=overrides,
         )
 
     def update(
-        self, identifier: str, calendar_id: str, request_body: UpdateCalendarRequest
+        self,
+        identifier: str,
+        calendar_id: str,
+        request_body: UpdateCalendarRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Calendar]:
         """
         Update a Calendar.
@@ -106,6 +125,7 @@ class Calendars(
             calendar_id: The ID of the Calendar to update.
                 Use "primary" to refer to the primary Calendar associated with the Grant.
             request_body: The values to update the Calendar with.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The updated Calendar.
@@ -114,9 +134,12 @@ class Calendars(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
             response_type=Calendar,
             request_body=request_body,
+            overrides=overrides,
         )
 
-    def destroy(self, identifier: str, calendar_id: str) -> DeleteResponse:
+    def destroy(
+        self, identifier: str, calendar_id: str, overrides: RequestOverrides = None
+    ) -> DeleteResponse:
         """
         Delete a Calendar.
 
@@ -124,20 +147,24 @@ class Calendars(
             identifier: The identifier of the Grant to act upon.
             calendar_id: The ID of the Calendar to delete.
                 Use "primary" to refer to the primary Calendar associated with the Grant.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The deletion response.
         """
-        return super().destroy(path=f"/v3/grants/{identifier}/calendars/{calendar_id}")
+        return super().destroy(
+            path=f"/v3/grants/{identifier}/calendars/{calendar_id}", overrides=overrides
+        )
 
     def get_availability(
-        self, request_body: GetAvailabilityRequest
+        self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.
 
         Args:
             request_body: The request body to send to the API.
+            overrides: The request overrides to use for the request.
 
         Returns:
             Response: The availability response from the API.
@@ -146,12 +173,16 @@ class Calendars(
             method="POST",
             path="/v3/calendars/availability",
             request_body=request_body,
+            overrides=overrides,
         )
 
         return Response.from_dict(json_response, GetAvailabilityResponse)
 
     def get_free_busy(
-        self, identifier: str, request_body: GetFreeBusyRequest
+        self,
+        identifier: str,
+        request_body: GetFreeBusyRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[List[GetFreeBusyResponse]]:
         """
         Get free/busy info for a Calendar.
@@ -159,6 +190,7 @@ class Calendars(
         Args:
             identifier: The grant ID or email account to get free/busy for.
             request_body: The request body to send to the API.
+            overrides: The request overrides to use for the request.
 
         Returns:
             Response: The free/busy response from the API.
@@ -167,6 +199,7 @@ class Calendars(
             method="POST",
             path=f"/v3/grants/{identifier}/calendars/free-busy",
             request_body=request_body,
+            overrides=overrides,
         )
 
         data = []
