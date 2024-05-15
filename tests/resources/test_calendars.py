@@ -43,7 +43,7 @@ class TestCalendar:
         calendars.list(identifier="abc-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/calendars", None, None, None,overrides=None
+            "GET", "/v3/grants/abc-123/calendars", None, None, None, overrides=None
         )
 
     def test_list_calendars_with_query_params(self, http_client_list_response):
@@ -52,7 +52,12 @@ class TestCalendar:
         calendars.list(identifier="abc-123", query_params={"limit": 20})
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/calendars", None, {"limit": 20}, None, overrides=None
+            "GET",
+            "/v3/grants/abc-123/calendars",
+            None,
+            {"limit": 20},
+            None,
+            overrides=None,
         )
 
     def test_find_calendar(self, http_client_response):
@@ -61,7 +66,12 @@ class TestCalendar:
         calendars.find(identifier="abc-123", calendar_id="calendar-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/calendars/calendar-123", None, None, None,overrides=None
+            "GET",
+            "/v3/grants/abc-123/calendars/calendar-123",
+            None,
+            None,
+            None,
+            overrides=None,
         )
 
     def test_create_calendar(self, http_client_response):
@@ -82,7 +92,7 @@ class TestCalendar:
             None,
             None,
             request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_update_calendar(self, http_client_response):
@@ -105,7 +115,7 @@ class TestCalendar:
             None,
             None,
             request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_destroy_calendar(self, http_client_delete_response):
@@ -119,7 +129,7 @@ class TestCalendar:
             None,
             None,
             None,
-            overrides=None
+            overrides=None,
         )
 
     def test_get_availability(self, http_client_response):
@@ -158,7 +168,7 @@ class TestCalendar:
                     }
                 ],
                 "round_robin_event_id": "event-123",
-            }
+            },
         }
 
         calendars.get_availability(request_body)
@@ -167,7 +177,7 @@ class TestCalendar:
             method="POST",
             path="/v3/calendars/availability",
             request_body=request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_get_free_busy(self, http_client_free_busy):
@@ -186,7 +196,7 @@ class TestCalendar:
             method="POST",
             path="/v3/grants/abc-123/calendars/free-busy",
             request_body=request_body,
-            overrides=None
+            overrides=None,
         )
         assert len(response.data) == 2
         assert response.request_id == "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5"

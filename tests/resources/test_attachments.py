@@ -42,7 +42,7 @@ class TestAttachments:
             None,
             query_params,
             None,
-            overrides=None
+            overrides=None,
         )
 
     def test_download_attachment(self):
@@ -55,14 +55,14 @@ class TestAttachments:
             identifier="abc-123",
             attachment_id="attachment-123",
             query_params=query_params,
-            overrides=None
+            overrides=None,
         )
 
         mock_http_client._execute_download_request.assert_called_once_with(
             path="/v3/grants/abc-123/attachments/attachment-123/download",
             query_params=query_params,
             stream=True,
-            overrides=None
+            overrides=None,
         )
 
     def test_download_bytes(self):
@@ -75,12 +75,12 @@ class TestAttachments:
             identifier="abc-123",
             attachment_id="attachment-123",
             query_params=query_params,
-            overrides=None
+            overrides=None,
         )
 
         mock_http_client._execute_download_request.assert_called_once_with(
             path="/v3/grants/abc-123/attachments/attachment-123/download",
             query_params=query_params,
             stream=False,
-            overrides=None
+            overrides=None,
         )

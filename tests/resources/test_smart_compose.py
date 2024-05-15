@@ -20,7 +20,7 @@ class TestSmartCompose:
             method="POST",
             path="/v3/grants/grant-123/messages/smart-compose",
             request_body=request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_compose_message_reply(self, http_client_response):
@@ -33,5 +33,5 @@ class TestSmartCompose:
             method="POST",
             path="/v3/grants/grant-123/messages/message-123/smart-compose",
             request_body=request_body,
-            overrides=None
+            overrides=None,
         )

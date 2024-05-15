@@ -50,7 +50,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
     def test_find_resource(self, http_client_response):
@@ -71,7 +71,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
     def test_create_resource(self, http_client_response):
@@ -83,7 +83,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
         assert type(response) is Response
@@ -93,7 +93,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
     def test_update_resource(self, http_client_response):
@@ -105,7 +105,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
         assert type(response) is Response
@@ -115,7 +115,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
     def test_destroy_resource(self, http_client_delete_response):
@@ -127,7 +127,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
         assert type(response) is RequestIdOnlyResponse
@@ -137,7 +137,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
     def test_destroy_resource_default_type(self, http_client_delete_response):
@@ -148,7 +148,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
-            overrides=None
+            overrides=None,
         )
 
         assert type(response) is DeleteResponse
@@ -158,5 +158,5 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
-            overrides=None
+            overrides=None,
         )

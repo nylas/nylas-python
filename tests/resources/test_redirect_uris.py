@@ -46,7 +46,12 @@ class TestRedirectUri:
         redirect_uris.find(redirect_uri_id="redirect_uri-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/applications/redirect-uris/redirect_uri-123", None, None, None, overrides=None
+            "GET",
+            "/v3/applications/redirect-uris/redirect_uri-123",
+            None,
+            None,
+            None,
+            overrides=None,
         )
 
     def test_create_redirect_uri(self, http_client_response):
@@ -72,7 +77,7 @@ class TestRedirectUri:
             None,
             None,
             request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_update_redirect_uri(self, http_client_response):
@@ -101,7 +106,7 @@ class TestRedirectUri:
             None,
             None,
             request_body,
-            overrides=None
+            overrides=None,
         )
 
     def test_destroy_redirect_uri(self, http_client_delete_response):
@@ -115,5 +120,5 @@ class TestRedirectUri:
             None,
             None,
             None,
-            overrides=None
+            overrides=None,
         )

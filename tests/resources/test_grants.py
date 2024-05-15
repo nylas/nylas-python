@@ -67,12 +67,7 @@ class TestGrants:
         )
 
         http_client_response._execute.assert_called_once_with(
-            "PUT",
-            "/v3/grants/grant-123",
-            None,
-            None,
-            request_body,
-            overrides=None
+            "PUT", "/v3/grants/grant-123", None, None, request_body, overrides=None
         )
 
     def test_destroy_grant(self, http_client_delete_response):
@@ -81,10 +76,5 @@ class TestGrants:
         grants.destroy("grant-123")
 
         http_client_delete_response._execute.assert_called_once_with(
-            "DELETE",
-            "/v3/grants/grant-123",
-            None,
-            None,
-            None,
-            overrides=None
+            "DELETE", "/v3/grants/grant-123", None, None, None, overrides=None
         )

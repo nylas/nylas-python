@@ -87,10 +87,7 @@ class TestAuth:
         res = auth._get_token(req, overrides=None)
 
         http_client_token_exchange._execute.assert_called_once_with(
-            method="POST",
-            path="/v3/connect/token",
-            request_body=req,
-            overrides=None
+            method="POST", path="/v3/connect/token", request_body=req, overrides=None
         )
         assert type(res) is CodeExchangeResponse
         assert res.access_token == "nylas_access_token"
@@ -111,10 +108,7 @@ class TestAuth:
         res = auth._get_token_info(req, overrides=None)
 
         http_client_token_info._execute.assert_called_once_with(
-            method="GET",
-            path="/v3/connect/tokeninfo",
-            query_params=req,
-            overrides=None
+            method="GET", path="/v3/connect/tokeninfo", query_params=req, overrides=None
         )
         assert type(res.data) is TokenInfoResponse
         assert res.data.iss == "https://nylas.com"
@@ -163,7 +157,8 @@ class TestAuth:
                 "code": "code",
                 "redirect_uri": "https://example.com/oauth/callback",
                 "grant_type": "authorization_code",
-            },overrides=None
+            },
+            overrides=None,
         )
 
     def test_exchange_code_for_token_no_secret(self, http_client_token_exchange):
@@ -186,7 +181,8 @@ class TestAuth:
                 "redirect_uri": "https://example.com/oauth/callback",
                 "client_secret": "nylas-api-key",
                 "grant_type": "authorization_code",
-            },overrides=None
+            },
+            overrides=None,
         )
 
     def test_custom_authentication(self):
@@ -216,7 +212,7 @@ class TestAuth:
             method="POST",
             path="/v3/connect/custom",
             request_body={"provider": "google", "settings": {"foo": "bar"}},
-            overrides=None
+            overrides=None,
         )
         assert type(res.data) is Grant
         assert res.data.id == "e19f8e1a-eb1c-41c0-b6a6-d2e59daf7f47"
@@ -250,7 +246,8 @@ class TestAuth:
                 "client_id": "abc-123",
                 "client_secret": "secret",
                 "grant_type": "refresh_token",
-            },overrides=None
+            },
+            overrides=None,
         )
 
     def test_refresh_access_token_no_secret(self, http_client_token_exchange):
@@ -273,7 +270,8 @@ class TestAuth:
                 "client_id": "abc-123",
                 "client_secret": "nylas-api-key",
                 "grant_type": "refresh_token",
-            },overrides=None
+            },
+            overrides=None,
         )
 
     def test_id_token_info(self, http_client_token_info):
@@ -285,7 +283,7 @@ class TestAuth:
             method="GET",
             path="/v3/connect/tokeninfo",
             query_params={"id_token": "id-123"},
-            overrides=None
+            overrides=None,
         )
 
     def test_validate_access_token(self, http_client_token_info):
@@ -297,7 +295,7 @@ class TestAuth:
             method="GET",
             path="/v3/connect/tokeninfo",
             query_params={"access_token": "id-123"},
-            overrides=None
+            overrides=None,
         )
 
     @mock.patch("uuid.uuid4")
@@ -354,7 +352,7 @@ class TestAuth:
             method="POST",
             path="/v3/connect/revoke",
             query_params={"token": "access_token"},
-            overrides=None
+            overrides=None,
         )
         assert res is True
 
@@ -370,10 +368,7 @@ class TestAuth:
             },
         }
         auth = Auth(mock_http_client)
-        req = {
-            "email": "test@gmail.com",
-            "all_provider_types": True
-        }
+        req = {"email": "test@gmail.com", "all_provider_types": True}
 
         res = auth.detect_provider(req)
 
