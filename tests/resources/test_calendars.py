@@ -167,6 +167,7 @@ class TestCalendar:
             method="POST",
             path="/v3/calendars/availability",
             request_body=request_body,
+            overrides=None
         )
 
     def test_get_free_busy(self, http_client_free_busy):

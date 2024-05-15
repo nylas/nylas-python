@@ -90,6 +90,7 @@ class TestAuth:
             method="POST",
             path="/v3/connect/token",
             request_body=req,
+            overrides=None
         )
         assert type(res) is CodeExchangeResponse
         assert res.access_token == "nylas_access_token"
@@ -113,6 +114,7 @@ class TestAuth:
             method="GET",
             path="/v3/connect/tokeninfo",
             query_params=req,
+            overrides=None
         )
         assert type(res.data) is TokenInfoResponse
         assert res.data.iss == "https://nylas.com"
@@ -376,6 +378,6 @@ class TestAuth:
         res = auth.detect_provider(req)
 
         mock_http_client._execute.assert_called_once_with(
-            method="POST", path="/v3/providers/detect", query_params=req
+            method="POST", path="/v3/providers/detect", query_params=req, overrides=None
         )
         assert type(res.data) == ProviderDetectResponse

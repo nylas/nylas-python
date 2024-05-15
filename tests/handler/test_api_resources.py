@@ -93,6 +93,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )
 
     def test_update_resource(self, http_client_response):
@@ -114,6 +115,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )
 
     def test_destroy_resource(self, http_client_delete_response):
@@ -135,6 +137,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )
 
     def test_destroy_resource_default_type(self, http_client_delete_response):
@@ -155,4 +158,5 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )

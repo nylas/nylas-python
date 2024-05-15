@@ -62,6 +62,7 @@ class TestAttachments:
             path="/v3/grants/abc-123/attachments/attachment-123/download",
             query_params=query_params,
             stream=True,
+            overrides=None
         )
 
     def test_download_bytes(self):
@@ -81,4 +82,5 @@ class TestAttachments:
             path="/v3/grants/abc-123/attachments/attachment-123/download",
             query_params=query_params,
             stream=False,
+            overrides=None
         )

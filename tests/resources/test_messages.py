@@ -245,6 +245,7 @@ class TestMessage:
         http_client_list_scheduled_messages._execute.assert_called_once_with(
             method="GET",
             path="/v3/grants/abc-123/messages/schedules",
+            overrides=None
         )
         assert res.request_id == "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5"
         assert len(res.data) == 2
@@ -279,6 +280,7 @@ class TestMessage:
         http_client_response._execute.assert_called_once_with(
             method="DELETE",
             path="/v3/grants/abc-123/messages/schedules/schedule-123",
+            overrides=None
         )
 
     def test_clean_messages(self, http_client_clean_messages):
