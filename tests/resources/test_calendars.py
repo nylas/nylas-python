@@ -158,7 +158,7 @@ class TestCalendar:
                     }
                 ],
                 "round_robin_event_id": "event-123",
-            },overrides=None
+            }
         }
 
         calendars.get_availability(request_body)

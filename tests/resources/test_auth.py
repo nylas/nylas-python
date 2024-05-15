@@ -370,8 +370,7 @@ class TestAuth:
         auth = Auth(mock_http_client)
         req = {
             "email": "test@gmail.com",
-            "all_provider_types": True,
-            overrides=None
+            "all_provider_types": True
         }
 
         res = auth.detect_provider(req)
