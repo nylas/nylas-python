@@ -71,7 +71,7 @@ class TestMessage:
         messages.list(identifier="abc-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/messages", None, None, None
+            "GET", "/v3/grants/abc-123/messages", None, None, None, overrides=None
         )
 
     def test_list_messages_with_query_params(self, http_client_list_response):
@@ -92,6 +92,7 @@ class TestMessage:
                 "subject": "Hello from Nylas!",
             },
             None,
+            overrides=None
         )
 
     def test_find_message(self, http_client_response):
@@ -100,7 +101,7 @@ class TestMessage:
         messages.find(identifier="abc-123", message_id="message-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/messages/message-123", None, None, None
+            "GET", "/v3/grants/abc-123/messages/message-123", None, None, None, overrides=None
         )
 
     def test_find_message_with_query_params(self, http_client_response):
@@ -118,6 +119,7 @@ class TestMessage:
             None,
             {"fields": "standard"},
             None,
+            overrides=None
         )
 
     def test_update_message(self, http_client_response):
@@ -141,6 +143,7 @@ class TestMessage:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_destroy_message(self, http_client_delete_response):
@@ -154,6 +157,7 @@ class TestMessage:
             None,
             None,
             None,
+            overrides=None
         )
 
     def test_send_message(self, http_client_response):
@@ -172,6 +176,7 @@ class TestMessage:
             path="/v3/grants/abc-123/messages/send",
             request_body=request_body,
             data=None,
+            overrides=None
         )
 
     def test_send_message_small_attachment(self, http_client_response):
@@ -198,6 +203,7 @@ class TestMessage:
             path="/v3/grants/abc-123/messages/send",
             request_body=request_body,
             data=None,
+            overrides=None
         )
 
     def test_send_message_large_attachment(self, http_client_response):
@@ -228,6 +234,7 @@ class TestMessage:
                 path="/v3/grants/abc-123/messages/send",
                 request_body=None,
                 data=mock_encoder,
+                overrides=None
             )
 
     def test_list_scheduled_messages(self, http_client_list_scheduled_messages):
@@ -259,6 +266,7 @@ class TestMessage:
         http_client_response._execute.assert_called_once_with(
             method="GET",
             path="/v3/grants/abc-123/messages/schedules/schedule-123",
+            overrides=None
         )
 
     def test_stop_scheduled_message(self, http_client_response):
@@ -293,6 +301,7 @@ class TestMessage:
             method="PUT",
             path="/v3/grants/abc-123/messages/clean",
             request_body=request_body,
+            overrides=None
         )
 
         # Assert the conversation field, and the typical message fields serialize properly

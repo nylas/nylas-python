@@ -36,7 +36,7 @@ class TestGrants:
         grants.list()
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants", None, None, None
+            "GET", "/v3/grants", None, None, None, overrides=None
         )
 
     def test_find_grant(self, http_client_response):
@@ -45,7 +45,7 @@ class TestGrants:
         grants.find("grant-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/grant-123", None, None, None
+            "GET", "/v3/grants/grant-123", None, None, None, overrides=None
         )
 
     def test_update_grant(self, http_client_response):
@@ -72,6 +72,7 @@ class TestGrants:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_destroy_grant(self, http_client_delete_response):
@@ -85,4 +86,5 @@ class TestGrants:
             None,
             None,
             None,
+            overrides=None
         )

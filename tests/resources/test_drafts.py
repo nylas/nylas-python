@@ -68,7 +68,7 @@ class TestDraft:
         drafts.list(identifier="abc-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/drafts", None, None, None
+            "GET", "/v3/grants/abc-123/drafts", None, None, None, overrides=None
         )
 
     def test_list_drafts_with_query_params(self, http_client_list_response):
@@ -89,6 +89,7 @@ class TestDraft:
                 "subject": "Hello from Nylas!",
             },
             None,
+            overrides=None
         )
 
     def test_find_draft(self, http_client_response):
@@ -97,7 +98,7 @@ class TestDraft:
         drafts.find(identifier="abc-123", draft_id="draft-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/drafts/draft-123", None, None, None
+            "GET", "/v3/grants/abc-123/drafts/draft-123", None, None, None, overrides=None
         )
 
     def test_create_draft(self, http_client_response):
@@ -112,7 +113,7 @@ class TestDraft:
         drafts.create(identifier="abc-123", request_body=request_body)
 
         http_client_response._execute.assert_called_once_with(
-            "POST", "/v3/grants/abc-123/drafts", None, None, request_body
+            "POST", "/v3/grants/abc-123/drafts", None, None, request_body, overrides=None
         )
 
     def test_create_draft_small_attachment(self, http_client_response):
@@ -135,7 +136,7 @@ class TestDraft:
         drafts.create(identifier="abc-123", request_body=request_body)
 
         http_client_response._execute.assert_called_once_with(
-            "POST", "/v3/grants/abc-123/drafts", None, None, request_body
+            "POST", "/v3/grants/abc-123/drafts", None, None, request_body, overrides=None
         )
 
     def test_create_draft_large_attachment(self, http_client_response):
@@ -165,6 +166,7 @@ class TestDraft:
                 method="POST",
                 path="/v3/grants/abc-123/drafts",
                 data=mock_encoder,
+                overrides=None
             )
 
     def test_update_draft(self, http_client_response):
@@ -186,6 +188,7 @@ class TestDraft:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_update_draft_small_attachment(self, http_client_response):
@@ -215,6 +218,7 @@ class TestDraft:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_update_draft_large_attachment(self, http_client_response):
@@ -246,6 +250,7 @@ class TestDraft:
                 method="PUT",
                 path="/v3/grants/abc-123/drafts/draft-123",
                 data=mock_encoder,
+                overrides=None
             )
 
     def test_destroy_draft(self, http_client_delete_response):
@@ -259,6 +264,7 @@ class TestDraft:
             None,
             None,
             None,
+            overrides=None
         )
 
     def test_send_draft(self, http_client_response):
@@ -269,4 +275,5 @@ class TestDraft:
         http_client_response._execute.assert_called_once_with(
             method="POST",
             path="/v3/grants/abc-123/drafts/draft-123",
+            overrides=None
         )

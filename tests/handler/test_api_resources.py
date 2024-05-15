@@ -50,6 +50,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )
 
     def test_find_resource(self, http_client_response):
@@ -70,6 +71,7 @@ class TestApiResource:
             {"test": "header"},
             {"query": "param"},
             {"foo": "bar"},
+            overrides=None
         )
 
     def test_create_resource(self, http_client_response):
@@ -81,6 +83,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
+            overrides=None
         )
 
         assert type(response) is Response
@@ -101,6 +104,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
+            overrides=None
         )
 
         assert type(response) is Response
@@ -121,6 +125,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
+            overrides=None
         )
 
         assert type(response) is RequestIdOnlyResponse
@@ -140,6 +145,7 @@ class TestApiResource:
             headers={"test": "header"},
             query_params={"query": "param"},
             request_body={"foo": "bar"},
+            overrides=None
         )
 
         assert type(response) is DeleteResponse

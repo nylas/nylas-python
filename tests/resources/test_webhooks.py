@@ -39,7 +39,7 @@ class TestWebhooks:
         webhooks.list()
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/webhooks", None, None, None
+            "GET", "/v3/webhooks", None, None, None, overrides=None
         )
 
     def test_find_webhook(self, http_client_response):
@@ -48,7 +48,7 @@ class TestWebhooks:
         webhooks.find("webhook-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/webhooks/webhook-123", None, None, None
+            "GET", "/v3/webhooks/webhook-123", None, None, None, overrides=None
         )
 
     def test_create_webhook(self, http_client_response):
@@ -68,6 +68,7 @@ class TestWebhooks:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_update_webhook(self, http_client_response):
@@ -90,6 +91,7 @@ class TestWebhooks:
             None,
             None,
             request_body,
+            overrides=None
         )
 
     def test_destroy_webhook(self, http_client_delete_response):
@@ -103,6 +105,7 @@ class TestWebhooks:
             None,
             None,
             None,
+            overrides=None
         )
 
     def test_rotate_secret(self, http_client_response):
@@ -114,6 +117,7 @@ class TestWebhooks:
             method="PUT",
             path="/v3/webhooks/webhook-123/rotate-secret",
             request_body={},
+            overrides=None
         )
 
     def test_ip_addresses(self, http_client_response):
@@ -124,6 +128,7 @@ class TestWebhooks:
         http_client_response._execute.assert_called_once_with(
             method="GET",
             path="/v3/webhooks/ip-addresses",
+            overrides=None
         )
 
     def test_extract_challenge_parameter(self, http_client):

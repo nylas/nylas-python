@@ -42,6 +42,7 @@ class TestAttachments:
             None,
             query_params,
             None,
+            overrides=None
         )
 
     def test_download_attachment(self):
@@ -54,6 +55,7 @@ class TestAttachments:
             identifier="abc-123",
             attachment_id="attachment-123",
             query_params=query_params,
+            overrides=None
         )
 
         mock_http_client._execute_download_request.assert_called_once_with(
@@ -72,6 +74,7 @@ class TestAttachments:
             identifier="abc-123",
             attachment_id="attachment-123",
             query_params=query_params,
+            overrides=None
         )
 
         mock_http_client._execute_download_request.assert_called_once_with(
