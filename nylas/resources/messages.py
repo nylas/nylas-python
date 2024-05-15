@@ -1,6 +1,7 @@
 import io
 from typing import Optional, List
 
+from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -52,7 +53,10 @@ class Messages(
         return SmartCompose(self._http_client)
 
     def list(
-        self, identifier: str, query_params: Optional[ListMessagesQueryParams] = None
+        self,
+        identifier: str,
+        query_params: Optional[ListMessagesQueryParams] = None,
+        overrides: RequestOverrides = None,
     ) -> ListResponse[Message]:
         """
         Return all Messages.
@@ -60,6 +64,7 @@ class Messages(
         Args:
             identifier: The identifier of the grant to get messages for.
             query_params: The query parameters to filter messages by.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             A list of Messages.
@@ -68,6 +73,7 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages",
             response_type=Message,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def find(
@@ -75,6 +81,7 @@ class Messages(
         identifier: str,
         message_id: str,
         query_params: Optional[FindMessageQueryParams] = None,
+        overrides: RequestOverrides = None,
     ) -> Response[Message]:
         """
         Return a Message.
@@ -83,6 +90,7 @@ class Messages(
             identifier: The identifier of the grant to get the message for.
             message_id: The identifier of the message to get.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             The requested Message.
@@ -91,6 +99,7 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             response_type=Message,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def update(
@@ -98,6 +107,7 @@ class Messages(
         identifier: str,
         message_id: str,
         request_body: UpdateMessageRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Message]:
         """
         Update a Message.
@@ -106,6 +116,7 @@ class Messages(
             identifier: The identifier of the grant to update the message for.
             message_id: The identifier of the message to update.
             request_body: The request body to update the message with.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             The updated Message.
@@ -114,25 +125,32 @@ class Messages(
             path=f"/v3/grants/{identifier}/messages/{message_id}",
             response_type=Message,
             request_body=request_body,
+            overrides=overrides,
         )
 
-    def destroy(self, identifier: str, message_id: str) -> DeleteResponse:
+    def destroy(
+        self, identifier: str, message_id: str, overrides: RequestOverrides = None
+    ) -> DeleteResponse:
         """
         Delete a Message.
 
         Args:
             identifier: The identifier of the grant to delete the message for.
             message_id: The identifier of the message to delete.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             The deletion response.
         """
         return super().destroy(
-            path=f"/v3/grants/{identifier}/messages/{message_id}",
+            path=f"/v3/grants/{identifier}/messages/{message_id}", overrides=overrides
         )
 
     def send(
-        self, identifier: str, request_body: SendMessageRequest
+        self,
+        identifier: str,
+        request_body: SendMessageRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Message]:
         """
         Send a Message.
@@ -140,6 +158,7 @@ class Messages(
         Args:
             identifier: The identifier of the grant to send the message for.
             request_body: The request body to send the message with.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             The sent message.
@@ -170,18 +189,20 @@ class Messages(
             path=path,
             request_body=json_body,
             data=form_data,
+            overrides=overrides,
         )
 
         return Response.from_dict(json_response, Message)
 
     def list_scheduled_messages(
-        self, identifier: str
+        self, identifier: str, overrides: RequestOverrides = None
     ) -> Response[List[ScheduledMessage]]:
         """
         Retrieve your scheduled messages.
 
         Args:
             identifier: The identifier of the grant to delete the message for.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             Response: The list of scheduled messages.
@@ -189,6 +210,7 @@ class Messages(
         json_response = self._http_client._execute(
             method="GET",
             path=f"/v3/grants/{identifier}/messages/schedules",
+            overrides=overrides,
         )
 
         data = []
@@ -199,7 +221,7 @@ class Messages(
         return Response(data, request_id)
 
     def find_scheduled_message(
-        self, identifier: str, schedule_id: str
+        self, identifier: str, schedule_id: str, overrides: RequestOverrides = None
     ) -> Response[ScheduledMessage]:
         """
         Retrieve your scheduled messages.
@@ -207,6 +229,7 @@ class Messages(
         Args:
             identifier: The identifier of the grant to delete the message for.
             schedule_id: The id of the scheduled message to retrieve.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             Response: The scheduled message.
@@ -214,12 +237,13 @@ class Messages(
         json_response = self._http_client._execute(
             method="GET",
             path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
+            overrides=overrides,
         )
 
         return Response.from_dict(json_response, ScheduledMessage)
 
     def stop_scheduled_message(
-        self, identifier: str, schedule_id: str
+        self, identifier: str, schedule_id: str, overrides: RequestOverrides = None
     ) -> Response[StopScheduledMessageResponse]:
         """
         Stop a scheduled message.
@@ -227,6 +251,7 @@ class Messages(
         Args:
             identifier: The identifier of the grant to delete the message for.
             schedule_id: The id of the scheduled message to stop.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             Response: The confirmation of the stopped scheduled message.
@@ -234,12 +259,16 @@ class Messages(
         json_response = self._http_client._execute(
             method="DELETE",
             path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
+            overrides=overrides,
         )
 
         return Response.from_dict(json_response, StopScheduledMessageResponse)
 
     def clean_messages(
-        self, identifier: str, request_body: CleanMessagesRequest
+        self,
+        identifier: str,
+        request_body: CleanMessagesRequest,
+        overrides: RequestOverrides = None,
     ) -> ListResponse[CleanMessagesResponse]:
         """
         Remove extra information from a list of messages.
@@ -247,6 +276,7 @@ class Messages(
         Args:
             identifier: The identifier of the grant to clean the message for.
             request_body: The values to clean the message with.
+            overrides: The request overrides to apply to the request.
 
         Returns:
             The list of cleaned messages.
@@ -255,6 +285,7 @@ class Messages(
             method="PUT",
             path=f"/v3/grants/{identifier}/messages/clean",
             request_body=request_body,
+            overrides=overrides,
         )
 
         return ListResponse.from_dict(json_resposne, CleanMessagesResponse)

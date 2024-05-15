@@ -2,6 +2,7 @@ import base64
 import hashlib
 import uuid
 
+from nylas.config import RequestOverrides
 from nylas.handler.http_client import _build_query_params
 from nylas.models.grants import CreateGrantRequest, Grant
 
@@ -79,13 +80,14 @@ class Auth(Resource):
         return self._url_auth_builder(query)
 
     def exchange_code_for_token(
-        self, request: CodeExchangeRequest
+        self, request: CodeExchangeRequest, overrides: RequestOverrides = None
     ) -> CodeExchangeResponse:
         """
         Exchange an authorization code for an access token.
 
         Args:
             request: The request parameters for the code exchange
+            overrides: The request overrides to use for the request.
 
         Returns:
             Information about the Nylas application
@@ -96,16 +98,17 @@ class Auth(Resource):
         request_body = dict(request)
         request_body["grant_type"] = "authorization_code"
 
-        return self._get_token(request_body)
+        return self._get_token(request_body, overrides)
 
     def custom_authentication(
-        self, request_body: CreateGrantRequest
+        self, request_body: CreateGrantRequest, overrides: RequestOverrides = None
     ) -> Response[Grant]:
         """
         Create a Grant via Custom Authentication.
 
         Args:
             request_body: The values to create the Grant with.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The created Grant.
@@ -115,17 +118,19 @@ class Auth(Resource):
             method="POST",
             path="/v3/connect/custom",
             request_body=request_body,
+            overrides=overrides,
         )
         return Response.from_dict(json_response, Grant)
 
     def refresh_access_token(
-        self, request: TokenExchangeRequest
+        self, request: TokenExchangeRequest, overrides: RequestOverrides = None
     ) -> CodeExchangeResponse:
         """
         Refresh an access token.
 
         Args:
             request: The refresh token request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The response containing the new access token.
@@ -136,14 +141,17 @@ class Auth(Resource):
         request_body = dict(request)
         request_body["grant_type"] = "refresh_token"
 
-        return self._get_token(request_body)
+        return self._get_token(request_body, overrides)
 
-    def id_token_info(self, id_token: str) -> Response[TokenInfoResponse]:
+    def id_token_info(
+        self, id_token: str, overrides: RequestOverrides = None
+    ) -> Response[TokenInfoResponse]:
         """
         Get info about an ID token.
 
         Args:
             id_token: The ID token to query.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The API response with the token information.
@@ -153,14 +161,17 @@ class Auth(Resource):
             "id_token": id_token,
         }
 
-        return self._get_token_info(query_params)
+        return self._get_token_info(query_params, overrides)
 
-    def validate_access_token(self, access_token: str) -> Response[TokenInfoResponse]:
+    def validate_access_token(
+        self, access_token: str, overrides: RequestOverrides = None
+    ) -> Response[TokenInfoResponse]:
         """
         Get info about an access token.
 
         Args:
             access_token: The access token to query.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The API response with the token information.
@@ -170,7 +181,7 @@ class Auth(Resource):
             "access_token": access_token,
         }
 
-        return self._get_token_info(query_params)
+        return self._get_token_info(query_params, overrides)
 
     def url_for_oauth2_pkce(self, config: URLForAuthenticationConfig) -> PkceAuthUrl:
         """
@@ -204,11 +215,12 @@ class Auth(Resource):
 
         return self._url_auth_builder(query)
 
-    def revoke(self, token: str) -> True:
+    def revoke(self, token: str, overrides: RequestOverrides = None) -> True:
         """Revoke a single access token.
 
         Args:
             token: The access token to revoke.
+            overrides: The request overrides to use for the request.
 
         Returns:
             True: If the token was revoked successfully.
@@ -217,18 +229,20 @@ class Auth(Resource):
             method="POST",
             path="/v3/connect/revoke",
             query_params={"token": token},
+            overrides=overrides,
         )
 
         return True
 
     def detect_provider(
-        self, params: ProviderDetectParams
+        self, params: ProviderDetectParams, overrides: RequestOverrides = None
     ) -> Response[ProviderDetectResponse]:
         """
         Detect provider from email address.
 
         Args:
             params: The parameters to include in the request
+            overrides: The request overrides to use for the request.
 
         Returns:
             The detected provider, if found.
@@ -238,6 +252,7 @@ class Auth(Resource):
             method="POST",
             path="/v3/providers/detect",
             query_params=params,
+            overrides=overrides,
         )
         return Response.from_dict(json_response, ProviderDetectResponse)
 
@@ -245,14 +260,24 @@ class Auth(Resource):
         base = f"{self._http_client.api_server}/v3/connect/auth"
         return _build_query_params(base, query)
 
-    def _get_token(self, request_body: dict) -> CodeExchangeResponse:
+    def _get_token(
+        self, request_body: dict, overrides: RequestOverrides
+    ) -> CodeExchangeResponse:
         json_response = self._http_client._execute(
-            method="POST", path="/v3/connect/token", request_body=request_body
+            method="POST",
+            path="/v3/connect/token",
+            request_body=request_body,
+            overrides=overrides,
         )
         return CodeExchangeResponse.from_dict(json_response)
 
-    def _get_token_info(self, query_params: dict) -> Response[TokenInfoResponse]:
+    def _get_token_info(
+        self, query_params: dict, overrides: RequestOverrides
+    ) -> Response[TokenInfoResponse]:
         json_response = self._http_client._execute(
-            method="GET", path="/v3/connect/tokeninfo", query_params=query_params
+            method="GET",
+            path="/v3/connect/tokeninfo",
+            query_params=query_params,
+            overrides=overrides,
         )
         return Response.from_dict(json_response, TokenInfoResponse)

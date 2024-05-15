@@ -1,3 +1,4 @@
+from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -26,12 +27,17 @@ class Folders(
     The Nylas folders API allows you to create new folders or manage existing ones.
     """
 
-    def list(self, identifier: str) -> ListResponse[Folder]:
+    def list(
+        self,
+        identifier: str,
+        overrides: RequestOverrides = None,
+    ) -> ListResponse[Folder]:
         """
         Return all Folders.
 
         Args:
             identifier: The identifier of the Grant to act upon.
+            overrides: The request overrides to use.
 
         Returns:
             The list of Folders.
@@ -40,15 +46,22 @@ class Folders(
         return super().list(
             path=f"/v3/grants/{identifier}/folders",
             response_type=Folder,
+            overrides=overrides,
         )
 
-    def find(self, identifier: str, folder_id: str) -> Response[Folder]:
+    def find(
+        self,
+        identifier: str,
+        folder_id: str,
+        overrides: RequestOverrides = None,
+    ) -> Response[Folder]:
         """
         Return a Folder.
 
         Args:
             identifier: The identifier of the Grant to act upon.
             folder_id: The ID of the Folder to retrieve.
+            overrides: The request overrides to use.
 
         Returns:
             The Folder.
@@ -56,10 +69,14 @@ class Folders(
         return super().find(
             path=f"/v3/grants/{identifier}/folders/{folder_id}",
             response_type=Folder,
+            overrides=overrides,
         )
 
     def create(
-        self, identifier: str, request_body: CreateFolderRequest
+        self,
+        identifier: str,
+        request_body: CreateFolderRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Folder]:
         """
         Create a Folder.
@@ -67,6 +84,7 @@ class Folders(
         Args:
             identifier: The identifier of the Grant to act upon.
             request_body: The values to create the Folder with.
+            overrides: The request overrides to use.
 
         Returns:
             The created Folder.
@@ -75,10 +93,15 @@ class Folders(
             path=f"/v3/grants/{identifier}/folders",
             response_type=Folder,
             request_body=request_body,
+            overrides=overrides,
         )
 
     def update(
-        self, identifier: str, folder_id: str, request_body: UpdateFolderRequest
+        self,
+        identifier: str,
+        folder_id: str,
+        request_body: UpdateFolderRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Folder]:
         """
         Update a Folder.
@@ -87,6 +110,7 @@ class Folders(
             identifier: The identifier of the Grant to act upon.
             folder_id: The ID of the Folder to update.
             request_body: The values to update the Folder with.
+            overrides: The request overrides to use.
 
         Returns:
             The updated Folder.
@@ -95,17 +119,26 @@ class Folders(
             path=f"/v3/grants/{identifier}/folders/{folder_id}",
             response_type=Folder,
             request_body=request_body,
+            overrides=overrides,
         )
 
-    def destroy(self, identifier: str, folder_id: str) -> DeleteResponse:
+    def destroy(
+        self,
+        identifier: str,
+        folder_id: str,
+        overrides: RequestOverrides = None,
+    ) -> DeleteResponse:
         """
         Delete a Folder.
 
         Args:
             identifier: The identifier of the Grant to act upon.
             folder_id: The ID of the Folder to delete.
+            overrides: The request overrides to use.
 
         Returns:
             The deletion response.
         """
-        return super().destroy(path=f"/v3/grants/{identifier}/folders/{folder_id}")
+        return super().destroy(
+            path=f"/v3/grants/{identifier}/folders/{folder_id}", overrides=overrides
+        )

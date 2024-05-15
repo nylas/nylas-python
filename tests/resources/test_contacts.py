@@ -95,7 +95,7 @@ class TestContact:
         contacts.list(identifier="abc-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/contacts", None, None, None
+            "GET", "/v3/grants/abc-123/contacts", None, None, None, overrides=None
         )
 
     def test_list_contacts_with_query_params(self, http_client_list_response):
@@ -104,7 +104,12 @@ class TestContact:
         contacts.list(identifier="abc-123", query_params={"limit": 20})
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/contacts", None, {"limit": 20}, None
+            "GET",
+            "/v3/grants/abc-123/contacts",
+            None,
+            {"limit": 20},
+            None,
+            overrides=None,
         )
 
     def test_find_contact(self, http_client_response):
@@ -113,7 +118,12 @@ class TestContact:
         contacts.find(identifier="abc-123", contact_id="contact-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/contacts/contact-123", None, None, None
+            "GET",
+            "/v3/grants/abc-123/contacts/contact-123",
+            None,
+            None,
+            None,
+            overrides=None,
         )
 
     def test_find_contact_with_query_params(self, http_client_response):
@@ -131,6 +141,7 @@ class TestContact:
             None,
             {"profile_picture": True},
             None,
+            overrides=None,
         )
 
     def test_create_contact(self, http_client_response):
@@ -149,6 +160,7 @@ class TestContact:
             None,
             None,
             request_body,
+            overrides=None,
         )
 
     def test_update_contact(self, http_client_response):
@@ -169,6 +181,7 @@ class TestContact:
             None,
             None,
             request_body,
+            overrides=None,
         )
 
     def test_destroy_contact(self, http_client_delete_response):
@@ -182,6 +195,7 @@ class TestContact:
             None,
             None,
             None,
+            overrides=None,
         )
 
     def test_list_groups(self, http_client_list_response):
@@ -193,4 +207,5 @@ class TestContact:
             method="GET",
             path="/v3/grants/abc-123/contacts/groups",
             query_params={"limit": 20},
+            overrides=None,
         )

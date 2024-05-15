@@ -1,6 +1,7 @@
 import io
 from typing import Optional
 
+from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -37,7 +38,10 @@ class Drafts(
     """
 
     def list(
-        self, identifier: str, query_params: Optional[ListDraftsQueryParams] = None
+        self,
+        identifier: str,
+        query_params: Optional[ListDraftsQueryParams] = None,
+        overrides: RequestOverrides = None,
     ) -> ListResponse[Draft]:
         """
         Return all Drafts.
@@ -45,6 +49,7 @@ class Drafts(
         Args:
             identifier: The identifier of the grant to get drafts for.
             query_params: The query parameters to filter drafts by.
+            overrides: The request overrides to use for the request.
 
         Returns:
             A list of Drafts.
@@ -53,12 +58,14 @@ class Drafts(
             path=f"/v3/grants/{identifier}/drafts",
             response_type=Draft,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def find(
         self,
         identifier: str,
         draft_id: str,
+        overrides: RequestOverrides = None,
     ) -> Response[Draft]:
         """
         Return a Draft.
@@ -66,6 +73,7 @@ class Drafts(
         Args:
             identifier: The identifier of the grant to get the draft for.
             draft_id: The identifier of the draft to get.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The requested Draft.
@@ -73,10 +81,14 @@ class Drafts(
         return super().find(
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
             response_type=Draft,
+            overrides=overrides,
         )
 
     def create(
-        self, identifier: str, request_body: CreateDraftRequest
+        self,
+        identifier: str,
+        request_body: CreateDraftRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Draft]:
         """
         Create a Draft.
@@ -84,6 +96,7 @@ class Drafts(
         Args:
             identifier: The identifier of the grant to send the message for.
             request_body: The request body to create a draft with.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The newly created Draft.
@@ -100,6 +113,7 @@ class Drafts(
                 method="POST",
                 path=path,
                 data=_build_form_request(request_body),
+                overrides=overrides,
             )
 
             return Response.from_dict(json_response, Draft)
@@ -113,6 +127,7 @@ class Drafts(
             path=path,
             response_type=Draft,
             request_body=request_body,
+            overrides=overrides,
         )
 
     def update(
@@ -120,6 +135,7 @@ class Drafts(
         identifier: str,
         draft_id: str,
         request_body: UpdateDraftRequest,
+        overrides: RequestOverrides = None,
     ) -> Response[Draft]:
         """
         Update a Draft.
@@ -128,6 +144,7 @@ class Drafts(
             identifier: The identifier of the grant to update the draft for.
             draft_id: The identifier of the draft to update.
             request_body: The request body to update the draft with.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The updated Draft.
@@ -144,6 +161,7 @@ class Drafts(
                 method="PUT",
                 path=path,
                 data=_build_form_request(request_body),
+                overrides=overrides,
             )
 
             return Response.from_dict(json_response, Draft)
@@ -157,34 +175,49 @@ class Drafts(
             path=path,
             response_type=Draft,
             request_body=request_body,
+            overrides=overrides,
         )
 
-    def destroy(self, identifier: str, draft_id: str) -> DeleteResponse:
+    def destroy(
+        self,
+        identifier: str,
+        draft_id: str,
+        overrides: RequestOverrides = None,
+    ) -> DeleteResponse:
         """
         Delete a Draft.
 
         Args:
             identifier: The identifier of the grant to delete the draft for.
             draft_id: The identifier of the draft to delete.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The deletion response.
         """
         return super().destroy(
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+            overrides=overrides,
         )
 
-    def send(self, identifier: str, draft_id: str) -> Response[Message]:
+    def send(
+        self,
+        identifier: str,
+        draft_id: str,
+        overrides: RequestOverrides = None,
+    ) -> Response[Message]:
         """
         Send a Draft.
 
         Args:
             identifier: The identifier of the grant to send the draft for.
             draft_id: The identifier of the draft to send.
+            overrides: The request overrides to use for the request.
         """
         json_response = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+            overrides=overrides,
         )
 
         return Response.from_dict(json_response, Message)

@@ -33,7 +33,7 @@ class TestConnectors:
         connectors.list()
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/connectors", None, None, None
+            "GET", "/v3/connectors", None, None, None, overrides=None
         )
 
     def test_find_connector(self, http_client_response):
@@ -42,7 +42,7 @@ class TestConnectors:
         connectors.find("google")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/connectors/google", None, None, None
+            "GET", "/v3/connectors/google", None, None, None, overrides=None
         )
 
     def test_create_connector(self, http_client_response):
@@ -63,11 +63,7 @@ class TestConnectors:
         connectors.create(request_body=request_body)
 
         http_client_response._execute.assert_called_once_with(
-            "POST",
-            "/v3/connectors",
-            None,
-            None,
-            request_body,
+            "POST", "/v3/connectors", None, None, request_body, overrides=None
         )
 
     def test_update_connector(self, http_client_response):
@@ -90,11 +86,7 @@ class TestConnectors:
         )
 
         http_client_response._execute.assert_called_once_with(
-            "PATCH",
-            "/v3/connectors/google",
-            None,
-            None,
-            request_body,
+            "PATCH", "/v3/connectors/google", None, None, request_body, overrides=None
         )
 
     def test_destroy_connector(self, http_client_delete_response):
@@ -103,9 +95,5 @@ class TestConnectors:
         connectors.destroy("google")
 
         http_client_delete_response._execute.assert_called_once_with(
-            "DELETE",
-            "/v3/connectors/google",
-            None,
-            None,
-            None,
+            "DELETE", "/v3/connectors/google", None, None, None, overrides=None
         )

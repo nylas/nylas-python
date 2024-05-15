@@ -118,6 +118,7 @@ class TestEvent:
                 "limit": 20,
             },
             None,
+            overrides=None,
         )
 
     def test_find_event(self, http_client_response):
@@ -135,6 +136,7 @@ class TestEvent:
             None,
             {"calendar_id": "abc-123"},
             None,
+            overrides=None,
         )
 
     def test_create_event(self, http_client_response):
@@ -163,6 +165,7 @@ class TestEvent:
             None,
             {"calendar_id": "abc-123"},
             request_body,
+            overrides=None,
         )
 
     def test_update_event(self, http_client_response):
@@ -192,6 +195,7 @@ class TestEvent:
             None,
             {"calendar_id": "abc-123"},
             request_body,
+            overrides=None,
         )
 
     def test_destroy_event(self, http_client_delete_response):
@@ -209,6 +213,7 @@ class TestEvent:
             None,
             {"calendar_id": "abc-123"},
             None,
+            overrides=None,
         )
 
     def test_send_rsvp(self, http_client_response):
@@ -227,4 +232,5 @@ class TestEvent:
             path="/v3/grants/abc-123/events/event-123/send-rsvp",
             request_body=request_body,
             query_params={"calendar_id": "abc-123"},
+            overrides=None,
         )

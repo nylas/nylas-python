@@ -1,3 +1,4 @@
+from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
@@ -39,7 +40,10 @@ class Events(
     """
 
     def list(
-        self, identifier: str, query_params: ListEventQueryParams
+        self,
+        identifier: str,
+        query_params: ListEventQueryParams,
+        overrides: RequestOverrides = None,
     ) -> ListResponse[Event]:
         """
         Return all Events.
@@ -47,6 +51,7 @@ class Events(
         Args:
             identifier: The identifier of the Grant to act upon.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The list of Events.
@@ -56,10 +61,15 @@ class Events(
             path=f"/v3/grants/{identifier}/events",
             response_type=Event,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def find(
-        self, identifier: str, event_id: str, query_params: FindEventQueryParams
+        self,
+        identifier: str,
+        event_id: str,
+        query_params: FindEventQueryParams,
+        overrides: RequestOverrides = None,
     ) -> Response[Event]:
         """
         Return an Event.
@@ -68,6 +78,7 @@ class Events(
             identifier: The identifier of the Grant to act upon.
             event_id: The ID of the Event to retrieve.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The Event.
@@ -77,6 +88,7 @@ class Events(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             response_type=Event,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def create(
@@ -84,6 +96,7 @@ class Events(
         identifier: str,
         request_body: CreateEventRequest,
         query_params: CreateEventQueryParams,
+        overrides: RequestOverrides = None,
     ) -> Response[Event]:
         """
         Create an Event.
@@ -92,6 +105,7 @@ class Events(
             identifier: The identifier of the Grant to act upon.
             request_body: The values to create the Event with.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The created Event.
@@ -102,6 +116,7 @@ class Events(
             response_type=Event,
             request_body=request_body,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def update(
@@ -110,6 +125,7 @@ class Events(
         event_id: str,
         request_body: UpdateEventRequest,
         query_params: UpdateEventQueryParams,
+        overrides: RequestOverrides = None,
     ) -> Response[Event]:
         """
         Update an Event.
@@ -119,6 +135,7 @@ class Events(
             event_id: The ID of the Event to update.
             request_body: The values to update the Event with.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The updated Event.
@@ -129,10 +146,15 @@ class Events(
             response_type=Event,
             request_body=request_body,
             query_params=query_params,
+            overrides=overrides,
         )
 
     def destroy(
-        self, identifier: str, event_id: str, query_params: DestroyEventQueryParams
+        self,
+        identifier: str,
+        event_id: str,
+        query_params: DestroyEventQueryParams,
+        overrides: RequestOverrides = None,
     ) -> DeleteResponse:
         """
         Delete an Event.
@@ -141,6 +163,7 @@ class Events(
             identifier: The identifier of the Grant to act upon.
             event_id: The ID of the Event to delete.
             query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
 
         Returns:
             The deletion response.
@@ -149,6 +172,7 @@ class Events(
         return super().destroy(
             path=f"/v3/grants/{identifier}/events/{event_id}",
             query_params=query_params,
+            overrides=overrides,
         )
 
     def send_rsvp(
@@ -157,6 +181,7 @@ class Events(
         event_id: str,
         request_body: SendRsvpRequest,
         query_params: SendRsvpQueryParams,
+        overrides: RequestOverrides = None,
     ) -> RequestIdOnlyResponse:
         """Send RSVP for an event.
 
@@ -165,6 +190,7 @@ class Events(
             event_id: The event ID to send RSVP for.
             query_params: The query parameters to send to the API.
             request_body: The request body to send to the API.
+            overrides: The request overrides to use for the request.
 
         Returns:
             Response: The RSVP response from the API.
@@ -174,6 +200,7 @@ class Events(
             path=f"/v3/grants/{identifier}/events/{event_id}/send-rsvp",
             query_params=query_params,
             request_body=request_body,
+            overrides=overrides,
         )
 
         return RequestIdOnlyResponse.from_dict(json_response)

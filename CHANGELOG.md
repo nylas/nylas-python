@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Added support for adding custom headers to outgoing requests
+* Added support for overriding various fields of outgoing requests
 * Added support for `provider` field in code exchange response
 * Added clean messages support
 * Added additional webhook triggers

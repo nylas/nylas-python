@@ -57,7 +57,7 @@ class TestApplications:
         res = app.info()
 
         mock_http_client._execute.assert_called_once_with(
-            method="GET", path="/v3/applications"
+            method="GET", path="/v3/applications", overrides=None
         )
         assert type(res.data) == ApplicationDetails
         assert res.data.application_id == "ad410018-d306-43f9-8361-fa5d7b2172e0"

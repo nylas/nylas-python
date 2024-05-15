@@ -81,6 +81,37 @@ class TestHttpClient:
             "Content-type": "application/x-www-form-urlencoded",
         }
 
+    def test_build_headers_override_headers(self, http_client, patched_version_and_sys):
+        headers = http_client._build_headers(
+            overrides={
+                "headers": {
+                    "foo": "bar",
+                    "X-Test": "test",
+                }
+            }
+        )
+
+        assert headers == {
+            "X-Nylas-API-Wrapper": "python",
+            "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+            "Authorization": "Bearer test-key",
+            "foo": "bar",
+            "X-Test": "test",
+        }
+
+    def test_build_headers_override_api_key(self, http_client, patched_version_and_sys):
+        headers = http_client._build_headers(
+            overrides={
+                "api_key": "test-key-override",
+            }
+        )
+
+        assert headers == {
+            "X-Nylas-API-Wrapper": "python",
+            "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+            "Authorization": "Bearer test-key-override",
+        }
+
     def test_build_request_default(self, http_client, patched_version_and_sys):
         request = http_client._build_request(
             method="GET",
@@ -90,6 +121,25 @@ class TestHttpClient:
         assert request == {
             "method": "GET",
             "url": "https://test.nylas.com/foo",
+            "headers": {
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+            },
+        }
+
+    def test_build_request_override_api_uri(self, http_client, patched_version_and_sys):
+        request = http_client._build_request(
+            method="GET",
+            path="/foo",
+            overrides={
+                "api_uri": "https://override.nylas.com",
+            },
+        )
+
+        assert request == {
+            "method": "GET",
+            "url": "https://override.nylas.com/foo",
             "headers": {
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
@@ -136,6 +186,26 @@ class TestHttpClient:
         assert (
             str(e.value)
             == "Nylas SDK timed out before receiving a response from the server."
+        )
+
+    def test_execute_download_request_override_timeout(
+        self, http_client, patched_version_and_sys, patched_session_request
+    ):
+        response = http_client._execute_download_request(
+            path="/foo",
+            overrides={"timeout": 60},
+        )
+        patched_session_request.assert_called_once_with(
+            "GET",
+            "https://test.nylas.com/foo",
+            headers={
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+                "Content-type": "application/json",
+            },
+            timeout=60,
+            stream=False,
         )
 
     def test_validate_response(self):
@@ -229,6 +299,34 @@ class TestHttpClient:
             },
             json={"foo": "bar"},
             timeout=30,
+            data=None,
+        )
+
+    def test_execute_override_timeout(
+        self, http_client, patched_version_and_sys, patched_session_request
+    ):
+        response = http_client._execute(
+            method="GET",
+            path="/foo",
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+            overrides={"timeout": 60},
+        )
+
+        assert response == {"foo": "bar"}
+        patched_session_request.assert_called_once_with(
+            "GET",
+            "https://test.nylas.com/foo?query=param",
+            headers={
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+                "Content-type": "application/json",
+                "test": "header",
+            },
+            json={"foo": "bar"},
+            timeout=60,
             data=None,
         )
 

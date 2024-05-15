@@ -130,7 +130,7 @@ class TestThread:
         threads.list(identifier="abc-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/threads", None, None, None
+            "GET", "/v3/grants/abc-123/threads", None, None, None, overrides=None
         )
 
     def test_list_threads_with_query_params(self, http_client_list_response):
@@ -139,7 +139,12 @@ class TestThread:
         threads.list(identifier="abc-123", query_params={"to": "abc@gmail.com"})
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/threads", None, {"to": "abc@gmail.com"}, None
+            "GET",
+            "/v3/grants/abc-123/threads",
+            None,
+            {"to": "abc@gmail.com"},
+            None,
+            overrides=None,
         )
 
     def test_find_thread(self, http_client_response):
@@ -148,7 +153,12 @@ class TestThread:
         threads.find(identifier="abc-123", thread_id="thread-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/abc-123/threads/thread-123", None, None, None
+            "GET",
+            "/v3/grants/abc-123/threads/thread-123",
+            None,
+            None,
+            None,
+            overrides=None,
         )
 
     def test_update_thread(self, http_client_response):
@@ -169,6 +179,7 @@ class TestThread:
             None,
             None,
             request_body,
+            overrides=None,
         )
 
     def test_destroy_thread(self, http_client_delete_response):
@@ -182,4 +193,5 @@ class TestThread:
             None,
             None,
             None,
+            overrides=None,
         )

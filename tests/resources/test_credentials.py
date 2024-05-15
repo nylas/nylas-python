@@ -24,7 +24,7 @@ class TestCredentials:
         credentials.list("google")
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/connectors/google/creds", None, None, None
+            "GET", "/v3/connectors/google/creds", None, None, None, overrides=None
         )
 
     def test_find_credential(self, http_client_response):
@@ -33,7 +33,12 @@ class TestCredentials:
         credentials.find("google", "abc-123")
 
         http_client_response._execute.assert_called_once_with(
-            "GET", "/v3/connectors/google/creds/abc-123", None, None, None
+            "GET",
+            "/v3/connectors/google/creds/abc-123",
+            None,
+            None,
+            None,
+            overrides=None,
         )
 
     def test_create_credential(self, http_client_response):
@@ -56,6 +61,7 @@ class TestCredentials:
             None,
             None,
             request_body,
+            overrides=None,
         )
 
     def test_update_credential(self, http_client_response):
@@ -81,6 +87,7 @@ class TestCredentials:
             None,
             None,
             request_body,
+            overrides=None,
         )
 
     def test_destroy_credential(self, http_client_delete_response):
@@ -94,4 +101,5 @@ class TestCredentials:
             None,
             None,
             None,
+            overrides=None,
         )
