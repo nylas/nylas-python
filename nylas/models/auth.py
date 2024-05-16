@@ -123,6 +123,7 @@ class CodeExchangeResponse:
     expires_in: int
     email: Optional[str] = None
     refresh_token: Optional[str] = None
+    scope: Optional[List[str]] = None
     id_token: Optional[str] = None
     token_type: Optional[str] = None
     provider: Optional[Provider] = None
