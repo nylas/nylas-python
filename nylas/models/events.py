@@ -18,6 +18,9 @@ ParticipantStatus = Literal["noreply", "yes", "no", "maybe"]
 SendRsvpStatus = Literal["yes", "no", "maybe"]
 """ Literal representing the status of an RSVP. """
 
+EventType = Literal["default", "outOfOffice", "focusTime", "workingLocation"]
+""" Literal representing the event type to filter by. """
+
 
 @dataclass_json
 @dataclass
@@ -722,6 +725,8 @@ class ListEventQueryParams(ListQueryParams):
             This field defaults to 50. The maximum allowed value is 200.
         page_token (NotRequired[str]): An identifier that specifies which page of data to return.
             This value should be taken from a ListResponse object's next_cursor parameter.
+        event_type (NotRequired[List[EventType]]): (Google only) Filter events by event type.
+            You can pass the query parameter multiple times to select or exclude multiple event types.
     """
 
     calendar_id: str
@@ -735,6 +740,7 @@ class ListEventQueryParams(ListQueryParams):
     expand_recurring: NotRequired[bool]
     busy: NotRequired[bool]
     order_by: NotRequired[str]
+    event_type: NotRequired[List[EventType]]
 
 
 class CreateEventQueryParams(TypedDict):

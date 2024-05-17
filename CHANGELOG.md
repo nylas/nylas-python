@@ -6,6 +6,7 @@ Unreleased
 * Added support for adding custom headers to outgoing requests
 * Added support for overriding various fields of outgoing requests
 * Added support for `provider` field in code exchange response
+* Added support for `event_type` filtering field for listing events
 * Added clean messages support
 * Added additional webhook triggers
 * Made event visibility optional to support iCloud events
