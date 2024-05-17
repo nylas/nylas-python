@@ -37,7 +37,7 @@ class Participant:
     """
 
     email: str
-    status: ParticipantStatus
+    status: Optional[ParticipantStatus] = None
     name: Optional[str] = None
     comment: Optional[str] = None
     phone_number: Optional[str] = None
