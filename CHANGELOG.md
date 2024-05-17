@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.2.0
 ----------------
 * Added support for adding custom headers to outgoing requests
 * Added support for overriding various fields of outgoing requests
@@ -9,7 +9,6 @@ Unreleased
 * Added support for `event_type` filtering field for listing events
 * Added clean messages support
 * Added additional webhook triggers
-* Made event visibility optional to support iCloud events
 * Fixed issue where attachments < 3mb were not being encoded correctly
 * Fixed issue deserializing event and code exchange responses.
 
