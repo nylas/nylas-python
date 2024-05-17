@@ -3,14 +3,14 @@ nylas-python Changelog
 
 v6.2.0
 ----------------
-* Added support for adding custom headers to outgoing requests
+* Added support for custom headers field for drafts and messages
 * Added support for overriding various fields of outgoing requests
 * Added support for `provider` field in code exchange response
 * Added support for `event_type` filtering field for listing events
 * Added clean messages support
 * Added additional webhook triggers
 * Fixed issue where attachments < 3mb were not being encoded correctly
-* Fixed issue deserializing event and code exchange responses.
+* Fixed issue deserializing event and code exchange responses
 
 v6.1.1
 ----------------
