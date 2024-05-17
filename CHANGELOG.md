@@ -11,6 +11,7 @@ Unreleased
 * Added additional webhook triggers
 * Made event visibility optional to support iCloud events
 * Fixed issue where attachments < 3mb were not being encoded correctly
+* Fixed issue deserializing event and code exchange responses.
 
 v6.1.1
 ----------------
