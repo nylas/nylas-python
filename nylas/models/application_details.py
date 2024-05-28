@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal, Optional, List
 
 from dataclasses_json import dataclass_json
@@ -48,7 +48,7 @@ class HostedAuthentication:
         spacing: CSS spacing attribute in px.
     """
 
-    background_image_url: str
+    background_image_url: Optional[str] = None
     alignment: Optional[str] = None
     color_primary: Optional[str] = None
     color_secondary: Optional[str] = None
@@ -80,4 +80,4 @@ class ApplicationDetails:
     environment: Environment
     branding: Branding
     hosted_authentication: Optional[HostedAuthentication] = None
-    callback_uris: List[RedirectUri] = None
+    callback_uris: List[RedirectUri] = field(default_factory=list)
