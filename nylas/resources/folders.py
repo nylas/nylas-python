@@ -10,6 +10,7 @@ from nylas.models.folders import (
     Folder,
     CreateFolderRequest,
     UpdateFolderRequest,
+    ListFolderQueryParams,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -30,6 +31,7 @@ class Folders(
     def list(
         self,
         identifier: str,
+        query_params: ListFolderQueryParams,
         overrides: RequestOverrides = None,
     ) -> ListResponse[Folder]:
         """
@@ -37,6 +39,7 @@ class Folders(
 
         Args:
             identifier: The identifier of the Grant to act upon.
+            query_params: The query parameters to include in the request.
             overrides: The request overrides to use.
 
         Returns:
@@ -46,6 +49,7 @@ class Folders(
         return super().list(
             path=f"/v3/grants/{identifier}/folders",
             response_type=Folder,
+            query_params=query_params,
             overrides=overrides,
         )
 
