@@ -88,4 +88,3 @@ class ListFolderQueryParams(ListQueryParams):
     """
 
     parent_id: NotRequired[str]
-

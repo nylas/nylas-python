@@ -1,3 +1,5 @@
+from typing import Optional
+
 from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
@@ -31,7 +33,7 @@ class Folders(
     def list(
         self,
         identifier: str,
-        query_params: ListFolderQueryParams,
+        query_params: Optional[ListFolderQueryParams] = None,
         overrides: RequestOverrides = None,
     ) -> ListResponse[Folder]:
         """
