@@ -4,6 +4,8 @@ from typing import Optional
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
+from nylas.models.list_query_params import ListQueryParams
+
 
 @dataclass_json
 @dataclass
@@ -75,3 +77,14 @@ class UpdateFolderRequest(TypedDict):
     parent_id: NotRequired[str]
     background_color: NotRequired[str]
     text_color: NotRequired[str]
+
+
+class ListFolderQueryParams(ListQueryParams):
+    """
+    Interface representing the query parameters for listing folders.
+
+    Attributes:
+        parent_id: (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+    """
+
+    parent_id: NotRequired[str]

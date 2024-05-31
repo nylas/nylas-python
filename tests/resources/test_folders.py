@@ -38,7 +38,7 @@ class TestFolder:
     def test_list_folders(self, http_client_list_response):
         folders = Folders(http_client_list_response)
 
-        folders.list(identifier="abc-123")
+        folders.list(identifier="abc-123",query_params=None)
 
         http_client_list_response._execute.assert_called_once_with(
             "GET", "/v3/grants/abc-123/folders", None, None, None, overrides=None
