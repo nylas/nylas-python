@@ -342,7 +342,7 @@ class Event:
     capacity: Optional[int] = None
     created_at: Optional[int] = None
     updated_at: Optional[int] = None
-    master_event_id: Optional[int] = None
+    master_event_id: Optional[str] = None
 
 
 class CreateParticipant(TypedDict):
