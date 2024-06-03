@@ -312,7 +312,7 @@ class Event:
         status: The Event's status.
         visibility: The Event's visibility (private or public).
         capacity: Sets the maximum number of participants that may attend the event.
-        master_event_id: If the event is an instance of a recurring event series, this field contains the main (master) event's ID.
+        master_event_id: For recurring events, this field contains the main (master) event's ID.
     """
 
     id: str
