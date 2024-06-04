@@ -729,6 +729,8 @@ class ListEventQueryParams(ListQueryParams):
             This value should be taken from a ListResponse object's next_cursor parameter.
         event_type (NotRequired[List[EventType]]): (Google only) Filter events by event type.
             You can pass the query parameter multiple times to select or exclude multiple event types.
+        master_event_id (NotRequired[str]): Filter for instances of recurring events with the 
+            specified master_event_id. Not respected by metadata filtering.
     """
 
     calendar_id: str
@@ -743,6 +745,7 @@ class ListEventQueryParams(ListQueryParams):
     busy: NotRequired[bool]
     order_by: NotRequired[str]
     event_type: NotRequired[List[EventType]]
+    master_event_id: NotRequired[str]
 
 
 class CreateEventQueryParams(TypedDict):
