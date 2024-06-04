@@ -21,7 +21,8 @@ class TestEvent:
             "hide_participants": False,
             "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
             "html_link": "https://www.google.com/calendar/event?eid=bTMzcGJrNW4yYjk4bjk3OWE4Ef3feD2VuM29fMjAyMjA2MjdUMjIwMDAwWiBoYWxsYUBueWxhcy5jb20",
-            "id": "5d3qmne77v32r8l4phyuksl2x",
+            "id": "5d3qmne77v32r8l4phyuksl2x_20240603T180000Z",
+            "master_event_id": "5d3qmne77v32r8l4phyuksl2x",
             "location": "Roller Rink",
             "metadata": {"your_key": "your_value"},
             "object": "event",
@@ -73,7 +74,8 @@ class TestEvent:
             event.html_link
             == "https://www.google.com/calendar/event?eid=bTMzcGJrNW4yYjk4bjk3OWE4Ef3feD2VuM29fMjAyMjA2MjdUMjIwMDAwWiBoYWxsYUBueWxhcy5jb20"
         )
-        assert event.id == "5d3qmne77v32r8l4phyuksl2x"
+        assert event.id == "5d3qmne77v32r8l4phyuksl2x_20240603T180000Z"
+        assert event.master_event_id == "5d3qmne77v32r8l4phyuksl2x"
         assert event.location == "Roller Rink"
         assert event.metadata == {"your_key": "your_value"}
         assert event.object == "event"

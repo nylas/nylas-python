@@ -312,6 +312,7 @@ class Event:
         status: The Event's status.
         visibility: The Event's visibility (private or public).
         capacity: Sets the maximum number of participants that may attend the event.
+        master_event_id: For recurring events, this field contains the main (master) event's ID.
     """
 
     id: str
@@ -341,6 +342,7 @@ class Event:
     capacity: Optional[int] = None
     created_at: Optional[int] = None
     updated_at: Optional[int] = None
+    master_event_id: Optional[str] = None
 
 
 class CreateParticipant(TypedDict):
@@ -727,6 +729,8 @@ class ListEventQueryParams(ListQueryParams):
             This value should be taken from a ListResponse object's next_cursor parameter.
         event_type (NotRequired[List[EventType]]): (Google only) Filter events by event type.
             You can pass the query parameter multiple times to select or exclude multiple event types.
+        master_event_id (NotRequired[str]): Filter for instances of recurring events with the 
+            specified master_event_id. Not respected by metadata filtering.
     """
 
     calendar_id: str
@@ -741,6 +745,7 @@ class ListEventQueryParams(ListQueryParams):
     busy: NotRequired[bool]
     order_by: NotRequired[str]
     event_type: NotRequired[List[EventType]]
+    master_event_id: NotRequired[str]
 
 
 class CreateEventQueryParams(TypedDict):
