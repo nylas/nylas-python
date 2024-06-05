@@ -1,6 +1,12 @@
 nylas-python Changelog
 ======================
 
+v6.3.0
+----------------
+* Added Folder query param support
+* Added `master_event_id` field to events
+* Fixed issue with application models not being deserialized correctly
+
 v6.2.0
 ----------------
 * Added support for custom headers field for drafts and messages
