@@ -281,11 +281,11 @@ class Messages(
         Returns:
             The list of cleaned messages.
         """
-        json_resposne = self._http_client._execute(
+        json_response = self._http_client._execute(
             method="PUT",
             path=f"/v3/grants/{identifier}/messages/clean",
             request_body=request_body,
             overrides=overrides,
         )
 
-        return ListResponse.from_dict(json_resposne, CleanMessagesResponse)
+        return ListResponse.from_dict(json_response, CleanMessagesResponse)
