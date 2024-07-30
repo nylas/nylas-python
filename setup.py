@@ -3,8 +3,7 @@ import shutil
 import sys
 import re
 import subprocess
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
+from setuptools import setup, find_packages, Command
 
 
 VERSION = ""
@@ -36,11 +35,10 @@ DOCS_DEPENDENCIES = [
 RELEASE_DEPENDENCIES = ["bumpversion>=0.6.0", "twine>=4.0.2"]
 
 
-class PyTest(TestCommand):
+class PyTest(Command):
     user_options = [("pytest-args=", "a", "Arguments to pass to pytest")]
 
     def initialize_options(self):
-        TestCommand.initialize_options(self)
         # pylint: disable=attribute-defined-outside-init
         self.pytest_args = [
             "--cov",
@@ -52,12 +50,11 @@ class PyTest(TestCommand):
         self.lint = False
 
     def finalize_options(self):
-        TestCommand.finalize_options(self)
         # pylint: disable=attribute-defined-outside-init
         self.test_args = []
         self.test_suite = True
 
-    def run_tests(self):
+    def run(self):
         # import here, cause outside the eggs aren't loaded
         import pytest
 
