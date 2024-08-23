@@ -17,7 +17,19 @@ from nylas.models.errors import (
 
 
 def _validate_response(response: Response) -> dict:
-    json = response.json()
+    try:
+        json = response.json()
+    except Exception as exc:
+        raise NylasApiError(
+            NylasApiErrorResponse(
+                None,
+                NylasApiErrorResponseData(
+                    type="unknown",
+                    message=response.content,
+                ),
+            ),
+            status_code=response.status_code,
+        ) from exc
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
         try:
