@@ -70,7 +70,6 @@ class HttpClient:
         self.api_server = api_server
         self.api_key = api_key
         self.timeout = timeout
-        self.session = requests.Session()
 
     def _execute(
         self,
@@ -90,7 +89,7 @@ class HttpClient:
         if overrides and overrides.get("timeout"):
             timeout = overrides["timeout"]
         try:
-            response = self.session.request(
+            response = requests.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
@@ -117,7 +116,7 @@ class HttpClient:
         if overrides and overrides.get("timeout"):
             timeout = overrides["timeout"]
         try:
-            response = self.session.request(
+            response = requests.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
