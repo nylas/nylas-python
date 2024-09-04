@@ -1,6 +1,14 @@
 nylas-python Changelog
 ======================
 
+v6.3.1
+----------------
+* Fix typo on Clean Messages
+* Remove use of TestCommand
+* Add Folder Webhooks
+* Fix request session being reused across multiple requests
+
+
 v6.3.0
 ----------------
 * Added Folder query param support
@@ -193,7 +201,7 @@ v5.0.0
 * Transitioned from `app_id` and `app_secret` naming to `client_id` and `client_secret`
 * Add support for the Nylas Neural API
 * Add `metadata` field in the Event model to support new event metadata feature
-* Add new Room Resource fields  
+* Add new Room Resource fields
 * Add `Nylas-API-Version` header support
 * Fix adding a tracking object to an existing `draft`
 * Fix issue when converting offset-aware `datetime` objects to `timestamp`
