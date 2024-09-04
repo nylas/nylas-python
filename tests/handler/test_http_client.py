@@ -162,14 +162,14 @@ class TestHttpClient:
             == "https://test.nylas.com/foo?foo=bar&list=a&list=b&list=c&map=key1:value1&map=key2:value2"
         )
 
-    def test_execute_download_request(self, http_client, patched_session_request):
+    def test_execute_download_request(self, http_client, patched_request):
         response = http_client._execute_download_request(
             path="/foo",
         )
         assert response == b"mock data"
 
     def test_execute_download_request_with_stream(
-        self, http_client, patched_session_request
+        self, http_client, patched_request
     ):
         response = http_client._execute_download_request(
             path="/foo",
@@ -189,13 +189,13 @@ class TestHttpClient:
         )
 
     def test_execute_download_request_override_timeout(
-        self, http_client, patched_version_and_sys, patched_session_request
+        self, http_client, patched_version_and_sys, patched_request
     ):
         response = http_client._execute_download_request(
             path="/foo",
             overrides={"timeout": 60},
         )
-        patched_session_request.assert_called_once_with(
+        patched_request.assert_called_once_with(
             "GET",
             "https://test.nylas.com/foo",
             headers={
@@ -276,7 +276,7 @@ class TestHttpClient:
         assert e.value.status_code == 400
 
     def test_execute(
-        self, http_client, patched_version_and_sys, patched_session_request
+        self, http_client, patched_version_and_sys, patched_request
     ):
         response = http_client._execute(
             method="GET",
@@ -287,7 +287,7 @@ class TestHttpClient:
         )
 
         assert response == {"foo": "bar"}
-        patched_session_request.assert_called_once_with(
+        patched_request.assert_called_once_with(
             "GET",
             "https://test.nylas.com/foo?query=param",
             headers={
@@ -303,7 +303,7 @@ class TestHttpClient:
         )
 
     def test_execute_override_timeout(
-        self, http_client, patched_version_and_sys, patched_session_request
+        self, http_client, patched_version_and_sys, patched_request
     ):
         response = http_client._execute(
             method="GET",
@@ -315,7 +315,7 @@ class TestHttpClient:
         )
 
         assert response == {"foo": "bar"}
-        patched_session_request.assert_called_once_with(
+        patched_request.assert_called_once_with(
             "GET",
             "https://test.nylas.com/foo?query=param",
             headers={

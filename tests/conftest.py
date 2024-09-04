@@ -34,19 +34,19 @@ def patched_version_and_sys():
 
 
 @pytest.fixture
-def patched_session_request():
+def patched_request():
     mock_response = Mock()
     mock_response.content = b"mock data"
     mock_response.json.return_value = {"foo": "bar"}
     mock_response.status_code = 200
 
-    with patch("requests.Session.request", return_value=mock_response) as mock_request:
+    with patch("requests.request", return_value=mock_response) as mock_request:
         yield mock_request
 
 
 @pytest.fixture
 def mock_session_timeout():
-    with patch("requests.Session.request", side_effect=requests.exceptions.Timeout):
+    with patch("requests.request", side_effect=requests.exceptions.Timeout):
         yield
 
 
