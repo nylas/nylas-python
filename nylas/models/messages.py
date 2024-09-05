@@ -56,7 +56,7 @@ class Message:
     """
 
     grant_id: str
-    from_: List[EmailName] = field(metadata=config(field_name="from"))
+    from_: Optional[List[EmailName]] = field(default=None,metadata=config(field_name="from"))
     object: str = "message"
     id: Optional[str] = None
     body: Optional[str] = None
