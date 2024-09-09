@@ -1,3 +1,4 @@
+import urllib.parse
 from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
@@ -60,7 +61,7 @@ class Threads(
             The requested Thread.
         """
         return super().find(
-            path=f"/v3/grants/{identifier}/threads/{thread_id}",
+            path=f"/v3/grants/{identifier}/threads/{urllib.parse.quote(thread_id, safe='')}",
             response_type=Thread,
             overrides=overrides,
         )
@@ -85,7 +86,7 @@ class Threads(
             The updated Thread.
         """
         return super().update(
-            path=f"/v3/grants/{identifier}/threads/{thread_id}",
+            path=f"/v3/grants/{identifier}/threads/{urllib.parse.quote(thread_id, safe='')}",
             response_type=Thread,
             request_body=request_body,
             overrides=overrides,
@@ -106,5 +107,6 @@ class Threads(
             The deletion response.
         """
         return super().destroy(
-            path=f"/v3/grants/{identifier}/threads/{thread_id}", overrides=overrides
+            path=f"/v3/grants/{identifier}/threads/{urllib.parse.quote(thread_id, safe='')}",
+            overrides=overrides,
         )
