@@ -1,4 +1,5 @@
 import io
+import urllib.parse
 from typing import Optional, List
 
 from nylas.config import RequestOverrides
@@ -96,7 +97,7 @@ class Messages(
             The requested Message.
         """
         return super().find(
-            path=f"/v3/grants/{identifier}/messages/{message_id}",
+            path=f"/v3/grants/{identifier}/messages/{urllib.parse.quote(message_id, safe='')}",
             response_type=Message,
             query_params=query_params,
             overrides=overrides,
@@ -122,7 +123,7 @@ class Messages(
             The updated Message.
         """
         return super().update(
-            path=f"/v3/grants/{identifier}/messages/{message_id}",
+            path=f"/v3/grants/{identifier}/messages/{urllib.parse.quote(message_id, safe='')}",
             response_type=Message,
             request_body=request_body,
             overrides=overrides,
@@ -143,7 +144,8 @@ class Messages(
             The deletion response.
         """
         return super().destroy(
-            path=f"/v3/grants/{identifier}/messages/{message_id}", overrides=overrides
+            path=f"/v3/grants/{identifier}/messages/{urllib.parse.quote(message_id, safe='')}",
+            overrides=overrides,
         )
 
     def send(

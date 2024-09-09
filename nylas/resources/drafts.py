@@ -1,4 +1,5 @@
 import io
+import urllib.parse
 from typing import Optional
 
 from nylas.config import RequestOverrides
@@ -79,7 +80,7 @@ class Drafts(
             The requested Draft.
         """
         return super().find(
-            path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+            path=f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}",
             response_type=Draft,
             overrides=overrides,
         )
@@ -149,7 +150,7 @@ class Drafts(
         Returns:
             The updated Draft.
         """
-        path = f"/v3/grants/{identifier}/drafts/{draft_id}"
+        path = f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}"
 
         # Use form data only if the attachment size is greater than 3mb
         attachment_size = sum(
@@ -196,7 +197,7 @@ class Drafts(
             The deletion response.
         """
         return super().destroy(
-            path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+            path=f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}",
             overrides=overrides,
         )
 
@@ -216,7 +217,7 @@ class Drafts(
         """
         json_response = self._http_client._execute(
             method="POST",
-            path=f"/v3/grants/{identifier}/drafts/{draft_id}",
+            path=f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}",
             overrides=overrides,
         )
 
