@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Fix IMAP identifiers not encoding correctly
+
 v6.3.1
 ----------------
 * Fix typo on Clean Messages
