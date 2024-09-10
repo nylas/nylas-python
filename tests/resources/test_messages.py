@@ -109,6 +109,23 @@ class TestMessage:
             overrides=None,
         )
 
+    def test_find_message_encoded_id(self, http_client_response):
+        messages = Messages(http_client_response)
+
+        messages.find(
+            identifier="abc-123",
+            message_id="<!&!AAAAAAAAAAAuAAAAAAAAABQ/wHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ/T4N/0BgqPmf+AQAAAAA=@example.com>",
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages/%3C%21%26%21AAAAAAAAAAAuAAAAAAAAABQ%2FwHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ%2FT4N%2F0BgqPmf%2BAQAAAAA%3D%40example.com%3E",
+            None,
+            None,
+            None,
+            overrides=None,
+        )
+
     def test_find_message_with_query_params(self, http_client_response):
         messages = Messages(http_client_response)
 
@@ -151,6 +168,30 @@ class TestMessage:
             overrides=None,
         )
 
+    def test_update_message_encoded_id(self, http_client_response):
+        messages = Messages(http_client_response)
+        request_body = {
+            "starred": True,
+            "unread": False,
+            "folders": ["folder-123"],
+            "metadata": {"foo": "bar"},
+        }
+
+        messages.update(
+            identifier="abc-123",
+            message_id="<!&!AAAAAAAAAAAuAAAAAAAAABQ/wHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ/T4N/0BgqPmf+AQAAAAA=@example.com>",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/messages/%3C%21%26%21AAAAAAAAAAAuAAAAAAAAABQ%2FwHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ%2FT4N%2F0BgqPmf%2BAQAAAAA%3D%40example.com%3E",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
     def test_destroy_message(self, http_client_delete_response):
         messages = Messages(http_client_delete_response)
 
@@ -159,6 +200,23 @@ class TestMessage:
         http_client_delete_response._execute.assert_called_once_with(
             "DELETE",
             "/v3/grants/abc-123/messages/message-123",
+            None,
+            None,
+            None,
+            overrides=None,
+        )
+
+    def test_destroy_message_encoded_id(self, http_client_delete_response):
+        messages = Messages(http_client_delete_response)
+
+        messages.destroy(
+            identifier="abc-123",
+            message_id="<!&!AAAAAAAAAAAuAAAAAAAAABQ/wHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ/T4N/0BgqPmf+AQAAAAA=@example.com>",
+        )
+
+        http_client_delete_response._execute.assert_called_once_with(
+            "DELETE",
+            "/v3/grants/abc-123/messages/%3C%21%26%21AAAAAAAAAAAuAAAAAAAAABQ%2FwHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ%2FT4N%2F0BgqPmf%2BAQAAAAA%3D%40example.com%3E",
             None,
             None,
             None,
