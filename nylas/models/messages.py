@@ -53,10 +53,14 @@ class Message:
         folders: The folders that the message is in.
         headers: The headers of the message.
         created_at: Unix timestamp of when the message was created.
+        schedule_id: The ID of the scheduled email message. Nylas returns the schedule_id if send_at is set.
+        send_at: Unix timestamp of when the message will be sent, if scheduled.
     """
 
     grant_id: str
-    from_: Optional[List[EmailName]] = field(default=None,metadata=config(field_name="from"))
+    from_: Optional[List[EmailName]] = field(
+        default=None, metadata=config(field_name="from")
+    )
     object: str = "message"
     id: Optional[str] = None
     body: Optional[str] = None
@@ -74,6 +78,8 @@ class Message:
     starred: Optional[bool] = None
     created_at: Optional[int] = None
     date: Optional[int] = None
+    schedule_id: Optional[str] = None
+    send_at: Optional[int] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
