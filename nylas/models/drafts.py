@@ -164,7 +164,9 @@ class SendMessageRequest(CreateDraftRequest):
         reply_to_message_id (NotRequired[str]): The ID of the message that you are replying to.
         tracking_options (NotRequired[TrackingOptions]): Options for tracking opens, links, and thread replies.
         custom_headers(NotRequired[List[CustomHeader]]): Custom headers to add to the message.
+        from_: The sender of the message.
         use_draft: Whether or not to use draft support. This is primarily used when dealing with large attachments.
     """
 
+    from_: NotRequired[List[EmailName]]
     use_draft: NotRequired[bool]

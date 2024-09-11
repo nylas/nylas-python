@@ -169,6 +169,10 @@ class Messages(
         form_data = None
         json_body = None
 
+        # From is a reserved keyword in Python, so we need to pull the data from 'from_' instead
+        if request_body["from_"]:
+            request_body["from"] = request_body.pop("from_")
+
         # Use form data only if the attachment size is greater than 3mb
         attachment_size = sum(
             attachment.get("size", 0)
