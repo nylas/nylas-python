@@ -15,7 +15,6 @@ class Grant:
 
     Attributes:
         id: Globally unique object identifier.
-        account_id: Globally unique identifier for your v2 account that has been migrated using our migration APIs.
         provider: OAuth provider that the user authenticated with.
         scope: Scopes specified for the grant.
         created_at: Unix timestamp when the grant was created.
@@ -32,7 +31,6 @@ class Grant:
     id: str
     provider: str
     scope: List[str] = field(default_factory=list)
-    account_id: Optional[str] = None
     grant_status: Optional[str] = None
     email: Optional[str] = None
     user_agent: Optional[str] = None
