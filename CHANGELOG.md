@@ -6,6 +6,7 @@ Unreleased
 * Add support for from field for sending messages
 * Fix IMAP identifiers not encoding correctly
 * Add missing schedule-specific fields to Message model
+* Fix NylasOAuthError not setting the status code properly
 
 v6.3.1
 ----------------
