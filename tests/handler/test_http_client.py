@@ -168,9 +168,7 @@ class TestHttpClient:
         )
         assert response == b"mock data"
 
-    def test_execute_download_request_with_stream(
-        self, http_client, patched_request
-    ):
+    def test_execute_download_request_with_stream(self, http_client, patched_request):
         response = http_client._execute_download_request(
             path="/foo",
             stream=True,
@@ -275,9 +273,7 @@ class TestHttpClient:
         assert e.value.request_id == "123"
         assert e.value.status_code == 400
 
-    def test_execute(
-        self, http_client, patched_version_and_sys, patched_request
-    ):
+    def test_execute(self, http_client, patched_version_and_sys, patched_request):
         response = http_client._execute(
             method="GET",
             path="/foo",
