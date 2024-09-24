@@ -1,11 +1,13 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.4.0
 ----------------
 * Add support for from field for sending messages
-* Fix IMAP identifiers not encoding correctly
 * Add missing schedule-specific fields to Message model
+* Add migration grant properties
+* Fix from field not being optional causing deserialization errors
+* Fix IMAP identifiers not encoding correctly
 * Fix NylasOAuthError not setting the status code properly
 
 v6.3.1
