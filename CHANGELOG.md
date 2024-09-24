@@ -5,6 +5,7 @@ Unreleased
 ----------------
 * Add support for from field for sending messages
 * Fix IMAP identifiers not encoding correctly
+* Add missing schedule-specific fields to Message model
 
 v6.3.1
 ----------------
