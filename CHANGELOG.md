@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Add support for from field for sending messages
 * Fix IMAP identifiers not encoding correctly
 * Add missing schedule-specific fields to Message model
 
