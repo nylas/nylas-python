@@ -134,7 +134,7 @@ class NylasOAuthError(AbstractNylasApiError):
             oauth_error: The error details from the API.
             status_code: The HTTP status code of the error response.
         """
-        super().__init__(oauth_error.error_description, status_code)
+        super().__init__(oauth_error.error_description, None, status_code)
         self.error: str = oauth_error.error
         self.error_code: int = oauth_error.error_code
         self.error_description: str = oauth_error.error_description
