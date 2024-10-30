@@ -34,7 +34,6 @@ class TestHttpClient:
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_headers_extra_headers(self, http_client, patched_version_and_sys):
@@ -51,7 +50,6 @@ class TestHttpClient:
             "Authorization": "Bearer test-key",
             "foo": "bar",
             "X-Test": "test",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_headers_json_body(self, http_client, patched_version_and_sys):
@@ -66,7 +64,6 @@ class TestHttpClient:
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key",
             "Content-type": "application/json",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_headers_form_body(self, http_client, patched_version_and_sys):
@@ -82,7 +79,6 @@ class TestHttpClient:
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key",
             "Content-type": "application/x-www-form-urlencoded",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_headers_override_headers(self, http_client, patched_version_and_sys):
@@ -101,7 +97,6 @@ class TestHttpClient:
             "Authorization": "Bearer test-key",
             "foo": "bar",
             "X-Test": "test",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_headers_override_api_key(self, http_client, patched_version_and_sys):
@@ -115,7 +110,6 @@ class TestHttpClient:
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key-override",
-            "Accept-Encoding": "gzip",
         }
 
     def test_build_request_default(self, http_client, patched_version_and_sys):
@@ -131,7 +125,6 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Accept-Encoding": "gzip",
             },
         }
 
@@ -151,7 +144,6 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Accept-Encoding": "gzip",
             },
         }
 
@@ -209,7 +201,6 @@ class TestHttpClient:
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
                 "Content-type": "application/json",
-                "Accept-Encoding": "gzip",
             },
             timeout=60,
             stream=False,
@@ -300,7 +291,6 @@ class TestHttpClient:
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
                 "Content-type": "application/json",
-                "Accept-Encoding": "gzip",
                 "test": "header",
             },
             json={"foo": "bar"},
@@ -329,7 +319,6 @@ class TestHttpClient:
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
                 "Content-type": "application/json",
-                "Accept-Encoding": "gzip",
                 "test": "header",
             },
             json={"foo": "bar"},

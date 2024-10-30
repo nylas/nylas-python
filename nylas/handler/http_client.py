@@ -179,7 +179,6 @@ class HttpClient:
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
             "Authorization": f"Bearer {api_key}",
-            "Accept-Encoding": "gzip",
         }
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
