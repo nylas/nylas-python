@@ -10,6 +10,8 @@ BookingType = Literal['booking', 'organizer-confirmation']
 BookingReminderType = Literal['email', 'webhook']
 BookingRecipientType = Literal['host', 'guest', 'all']
 EmailLanguage = Literal['en', 'es', 'fr', 'de', 'nl', 'sv', 'ja', 'zh']
+AdditionalFieldType = Literal['text', 'multi_line_text', 'email', 'phone_number', 'dropdown', 'date', 'checkbox', 'radio_button']
+AdditonalFieldOptionsType = Literal['text', 'email', 'phone_number', 'date', 'checkbox', 'radio_button']
 
 @dataclass_json
 @dataclass
@@ -35,9 +37,29 @@ class EmailTemplate:
         logo: The URL to a custom logo that appears at the top of the booking email.
         booking_confirmed: Configurable settings specifically for booking confirmed emails.
     """
-    logo: Optional[str] = None
+    # logo: Optional[str] = None
     booking_confirmed: Optional[BookingConfirmedTemplate] = None
 
+@dataclass_json
+@dataclass
+class AdditionalField:
+    """
+    Class representation of an additional field.
+    
+    Atributes:
+		label: The text label to be displayed in the Scheduler UI.
+		type: The field type. Supported values are text, multi_line_text, email, phone_number, dropdown, date, checkbox, and radio_button
+		required: Whether the field is required to be filled out by the guest when booking an event.
+		pattern: A regular expression pattern that the value of the field must match.
+		order: The order in which the field will be displayed in the Scheduler UI. Fields with lower order values will be displayed first.
+		options: A list of options for the dropdown or radio_button types. This field is required for the dropdown and radio_button types.
+    """
+    label: str
+    type: AdditionalFieldType
+    required: bool
+    pattern: Optional[str] = None
+    order: Optional[int] = None
+    options: Optional[AdditonalFieldOptionsType] = None
 
 @dataclass_json
 @dataclass
@@ -60,7 +82,7 @@ class SchedulerSettings:
         hide_additional_guests: Whether to hide the additional guests field on the scheduling page.
         email_template: Configurable settings for booking emails.
     """
-    additional_fields: Optional[Dict[str, str]] = None
+    additional_fields: Optional[Dict[str, AdditionalField]] = None
     available_days_in_future: Optional[int] = None
     min_booking_notice: Optional[int] = None
     min_cancellation_notice: Optional[int] = None
@@ -160,7 +182,7 @@ class ParticipantAvailability:
         open_hours: Open hours for this participant. The endpoint searches for free time slots during these open hours.
     """
     calendar_ids: List[str]
-    open_hours: Optional[OpenHours] = None
+    open_hours: Optional[List[OpenHours]] = None
 
 
 @dataclass_json
@@ -384,8 +406,10 @@ class CreateBookingQueryParams:
     Class representation of query parameters for creating a booking.
 
     Attributes:
-      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
-      slug:  The slug of the Configuration object whose settings are used for calculating availability. If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
+      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. 
+      	If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+      slug: The slug of the Configuration object whose settings are used for calculating availability. 
+      	If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
       timezone: The timezone to use for the booking. If not provided, Nylas uses the timezone from the Configuration object.
     """
     configuration_id: Optional[str] = None
@@ -398,8 +422,10 @@ class FindBookingQueryParams:
     Class representation of query parameters for finding a booking.
 
     Attributes:
-      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
-      slug:  The slug of the Configuration object whose settings are used for calculating availability. If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
+      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. 
+    	If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+      slug:  The slug of the Configuration object whose settings are used for calculating availability. 
+      	If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
     """
     configuration_id: Optional[str] = None
     slug: Optional[str] = None
@@ -407,4 +433,3 @@ class FindBookingQueryParams:
 ConfirmBookingQueryParams = FindBookingQueryParams 
 RescheduleBookingQueryParams = FindBookingQueryParams
 DestroyBookingQueryParams = FindBookingQueryParams
- 
