@@ -1,6 +1,6 @@
-from configurations import Configurations
-from bookings import Bookings
-from sessions import Sessions
+from nylas.resources.configurations import Configurations
+from nylas.resources.bookings import Bookings
+from nylas.resources.sessions import Sessions
 
 class Scheduler:
     """

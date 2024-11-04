@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, List
+from dataclasses import dataclass
+from typing import Dict, Optional, List
 
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired, Literal
