@@ -7,7 +7,17 @@ from nylas.handler.api_resources import (
 		UpdatablePatchApiResource,
     DestroyableApiResource,
 )
-from nylas.models.scheduler import Booking, CreateBookingRequest, CreateBookingQueryParams, ConfirmBookingRequest, DestroyBookingQueryParams
+from nylas.models.scheduler import (
+	Booking, 
+	CreateBookingRequest, 
+	CreateBookingQueryParams, 
+	ConfirmBookingRequest, 
+	FindBookingQueryParams, 
+	DeleteBookingRequest,
+	RescheduleBookingQueryParams,
+	DestroyBookingQueryParams, 
+	ConfirmBookingQueryParams
+)
 from nylas.models.response import Response, DeleteResponse
 
 class Bookings(
@@ -28,7 +38,10 @@ class Bookings(
 	"""
 
 	def find(
-		self, identifier: str, booking_id: str, overrides: RequestOverrides = None
+		self, 
+		booking_id: str, 
+		query_params: FindBookingQueryParams,
+		overrides: RequestOverrides = None
 	) -> Response[Booking]:
 		"""
 		Return a Booking.
@@ -36,6 +49,7 @@ class Bookings(
 		Args:
 			identifier: The identifier of the Grant to act upon.
 			booking_id: The identifier of the Booking to get.
+			query_params: The query parameters to include in the request.
 			overrides: The request overrides to use for the request.
 
 		Returns:
@@ -43,7 +57,8 @@ class Bookings(
 		"""
 
 		return super().find(
-			path=f"/v3/grants/{identifier}/bookings/{booking_id}",
+			path=f"/v3/scheduling/bookings/{booking_id}",
+			query_params=query_params,
 			response_type=Booking,
 			overrides=overrides,
 		)
@@ -76,7 +91,11 @@ class Bookings(
 		)
 
 	def confirm(
-		self, booking_id: str, request_body:ConfirmBookingRequest, overrides: RequestOverrides = None
+		self, 
+		booking_id: str, 
+		request_body:ConfirmBookingRequest, 
+		query_params: ConfirmBookingQueryParams = None,
+		overrides: RequestOverrides = None
 	) -> Response[Booking]:
 		"""
 		Confirm a Booking.
@@ -84,6 +103,7 @@ class Bookings(
 		Args:
 			booking_id: The identifier of the Booking to confirm.
 			request_body: The values to confirm booking with.
+			query_params: The query parameters to include in the request.
 			overrides: The request overrides to use for the request.
 
 		Returns:
@@ -93,12 +113,17 @@ class Bookings(
 		return super().update(
 			path=f"/v3/scheduling/bookings/{booking_id}",
 			request_body=request_body,
+			query_params=query_params,
 			response_type=Booking,
 			overrides=overrides,
 		)
 	
 	def reschedule(
-		self, booking_id: str, request_body:CreateBookingRequest, overrides: RequestOverrides = None
+		self, 
+		booking_id: str, 
+		request_body:CreateBookingRequest, 
+		query_params: RescheduleBookingQueryParams = None,
+		overrides: RequestOverrides = None
 	) -> Response[Booking]:
 		"""
 		Reschedule a Booking.
@@ -106,6 +131,7 @@ class Bookings(
 		Args:
 			booking_id: The identifier of the Booking to reschedule.
 			request_body: The values to reschedule booking with.
+			query_params: The query parameters to include in the request.
 			overrides: The request overrides to use for the request.
 
 		Returns:
@@ -115,18 +141,23 @@ class Bookings(
 		return super().patch(
 			path=f"/v3/scheduling/bookings/{booking_id}",
 			request_body=request_body,
+			query_params=query_params,
 			response_type=Booking,
 			overrides=overrides,
 		)
 	
 	def destroy(
-		self, booking_id: str, query_params: DestroyBookingQueryParams = None ,overrides: RequestOverrides = None
+		self, booking_id: str, 
+		request_body: DeleteBookingRequest, 
+		query_params: DestroyBookingQueryParams = None,
+		overrides: RequestOverrides = None
 	) -> DeleteResponse:
 		"""
 		Delete a Booking.
 
 		Args:
 			booking_id: The identifier of the Booking to delete.
+			request_body: The reason to delete booking with.
 			query_params: The query parameters to include in the request.
 			overrides: The request overrides to use for the request.
 
@@ -136,6 +167,7 @@ class Bookings(
 
 		return super().destroy(
 			path=f"/v3/scheduling/bookings/{booking_id}",
+			request_body=request_body,
 			query_params=query_params,
 			overrides=overrides,
 		)
