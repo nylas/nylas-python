@@ -8,10 +8,10 @@ from nylas.handler.api_resources import (
     DestroyableApiResource,
 )
 from nylas.models.scheduler import Booking, CreateBookingRequest, CreateBookingQueryParams, ConfirmBookingRequest, DestroyBookingQueryParams
-from nylas.models.response import Response
+from nylas.models.response import Response, DeleteResponse
 
 class Bookings(
-  	ListableApiResource,
+	ListableApiResource,
 	FindableApiResource,
 	CreatableApiResource,
 	UpdatableApiResource,
@@ -121,7 +121,7 @@ class Bookings(
 	
 	def destroy(
 		self, booking_id: str, query_params: DestroyBookingQueryParams = None ,overrides: RequestOverrides = None
-	) -> Response[None]:
+	) -> DeleteResponse:
 		"""
 		Delete a Booking.
 

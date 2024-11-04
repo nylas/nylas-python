@@ -8,7 +8,7 @@ from nylas.handler.api_resources import (
 )
 
 from nylas.models.scheduler import Configuration, CreateConfigurationRequest, UpdateConfigurationRequest
-from nylas.models.response import Response, ListResponse
+from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.models.list_query_params import ListQueryParams
 from typing import Any
 
@@ -146,7 +146,7 @@ class Configurations(
 		identifier: str,
 		config_id: str,
 		overrides: RequestOverrides = None
-	) -> None:
+	) -> DeleteResponse:
 		"""
 		Delete a Configuration.
 
