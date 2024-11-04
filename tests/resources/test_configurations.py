@@ -150,7 +150,7 @@ class TestConfiguration:
             "/v3/grants/grant-123/scheduling/configurations",
             None,
             None,
-            None
+            None,
             overrides=None,
         )
     
