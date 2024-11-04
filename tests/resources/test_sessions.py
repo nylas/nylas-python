@@ -5,7 +5,7 @@ from nylas.models.scheduler import Session
 class TestSession:
   def test_session_deserialization(self):
     session_json = {
-      "id": "session-id",
+      "session_id": "session-id",
     }
 
     session = Session.from_dict(session_json)
@@ -24,6 +24,8 @@ class TestSession:
     http_client_response._execute.assert_called_once_with(
       "POST",
       "/v3/scheduling/sessions",
+      None,
+      None,
       request_body,
       overrides=None,
     )
@@ -36,5 +38,8 @@ class TestSession:
     http_client_response._execute.assert_called_once_with(
       "DELETE",
       "/v3/scheduling/sessions/session-123",
+      None,
+      None,
+      None,
       overrides=None,
     )

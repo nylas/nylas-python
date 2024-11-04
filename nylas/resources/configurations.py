@@ -94,7 +94,7 @@ class Configurations(
 	def create(
 		self,
 		identifier: str,
-		requestBody: CreateConfigurationRequest,
+		request_body: CreateConfigurationRequest,
 		overrides: RequestOverrides = None
 	) -> Response[Configuration]:
 		"""
@@ -110,7 +110,7 @@ class Configurations(
 		"""
 		return super().create(
 			path=f"/v3/grants/{identifier}/scheduling/configurations",
-			request_body=requestBody,
+			request_body=request_body,
 			overrides=overrides,
 			response_type=Configuration,
 		)
@@ -119,7 +119,7 @@ class Configurations(
 		self,
 		identifier: str,
 		config_id: str,
-		requestBody: UpdateConfigurationRequest,
+		request_body: UpdateConfigurationRequest,
 		overrides: RequestOverrides = None
 	) -> Response[Configuration]:
 		"""
@@ -136,7 +136,7 @@ class Configurations(
 		"""
 		return super().update(
 			path=f"/v3/grants/{identifier}/scheduling/configurations/{config_id}",
-			request_body=requestBody,
+			request_body=request_body,
 			overrides=overrides,
 			response_type=Configuration,
 		)

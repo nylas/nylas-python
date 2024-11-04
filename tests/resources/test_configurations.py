@@ -146,10 +146,11 @@ class TestConfiguration:
         configurations.list(identifier="grant-123")
 
         http_client_list_response._execute.assert_called_once_with(
-            method="GET",
-            path="/v3/grants/grant-123/scheduling/configurations",
-            query_params=None,
-            request_body=None,
+            "GET",
+            "/v3/grants/grant-123/scheduling/configurations",
+            None,
+            None,
+            None
             overrides=None,
         )
     
@@ -158,8 +159,11 @@ class TestConfiguration:
         configurations.find(identifier="grant-123", config_id="config-123")
 
         http_client_response._execute.assert_called_once_with(
-            method="GET",
-            path="/v3/grants/grant-123/scheduling/configurations/config-123",
+            "GET",
+            "/v3/grants/grant-123/scheduling/configurations/config-123",
+            None,
+            None,
+            None,
             overrides=None,
         )
 
@@ -191,9 +195,11 @@ class TestConfiguration:
         }
         configurations.create(identifier="grant-123", request_body=request_body)
         http_client_response._execute.assert_called_once_with(
-            method="POST",
-            path="/v3/grants/grant-123/scheduling/configurations",
-            request_body=request_body,
+            "POST",
+            "/v3/grants/grant-123/scheduling/configurations",
+            None,
+            None,
+            request_body,
             overrides=None,
         )
 
@@ -207,9 +213,11 @@ class TestConfiguration:
         configurations.update(identifier="grant-123", config_id="config-123", request_body=request_body)
 
         http_client_response._execute.assert_called_once_with(
-            method="PUT",
-            path="/v3/grants/grant-123/scheduling/configurations/config-123",
-            request_body=request_body,
+            "PUT",
+            "/v3/grants/grant-123/scheduling/configurations/config-123",
+            None,
+            None,
+            request_body,
             overrides=None,
         )
 
@@ -218,7 +226,10 @@ class TestConfiguration:
         configurations.destroy(identifier="grant-123", config_id="config-123")
 
         http_client_response._execute.assert_called_once_with(
-            method="DELETE",
-            path="/v3/grants/grant-123/scheduling/configurations/config-123",
+            "DELETE",
+            "/v3/grants/grant-123/scheduling/configurations/config-123",
+            None,
+            None,
+            None,
             overrides=None,
         )

@@ -222,6 +222,7 @@ class Configuration:
         scheduler: Settings for the Scheduler UI.
         appearance: Appearance settings for the Scheduler UI.
     """
+    id: str
     participants: List[ConfigParticipant]
     availability: Availability
     event_booking: EventBooking
