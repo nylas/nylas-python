@@ -1,4 +1,5 @@
 from configurations import Configurations
+from bookings import Bookings
 
 class Scheduler:
     """
@@ -16,4 +17,14 @@ class Scheduler:
             The Configurations API.
         """
         return Configurations(self.http_client)
+    
+    @property
+    def bookings(self) -> Bookings:
+        """
+        Access the Bookings API.
+
+        Returns:
+            The Bookings API.
+        """
+        return Bookings(self.http_client)
 

@@ -426,9 +426,11 @@ class FindBookingQueryParams:
     	If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
       slug:  The slug of the Configuration object whose settings are used for calculating availability. 
       	If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
+      client_id: The client ID that was used to create the Configuration object. client_id is required only if using slug.
     """
     configuration_id: Optional[str] = None
     slug: Optional[str] = None
+    client_id: Optional[str] = None
 
 ConfirmBookingQueryParams = FindBookingQueryParams 
 RescheduleBookingQueryParams = FindBookingQueryParams
