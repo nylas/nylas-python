@@ -313,7 +313,8 @@ class CreateSessionRequest(TypedDict):
 
     Attributes:
         configuration_id: The ID of the Configuration object whose settings are used for calculating availability.
-            If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+            If you're using session authentication (requires_session_auth is set to true),
+            configuration_id is not required.
         slug: The slug of the Configuration object whose settings are used for calculating availability.
             If you're using session authentication (requires_session_auth is set to true) or using configurationId,
             slug is not required.
