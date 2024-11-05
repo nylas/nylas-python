@@ -73,7 +73,8 @@ class UpdatableApiResource(Resource):
         )
 
         return Response.from_dict(response_json, response_type)
-    
+
+
 class UpdatablePatchApiResource(Resource):
     def patch(
         self,

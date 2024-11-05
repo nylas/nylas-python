@@ -32,7 +32,12 @@ class TestBooking:
     bookings.find(booking_id="booking-123")
 
     http_client_response._execute.assert_called_once_with(
-      "GET", "/v3/scheduling/bookings/booking-123", query_params=None, overrides=None
+      "GET", 
+      "/v3/scheduling/bookings/booking-123", 
+      None,
+      None,
+      None,
+      overrides=None
     )
 
   def test_create_booking(self, http_client_response):
@@ -88,22 +93,24 @@ class TestBooking:
     http_client_response._execute.assert_called_once_with(
       "PATCH",
       "/v3/scheduling/bookings/booking-123",
-      query_params=None,
-      request_body=request_body,
+      None,
+      None,
+      request_body,
       overrides=None
     )
 
-  def test_destroy_booking(self, http_client_response):
-    bookings = Bookings(http_client_response)
+  def test_destroy_booking(self, http_client_delete_response):
+    bookings = Bookings(http_client_delete_response)
     request_body = {
       "cancellation_reason": "I am no longer available at this time."
     }
     bookings.destroy(booking_id="booking-123", request_body=request_body)
 
-    http_client_response._execute.assert_called_once_with(
+    http_client_delete_response._execute.assert_called_once_with(
       "DELETE",
       "/v3/scheduling/bookings/booking-123",
-      request_body=request_body,
-      query_params=None,
+      None,
+      None,
+      request_body,
       overrides=None
     )

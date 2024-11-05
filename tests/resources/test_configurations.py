@@ -112,24 +112,23 @@ class TestConfiguration:
         assert configuration.participants[0].is_organizer == True
         assert configuration.participants[0].name == "Test"
         assert configuration.participants[0].availability.calendar_ids == ["primary"]
-        assert configuration.participants[0].availability.open_hours[0].days == [0, 1, 2, 3, 4, 5, 6]
-        assert configuration.participants[0].availability.open_hours[0].exdates == None
-        assert configuration.participants[0].availability.open_hours[0].timezone == ""
+        assert configuration.participants[0].availability.open_hours[0]["days"] == [0, 1, 2, 3, 4, 5, 6]
+        assert configuration.participants[0].availability.open_hours[0]["exdates"] == None
+        assert configuration.participants[0].availability.open_hours[0]["timezone"] == ""
         assert configuration.participants[0].booking.calendar_id == "primary"
         assert configuration.participants[0].timezone == ""
         assert configuration.requires_session_auth == False
         assert configuration.availability.duration_minutes == 30
         assert configuration.availability.interval_minutes == 15
         assert configuration.availability.round_to == 15
-        assert configuration.availability.availability_rules.availability_method == "collective"
-        assert configuration.availability.availability_rules.buffer.before == 60
-        assert configuration.availability.availability_rules.buffer.after == 0
-        assert configuration.availability.availability_rules.default_open_hours[0].days == [0, 1, 2, 5, 6]
-        assert configuration.availability.availability_rules.default_open_hours[0].exdates == None
-        assert configuration.availability.availability_rules.default_open_hours[0].timezone == ""
-        assert configuration.availability.availability_rules.default_open_hours[0].start == "09:00"
-        assert configuration.availability.availability_rules.default_open_hours[0].end == "18:00"
-        assert configuration.availability.availability_rules.round_robin_group_id == ""
+        assert configuration.availability.availability_rules["availability_method"] == "collective"
+        assert configuration.availability.availability_rules["buffer"]["before"] == 60
+        assert configuration.availability.availability_rules["buffer"]["after"] == 0
+        assert configuration.availability.availability_rules["default_open_hours"][0]["days"] == [0, 1, 2, 5, 6]
+        assert configuration.availability.availability_rules["default_open_hours"][0]["exdates"] == None
+        assert configuration.availability.availability_rules["default_open_hours"][0]["timezone"] == ""
+        assert configuration.availability.availability_rules["default_open_hours"][0]["start"] == "09:00"
+        assert configuration.availability.availability_rules["default_open_hours"][0]["end"] == "18:00"
         assert configuration.event_booking.title == "Updated Title"
         assert configuration.event_booking.timezone == "utc"
         assert configuration.event_booking.description == ""
@@ -139,7 +138,7 @@ class TestConfiguration:
         assert configuration.scheduler.available_days_in_future == 7
         assert configuration.scheduler.min_cancellation_notice == 60
         assert configuration.scheduler.min_booking_notice == 120
-        assert configuration.scheduler.appearance.submit_button_label == "submit"
+        assert configuration.appearance["submit_button_label"] == "submit"
 
     def test_list_configurations(self, http_client_list_response):
         configurations = Configurations(http_client_list_response)
@@ -221,11 +220,11 @@ class TestConfiguration:
             overrides=None,
         )
 
-    def test_delete_configuration(self, http_client_response):
-        configurations = Configurations(http_client_response)
+    def test_destroy_configuration(self, http_client_delete_response):
+        configurations = Configurations(http_client_delete_response)
         configurations.destroy(identifier="grant-123", config_id="config-123")
 
-        http_client_response._execute.assert_called_once_with(
+        http_client_delete_response._execute.assert_called_once_with(
             "DELETE",
             "/v3/grants/grant-123/scheduling/configurations/config-123",
             None,

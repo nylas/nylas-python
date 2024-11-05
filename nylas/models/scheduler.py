@@ -6,12 +6,24 @@ from typing_extensions import TypedDict, NotRequired, Literal
 from nylas.models.events import Conferencing
 from nylas.models.availability import AvailabilityRules, OpenHours
 
-BookingType = Literal['booking', 'organizer-confirmation']
-BookingReminderType = Literal['email', 'webhook']
-BookingRecipientType = Literal['host', 'guest', 'all']
-EmailLanguage = Literal['en', 'es', 'fr', 'de', 'nl', 'sv', 'ja', 'zh']
-AdditionalFieldType = Literal['text', 'multi_line_text', 'email', 'phone_number', 'dropdown', 'date', 'checkbox', 'radio_button']
-AdditonalFieldOptionsType = Literal['text', 'email', 'phone_number', 'date', 'checkbox', 'radio_button']
+BookingType = Literal["booking", "organizer-confirmation"]
+BookingReminderType = Literal["email", "webhook"]
+BookingRecipientType = Literal["host", "guest", "all"]
+EmailLanguage = Literal["en", "es", "fr", "de", "nl", "sv", "ja", "zh"]
+AdditionalFieldType = Literal[
+    "text",
+    "multi_line_text",
+    "email",
+    "phone_number",
+    "dropdown",
+    "date",
+    "checkbox",
+    "radio_button",
+]
+AdditonalFieldOptionsType = Literal[
+    "text", "email", "phone_number", "date", "checkbox", "radio_button"
+]
+
 
 @dataclass_json
 @dataclass
@@ -23,6 +35,7 @@ class BookingConfirmedTemplate:
         title: The title to replace the default 'Booking Confirmed' title.
         body: The additional body to be appended after the default body.
     """
+
     title: Optional[str] = None
     body: Optional[str] = None
 
@@ -37,29 +50,36 @@ class EmailTemplate:
         logo: The URL to a custom logo that appears at the top of the booking email.
         booking_confirmed: Configurable settings specifically for booking confirmed emails.
     """
+
     # logo: Optional[str] = None
     booking_confirmed: Optional[BookingConfirmedTemplate] = None
+
 
 @dataclass_json
 @dataclass
 class AdditionalField:
     """
     Class representation of an additional field.
-    
+
     Atributes:
-		label: The text label to be displayed in the Scheduler UI.
-		type: The field type. Supported values are text, multi_line_text, email, phone_number, dropdown, date, checkbox, and radio_button
-		required: Whether the field is required to be filled out by the guest when booking an event.
-		pattern: A regular expression pattern that the value of the field must match.
-		order: The order in which the field will be displayed in the Scheduler UI. Fields with lower order values will be displayed first.
-		options: A list of options for the dropdown or radio_button types. This field is required for the dropdown and radio_button types.
+        label: The text label to be displayed in the Scheduler UI.
+        type: The field type. Supported values are text, multi_line_text,
+            email, phone_number, dropdown, date, checkbox, and radio_button
+        required: Whether the field is required to be filled out by the guest when booking an event.
+        pattern: A regular expression pattern that the value of the field must match.
+        order: The order in which the field will be displayed in the Scheduler UI.
+            Fields with lower order values will be displayed first.
+        options: A list of options for the dropdown or radio_button types.
+            This field is required for the dropdown and radio_button types.
     """
+
     label: str
     type: AdditionalFieldType
     required: bool
     pattern: Optional[str] = None
     order: Optional[int] = None
     options: Optional[AdditonalFieldOptionsType] = None
+
 
 @dataclass_json
 @dataclass
@@ -77,11 +97,14 @@ class SchedulerSettings:
         cancellation_url: The URL used to cancel bookings.
         organizer_confirmation_url: The URL used to confirm or cancel pending bookings.
         confirmation_redirect_url: The custom URL to redirect to once the booking is confirmed.
-        hide_rescheduling_options: Whether the option to reschedule an event is hidden in booking confirmations and notifications.
-        hide_cancellation_options: Whether the option to cancel an event is hidden in booking confirmations and notifications.
+        hide_rescheduling_options: Whether the option to reschedule an event
+            is hidden in booking confirmations and notifications.
+        hide_cancellation_options: Whether the option to cancel an event 
+            is hidden in booking confirmations and notifications.
         hide_additional_guests: Whether to hide the additional guests field on the scheduling page.
         email_template: Configurable settings for booking emails.
     """
+
     additional_fields: Optional[Dict[str, AdditionalField]] = None
     available_days_in_future: Optional[int] = None
     min_booking_notice: Optional[int] = None
@@ -109,6 +132,7 @@ class BookingReminder:
         recipient: The recipient of the reminder.
         email_subject: The subject of the email reminder.
     """
+
     type: str
     minutes_before_event: int
     recipient: Optional[str] = None
@@ -131,6 +155,7 @@ class EventBooking:
         disable_emails: Whether Nylas sends email messages when an event is booked, cancelled, or rescheduled.
         reminders: The list of reminders to send to participants before the event starts.
     """
+
     title: str
     description: Optional[str] = None
     location: Optional[str] = None
@@ -153,6 +178,7 @@ class Availability:
         round_to: Nylas rounds each time slot to the nearest multiple of this number of minutes.
         availability_rules: Availability rules for scheduling configuration.
     """
+
     duration_minutes: int
     interval_minutes: Optional[int] = None
     round_to: Optional[int] = None
@@ -168,6 +194,7 @@ class ParticipantBooking:
     Attributes:
         calendar_id: The calendar ID that the event is created in.
     """
+
     calendar_id: str
 
 
@@ -181,6 +208,7 @@ class ParticipantAvailability:
         calendar_ids: List of calendar IDs associated with the participant's email address.
         open_hours: Open hours for this participant. The endpoint searches for free time slots during these open hours.
     """
+
     calendar_ids: List[str]
     open_hours: Optional[List[OpenHours]] = None
 
@@ -199,6 +227,7 @@ class ConfigParticipant:
         is_organizer: Whether the participant is the organizer of the event.
         timezone: The participant's timezone.
     """
+
     email: str
     availability: ParticipantAvailability
     booking: ParticipantBooking
@@ -222,6 +251,7 @@ class Configuration:
         scheduler: Settings for the Scheduler UI.
         appearance: Appearance settings for the Scheduler UI.
     """
+
     id: str
     participants: List[ConfigParticipant]
     availability: Availability
@@ -233,6 +263,19 @@ class Configuration:
 
 
 class CreateConfigurationRequest(TypedDict):
+    """
+    Interface of a Nylas create configuration request.
+
+    Attributes:
+        participants: List of participants included in the scheduled event.
+        availability: Rules that determine available time slots for the event.
+        event_booking: Booking data for the event.
+        slug: Unique identifier for the Configuration object.
+        requires_session_auth: If true, scheduling Availability and Bookings endpoints require a valid session ID.
+        scheduler: Settings for the Scheduler UI.
+        appearance: Appearance settings for the Scheduler UI.
+    """
+
     participants: List[ConfigParticipant]
     availability: Availability
     event_booking: EventBooking
@@ -243,6 +286,18 @@ class CreateConfigurationRequest(TypedDict):
 
 
 class UpdateConfigurationRequest(TypedDict):
+    """
+    Interface of a Nylas update configuration request.
+
+    Attributes:
+        participants: List of participants included in the scheduled event.
+        availability: Rules that determine available time slots for the event.
+        event_booking: Booking data for the event.
+        slug: Unique identifier for the Configuration object.
+        requires_session_auth: If true, scheduling Availability and Bookings endpoints require a valid session ID.
+        scheduler: Settings for the Scheduler UI.
+        appearance: Appearance settings for the Scheduler UI.
+    """
     participants: NotRequired[List[ConfigParticipant]]
     availability: NotRequired[Availability]
     event_booking: NotRequired[EventBooking]
@@ -253,6 +308,17 @@ class UpdateConfigurationRequest(TypedDict):
 
 
 class CreateSessionRequest(TypedDict):
+    """
+    Interface of a Nylas create session request.
+
+    Attributes:
+        configuration_id: The ID of the Configuration object whose settings are used for calculating availability.
+            If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+        slug: The slug of the Configuration object whose settings are used for calculating availability.
+            If you're using session authentication (requires_session_auth is set to true) or using configurationId,
+            slug is not required.
+        time_to_live: The time-to-live in seconds for the session
+    """
     configuration_id: NotRequired[str]
     slug: NotRequired[str]
     time_to_live: NotRequired[int]
@@ -267,6 +333,7 @@ class Session:
     Attributes:
         session_id: The ID of the session.
     """
+
     session_id: str
 
 
@@ -280,8 +347,10 @@ class BookingGuest:
         email: The email address of the guest.
         name: The name of the guest.
     """
+
     email: str
     name: str
+
 
 @dataclass_json
 @dataclass
@@ -292,8 +361,9 @@ class BookingParticipant:
     Attributes:
         email: The email address of the participant to include in the booking.
     """
+
     email: str
-    
+
 
 @dataclass_json
 @dataclass
@@ -305,12 +375,15 @@ class CreateBookingRequest:
         start_time: The event's start time, in Unix epoch format.
         end_time: The event's end time, in Unix epoch format.
         guest: Details about the guest that is creating the booking.
-        participants: List of participant email addresses from the Configuration object to include in the booking.
+        participants: List of participant email addresses from the
+            Configuration object to include in the booking.
         timezone: The guest's timezone that is used in email notifications.
         email_language: The language of the guest email notifications.
         additional_guests: List of additional guest email addresses to include in the booking.
-        additional_fields: Dictionary of additional field keys mapped to values populated by the guest in the booking form.
+        additional_fields: Dictionary of additional field keys mapped to 
+            values populated by the guest in the booking form.
     """
+
     start_time: int
     end_time: int
     guest: BookingGuest
@@ -331,12 +404,14 @@ class BookingOrganizer:
         email: The email address of the participant designated as the organizer of the event.
         name: The name of the participant designated as the organizer of the event.
     """
+
     email: str
     name: Optional[str] = None
 
 
-BookingStatus = Literal['pending', 'confirmed', 'cancelled']
-ConfirmBookingStatus = Literal['confirm', 'cancel']
+BookingStatus = Literal["pending", "confirmed", "cancelled"]
+ConfirmBookingStatus = Literal["confirm", "cancel"]
+
 
 @dataclass_json
 @dataclass
@@ -352,6 +427,7 @@ class Booking:
         status: The current status of the booking.
         description: The description of the event.
     """
+
     booking_id: str
     event_id: str
     title: str
@@ -371,9 +447,11 @@ class ConfirmBookingRequest:
         status: The action to take on the pending booking.
         cancellation_reason: The reason the booking is being cancelled.
     """
+
     salt: str
     status: ConfirmBookingStatus
     cancellation_reason: Optional[str] = None
+
 
 @dataclass_json
 @dataclass
@@ -384,6 +462,7 @@ class DeleteBookingRequest:
     Attributes:
         cancellation_reason: The reason the booking is being cancelled.
     """
+
     cancellation_reason: Optional[str] = None
 
 
@@ -397,8 +476,10 @@ class RescheduleBookingRequest:
         start_time: The event's start time, in Unix epoch format.
         end_time: The event's end time, in Unix epoch format.
     """
+
     start_time: int
     end_time: int
+
 
 @dataclass_json
 @dataclass
@@ -407,12 +488,15 @@ class CreateBookingQueryParams:
     Class representation of query parameters for creating a booking.
 
     Attributes:
-      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. 
-      	If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
-      slug: The slug of the Configuration object whose settings are used for calculating availability. 
-      	If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
-      timezone: The timezone to use for the booking. If not provided, Nylas uses the timezone from the Configuration object.
+      configuration_id: The ID of the Configuration object whose settings are used for calculating availability.
+        If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+      slug: The slug of the Configuration object whose settings are used for calculating availability.
+        If you're using session authentication (requires_session_auth is set to true) or using configurationId,
+          slug is not required.
+      timezone: The timezone to use for the booking. 
+        If not provided, Nylas uses the timezone from the Configuration object.
     """
+
     configuration_id: Optional[str] = None
     slug: Optional[str] = None
     timezone: Optional[str] = None
@@ -423,16 +507,20 @@ class FindBookingQueryParams:
     Class representation of query parameters for finding a booking.
 
     Attributes:
-      configuration_id: The ID of the Configuration object whose settings are used for calculating availability. 
-    	If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
-      slug:  The slug of the Configuration object whose settings are used for calculating availability. 
-      	If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
-      client_id: The client ID that was used to create the Configuration object. client_id is required only if using slug.
+      configuration_id: The ID of the Configuration object whose settings are used for calculating availability.
+        If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+      slug:  The slug of the Configuration object whose settings are used for calculating availability.
+        If you're using session authentication (requires_session_auth is set to true)
+        or using configurationId, slug is not required.
+      client_id: The client ID that was used to create the Configuration object.
+        client_id is required only if using slug.
     """
+
     configuration_id: Optional[str] = None
     slug: Optional[str] = None
     client_id: Optional[str] = None
 
-ConfirmBookingQueryParams = FindBookingQueryParams 
+
+ConfirmBookingQueryParams = FindBookingQueryParams
 RescheduleBookingQueryParams = FindBookingQueryParams
 DestroyBookingQueryParams = FindBookingQueryParams

@@ -170,7 +170,7 @@ class Client:
             The Webhooks API.
         """
         return Webhooks(self.http_client)
-    
+
     @property
     def scheduler(self) -> Scheduler:
         """
