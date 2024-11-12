@@ -16,6 +16,7 @@ from nylas.models.scheduler import (
     CreateBookingRequest,
     DeleteBookingRequest,
     DestroyBookingQueryParams,
+    RescheduleBookingRequest,
     FindBookingQueryParams,
     RescheduleBookingQueryParams,
 )
@@ -122,7 +123,7 @@ class Bookings(
     def reschedule(
         self,
         booking_id: str,
-        request_body: CreateBookingRequest,
+        request_body: RescheduleBookingRequest,
         query_params: RescheduleBookingQueryParams = None,
         overrides: RequestOverrides = None,
     ) -> Response[Booking]:
