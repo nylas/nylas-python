@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+--------------
+* Add support for Scheduler APIs
+
 v6.4.0
 ----------------
 * Add support for from field for sending messages

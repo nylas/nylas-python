@@ -167,7 +167,7 @@ class TestCalendar:
                         "exdates": ["2021-03-01"],
                     }
                 ],
-                "round_robin_event_id": "event-123",
+                "round_robin_group_id": "event-123",
             },
         }
 

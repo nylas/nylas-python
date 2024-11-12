@@ -75,6 +75,24 @@ class UpdatableApiResource(Resource):
         return Response.from_dict(response_json, response_type)
 
 
+class UpdatablePatchApiResource(Resource):
+    def patch(
+        self,
+        path,
+        response_type,
+        headers=None,
+        query_params=None,
+        request_body=None,
+        method="PATCH",
+        overrides=None,
+    ):
+        response_json = self._http_client._execute(
+            method, path, headers, query_params, request_body, overrides=overrides
+        )
+
+        return Response.from_dict(response_json, response_type)
+
+
 class DestroyableApiResource(Resource):
     def destroy(
         self,
