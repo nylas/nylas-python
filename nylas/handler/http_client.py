@@ -45,6 +45,10 @@ def _validate_response(response: Response) -> dict:
 
     return json
 
+def _validate_download_response(response:Response, stream = False) -> Union[bytes, Response, dict]:
+    if response.status_code < 400:
+        return response if stream == True else response.content
+    return _validate_response(response)
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
@@ -126,9 +130,9 @@ class HttpClient:
 
             # If we stream an iterator for streaming the content, otherwise return the entire byte array
             if stream:
-                return response
+                return _validate_download_response(response,stream)
 
-            return response.content if response.content else None
+            return _validate_download_response(response) if response.content else None
         except requests.exceptions.Timeout as exc:
             raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
 
