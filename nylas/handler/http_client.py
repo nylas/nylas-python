@@ -45,7 +45,7 @@ def _validate_response(response: Response) -> dict:
 
     return json
 
-def _validate_download_response(response:Response, stream = False) -> Union[bytes, Response, dict]:
+def _validate_download_response(response:Response) -> Union[bytes, Response, dict]:
     if response.ok:
         return response.content
     return _validate_response(response)
