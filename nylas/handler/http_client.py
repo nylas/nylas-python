@@ -46,8 +46,8 @@ def _validate_response(response: Response) -> dict:
     return json
 
 def _validate_download_response(response:Response, stream = False) -> Union[bytes, Response, dict]:
-    if response.status_code < 400:
-        return response if stream == True else response.content
+    if response.ok:
+        return response.content
     return _validate_response(response)
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
