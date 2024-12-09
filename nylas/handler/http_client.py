@@ -130,7 +130,7 @@ class HttpClient:
 
             # If we stream an iterator for streaming the content, otherwise return the entire byte array
             if stream:
-                return _validate_download_response(response,stream)
+                return response if response.ok else _validate_response(response)
 
             return _validate_download_response(response) if response.content else None
         except requests.exceptions.Timeout as exc:
