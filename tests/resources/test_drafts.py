@@ -2,6 +2,7 @@ from unittest.mock import patch, Mock
 
 from nylas.models.drafts import Draft
 from nylas.resources.drafts import Drafts
+from nylas.resources.messages import Messages
 
 
 class TestDraft:
@@ -371,7 +372,7 @@ class TestDraft:
         )
 
     def test_send_message_with_metadata(self, http_client_response):
-        drafts = Drafts(http_client_response)
+        messages = Messages(http_client_response)
         request_body = {
             "subject": "Hello from Nylas!",
             "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
@@ -379,14 +380,13 @@ class TestDraft:
             "metadata": {"custom_field": "value", "another_field": 123}
         }
 
-        drafts.send(identifier="abc-123", request_body=request_body)
+        messages.send(identifier="abc-123", request_body=request_body)
 
         http_client_response._execute.assert_called_once_with(
-            "POST",
-            "/v3/grants/abc-123/messages/send",
-            None,
-            None,
-            request_body,
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
             overrides=None,
         )
 
