@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, get_type_hints
+from typing import List, Dict, Any, get_type_hints
 
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
@@ -87,6 +87,7 @@ class CreateDraftRequest(TypedDict):
         reply_to_message_id: The ID of the message that you are replying to.
         tracking_options: Options for tracking opens, links, and thread replies.
         custom_headers: Custom headers to add to the message.
+        metadata: A dictionary of key-value pairs storing additional data.
     """
 
     body: NotRequired[str]
@@ -101,6 +102,7 @@ class CreateDraftRequest(TypedDict):
     reply_to_message_id: NotRequired[str]
     tracking_options: NotRequired[TrackingOptions]
     custom_headers: NotRequired[List[CustomHeader]]
+    metadata: NotRequired[Dict[str, Any]]
 
 
 UpdateDraftRequest = CreateDraftRequest
