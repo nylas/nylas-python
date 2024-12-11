@@ -143,6 +143,27 @@ class TestDraft:
             overrides=None,
         )
 
+    def test_create_draft_with_metadata(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "metadata": {"custom_field": "value", "another_field": 123}
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
     def test_create_draft_small_attachment(self, http_client_response):
         drafts = Drafts(http_client_response)
         request_body = {
@@ -347,6 +368,26 @@ class TestDraft:
 
         http_client_response._execute.assert_called_once_with(
             method="POST", path="/v3/grants/abc-123/drafts/draft-123", overrides=None
+        )
+
+    def test_send_message_with_metadata(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "metadata": {"custom_field": "value", "another_field": 123}
+        }
+
+        drafts.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/messages/send",
+            None,
+            None,
+            request_body,
+            overrides=None,
         )
 
     def test_send_draft_encoded_id(self, http_client_response):
