@@ -13,6 +13,7 @@ from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
 from nylas.resources.grants import Grants
+from nylas.resources.scheduler import Scheduler
 
 
 class Client:
@@ -169,3 +170,13 @@ class Client:
             The Webhooks API.
         """
         return Webhooks(self.http_client)
+
+    @property
+    def scheduler(self) -> Scheduler:
+        """
+        Access the Scheduler API.
+
+        Returns:
+            The Scheduler API.
+        """
+        return Scheduler(self.http_client)
