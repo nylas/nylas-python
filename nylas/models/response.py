@@ -94,7 +94,7 @@ class ListResponse(tuple, Generic[T]):
 
         converted_data = []
         for item in resp["data"]:
-            converted_data.append(generic_type.from_dict(item))
+            converted_data.append(generic_type.from_dict(item, infer_missing=True))
 
         return cls(
             data=converted_data,

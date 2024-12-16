@@ -132,7 +132,6 @@ Attributes:
 
 
 class FindMessageQueryParams(TypedDict):
-
     """
     Query parameters for finding a message.
 
@@ -144,7 +143,6 @@ class FindMessageQueryParams(TypedDict):
 
 
 class UpdateMessageRequest(TypedDict):
-
     """
     Request payload for updating a message.
 
