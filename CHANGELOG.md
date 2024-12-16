@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+# Unreleased
+----------------
+* Fixed attachment download response handling
+
 v6.4.0
 ----------------
 * Add support for from field for sending messages
