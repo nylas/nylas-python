@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-# Unreleased
+Unreleased
 ----------------
 * Add support for Scheduler APIs
 * Fixed attachment download response handling
