@@ -1,27 +1,27 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.5.0
 ----------------
-* Add support for Scheduler APIs
+* Added support for Scheduler APIs
+* Added metadata field support for drafts and messages through CreateDraftRequest and Message model
 * Fixed attachment download response handling
-* Add metadata field support for drafts and messages through CreateDraftRequest model
 
 v6.4.0
 ----------------
-* Add support for from field for sending messages
-* Add missing schedule-specific fields to Message model
-* Add migration grant properties
-* Fix from field not being optional causing deserialization errors
-* Fix IMAP identifiers not encoding correctly
-* Fix NylasOAuthError not setting the status code properly
+* Added support for from field for sending messages
+* Added missing schedule-specific fields to Message model
+* Added migration grant properties
+* Fixed from field not being optional causing deserialization errors
+* Fixed IMAP identifiers not encoding correctly
+* Fixed NylasOAuthError not setting the status code properly
 
 v6.3.1
 ----------------
-* Fix typo on Clean Messages
-* Remove use of TestCommand
-* Add Folder Webhooks
-* Fix request session being reused across multiple requests
+* Fixed typo on Clean Messages
+* Fixed request session being reused across multiple requests
+* Added Folder Webhooks
+* Removed use of TestCommand
 
 
 v6.3.0
