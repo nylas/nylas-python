@@ -80,6 +80,7 @@ class Message:
     date: Optional[int] = None
     schedule_id: Optional[str] = None
     send_at: Optional[int] = None
+    metadata: Optional[Dict[str, Any]] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python

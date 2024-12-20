@@ -2,9 +2,10 @@ nylas-python Changelog
 ======================
 
 Unreleased
---------------
+----------------
 * Add support for Scheduler APIs
 * Fixed attachment download response handling
+* Add metadata field support for drafts and messages through CreateDraftRequest model
 
 v6.4.0
 ----------------
