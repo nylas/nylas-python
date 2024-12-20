@@ -28,7 +28,7 @@ from typing import Dict, Any, Optional
 
 # Import from local nylas package
 from nylas import Client
-from nylas.models.errors import NylasAPIError
+from nylas.models.errors import NylasApiError
 
 
 def get_env_or_exit(var_name: str, required: bool = True) -> Optional[str]:
@@ -59,14 +59,14 @@ def create_draft_with_metadata(
         print(f"✓ Created draft with ID: {draft.id}")
         print(f"  Request ID: {request_id}")
         return draft.id
-    except NylasAPIError as e:
+    except NylasApiError as e:
         print(f"✗ Failed to create draft: {e}")
         sys.exit(1)
 
 
 def send_message_with_metadata(
     client: Client, grant_id: str, metadata: Dict[str, Any], recipient: str
-) -> None:
+) -> str:
     """Send a message directly with metadata fields."""
     try:
         message_request = {
@@ -82,7 +82,9 @@ def send_message_with_metadata(
         )
         print(f"✓ Sent message with ID: {message.id}")
         print(f"  Request ID: {request_id}")
-    except NylasAPIError as e:
+
+        return message.id
+    except NylasApiError as e:
         print(f"✗ Failed to send message: {e}")
         sys.exit(1)
 
@@ -115,10 +117,21 @@ def main():
 
     # Send a message with metadata
     print("\n2. Sending message with metadata...")
-    send_message_with_metadata(client, grant_id, metadata, recipient)
+    message_id = send_message_with_metadata(client, grant_id, metadata, recipient)
 
     print("\nExample completed successfully!")
 
+    # Get the draft and message to demonstrate metadata retrieval
+    draft = client.drafts.find(identifier=grant_id, draft_id=draft_id)
+    message = client.messages.find(identifier=grant_id, message_id=message_id)
+
+    print("\nRetrieved Draft Metadata:")
+    print("-------------------------")
+    print(draft.data)
+
+    print("\nRetrieved Message Metadata:")
+    print("---------------------------")
+    print(message.data)
 
 if __name__ == "__main__":
     main()
