@@ -13,20 +13,26 @@ This example demonstrates how to use metadata fields when creating drafts and se
 
 1. A Nylas account with API access
 2. Python 3.x installed
-3. The Nylas Python SDK installed (`pip install nylas`)
+3. Local installation of the Nylas Python SDK (this repository)
 
 ## Setup
 
-1. Set your environment variables:
+1. Install the SDK in development mode from the repository root:
+```bash
+cd /path/to/nylas-python
+pip install -e .
+```
+
+2. Set your environment variables:
 ```bash
 export NYLAS_API_KEY="your_api_key"
 export NYLAS_GRANT_ID="your_grant_id"
 export TEST_EMAIL="recipient@example.com"  # Optional
 ```
 
-2. Run the example:
+3. Run the example from the repository root:
 ```bash
-python metadata_example.py
+python examples/metadata_field_demo/metadata_example.py
 ```
 
 ## Example Output

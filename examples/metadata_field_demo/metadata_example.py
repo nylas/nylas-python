@@ -11,15 +11,22 @@ Required Environment Variables:
     TEST_EMAIL: Email address for sending test messages (optional)
 
 Usage:
+    First, install the SDK in development mode:
+    cd /path/to/nylas-python
+    pip install -e .
+
+    Then set environment variables and run:
     export NYLAS_API_KEY="your_api_key"
     export NYLAS_GRANT_ID="your_grant_id"
     export TEST_EMAIL="recipient@example.com"
-    python metadata_example.py
+    python examples/metadata_field_demo/metadata_example.py
 """
 
 import os
 import sys
 from typing import Dict, Any, Optional
+
+# Import from local nylas package
 from nylas import Client
 from nylas.models.errors import NylasAPIError
 
