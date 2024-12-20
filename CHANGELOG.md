@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+v6.5.0
+----------------
+* Add metadata field support for drafts and messages through CreateDraftRequest model
+
 v6.4.0
 ----------------
 * Add support for from field for sending messages
