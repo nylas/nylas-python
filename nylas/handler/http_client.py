@@ -45,7 +45,6 @@ def _validate_response(response: Response) -> dict:
 
     return json
 
-
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
     for key, value in query_params.items():
@@ -109,7 +108,7 @@ class HttpClient:
         query_params=None,
         stream=False,
         overrides=None,
-    ) -> Union[bytes, Response]:
+    ) -> Union[bytes, Response,dict]:
         request = self._build_request("GET", path, headers, query_params, overrides)
 
         timeout = self.timeout
@@ -123,6 +122,9 @@ class HttpClient:
                 timeout=timeout,
                 stream=stream,
             )
+
+            if not response.ok:
+                return _validate_response(response)
 
             # If we stream an iterator for streaming the content, otherwise return the entire byte array
             if stream:
