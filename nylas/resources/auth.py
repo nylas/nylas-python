@@ -263,7 +263,7 @@ class Auth(Resource):
     def _get_token(
         self, request_body: dict, overrides: RequestOverrides
     ) -> CodeExchangeResponse:
-        json_response, headers = self._http_client._execute(
+        json_response, _ = self._http_client._execute(
             method="POST",
             path="/v3/connect/token",
             request_body=request_body,

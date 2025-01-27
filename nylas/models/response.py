@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import TypeVar, Generic, Optional, List
 
-from dataclasses_json import DataClassJsonMixin, dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from requests.structures import CaseInsensitiveDict
 
@@ -73,7 +73,13 @@ class ListResponse(tuple, Generic[T]):
     next_cursor: Optional[str] = None
     headers: Optional[CaseInsensitiveDict] = None
 
-    def __new__(cls, data: List[T], request_id: str, next_cursor: Optional[str] = None, headers: Optional[CaseInsensitiveDict] = None):
+    def __new__(
+        cls,
+        data: List[T],
+        request_id: str,
+        next_cursor: Optional[str] = None,
+        headers: Optional[CaseInsensitiveDict] = None
+    ):
         """
         Initialize the response object.
 

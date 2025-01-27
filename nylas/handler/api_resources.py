@@ -109,7 +109,7 @@ class DestroyableApiResource(Resource):
         response_json, response_headers = self._http_client._execute(
             "DELETE", path, headers, query_params, request_body, overrides=overrides
         )
-        
+
         # Check if the response type is a dataclass_json class
         if hasattr(response_type, "from_dict") and not hasattr(response_type, "headers"):
             return response_type.from_dict(response_json)

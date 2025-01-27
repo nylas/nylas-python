@@ -44,7 +44,6 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 status_code=response.status_code,
                 headers=response.headers,
             ) from exc
-        
     return (json, response.headers)
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
