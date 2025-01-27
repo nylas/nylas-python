@@ -34,7 +34,7 @@ class Applications(Resource):
             Response: The application information.
         """
 
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="GET", path="/v3/applications", overrides=overrides
         )
-        return Response.from_dict(json_response, ApplicationDetails)
+        return Response.from_dict(json_response, ApplicationDetails, headers)

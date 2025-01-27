@@ -70,7 +70,6 @@ class Configurations(
             response_type=Configuration,
             query_params=query_params,
         )
-        print("What's this", res)
         return res
 
     def find(

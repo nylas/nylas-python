@@ -111,7 +111,7 @@ def http_client_token_exchange():
 @pytest.fixture
 def http_client_token_info():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "abc-123",
         "data": {
             "iss": "https://nylas.com",
@@ -121,14 +121,14 @@ def http_client_token_info():
             "iat": 1692094848,
             "exp": 1692095173,
         },
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_free_busy():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
         "data": [
             {
@@ -155,7 +155,7 @@ def http_client_free_busy():
                 "object": "error",
             },
         ],
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 

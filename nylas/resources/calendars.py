@@ -169,14 +169,14 @@ class Calendars(
         Returns:
             Response: The availability response from the API.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path="/v3/calendars/availability",
             request_body=request_body,
             overrides=overrides,
         )
 
-        return Response.from_dict(json_response, GetAvailabilityResponse)
+        return Response.from_dict(json_response, GetAvailabilityResponse, headers)
 
     def get_free_busy(
         self,
@@ -195,7 +195,7 @@ class Calendars(
         Returns:
             Response: The free/busy response from the API.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/calendars/free-busy",
             request_body=request_body,
@@ -210,4 +210,4 @@ class Calendars(
             else:
                 data.append(FreeBusy.from_dict(item))
 
-        return Response(data, request_id)
+        return Response(data, request_id, headers)

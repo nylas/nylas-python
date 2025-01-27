@@ -172,11 +172,11 @@ class Contacts(
         Returns:
             The list of contact groups.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="GET",
             path=f"/v3/grants/{identifier}/contacts/groups",
             query_params=query_params,
             overrides=overrides,
         )
 
-        return ListResponse.from_dict(json_response, ContactGroup)
+        return ListResponse.from_dict(json_response, ContactGroup, headers)

@@ -29,14 +29,14 @@ class SmartCompose(Resource):
         Returns:
             The generated message.
         """
-        res = self._http_client._execute(
+        res, headers = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/messages/smart-compose",
             request_body=request_body,
             overrides=overrides,
         )
 
-        return Response.from_dict(res, ComposeMessageResponse)
+        return Response.from_dict(res, ComposeMessageResponse, headers)
 
     def compose_message_reply(
         self,
@@ -57,11 +57,11 @@ class SmartCompose(Resource):
         Returns:
             The generated message reply.
         """
-        res = self._http_client._execute(
+        res, headers = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/messages/{message_id}/smart-compose",
             request_body=request_body,
             overrides=overrides,
         )
 
-        return Response.from_dict(res, ComposeMessageResponse)
+        return Response.from_dict(res, ComposeMessageResponse, headers)

@@ -139,13 +139,13 @@ class Webhooks(
         Returns:
             The updated webhook destination
         """
-        res = self._http_client._execute(
+        res, headers = self._http_client._execute(
             method="PUT",
             path=f"/v3/webhooks/{webhook_id}/rotate-secret",
             request_body={},
             overrides=overrides,
         )
-        return Response.from_dict(res, WebhookWithSecret)
+        return Response.from_dict(res, WebhookWithSecret, headers)
 
     def ip_addresses(
         self, overrides: RequestOverrides = None
@@ -159,10 +159,10 @@ class Webhooks(
         Returns:
             The list of IP addresses that Nylas sends webhooks from
         """
-        res = self._http_client._execute(
+        res, headers = self._http_client._execute(
             method="GET", path="/v3/webhooks/ip-addresses", overrides=overrides
         )
-        return Response.from_dict(res, WebhookIpAddressesResponse)
+        return Response.from_dict(res, WebhookIpAddressesResponse, headers)
 
 
 def extract_challenge_parameter(url: str) -> str:

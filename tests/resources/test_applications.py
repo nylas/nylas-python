@@ -14,7 +14,7 @@ class TestApplications:
 
     def test_info(self):
         mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
+        mock_http_client._execute.return_value = ({
             "request_id": "req-123",
             "data": {
                 "application_id": "ad410018-d306-43f9-8361-fa5d7b2172e0",
@@ -51,7 +51,7 @@ class TestApplications:
                     }
                 ],
             },
-        }
+        }, {"X-Test-Header": "test"})
         app = Applications(mock_http_client)
 
         res = app.info()

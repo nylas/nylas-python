@@ -215,10 +215,10 @@ class Drafts(
             draft_id: The identifier of the draft to send.
             overrides: The request overrides to use for the request.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}",
             overrides=overrides,
         )
 
-        return Response.from_dict(json_response, Message)
+        return Response.from_dict(json_response, Message, headers)
