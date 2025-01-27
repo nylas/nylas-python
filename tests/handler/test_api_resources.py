@@ -160,3 +160,108 @@ class TestApiResource:
             {"foo": "bar"},
             overrides=None,
         )
+
+    def test_list_resource_with_headers(self, http_client_list_response):
+        resource = MockResource(http_client_list_response)
+
+        response = resource.list(
+            path="/foo",
+            response_type=Calendar,
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response.headers == {"X-Test-Header": "test"}
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/foo",
+            {"test": "header"},
+            {"query": "param"},
+            {"foo": "bar"},
+            overrides=None,
+        )
+
+    def test_find_resource_with_headers(self, http_client_response):
+        resource = MockResource(http_client_response)
+
+        response = resource.find(
+            path="/foo",
+            response_type=Calendar,
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response.headers == {"X-Test-Header": "test"}
+        http_client_response._execute.assert_called_once_with(
+            "GET",
+            "/foo",
+            {"test": "header"},
+            {"query": "param"},
+            {"foo": "bar"},
+            overrides=None,
+        )
+
+    def test_create_resource_with_headers(self, http_client_response):
+        resource = MockResource(http_client_response)
+
+        response = resource.create(
+            path="/foo",
+            response_type=Calendar,
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response.headers == {"X-Test-Header": "test"}
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/foo",
+            {"test": "header"},
+            {"query": "param"},
+            {"foo": "bar"},
+            overrides=None,
+        )
+
+    def test_update_resource_with_headers(self, http_client_response):
+        resource = MockResource(http_client_response)
+
+        response = resource.update(
+            path="/foo",
+            response_type=Calendar,
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response.headers == {"X-Test-Header": "test"}
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/foo",
+            {"test": "header"},
+            {"query": "param"},
+            {"foo": "bar"},
+            overrides=None,
+        )
+
+    def test_destroy_resource_with_headers(self, http_client_delete_response):
+        resource = MockResource(http_client_delete_response)
+
+        response = resource.destroy(
+            path="/foo",
+            response_type=RequestIdOnlyResponse,
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response.headers == {"X-Test-Header": "test"}
+        http_client_delete_response._execute.assert_called_once_with(
+            "DELETE",
+            "/foo",
+            {"test": "header"},
+            {"query": "param"},
+            {"foo": "bar"},
+            overrides=None,
+        )

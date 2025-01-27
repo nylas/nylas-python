@@ -1,9 +1,10 @@
 import sys
-from typing import Union
+from typing import Union, Tuple, Dict
 from urllib.parse import urlparse, quote
 
 import requests
 from requests import Response
+from requests.structures import CaseInsensitiveDict
 
 from nylas._client_sdk_version import __VERSION__
 from nylas.models.errors import (
@@ -16,7 +17,7 @@ from nylas.models.errors import (
 )
 
 
-def _validate_response(response: Response) -> dict:
+def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
     json = response.json()
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
@@ -26,10 +27,10 @@ def _validate_response(response: Response) -> dict:
                 or "connect/revoke" in parsed_url.path
             ):
                 parsed_error = NylasOAuthErrorResponse.from_dict(json)
-                raise NylasOAuthError(parsed_error, response.status_code)
+                raise NylasOAuthError(parsed_error, response.status_code, response.headers)
 
             parsed_error = NylasApiErrorResponse.from_dict(json)
-            raise NylasApiError(parsed_error, response.status_code)
+            raise NylasApiError(parsed_error, response.status_code, response.headers)
         except (KeyError, TypeError) as exc:
             request_id = json.get("request_id", None)
             raise NylasApiError(
@@ -41,9 +42,10 @@ def _validate_response(response: Response) -> dict:
                     ),
                 ),
                 status_code=response.status_code,
+                headers=response.headers,
             ) from exc
-
-    return json
+        
+    return (json, response.headers)
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []

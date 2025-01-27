@@ -16,11 +16,11 @@ class ListableApiResource(Resource):
         request_body=None,
         overrides=None,
     ) -> ListResponse:
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             "GET", path, headers, query_params, request_body, overrides=overrides
         )
 
-        return ListResponse.from_dict(response_json, response_type)
+        return ListResponse.from_dict(response_json, response_type, response_headers)
 
 
 class FindableApiResource(Resource):
@@ -33,11 +33,11 @@ class FindableApiResource(Resource):
         request_body=None,
         overrides=None,
     ) -> Response:
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             "GET", path, headers, query_params, request_body, overrides=overrides
         )
 
-        return Response.from_dict(response_json, response_type)
+        return Response.from_dict(response_json, response_type, response_headers)
 
 
 class CreatableApiResource(Resource):
@@ -50,11 +50,11 @@ class CreatableApiResource(Resource):
         request_body=None,
         overrides=None,
     ) -> Response:
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             "POST", path, headers, query_params, request_body, overrides=overrides
         )
 
-        return Response.from_dict(response_json, response_type)
+        return Response.from_dict(response_json, response_type, response_headers)
 
 
 class UpdatableApiResource(Resource):
@@ -68,11 +68,11 @@ class UpdatableApiResource(Resource):
         method="PUT",
         overrides=None,
     ):
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             method, path, headers, query_params, request_body, overrides=overrides
         )
 
-        return Response.from_dict(response_json, response_type)
+        return Response.from_dict(response_json, response_type, response_headers)
 
 
 class UpdatablePatchApiResource(Resource):
@@ -86,11 +86,11 @@ class UpdatablePatchApiResource(Resource):
         method="PATCH",
         overrides=None,
     ):
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             method, path, headers, query_params, request_body, overrides=overrides
         )
 
-        return Response.from_dict(response_json, response_type)
+        return Response.from_dict(response_json, response_type, response_headers)
 
 
 class DestroyableApiResource(Resource):
@@ -106,7 +106,7 @@ class DestroyableApiResource(Resource):
         if response_type is None:
             response_type = DeleteResponse
 
-        response_json = self._http_client._execute(
+        response_json, response_headers = self._http_client._execute(
             "DELETE", path, headers, query_params, request_body, overrides=overrides
         )
-        return response_type.from_dict(response_json)
+        return response_type.from_dict(response_json, headers=response_headers)

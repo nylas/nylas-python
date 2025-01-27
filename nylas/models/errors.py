@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from requests.structures import CaseInsensitiveDict
 from dataclasses_json import dataclass_json
 
 
@@ -11,6 +12,7 @@ class AbstractNylasApiError(Exception):
     Attributes:
         request_id: The unique identifier of the request.
         status_code: The HTTP status code of the error response.
+        headers: The headers returned from the API.
     """
 
     def __init__(
@@ -18,6 +20,7 @@ class AbstractNylasApiError(Exception):
         message: str,
         request_id: Optional[str] = None,
         status_code: Optional[int] = None,
+        headers: Optional[CaseInsensitiveDict] = None,
     ):
         """
         Args:
@@ -27,6 +30,7 @@ class AbstractNylasApiError(Exception):
         """
         self.request_id: str = request_id
         self.status_code: int = status_code
+        self.headers: CaseInsensitiveDict = headers
         super().__init__(message)
 
 
@@ -96,22 +100,24 @@ class NylasApiError(AbstractNylasApiError):
     Attributes:
         type: Error type.
         provider_error: Provider Error.
+        headers: The headers returned from the API.
     """
 
     def __init__(
         self,
         api_error: NylasApiErrorResponse,
         status_code: Optional[int] = None,
+        headers: Optional[CaseInsensitiveDict] = None,
     ):
         """
         Args:
             api_error: The error details from the API.
             status_code: The HTTP status code of the error response.
         """
-        super().__init__(api_error.error.message, api_error.request_id, status_code)
+        super().__init__(api_error.error.message, api_error.request_id, status_code, headers)
         self.type: str = api_error.error.type
         self.provider_error: Optional[dict] = api_error.error.provider_error
-
+        self.headers: CaseInsensitiveDict = headers
 
 class NylasOAuthError(AbstractNylasApiError):
     """
@@ -128,18 +134,19 @@ class NylasOAuthError(AbstractNylasApiError):
         self,
         oauth_error: NylasOAuthErrorResponse,
         status_code: Optional[int] = None,
+        headers: Optional[CaseInsensitiveDict] = None,
     ):
         """
         Args:
             oauth_error: The error details from the API.
             status_code: The HTTP status code of the error response.
         """
-        super().__init__(oauth_error.error_description, None, status_code)
+        super().__init__(oauth_error.error_description, None, status_code, headers)
         self.error: str = oauth_error.error
         self.error_code: int = oauth_error.error_code
         self.error_description: str = oauth_error.error_description
         self.error_uri: str = oauth_error.error_uri
-
+        self.headers: CaseInsensitiveDict = headers
 
 class NylasSdkTimeoutError(AbstractNylasSdkError):
     """
@@ -150,7 +157,7 @@ class NylasSdkTimeoutError(AbstractNylasSdkError):
         timeout: The timeout value set in the Nylas SDK, in seconds.
     """
 
-    def __init__(self, url: str, timeout: int):
+    def __init__(self, url: str, timeout: int, headers: Optional[CaseInsensitiveDict] = None):
         """
         Args:
             url: The URL that timed out.
@@ -161,3 +168,4 @@ class NylasSdkTimeoutError(AbstractNylasSdkError):
         )
         self.url: str = url
         self.timeout: int = timeout
+        self.headers: CaseInsensitiveDict = headers
