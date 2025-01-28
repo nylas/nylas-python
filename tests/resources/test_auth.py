@@ -187,7 +187,7 @@ class TestAuth:
 
     def test_custom_authentication(self):
         mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
+        mock_http_client._execute.return_value = ({
             "request_id": "abc-123",
             "data": {
                 "id": "e19f8e1a-eb1c-41c0-b6a6-d2e59daf7f47",
@@ -201,7 +201,7 @@ class TestAuth:
                 "created_at": 1617817109,
                 "updated_at": 1617817109,
             },
-        }
+        }, {"X-Test-Header": "test"})
         auth = Auth(mock_http_client)
 
         res = auth.custom_authentication(
@@ -358,7 +358,7 @@ class TestAuth:
 
     def test_detect_provider(self):
         mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
+        mock_http_client._execute.return_value = ({
             "request_id": "abc-123",
             "data": {
                 "email_address": "test@gmail.com",
@@ -366,7 +366,7 @@ class TestAuth:
                 "provider": "google",
                 "type": "string",
             },
-        }
+        }, {"X-Test-Header": "test"})
         auth = Auth(mock_http_client)
         req = {"email": "test@gmail.com", "all_provider_types": True}
 

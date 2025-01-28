@@ -53,33 +53,23 @@ def mock_session_timeout():
 @pytest.fixture
 def http_client_list_response():
     with patch(
-        "nylas.models.response.ListResponse.from_dict",
-        return_value=ListResponse([], "bar"),
+        "nylas.models.response.ListResponse.from_dict", return_value=ListResponse([], "bar", None, {"X-Test-Header": "test"})
     ):
         mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
+        mock_http_client._execute.return_value = ({
             "request_id": "abc-123",
-            "data": [
-                {
-                    "id": "calendar-123",
-                    "grant_id": "grant-123",
-                    "name": "Mock Calendar",
-                    "read_only": False,
-                    "is_owned_by_user": True,
-                    "object": "calendar",
-                }
-            ],
-        }
+            "data": [],
+        }, {"X-Test-Header": "test"})
         yield mock_http_client
 
 
 @pytest.fixture
 def http_client_response():
     with patch(
-        "nylas.models.response.Response.from_dict", return_value=Response({}, "bar")
+        "nylas.models.response.Response.from_dict", return_value=Response({}, "bar", {"X-Test-Header": "test"})
     ):
         mock_http_client = Mock()
-        mock_http_client._execute.return_value = {
+        mock_http_client._execute.return_value = ({
             "request_id": "abc-123",
             "data": {
                 "id": "calendar-123",
@@ -89,23 +79,23 @@ def http_client_response():
                 "is_owned_by_user": True,
                 "object": "calendar",
             },
-        }
+        }, {"X-Test-Header": "test"})
         yield mock_http_client
 
 
 @pytest.fixture
 def http_client_delete_response():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "abc-123",
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_token_exchange():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "access_token": "nylas_access_token",
         "expires_in": 3600,
         "id_token": "jwt_token",
@@ -114,14 +104,14 @@ def http_client_token_exchange():
         "token_type": "Bearer",
         "grant_id": "grant_123",
         "provider": "google",
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_token_info():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "abc-123",
         "data": {
             "iss": "https://nylas.com",
@@ -131,14 +121,14 @@ def http_client_token_info():
             "iat": 1692094848,
             "exp": 1692095173,
         },
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_free_busy():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
         "data": [
             {
@@ -165,14 +155,14 @@ def http_client_free_busy():
                 "object": "error",
             },
         ],
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_list_scheduled_messages():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
         "data": [
             {
@@ -188,14 +178,14 @@ def http_client_list_scheduled_messages():
                 "close_time": 1690579819,
             },
         ],
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client
 
 
 @pytest.fixture
 def http_client_clean_messages():
     mock_http_client = Mock()
-    mock_http_client._execute.return_value = {
+    mock_http_client._execute.return_value = ({
         "request_id": "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5",
         "data": [
             {
@@ -217,5 +207,5 @@ def http_client_clean_messages():
                 "conversation": "another example",
             },
         ],
-    }
+    }, {"X-Test-Header": "test"})
     return mock_http_client

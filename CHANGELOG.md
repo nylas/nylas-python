@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added response headers to all responses from the Nylas API
+
 v6.5.0
 ----------------
 * Added support for Scheduler APIs

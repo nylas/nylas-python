@@ -189,7 +189,7 @@ class Messages(
 
             json_body = request_body
 
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path=path,
             request_body=json_body,
@@ -197,7 +197,7 @@ class Messages(
             overrides=overrides,
         )
 
-        return Response.from_dict(json_response, Message)
+        return Response.from_dict(json_response, Message, headers)
 
     def list_scheduled_messages(
         self, identifier: str, overrides: RequestOverrides = None
@@ -212,7 +212,7 @@ class Messages(
         Returns:
             Response: The list of scheduled messages.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="GET",
             path=f"/v3/grants/{identifier}/messages/schedules",
             overrides=overrides,
@@ -223,7 +223,7 @@ class Messages(
         for item in json_response["data"]:
             data.append(ScheduledMessage.from_dict(item))
 
-        return Response(data, request_id)
+        return Response(data, request_id, headers)
 
     def find_scheduled_message(
         self, identifier: str, schedule_id: str, overrides: RequestOverrides = None
@@ -239,13 +239,13 @@ class Messages(
         Returns:
             Response: The scheduled message.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="GET",
             path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
             overrides=overrides,
         )
 
-        return Response.from_dict(json_response, ScheduledMessage)
+        return Response.from_dict(json_response, ScheduledMessage, headers)
 
     def stop_scheduled_message(
         self, identifier: str, schedule_id: str, overrides: RequestOverrides = None
@@ -261,13 +261,13 @@ class Messages(
         Returns:
             Response: The confirmation of the stopped scheduled message.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="DELETE",
             path=f"/v3/grants/{identifier}/messages/schedules/{schedule_id}",
             overrides=overrides,
         )
 
-        return Response.from_dict(json_response, StopScheduledMessageResponse)
+        return Response.from_dict(json_response, StopScheduledMessageResponse, headers)
 
     def clean_messages(
         self,
@@ -284,13 +284,13 @@ class Messages(
             overrides: The request overrides to apply to the request.
 
         Returns:
-            The list of cleaned messages.
+            ListResponse: The list of cleaned messages.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="PUT",
             path=f"/v3/grants/{identifier}/messages/clean",
             request_body=request_body,
             overrides=overrides,
         )
 
-        return ListResponse.from_dict(json_response, CleanMessagesResponse)
+        return ListResponse.from_dict(json_response, CleanMessagesResponse, headers)

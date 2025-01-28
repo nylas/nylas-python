@@ -114,13 +114,13 @@ class Auth(Resource):
             The created Grant.
         """
 
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path="/v3/connect/custom",
             request_body=request_body,
             overrides=overrides,
         )
-        return Response.from_dict(json_response, Grant)
+        return Response.from_dict(json_response, Grant, headers)
 
     def refresh_access_token(
         self, request: TokenExchangeRequest, overrides: RequestOverrides = None
@@ -248,13 +248,13 @@ class Auth(Resource):
             The detected provider, if found.
         """
 
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path="/v3/providers/detect",
             query_params=params,
             overrides=overrides,
         )
-        return Response.from_dict(json_response, ProviderDetectResponse)
+        return Response.from_dict(json_response, ProviderDetectResponse, headers)
 
     def _url_auth_builder(self, query: dict) -> str:
         base = f"{self._http_client.api_server}/v3/connect/auth"
@@ -263,7 +263,7 @@ class Auth(Resource):
     def _get_token(
         self, request_body: dict, overrides: RequestOverrides
     ) -> CodeExchangeResponse:
-        json_response = self._http_client._execute(
+        json_response, _ = self._http_client._execute(
             method="POST",
             path="/v3/connect/token",
             request_body=request_body,
@@ -274,10 +274,10 @@ class Auth(Resource):
     def _get_token_info(
         self, query_params: dict, overrides: RequestOverrides
     ) -> Response[TokenInfoResponse]:
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="GET",
             path="/v3/connect/tokeninfo",
             query_params=query_params,
             overrides=overrides,
         )
-        return Response.from_dict(json_response, TokenInfoResponse)
+        return Response.from_dict(json_response, TokenInfoResponse, headers)

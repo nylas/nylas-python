@@ -183,7 +183,8 @@ class Events(
         query_params: SendRsvpQueryParams,
         overrides: RequestOverrides = None,
     ) -> RequestIdOnlyResponse:
-        """Send RSVP for an event.
+        """
+        Send an RSVP for an event.
 
         Args:
             identifier: The grant ID or email account to send RSVP for.
@@ -195,7 +196,7 @@ class Events(
         Returns:
             Response: The RSVP response from the API.
         """
-        json_response = self._http_client._execute(
+        json_response, headers = self._http_client._execute(
             method="POST",
             path=f"/v3/grants/{identifier}/events/{event_id}/send-rsvp",
             query_params=query_params,
@@ -203,4 +204,4 @@ class Events(
             overrides=overrides,
         )
 
-        return RequestIdOnlyResponse.from_dict(json_response)
+        return RequestIdOnlyResponse.from_dict(json_response, headers)

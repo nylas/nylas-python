@@ -211,9 +211,11 @@ class TestHttpClient:
         response.status_code = 200
         response.json.return_value = {"foo": "bar"}
         response.url = "https://test.nylas.com/foo"
+        response.headers = {"X-Test-Header": "test"}
 
-        validation = _validate_response(response)
-        assert validation == {"foo": "bar"}
+        response_json, response_headers = _validate_response(response)
+        assert response_json == {"foo": "bar"}
+        assert response_headers == {"X-Test-Header": "test"}
 
     def test_validate_response_400_error(self):
         response = Mock()
@@ -274,7 +276,13 @@ class TestHttpClient:
         assert e.value.status_code == 400
 
     def test_execute(self, http_client, patched_version_and_sys, patched_request):
-        response = http_client._execute(
+        mock_response = Mock()
+        mock_response.json.return_value = {"foo": "bar"}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        response_json, response_headers = http_client._execute(
             method="GET",
             path="/foo",
             headers={"test": "header"},
@@ -282,7 +290,8 @@ class TestHttpClient:
             request_body={"foo": "bar"},
         )
 
-        assert response == {"foo": "bar"}
+        assert response_json == {"foo": "bar"}
+        assert response_headers == {"X-Test-Header": "test"}
         patched_request.assert_called_once_with(
             "GET",
             "https://test.nylas.com/foo?query=param",
@@ -301,7 +310,13 @@ class TestHttpClient:
     def test_execute_override_timeout(
         self, http_client, patched_version_and_sys, patched_request
     ):
-        response = http_client._execute(
+        mock_response = Mock()
+        mock_response.json.return_value = {"foo": "bar"}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        response_json, response_headers = http_client._execute(
             method="GET",
             path="/foo",
             headers={"test": "header"},
@@ -310,7 +325,8 @@ class TestHttpClient:
             overrides={"timeout": 60},
         )
 
-        assert response == {"foo": "bar"}
+        assert response_json == {"foo": "bar"}
+        assert response_headers == {"X-Test-Header": "test"}
         patched_request.assert_called_once_with(
             "GET",
             "https://test.nylas.com/foo?query=param",
@@ -338,4 +354,81 @@ class TestHttpClient:
         assert (
             str(e.value)
             == "Nylas SDK timed out before receiving a response from the server."
+        )
+
+    def test_validate_response_with_headers(self):
+        response = Mock()
+        response.status_code = 200
+        response.json.return_value = {"foo": "bar"}
+        response.url = "https://test.nylas.com/foo"
+        response.headers = {"X-Test-Header": "test"}
+
+        json_response, headers = _validate_response(response)
+        assert json_response == {"foo": "bar"}
+        assert headers == {"X-Test-Header": "test"}
+
+    def test_validate_response_400_error_with_headers(self):
+        response = Mock()
+        response.status_code = 400
+        response.json.return_value = {
+            "request_id": "123",
+            "error": {
+                "type": "api_error",
+                "message": "The request is invalid.",
+                "provider_error": {"foo": "bar"},
+            },
+        }
+        response.url = "https://test.nylas.com/foo"
+        response.headers = {"X-Test-Header": "test"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.headers == {"X-Test-Header": "test"}
+
+    def test_validate_response_auth_error_with_headers(self):
+        response = Mock()
+        response.status_code = 401
+        response.json.return_value = {
+            "error": "invalid_request",
+            "error_description": "The request is invalid.",
+            "error_uri": "https://docs.nylas.com/reference#authentication-errors",
+            "error_code": 100241,
+        }
+        response.url = "https://test.nylas.com/connect/token"
+        response.headers = {"X-Test-Header": "test"}
+
+        with pytest.raises(NylasOAuthError) as e:
+            _validate_response(response)
+        assert e.value.headers == {"X-Test-Header": "test"}
+
+    def test_execute_with_headers(self, http_client, patched_version_and_sys, patched_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {"foo": "bar"}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        response_json, response_headers = http_client._execute(
+            method="GET",
+            path="/foo",
+            headers={"test": "header"},
+            query_params={"query": "param"},
+            request_body={"foo": "bar"},
+        )
+
+        assert response_json == {"foo": "bar"}
+        assert response_headers == {"X-Test-Header": "test"}
+        patched_request.assert_called_once_with(
+            "GET",
+            "https://test.nylas.com/foo?query=param",
+            headers={
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+                "Content-type": "application/json",
+                "test": "header",
+            },
+            json={"foo": "bar"},
+            timeout=30,
+            data=None,
         )
