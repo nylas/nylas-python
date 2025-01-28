@@ -66,6 +66,27 @@ def demonstrate_list_response_headers(client: Client, grant_id: str) -> None:
         print_response_headers(e.headers, "Error")
 
 
+def demonstrate_list_response_headers_with_pagination(client: Client, grant_id: str) -> None:
+    """Demonstrate headers in list responses with pagination."""
+    print("\nDemonstrating List Response Headers with Pagination")
+    print("--------------------------------------------------")
+
+    try:
+        # List messages to get a ListResponse
+        threads = client.threads.list(identifier=grant_id, query_params={"limit": 1})
+        
+        print("✓ Successfully retrieved threads")
+        print_response_headers(threads.headers)
+        print(f"Total threads count: {len(threads.data)}")
+        
+    except NylasApiError as e:
+        print("\nError occurred while listing threads:")
+        print(f"✗ Error Type: {e.type}")
+        print(f"✗ Provider Error: {e.provider_error}")
+        print(f"✗ Request ID: {e.request_id}")
+        print_response_headers(e.headers, "Error")
+
+
 def demonstrate_find_response_headers(client: Client, grant_id: str) -> None:
     """Demonstrate headers in find/single-item responses."""
     print("\nDemonstrating Find Response Headers")
@@ -129,6 +150,7 @@ def main():
 
     # Demonstrate different types of responses and their headers
     demonstrate_list_response_headers(client, grant_id)
+    demonstrate_list_response_headers_with_pagination(client, grant_id)
     demonstrate_find_response_headers(client, grant_id)
     demonstrate_error_response_headers(client, grant_id)
 
