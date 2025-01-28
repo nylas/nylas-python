@@ -187,7 +187,7 @@ class Events(
         Send an RSVP for an event.
 
         Args:
-            identifier: The grant ID to send RSVP for.
+            identifier: The grant ID or email account to send RSVP for.
             event_id: The event ID to send RSVP for.
             query_params: The query parameters to send to the API.
             request_body: The request body to send to the API.
