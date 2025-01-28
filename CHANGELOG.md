@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.6.0
 ----------------
 * Added response headers to all responses from the Nylas API
 
