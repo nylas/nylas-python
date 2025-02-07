@@ -123,6 +123,58 @@ class TestEvent:
             overrides=None,
         )
 
+    def test_list_events_with_query_params(self, http_client_list_response):
+        events = Events(http_client_list_response)
+
+        events.list(identifier="abc-123", query_params={"limit": 20})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/events",
+            None,
+            {"limit": 20},
+            None,
+            overrides=None,
+        )
+
+    def test_list_events_with_select_param(self, http_client_list_response):
+        events = Events(http_client_list_response)
+
+        # Set up mock response data
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "event-123",
+                "title": "Team Meeting",
+                "description": "Weekly team sync",
+                "when": {
+                    "start_time": 1625097600,
+                    "end_time": 1625101200
+                }
+            }]
+        }
+
+        # Call the API method
+        result = events.list(
+            identifier="abc-123",
+            query_params={
+                "select": "id,title,description,when"
+            }
+        )
+
+        # Verify API call
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/events",
+            None,
+            {"select": "id,title,description,when"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
+
     def test_find_event(self, http_client_response):
         events = Events(http_client_response)
 
@@ -140,6 +192,49 @@ class TestEvent:
             None,
             overrides=None,
         )
+
+    def test_find_event_with_select_param(self, http_client_response):
+        events = Events(http_client_response)
+
+        # Set up mock response data
+        http_client_response._execute.return_value = ({
+            "request_id": "abc-123",
+            "data": {
+                "id": "event-123",
+                "title": "Team Meeting",
+                "description": "Weekly team sync",
+                "when": {
+                    "start_time": 1625097600,
+                    "end_time": 1625101200
+                }
+            }
+        }, {"X-Test-Header": "test"})
+
+        # Call the API method
+        result = events.find(
+            identifier="abc-123",
+            event_id="event-123",
+            query_params={
+                "calendar_id": "abc-123",
+                "select": "id,title,description,when"
+            }
+        )
+
+        # Verify API call
+        http_client_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/events/event-123",
+            None,
+            {
+                "calendar_id": "abc-123",
+                "select": "id,title,description,when"
+            },
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
 
     def test_create_event(self, http_client_response):
         events = Events(http_client_response)

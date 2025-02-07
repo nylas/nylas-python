@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for `select` query parameter in list calendars, list events, and list messages.
+
 v6.6.0
 ----------------
 * Added response headers to all responses from the Nylas API
@@ -26,7 +30,6 @@ v6.3.1
 * Fixed request session being reused across multiple requests
 * Added Folder Webhooks
 * Removed use of TestCommand
-
 
 v6.3.0
 ----------------

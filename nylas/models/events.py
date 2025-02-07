@@ -801,3 +801,48 @@ class SendRsvpRequest(TypedDict):
     """
 
     status: SendRsvpStatus
+
+
+class ListEventsQueryParams(ListQueryParams):
+    """
+    Interface representing the query parameters for listing events.
+
+    Attributes:
+        calendar_id: Return events from this calendar.
+        show_cancelled: Return cancelled events.
+        title: Return events with matching title.
+        description: Return events with matching description.
+        ical_uid: Return events with matching iCal UID.
+        location: Return events with matching location.
+        start: Return events with start time after this Unix timestamp.
+        end: Return events with end time before this Unix timestamp.
+        master_event_id: Return events that are instances of this master event.
+        metadata_pair: Pass in your metadata key-value pair to search for metadata.
+        busy: Return events with matching busy status.
+        updated_before: Return events updated before this Unix timestamp.
+        updated_after: Return events updated after this Unix timestamp.
+        attendees: Return events with matching attendees.
+        event_type: Return events with matching event type.
+        select (NotRequired[str]): Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+        limit (NotRequired[int]): The maximum number of objects to return.
+            This field defaults to 50. The maximum allowed value is 200.
+        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
+    """
+
+    calendar_id: NotRequired[str]
+    show_cancelled: NotRequired[bool]
+    title: NotRequired[str]
+    description: NotRequired[str]
+    ical_uid: NotRequired[str]
+    location: NotRequired[str]
+    start: NotRequired[int]
+    end: NotRequired[int]
+    master_event_id: NotRequired[str]
+    metadata_pair: NotRequired[Dict[str, str]]
+    busy: NotRequired[bool]
+    updated_before: NotRequired[int]
+    updated_after: NotRequired[int]
+    attendees: NotRequired[List[str]]
+    event_type: NotRequired[EventType]

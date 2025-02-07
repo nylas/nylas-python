@@ -57,9 +57,23 @@ class ListCalendarsQueryParams(ListQueryParams):
         page_token (NotRequired[str]): An identifier that specifies which page of data to return.
             This value should be taken from a ListResponse object's next_cursor parameter.
         metadata_pair: Pass in your metadata key-value pair to search for metadata.
+        select (NotRequired[str]): Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
     """
 
     metadata_pair: NotRequired[Dict[str, str]]
+
+
+class FindCalendarQueryParams(TypedDict):
+    """
+    Interface of the query parameters for finding a calendar.
+
+    Attributes:
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+    """
+
+    select: NotRequired[str]
 
 
 class CreateCalendarRequest(TypedDict):

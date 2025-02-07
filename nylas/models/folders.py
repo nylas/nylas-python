@@ -85,6 +85,24 @@ class ListFolderQueryParams(ListQueryParams):
 
     Attributes:
         parent_id: (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+        select (NotRequired[str]): Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+        limit (NotRequired[int]): The maximum number of objects to return.
+            This field defaults to 50. The maximum allowed value is 200.
+        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
     """
 
     parent_id: NotRequired[str]
+
+
+class FindFolderQueryParams(TypedDict):
+    """
+    Interface representing the query parameters for finding a folder.
+
+    Attributes:
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+    """
+
+    select: NotRequired[str]

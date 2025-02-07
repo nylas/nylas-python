@@ -149,6 +149,18 @@ Attributes:
 """
 
 
+class FindDraftQueryParams(TypedDict):
+    """
+    Query parameters for finding a draft.
+
+    Attributes:
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+    """
+
+    select: NotRequired[str]
+
+
 class SendMessageRequest(CreateDraftRequest):
     """
     A request to send a message.
