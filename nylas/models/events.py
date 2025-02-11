@@ -703,11 +703,11 @@ class ListEventQueryParams(ListQueryParams):
     Interface representing the query parameters for listing events.
 
     Attributes:
+        calendar_id: Specify calendar ID of the event. "primary" is a supported value
+            indicating the user's primary calendar.
         show_cancelled: Return events that have a status of cancelled.
             If an event is recurring, then it returns no matter the value set.
             Different providers have different semantics for cancelled events.
-        calendar_id: Specify calendar ID of the event. "primary" is a supported value
-            indicating the user's primary calendar.
         title: Return events matching the specified title.
         description: Return events matching the specified description.
         location: Return events matching the specified location.
@@ -723,14 +723,16 @@ class ListEventQueryParams(ListQueryParams):
         busy: Returns events with a busy status of true.
         order_by: Order results by the specified field.
             Currently only start is supported.
-        limit (NotRequired[int]): The maximum number of objects to return.
-            This field defaults to 50. The maximum allowed value is 200.
-        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
-            This value should be taken from a ListResponse object's next_cursor parameter.
         event_type (NotRequired[List[EventType]]): (Google only) Filter events by event type.
             You can pass the query parameter multiple times to select or exclude multiple event types.
         master_event_id (NotRequired[str]): Filter for instances of recurring events with the
             specified master_event_id. Not respected by metadata filtering.
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+        limit (NotRequired[int]): The maximum number of objects to return.
+            This field defaults to 50. The maximum allowed value is 200.
+        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
     """
 
     calendar_id: str
@@ -746,6 +748,7 @@ class ListEventQueryParams(ListQueryParams):
     order_by: NotRequired[str]
     event_type: NotRequired[List[EventType]]
     master_event_id: NotRequired[str]
+    select: NotRequired[str]
 
 
 class CreateEventQueryParams(TypedDict):
@@ -801,48 +804,3 @@ class SendRsvpRequest(TypedDict):
     """
 
     status: SendRsvpStatus
-
-
-class ListEventsQueryParams(ListQueryParams):
-    """
-    Interface representing the query parameters for listing events.
-
-    Attributes:
-        calendar_id: Return events from this calendar.
-        show_cancelled: Return cancelled events.
-        title: Return events with matching title.
-        description: Return events with matching description.
-        ical_uid: Return events with matching iCal UID.
-        location: Return events with matching location.
-        start: Return events with start time after this Unix timestamp.
-        end: Return events with end time before this Unix timestamp.
-        master_event_id: Return events that are instances of this master event.
-        metadata_pair: Pass in your metadata key-value pair to search for metadata.
-        busy: Return events with matching busy status.
-        updated_before: Return events updated before this Unix timestamp.
-        updated_after: Return events updated after this Unix timestamp.
-        attendees: Return events with matching attendees.
-        event_type: Return events with matching event type.
-        select (NotRequired[str]): Comma-separated list of fields to return in the response.
-            This allows you to receive only the portion of object data that you're interested in.
-        limit (NotRequired[int]): The maximum number of objects to return.
-            This field defaults to 50. The maximum allowed value is 200.
-        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
-            This value should be taken from a ListResponse object's next_cursor parameter.
-    """
-
-    calendar_id: NotRequired[str]
-    show_cancelled: NotRequired[bool]
-    title: NotRequired[str]
-    description: NotRequired[str]
-    ical_uid: NotRequired[str]
-    location: NotRequired[str]
-    start: NotRequired[int]
-    end: NotRequired[int]
-    master_event_id: NotRequired[str]
-    metadata_pair: NotRequired[Dict[str, str]]
-    busy: NotRequired[bool]
-    updated_before: NotRequired[int]
-    updated_after: NotRequired[int]
-    attendees: NotRequired[List[str]]
-    event_type: NotRequired[EventType]
