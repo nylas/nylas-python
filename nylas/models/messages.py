@@ -104,6 +104,7 @@ ListMessagesQueryParams = TypedDict(
         "has_attachment": NotRequired[bool],
         "fields": NotRequired[Fields],
         "search_query_native": NotRequired[str],
+        "select": NotRequired[str],
     },
 )
 """
@@ -125,6 +126,8 @@ Attributes:
     has_attachment: Filter messages by whether they have an attachment.
     fields: Specify "include_headers" to include headers in the response. "standard" is the default.
     search_query_native: A native provider search query for Google or Microsoft.
+    select: Comma-separated list of fields to return in the response.
+        This allows you to receive only the portion of object data that you're interested in.
     limit (NotRequired[int]): The maximum number of objects to return.
         This field defaults to 50. The maximum allowed value is 200.
     page_token (NotRequired[str]): An identifier that specifies which page of data to return.
@@ -138,9 +141,12 @@ class FindMessageQueryParams(TypedDict):
 
     Attributes:
         fields: Specify "include_headers" to include headers in the response. "standard" is the default.
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
     """
 
     fields: NotRequired[Fields]
+    select: NotRequired[str]
 
 
 class UpdateMessageRequest(TypedDict):

@@ -60,6 +60,40 @@ class TestCalendar:
             overrides=None,
         )
 
+    def test_list_calendars_with_select_param(self, http_client_list_response):
+        calendars = Calendars(http_client_list_response)
+
+        # Set up mock response data
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "calendar-123",
+                "name": "My Calendar",
+                "description": "My calendar description"
+            }]
+        }
+
+        # Call the API method
+        result = calendars.list(
+            identifier="abc-123",
+            query_params={
+                "select": "id,name,description"
+            }
+        )
+
+        # Verify API call
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/calendars",
+            None,
+            {"select": "id,name,description"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
+
     def test_find_calendar(self, http_client_response):
         calendars = Calendars(http_client_response)
 
@@ -73,6 +107,39 @@ class TestCalendar:
             None,
             overrides=None,
         )
+
+    def test_find_calendar_with_select_param(self, http_client_response):
+        calendars = Calendars(http_client_response)
+
+        # Set up mock response data
+        http_client_response._execute.return_value = ({
+            "request_id": "abc-123",
+            "data": {
+                "id": "calendar-123",
+                "name": "My Calendar",
+                "description": "My calendar description"
+            }
+        }, {"X-Test-Header": "test"})
+
+        # Call the API method
+        result = calendars.find(
+            identifier="abc-123",
+            calendar_id="calendar-123",
+            query_params={"select": "id,name,description"}
+        )
+
+        # Verify API call
+        http_client_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/calendars/calendar-123",
+            None,
+            {"select": "id,name,description"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
 
     def test_create_calendar(self, http_client_response):
         calendars = Calendars(http_client_response)

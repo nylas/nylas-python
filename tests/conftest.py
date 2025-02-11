@@ -174,7 +174,7 @@ def http_client_list_scheduled_messages():
             },
             {
                 "schedule_id": "rb856334-6d95-432c-86d1-c5dab0ce98be",
-                "status": {"code": "sucess", "description": "schedule send succeeded"},
+                "status": {"code": "success", "description": "schedule send succeeded"},
                 "close_time": 1690579819,
             },
         ],

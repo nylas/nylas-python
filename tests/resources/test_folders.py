@@ -44,6 +44,55 @@ class TestFolder:
             "GET", "/v3/grants/abc-123/folders", None, None, None, overrides=None
         )
 
+    def test_list_folders_with_query_params(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(identifier="abc-123", query_params={"limit": 20})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"limit": 20},
+            None,
+            overrides=None,
+        )
+
+    def test_list_folders_with_select_param(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        # Set up mock response data
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "folder-123",
+                "name": "Important",
+                "total_count": 42,
+                "unread_count": 5
+            }]
+        }
+
+        # Call the API method
+        result = folders.list(
+            identifier="abc-123",
+            query_params={
+                "select": "id,name,total_count,unread_count"
+            }
+        )
+
+        # Verify API call
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"select": "id,name,total_count,unread_count"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
+
     def test_find_folder(self, http_client_response):
         folders = Folders(http_client_response)
 
@@ -57,6 +106,40 @@ class TestFolder:
             None,
             overrides=None,
         )
+
+    def test_find_folder_with_select_param(self, http_client_response):
+        folders = Folders(http_client_response)
+
+        # Set up mock response data
+        http_client_response._execute.return_value = ({
+            "request_id": "abc-123",
+            "data": {
+                "id": "folder-123",
+                "name": "Important",
+                "total_count": 42,
+                "unread_count": 5
+            }
+        }, {"X-Test-Header": "test"})
+
+        # Call the API method
+        result = folders.find(
+            identifier="abc-123",
+            folder_id="folder-123",
+            query_params={"select": "id,name,total_count,unread_count"}
+        )
+
+        # Verify API call
+        http_client_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/folders/folder-123",
+            None,
+            {"select": "id,name,total_count,unread_count"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
 
     def test_create_folder(self, http_client_response):
         folders = Folders(http_client_response)
