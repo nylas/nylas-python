@@ -806,14 +806,13 @@ class SendRsvpRequest(TypedDict):
     status: SendRsvpStatus
 
 
-class ListImportEventsQueryParams(TypedDict):
+class ListImportEventsQueryParams(ListQueryParams):
     """
     Interface representing the query parameters for listing imported events.
 
     Attributes:
         calendar_id: Specify calendar ID to import events to. "primary" is a supported value
             indicating the user's primary calendar.
-        max_results: Specifies the maximum number of events Nylas returns in a single page of results.
         start: Filter for events that start at or after the specified time, in Unix timestamp format.
         end: Filter for events that end at or before the specified time, in Unix timestamp format.
         select: Comma-separated list of fields to return in the response.
@@ -823,7 +822,6 @@ class ListImportEventsQueryParams(TypedDict):
     """
 
     calendar_id: str
-    max_results: NotRequired[int]
     start: NotRequired[int]
     end: NotRequired[int]
     select: NotRequired[str]

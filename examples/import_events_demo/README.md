@@ -6,7 +6,7 @@ This example demonstrates the usage of the `list_import_events` method in the Ny
 
 1. **Basic Usage**: Shows how to use `list_import_events` with required parameters.
 2. **Time Filtering**: Demonstrates filtering events by start and end time.
-3. **Pagination**: Shows how to handle paginated results with `max_results` and `page_token`.
+3. **Pagination**: Shows how to handle paginated results with `limit` and `page_token`.
 4. **Field Selection**: Demonstrates how to use the `select` parameter to request only specific fields.
 5. **Multiple Scenarios**: Shows various parameter combinations for different use cases.
 
@@ -59,7 +59,6 @@ Event - Title: Client Call, ID: ghi789...
 The `list_import_events` method accepts the following parameters:
 
 - `calendar_id` (required): Specify the calendar ID to import events from. You can use "primary" for the user's primary calendar.
-- `max_results`: Maximum number of events to return in a single page.
 - `start`: Filter for events starting at or after this Unix timestamp.
 - `end`: Filter for events ending at or before this Unix timestamp.
 - `select`: Comma-separated list of fields to return in the response.

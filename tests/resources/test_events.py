@@ -207,18 +207,18 @@ class TestEvent:
             overrides=None,
         )
         
-    def test_list_import_events_with_max_results(self, http_client_list_response):
+    def test_list_import_events_with_limit(self, http_client_list_response):
         events = Events(http_client=http_client_list_response)
         events.list_import_events(
             identifier="grant-123",
-            query_params={"calendar_id": "primary", "max_results": 100},
+            query_params={"calendar_id": "primary", "limit": 100},
         )
 
         http_client_list_response._execute.assert_called_once_with(
             "GET",
             "/v3/grants/grant-123/events/import",
             None,
-            {"calendar_id": "primary", "max_results": 100},
+            {"calendar_id": "primary", "limit": 100},
             None,
             overrides=None,
         )
@@ -261,7 +261,7 @@ class TestEvent:
             identifier="grant-123",
             query_params={
                 "calendar_id": "primary",
-                "max_results": 50,
+                "limit": 50,
                 "start": start_time,
                 "end": end_time,
                 "select": "id,title,participants,when",
@@ -275,7 +275,7 @@ class TestEvent:
             None,
             {
                 "calendar_id": "primary",
-                "max_results": 50,
+                "limit": 50,
                 "start": start_time,
                 "end": end_time,
                 "select": "id,title,participants,when",

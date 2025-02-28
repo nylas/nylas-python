@@ -53,7 +53,7 @@ def demonstrate_basic_import(client: Client, grant_id: str) -> None:
     print("\nFetching events from primary calendar:")
     events = client.events.list_import_events(
         identifier=grant_id,
-        query_params={"calendar_id": "primary", "max_results": 2}
+        query_params={"calendar_id": "primary", "limit": 2}
     )
     print_data(events.data, "Basic import events")
 
@@ -83,19 +83,19 @@ def demonstrate_time_filtered_import(client: Client, grant_id: str) -> None:
     print_data(events.data, f"Events from {from_date} to {to_date}")
 
 
-def demonstrate_max_results(client: Client, grant_id: str) -> None:
-    """Demonstrate import events with max_results parameter."""
+def demonstrate_limit(client: Client, grant_id: str) -> None:
+    """Demonstrate import events with limit parameter."""
     print("\n=== Import Events with Max Results ===")
     
-    print("\nFetching events with max_results=5:")
+    print("\nFetching events with limit=5:")
     events = client.events.list_import_events(
         identifier=grant_id,
         query_params={
             "calendar_id": "primary",
-            "max_results": 5
+            "limit": 5
         }
     )
-    print_data(events.data, "Events with max_results=5")
+    print_data(events.data, "Events with limit=5")
 
 
 def demonstrate_field_selection(client: Client, grant_id: str) -> None:
@@ -107,7 +107,7 @@ def demonstrate_field_selection(client: Client, grant_id: str) -> None:
         identifier=grant_id,
         query_params={
             "calendar_id": "primary",
-            "max_results": 2,
+            "limit": 2,
             "select": "id,title,when"
         }
     )
@@ -119,12 +119,12 @@ def demonstrate_pagination(client: Client, grant_id: str) -> None:
     print("\n=== Import Events with Pagination ===")
     
     # First page
-    print("\nFetching first page of events (max_results=3):")
+    print("\nFetching first page of events (limit=3):")
     first_page = client.events.list_import_events(
         identifier=grant_id,
         query_params={
             "calendar_id": "primary",
-            "max_results": 3
+            "limit": 3
         }
     )
     print_data(first_page.data, "First page of events")
@@ -136,7 +136,7 @@ def demonstrate_pagination(client: Client, grant_id: str) -> None:
             identifier=grant_id,
             query_params={
                 "calendar_id": "primary",
-                "max_results": 3,
+                "limit": 3,
                 "page_token": first_page.next_cursor
             }
         )
@@ -159,7 +159,7 @@ def demonstrate_full_example(client: Client, grant_id: str) -> None:
         identifier=grant_id,
         query_params={
             "calendar_id": "primary",
-            "max_results": 10,
+            "limit": 10,
             "start": int(start_of_year),
             "end": int(end_of_year),
             "select": "id,title,description,when,participants,location"
@@ -185,7 +185,7 @@ def main():
     # Demonstrate different ways to use list_import_events
     demonstrate_basic_import(client, grant_id)
     demonstrate_time_filtered_import(client, grant_id)
-    demonstrate_max_results(client, grant_id)
+    demonstrate_limit(client, grant_id)
     demonstrate_field_selection(client, grant_id)
     demonstrate_pagination(client, grant_id)
     demonstrate_full_example(client, grant_id)
