@@ -804,3 +804,25 @@ class SendRsvpRequest(TypedDict):
     """
 
     status: SendRsvpStatus
+
+
+class ListImportEventsQueryParams(ListQueryParams):
+    """
+    Interface representing the query parameters for listing imported events.
+
+    Attributes:
+        calendar_id: Specify calendar ID to import events to. "primary" is a supported value
+            indicating the user's primary calendar.
+        start: Filter for events that start at or after the specified time, in Unix timestamp format.
+        end: Filter for events that end at or before the specified time, in Unix timestamp format.
+        select: Comma-separated list of fields to return in the response.
+            This allows you to receive only the portion of object data that you're interested in.
+        page_token: An identifier that specifies which page of data to return.
+            This value should be taken from a ListResponse object's next_cursor parameter.
+    """
+
+    calendar_id: str
+    start: NotRequired[int]
+    end: NotRequired[int]
+    select: NotRequired[str]
+    page_token: NotRequired[str]

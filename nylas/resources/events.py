@@ -12,6 +12,7 @@ from nylas.models.events import (
     CreateEventRequest,
     FindEventQueryParams,
     ListEventQueryParams,
+    ListImportEventsQueryParams,
     CreateEventQueryParams,
     UpdateEventQueryParams,
     DestroyEventQueryParams,
@@ -59,6 +60,34 @@ class Events(
 
         return super().list(
             path=f"/v3/grants/{identifier}/events",
+            response_type=Event,
+            query_params=query_params,
+            overrides=overrides,
+        )
+
+    def list_import_events(
+        self,
+        identifier: str,
+        query_params: ListImportEventsQueryParams,
+        overrides: RequestOverrides = None,
+    ) -> ListResponse[Event]:
+        """
+        Returns a list of recurring events, recurring event exceptions, and 
+        single events from the specified calendar within a given time frame. 
+        This is useful when you want to import, store, and synchronize events 
+        from the time frame to your application
+
+        Args:
+            identifier: The identifier of the Grant to act upon.
+            query_params: The query parameters to include in the request.
+            overrides: The request overrides to use for the request.
+
+        Returns:
+            The list of imported Events.
+        """
+
+        return super().list(
+            path=f"/v3/grants/{identifier}/events/import",
             response_type=Event,
             query_params=query_params,
             overrides=overrides,
