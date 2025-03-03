@@ -95,7 +95,7 @@ ListMessagesQueryParams = TypedDict(
         "to": NotRequired[List[str]],
         "cc": NotRequired[List[str]],
         "bcc": NotRequired[List[str]],
-        "in": NotRequired[List[str]],
+        "in": NotRequired[str],
         "unread": NotRequired[bool],
         "starred": NotRequired[bool],
         "thread_id": NotRequired[str],
