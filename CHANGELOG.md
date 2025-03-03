@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for `list_import_events`
+
 v6.7.0
 ----------------
 * Added support for `select` query parameter in list calendars, list events, and list messages.

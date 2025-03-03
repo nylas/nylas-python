@@ -175,6 +175,116 @@ class TestEvent:
         # The actual response validation is handled by the mock in conftest.py
         assert result is not None
 
+    def test_list_import_events(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary"},
+            None,
+            overrides=None,
+        )
+
+    def test_list_import_events_with_select_param(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary", "select": "id,title,participants"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary", "select": "id,title,participants"},
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_limit(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary", "limit": 100},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary", "limit": 100},
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_time_filters(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        # Using Unix timestamps for Jan 1, 2023 and Dec 31, 2023
+        start_time = 1672531200  # Jan 1, 2023
+        end_time = 1704067199  # Dec 31, 2023
+        
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={
+                "calendar_id": "primary",
+                "start": start_time,
+                "end": end_time
+            },
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {
+                "calendar_id": "primary",
+                "start": start_time,
+                "end": end_time
+            },
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_all_params(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        # Using Unix timestamps for Jan 1, 2023 and Dec 31, 2023
+        start_time = 1672531200  # Jan 1, 2023
+        end_time = 1704067199  # Dec 31, 2023
+        
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={
+                "calendar_id": "primary",
+                "limit": 50,
+                "start": start_time,
+                "end": end_time,
+                "select": "id,title,participants,when",
+                "page_token": "next-page-token-123"
+            },
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {
+                "calendar_id": "primary",
+                "limit": 50,
+                "start": start_time,
+                "end": end_time,
+                "select": "id,title,participants,when",
+                "page_token": "next-page-token-123"
+            },
+            None,
+            overrides=None,
+        )
+
     def test_find_event(self, http_client_response):
         events = Events(http_client_response)
 
