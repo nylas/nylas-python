@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.8.0
 ----------------
 * Added support for `list_import_events`
 
