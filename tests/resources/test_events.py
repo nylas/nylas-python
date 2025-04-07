@@ -1,5 +1,4 @@
 from nylas.resources.events import Events
-
 from nylas.models.events import Event
 
 
@@ -439,5 +438,115 @@ class TestEvent:
             path="/v3/grants/abc-123/events/event-123/send-rsvp",
             request_body=request_body,
             query_params={"calendar_id": "abc-123"},
+            overrides=None,
+        )
+
+    def test_event_with_notetaker_deserialization(self):
+        event_json = {
+            "id": "event-123",
+            "grant_id": "grant-123",
+            "calendar_id": "calendar-123",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "title": "Test Event with Notetaker",
+            "notetaker": {
+                "id": "notetaker-123",
+                "name": "Custom Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                }
+            }
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert event.id == "event-123"
+        assert event.grant_id == "grant-123"
+        assert event.calendar_id == "calendar-123"
+        assert event.busy is True
+        assert event.title == "Test Event with Notetaker"
+        assert event.notetaker is not None
+        assert event.notetaker.id == "notetaker-123"
+        assert event.notetaker.name == "Custom Notetaker"
+        assert event.notetaker.meeting_settings is not None
+        assert event.notetaker.meeting_settings.video_recording is True
+        assert event.notetaker.meeting_settings.audio_recording is True
+        assert event.notetaker.meeting_settings.transcription is True
+
+    def test_create_event_with_notetaker(self, http_client_response):
+        events = Events(http_client_response)
+        request_body = {
+            "title": "Test Event with Notetaker",
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400
+            },
+            "participants": [
+                {"email": "test@example.com", "name": "Test User"}
+            ],
+            "notetaker": {
+                "name": "Custom Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                }
+            }
+        }
+        query_params = {"calendar_id": "calendar-123"}
+
+        events.create(
+            identifier="abc-123",
+            request_body=request_body,
+            query_params=query_params
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/events",
+            None,
+            query_params,
+            request_body,
+            overrides=None,
+        )
+
+    def test_update_event_with_notetaker(self, http_client_response):
+        events = Events(http_client_response)
+        request_body = {
+            "title": "Updated Test Event",
+            "notetaker": {
+                "id": "notetaker-123",
+                "name": "Updated Notetaker",
+                "meeting_settings": {
+                    "video_recording": False,
+                    "audio_recording": True,
+                    "transcription": False
+                }
+            }
+        }
+        query_params = {"calendar_id": "calendar-123"}
+
+        events.update(
+            identifier="abc-123",
+            event_id="event-123",
+            request_body=request_body,
+            query_params=query_params
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/events/event-123",
+            None,
+            query_params,
+            request_body,
             overrides=None,
         )
