@@ -1,9 +1,9 @@
-from dataclasses import dataclass
-from typing import Dict, Optional, List
+from dataclasses import dataclass, field
+from typing import Dict, Optional, List, Any, Literal, Union
 
-from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict, NotRequired, Literal
-from nylas.models.events import Conferencing
+from dataclasses_json import dataclass_json, config
+from typing_extensions import TypedDict, NotRequired
+from nylas.models.events import Conferencing, _decode_conferencing
 from nylas.models.availability import AvailabilityRules, OpenHours
 
 BookingType = Literal["booking", "organizer-confirmation"]
@@ -161,7 +161,9 @@ class EventBooking:
     location: Optional[str] = None
     timezone: Optional[str] = None
     booking_type: Optional[BookingType] = None
-    conferencing: Optional[Conferencing] = None
+    conferencing: Optional[Conferencing] = field(
+        default=None, metadata=config(decoder=_decode_conferencing)
+    )
     disable_emails: Optional[bool] = None
     reminders: Optional[List[BookingReminder]] = None
 

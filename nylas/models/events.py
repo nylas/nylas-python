@@ -243,6 +243,15 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
 
     if "autocreate" in conferencing:
         return Autocreate.from_dict(conferencing)
+        
+    # Handle case where provider exists but details/autocreate doesn't
+    if "provider" in conferencing:
+        # Create a Details object with empty details
+        details_dict = {
+            "provider": conferencing["provider"],
+            "details": conferencing.get("conf_settings", {}) if "conf_settings" in conferencing else {}
+        }
+        return Details.from_dict(details_dict)
 
     raise ValueError(f"Invalid conferencing object, unknown type found: {conferencing}")
 
