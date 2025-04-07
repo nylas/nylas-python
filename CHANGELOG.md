@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for Notetaker APIs
+
 v6.8.0
 ----------------
 * Added support for `list_import_events`
