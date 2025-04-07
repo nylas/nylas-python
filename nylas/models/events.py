@@ -243,13 +243,17 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
 
     if "autocreate" in conferencing:
         return Autocreate.from_dict(conferencing)
-        
+
     # Handle case where provider exists but details/autocreate doesn't
     if "provider" in conferencing:
         # Create a Details object with empty details
         details_dict = {
             "provider": conferencing["provider"],
-            "details": conferencing.get("conf_settings", {}) if "conf_settings" in conferencing else {}
+            "details": (
+                conferencing.get("conf_settings", {})
+                if "conf_settings" in conferencing
+                else {}
+            ),
         }
         return Details.from_dict(details_dict)
 
@@ -299,6 +303,7 @@ class NotetakerMeetingSettings:
         audio_recording: When true, Notetaker records the meeting's audio.
         transcription: When true, Notetaker transcribes the meeting's audio.
     """
+
     video_recording: Optional[bool] = True
     audio_recording: Optional[bool] = True
     transcription: Optional[bool] = True
@@ -315,6 +320,7 @@ class EventNotetaker:
         name: The display name for the Notetaker bot.
         meeting_settings: Notetaker Meeting Settings.
     """
+
     id: Optional[str] = None
     name: Optional[str] = "Nylas Notetaker"
     meeting_settings: Optional[NotetakerMeetingSettings] = None
@@ -679,6 +685,7 @@ class EventNotetakerSettings(TypedDict):
         audio_recording: When true, Notetaker records the meeting's audio.
         transcription: When true, Notetaker transcribes the meeting's audio.
     """
+
     video_recording: NotRequired[bool]
     audio_recording: NotRequired[bool]
     transcription: NotRequired[bool]
@@ -693,6 +700,7 @@ class EventNotetakerRequest(TypedDict):
         name: The display name for the Notetaker bot.
         meeting_settings: Notetaker Meeting Settings.
     """
+
     id: NotRequired[str]
     name: NotRequired[str]
     meeting_settings: NotRequired[EventNotetakerSettings]

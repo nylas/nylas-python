@@ -1,24 +1,17 @@
 from typing import Optional
 
 from nylas.config import RequestOverrides
-from nylas.handler.api_resources import (
-    ListableApiResource,
-    FindableApiResource,
-    CreatableApiResource,
-    UpdatablePatchApiResource,
-    DestroyableApiResource,
-)
-from nylas.models.notetakers import (
-    Notetaker,
-    NotetakerMedia,
-    NotetakerState,
-    MeetingProvider,
-    InviteNotetakerRequest,
-    UpdateNotetakerRequest,
-    ListNotetakerQueryParams,
-    FindNotetakerQueryParams,
-)
-from nylas.models.response import Response, ListResponse, DeleteResponse
+from nylas.handler.api_resources import (CreatableApiResource,
+                                         DestroyableApiResource,
+                                         FindableApiResource,
+                                         ListableApiResource,
+                                         UpdatablePatchApiResource)
+from nylas.models.notetakers import (FindNotetakerQueryParams,
+                                     InviteNotetakerRequest,
+                                     ListNotetakerQueryParams,
+                                     Notetaker, NotetakerMedia,
+                                     UpdateNotetakerRequest)
+from nylas.models.response import DeleteResponse, ListResponse, Response
 
 
 class Notetakers(
@@ -54,7 +47,11 @@ class Notetakers(
         Returns:
             The list of Notetakers.
         """
-        path = "/v3/grants/notetakers" if identifier is None else f"/v3/grants/{identifier}/notetakers"
+        path = (
+            "/v3/grants/notetakers"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers"
+        )
         return super().list(
             path=path,
             response_type=Notetaker,
@@ -81,7 +78,11 @@ class Notetakers(
         Returns:
             The Notetaker with properties like state (NotetakerState) and meeting_provider (MeetingProvider).
         """
-        path = f"/v3/grants/notetakers/{notetaker_id}" if identifier is None else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
+        path = (
+            f"/v3/grants/notetakers/{notetaker_id}"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
+        )
         return super().find(
             path=path,
             response_type=Notetaker,
@@ -106,7 +107,11 @@ class Notetakers(
         Returns:
             The created Notetaker with state set to NotetakerState.SCHEDULED.
         """
-        path = "/v3/grants/notetakers" if identifier is None else f"/v3/grants/{identifier}/notetakers"
+        path = (
+            "/v3/grants/notetakers"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers"
+        )
         return super().create(
             path=path,
             response_type=Notetaker,
@@ -133,7 +138,11 @@ class Notetakers(
         Returns:
             The updated Notetaker.
         """
-        path = f"/v3/grants/notetakers/{notetaker_id}" if identifier is None else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
+        path = (
+            f"/v3/grants/notetakers/{notetaker_id}"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
+        )
         return super().patch(
             path=path,
             response_type=Notetaker,
@@ -158,7 +167,11 @@ class Notetakers(
         Returns:
             The response with information about the Notetaker that left.
         """
-        path = f"/v3/grants/notetakers/{notetaker_id}/leave" if identifier is None else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/leave"
+        path = (
+            f"/v3/grants/notetakers/{notetaker_id}/leave"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/leave"
+        )
         return super().create(
             path=path,
             response_type=Notetaker,
@@ -182,7 +195,11 @@ class Notetakers(
         Returns:
             The Notetaker media information including URLs for recordings and transcripts.
         """
-        path = f"/v3/grants/notetakers/{notetaker_id}/media" if identifier is None else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/media"
+        path = (
+            f"/v3/grants/notetakers/{notetaker_id}/media"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/media"
+        )
         return super().find(
             path=path,
             response_type=NotetakerMedia,
@@ -206,8 +223,12 @@ class Notetakers(
         Returns:
             The deletion response.
         """
-        path = f"/v3/grants/notetakers/{notetaker_id}/cancel" if identifier is None else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/cancel"
+        path = (
+            f"/v3/grants/notetakers/{notetaker_id}/cancel"
+            if identifier is None
+            else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/cancel"
+        )
         return super().destroy(
             path=path,
             overrides=overrides,
-        ) 
+        )
