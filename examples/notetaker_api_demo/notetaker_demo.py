@@ -2,7 +2,7 @@ import os
 import sys
 import json
 from nylas import Client
-from nylas.models.notetakers import NotetakerMeetingSettings, NotetakerState, InviteNotetakerRequest
+from nylas.models.notetakers import NotetakerMeetingSettingsRequest, NotetakerState, InviteNotetakerRequest
 from nylas.models.errors import NylasApiError
 
 # Initialize the Nylas client
@@ -92,18 +92,18 @@ def get_notetaker_media(notetaker_id):
         print(f"Unexpected error in get_notetaker_media: {str(e)}")
         raise
 
-def cancel_notetaker(notetaker_id):
-    """Demonstrates how to cancel a Notetaker."""
-    print("\n=== Canceling Notetaker ===")
+def leave_notetaker(notetaker_id):
+    """Demonstrates how to leave a Notetaker."""
+    print("\n=== Leaving Notetaker ===")
     
     try:
-        nylas.notetakers.cancel(notetaker_id)
-        print(f"Cancelled Notetaker with ID: {notetaker_id}")
+        nylas.notetakers.leave(notetaker_id)
+        print(f"Left Notetaker with ID: {notetaker_id}")
     except NylasApiError as e:
-        print(f"Error canceling notetaker: {str(e)}")
+        print(f"Error leaving notetaker: {str(e)}")
         raise
     except Exception as e:
-        print(f"Unexpected error in cancel_notetaker: {str(e)}")
+        print(f"Unexpected error in leave_notetaker: {str(e)}")
         raise
 
 def main():
@@ -125,8 +125,8 @@ def main():
         if notetaker.data.state == NotetakerState.MEDIA_AVAILABLE:
             get_notetaker_media(notetaker.data.id)
         
-        # Cancel the Notetaker
-        cancel_notetaker(notetaker.data.id)
+        # Leave the Notetaker
+        leave_notetaker(notetaker.data.id)
         
     except NylasApiError as e:
         print(f"\nNylas API Error: {str(e)}")

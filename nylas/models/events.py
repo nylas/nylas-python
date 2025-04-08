@@ -706,6 +706,18 @@ class EventNotetakerRequest(TypedDict):
     meeting_settings: NotRequired[EventNotetakerSettings]
 
 
+class CreateEventNotetaker(TypedDict):
+    """
+    Class representing Notetaker settings for an event.
+
+    Attributes:
+        name: The display name for the Notetaker bot.
+        meeting_settings: Notetaker Meeting Settings.
+    """
+
+    name: Optional[str] = "Nylas Notetaker"
+    meeting_settings: Optional[EventNotetakerSettings] = None
+
 class CreateEventRequest(TypedDict):
     """
     Interface representing a request to create an event.
@@ -741,7 +753,7 @@ class CreateEventRequest(TypedDict):
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
-    notetaker: NotRequired[EventNotetakerRequest]
+    notetaker: NotRequired[CreateEventNotetaker]
 
 
 class UpdateEventRequest(TypedDict):

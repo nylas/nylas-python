@@ -50,6 +50,22 @@ class MeetingProvider(str, Enum):
     MICROSOFT_TEAMS = "Microsoft Teams"
 
 
+class NotetakerMeetingSettingsRequest(TypedDict):
+    """
+    Interface representing Notetaker meeting settings for request objects.
+
+    Attributes:
+        video_recording: When true, Notetaker records the meeting's video.
+        audio_recording: When true, Notetaker records the meeting's audio.
+        transcription: When true, Notetaker transcribes the meeting's audio. 
+            If transcription is true, audio_recording must also be true.
+    """
+
+    video_recording: Optional[bool]
+    audio_recording: Optional[bool]
+    transcription: Optional[bool]
+
+
 @dataclass_json
 @dataclass
 class NotetakerMeetingSettings:
@@ -63,9 +79,9 @@ class NotetakerMeetingSettings:
             If transcription is true, audio_recording must also be true.
     """
 
-    video_recording: Optional[bool] = True
-    audio_recording: Optional[bool] = True
-    transcription: Optional[bool] = True
+    video_recording: bool = True
+    audio_recording: bool = True
+    transcription: bool = True
 
 
 @dataclass_json
@@ -152,7 +168,7 @@ class Notetaker:
 
 class InviteNotetakerRequest(TypedDict):
     """
-    Class representation of the Nylas notetaker creation request.
+    Interface representing the Nylas notetaker creation request.
 
     Attributes:
         meeting_link: A meeting invitation link that Notetaker uses to join the meeting.
@@ -165,12 +181,12 @@ class InviteNotetakerRequest(TypedDict):
     meeting_link: str
     join_time: NotRequired[int]
     name: NotRequired[str]
-    meeting_settings: NotRequired[dict]
+    meeting_settings: NotRequired[NotetakerMeetingSettingsRequest]
 
 
 class UpdateNotetakerRequest(TypedDict):
     """
-    Class representation of the Nylas notetaker update request.
+    Interface representing the Nylas notetaker update request.
 
     Attributes:
         join_time: When Notetaker should join the meeting, in Unix timestamp format.
@@ -180,7 +196,7 @@ class UpdateNotetakerRequest(TypedDict):
 
     join_time: NotRequired[int]
     name: NotRequired[str]
-    meeting_settings: NotRequired[dict]
+    meeting_settings: NotRequired[NotetakerMeetingSettingsRequest]
 
 
 class ListNotetakerQueryParams(ListQueryParams):
@@ -220,3 +236,19 @@ class FindNotetakerQueryParams(TypedDict):
     """
 
     select: NotRequired[str]
+
+
+@dataclass_json
+@dataclass
+class NotetakerLeaveResponse:
+    """
+    Class representing a Notetaker leave response.
+
+    Attributes:
+        id: The Notetaker ID.
+        message: A message describing the API response.
+    """
+
+    id: str
+    message: str
+    object: str = "notetaker_leave_response"

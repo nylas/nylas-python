@@ -10,6 +10,7 @@ from nylas.models.notetakers import (FindNotetakerQueryParams,
                                      InviteNotetakerRequest,
                                      ListNotetakerQueryParams,
                                      Notetaker, NotetakerMedia,
+                                     NotetakerLeaveResponse,
                                      UpdateNotetakerRequest)
 from nylas.models.response import DeleteResponse, ListResponse, Response
 
@@ -155,7 +156,7 @@ class Notetakers(
         notetaker_id: str,
         identifier: str = None,
         overrides: RequestOverrides = None,
-    ) -> Response[Notetaker]:
+    ) -> Response[NotetakerLeaveResponse]:
         """
         Remove Notetaker from a meeting.
 
@@ -165,7 +166,8 @@ class Notetakers(
             overrides: The request overrides to use.
 
         Returns:
-            The response with information about the Notetaker that left.
+            The response with information about the Notetaker that left,
+            including the Notetaker ID and a message.
         """
         path = (
             f"/v3/notetakers/{notetaker_id}/leave"
@@ -174,7 +176,7 @@ class Notetakers(
         )
         return super().create(
             path=path,
-            response_type=Notetaker,
+            response_type=NotetakerLeaveResponse,
             overrides=overrides,
         )
 

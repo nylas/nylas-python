@@ -1,12 +1,14 @@
 from nylas.resources.notetakers import Notetakers
 from nylas.models.notetakers import (
     Notetaker, 
-    NotetakerMeetingSettings, 
+    NotetakerMeetingSettings,
+    NotetakerMeetingSettingsRequest, 
     NotetakerMedia, 
     NotetakerMediaRecording, 
     NotetakerState,
     MeetingProvider,
-    ListNotetakerQueryParams
+    ListNotetakerQueryParams,
+    NotetakerLeaveResponse
 )
 
 
@@ -88,7 +90,7 @@ class TestNotetaker:
         notetakers.list(query_params=None)
 
         http_client_list_response._execute.assert_called_once_with(
-            "GET", "/v3/grants/notetakers", None, None, None, overrides=None
+            "GET", "/v3/notetakers", None, None, None, overrides=None
         )
 
     def test_list_notetakers_with_query_params(self, http_client_list_response):
@@ -157,7 +159,7 @@ class TestNotetaker:
 
         http_client_response._execute.assert_called_once_with(
             "GET",
-            "/v3/grants/notetakers/notetaker-123",
+            "/v3/notetakers/notetaker-123",
             None,
             None,
             None,
@@ -205,7 +207,7 @@ class TestNotetaker:
 
         http_client_response._execute.assert_called_once_with(
             "POST",
-            "/v3/grants/notetakers",
+            "/v3/notetakers",
             None,
             None,
             request_body,
@@ -253,7 +255,7 @@ class TestNotetaker:
 
         http_client_response._execute.assert_called_once_with(
             "PATCH",
-            "/v3/grants/notetakers/notetaker-123",
+            "/v3/notetakers/notetaker-123",
             None,
             None,
             request_body,
@@ -286,7 +288,7 @@ class TestNotetaker:
 
         http_client_response._execute.assert_called_once_with(
             "POST",
-            "/v3/grants/notetakers/notetaker-123/leave",
+            "/v3/notetakers/notetaker-123/leave",
             None,
             None,
             None,
@@ -319,7 +321,7 @@ class TestNotetaker:
 
         http_client_response._execute.assert_called_once_with(
             "GET",
-            "/v3/grants/notetakers/notetaker-123/media",
+            "/v3/notetakers/notetaker-123/media",
             None,
             None,
             None,
@@ -352,7 +354,7 @@ class TestNotetaker:
 
         http_client_delete_response._execute.assert_called_once_with(
             "DELETE",
-            "/v3/grants/notetakers/notetaker-123/cancel",
+            "/v3/notetakers/notetaker-123/cancel",
             None,
             None,
             None,
@@ -542,4 +544,18 @@ class TestNotetaker:
             {"state": "scheduled", "limit": 20},
             None,
             overrides=None,
-        ) 
+        )
+
+    def test_notetaker_leave_response_deserialization(self):
+        """Test deserialization of the NotetakerLeaveResponse model."""
+        leave_response_json = {
+            "id": "notetaker-123",
+            "message": "Notetaker has left the meeting",
+            "object": "notetaker_leave_response"
+        }
+
+        leave_response = NotetakerLeaveResponse.from_dict(leave_response_json)
+
+        assert leave_response.id == "notetaker-123"
+        assert leave_response.message == "Notetaker has left the meeting"
+        assert leave_response.object == "notetaker_leave_response" 
