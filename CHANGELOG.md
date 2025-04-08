@@ -3,7 +3,8 @@ nylas-python Changelog
 
 Unreleased
 ----------------
-* Added support for `tentative_as_busy` query parameter for Events and Availability requests.
+* Support for tentative_as_busy parameter that controls whether tentative events are treated as busy time. 
+  * Available as a query parameter for Events requests and as a property in Availability request bodies
 
 v6.8.0
 ----------------

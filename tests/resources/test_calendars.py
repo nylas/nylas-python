@@ -238,9 +238,6 @@ class TestCalendar:
                 "tentative_as_busy": False
             },
         }
-        query_params = {
-            "tentative_as_busy": False
-        }
 
         calendars.get_availability(request_body,overrides=None,)
 
