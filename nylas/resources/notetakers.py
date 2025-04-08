@@ -48,7 +48,7 @@ class Notetakers(
             The list of Notetakers.
         """
         path = (
-            "/v3/grants/notetakers"
+            "/v3/notetakers"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers"
         )
@@ -79,7 +79,7 @@ class Notetakers(
             The Notetaker with properties like state (NotetakerState) and meeting_provider (MeetingProvider).
         """
         path = (
-            f"/v3/grants/notetakers/{notetaker_id}"
+            f"/v3/notetakers/{notetaker_id}"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
         )
@@ -108,7 +108,7 @@ class Notetakers(
             The created Notetaker with state set to NotetakerState.SCHEDULED.
         """
         path = (
-            "/v3/grants/notetakers"
+            "/v3/notetakers"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers"
         )
@@ -139,7 +139,7 @@ class Notetakers(
             The updated Notetaker.
         """
         path = (
-            f"/v3/grants/notetakers/{notetaker_id}"
+            f"/v3/notetakers/{notetaker_id}"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers/{notetaker_id}"
         )
@@ -168,7 +168,7 @@ class Notetakers(
             The response with information about the Notetaker that left.
         """
         path = (
-            f"/v3/grants/notetakers/{notetaker_id}/leave"
+            f"/v3/notetakers/{notetaker_id}/leave"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/leave"
         )
@@ -196,7 +196,7 @@ class Notetakers(
             The Notetaker media information including URLs for recordings and transcripts.
         """
         path = (
-            f"/v3/grants/notetakers/{notetaker_id}/media"
+            f"/v3/notetakers/{notetaker_id}/media"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/media"
         )
@@ -224,7 +224,7 @@ class Notetakers(
             The deletion response.
         """
         path = (
-            f"/v3/grants/notetakers/{notetaker_id}/cancel"
+            f"/v3/notetakers/{notetaker_id}/cancel"
             if identifier is None
             else f"/v3/grants/{identifier}/notetakers/{notetaker_id}/cancel"
         )
