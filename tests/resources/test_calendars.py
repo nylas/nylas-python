@@ -247,6 +247,7 @@ class TestCalendar:
             method="POST",
             path="/v3/calendars/availability",
             request_body=request_body,
+            query_params=query_params,
             overrides=None,
         )
 
