@@ -164,7 +164,10 @@ class Calendars(
         )
 
     def get_availability(
-        self, request_body: GetAvailabilityRequest, query_params: GetAvailabilityRequestQueryParams, overrides: RequestOverrides = None
+        self,
+        request_body: GetAvailabilityRequest,
+        query_params: GetAvailabilityRequestQueryParams = None,
+        overrides: RequestOverrides = None
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.

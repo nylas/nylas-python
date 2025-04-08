@@ -241,7 +241,7 @@ class TestCalendar:
             "tentative_as_busy": False
         }
 
-        calendars.get_availability(request_body,overrides=None,query_params=query_params)
+        calendars.get_availability(request_body,query_params=query_params,overrides=None,)
 
         http_client_response._execute.assert_called_once_with(
             method="POST",

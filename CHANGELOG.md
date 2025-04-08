@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for `tentative_as_busy` query parameter for Events and Availability requests.
+
 v6.8.0
 ----------------
 * Added support for `list_import_events`
