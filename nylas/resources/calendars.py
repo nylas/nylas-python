@@ -8,7 +8,7 @@ from nylas.handler.api_resources import (
     UpdatableApiResource,
     DestroyableApiResource,
 )
-from nylas.models.availability import GetAvailabilityResponse, GetAvailabilityRequest
+from nylas.models.availability import GetAvailabilityResponse, GetAvailabilityRequest, GetAvailabilityRequestQueryParams
 from nylas.models.free_busy import (
     GetFreeBusyResponse,
     GetFreeBusyRequest,
@@ -164,13 +164,14 @@ class Calendars(
         )
 
     def get_availability(
-        self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
+        self, request_body: GetAvailabilityRequest, query_params: GetAvailabilityRequestQueryParams, overrides: RequestOverrides = None
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.
 
         Args:
             request_body: The request body to send to the API.
+            query_params: The query parameters to include in the request.
             overrides: The request overrides to use for the request.
 
         Returns:
@@ -179,6 +180,7 @@ class Calendars(
         json_response, headers = self._http_client._execute(
             method="POST",
             path="/v3/calendars/availability",
+            query_params=query_params,
             request_body=request_body,
             overrides=overrides,
         )

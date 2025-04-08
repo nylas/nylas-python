@@ -144,3 +144,9 @@ class GetAvailabilityRequest(TypedDict):
     round_to_30_minutes: NotRequired[bool]
     availability_rules: NotRequired[AvailabilityRules]
     round_to: NotRequired[int]
+
+class GetAvailabilityRequestQueryParams(TypedDict):
+    """
+    tentative_as_busy: Specify if tentative events should be treated as busy (Only Microsoft and EWS)
+    """
+    tentative_as_busy: NotRequired[bool]

@@ -237,8 +237,11 @@ class TestCalendar:
                 "round_robin_group_id": "event-123",
             },
         }
+        query_params = {
+            "tentative_as_busy": False
+        }
 
-        calendars.get_availability(request_body)
+        calendars.get_availability(request_body,overrides=None,query_params=query_params)
 
         http_client_response._execute.assert_called_once_with(
             method="POST",
