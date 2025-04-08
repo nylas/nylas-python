@@ -1,10 +1,11 @@
-from dataclasses import dataclass
-from typing import Dict, Optional, List
+from dataclasses import dataclass, field
+from typing import Dict, List, Literal, Optional
 
-from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict, NotRequired, Literal
-from nylas.models.events import Conferencing
+from dataclasses_json import config, dataclass_json
+from typing_extensions import NotRequired, TypedDict
+
 from nylas.models.availability import AvailabilityRules, OpenHours
+from nylas.models.events import Conferencing, _decode_conferencing
 
 BookingType = Literal["booking", "organizer-confirmation"]
 BookingReminderType = Literal["email", "webhook"]
@@ -99,7 +100,7 @@ class SchedulerSettings:
         confirmation_redirect_url: The custom URL to redirect to once the booking is confirmed.
         hide_rescheduling_options: Whether the option to reschedule an event
             is hidden in booking confirmations and notifications.
-        hide_cancellation_options: Whether the option to cancel an event 
+        hide_cancellation_options: Whether the option to cancel an event
             is hidden in booking confirmations and notifications.
         hide_additional_guests: Whether to hide the additional guests field on the scheduling page.
         email_template: Configurable settings for booking emails.
@@ -161,7 +162,9 @@ class EventBooking:
     location: Optional[str] = None
     timezone: Optional[str] = None
     booking_type: Optional[BookingType] = None
-    conferencing: Optional[Conferencing] = None
+    conferencing: Optional[Conferencing] = field(
+        default=None, metadata=config(decoder=_decode_conferencing)
+    )
     disable_emails: Optional[bool] = None
     reminders: Optional[List[BookingReminder]] = None
 
@@ -298,6 +301,7 @@ class UpdateConfigurationRequest(TypedDict):
         scheduler: Settings for the Scheduler UI.
         appearance: Appearance settings for the Scheduler UI.
     """
+
     participants: NotRequired[List[ConfigParticipant]]
     availability: NotRequired[Availability]
     event_booking: NotRequired[EventBooking]
@@ -320,6 +324,7 @@ class CreateSessionRequest(TypedDict):
             slug is not required.
         time_to_live: The time-to-live in seconds for the session
     """
+
     configuration_id: NotRequired[str]
     slug: NotRequired[str]
     time_to_live: NotRequired[int]
@@ -381,7 +386,7 @@ class CreateBookingRequest:
         timezone: The guest's timezone that is used in email notifications.
         email_language: The language of the guest email notifications.
         additional_guests: List of additional guest email addresses to include in the booking.
-        additional_fields: Dictionary of additional field keys mapped to 
+        additional_fields: Dictionary of additional field keys mapped to
             values populated by the guest in the booking form.
     """
 
@@ -494,7 +499,7 @@ class CreateBookingQueryParams:
       slug: The slug of the Configuration object whose settings are used for calculating availability.
         If you're using session authentication (requires_session_auth is set to true) or using configurationId,
           slug is not required.
-      timezone: The timezone to use for the booking. 
+      timezone: The timezone to use for the booking.
         If not provided, Nylas uses the timezone from the Configuration object.
     """
 

@@ -14,6 +14,7 @@ from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
 from nylas.resources.grants import Grants
 from nylas.resources.scheduler import Scheduler
+from nylas.resources.notetakers import Notetakers
 
 
 class Client:
@@ -180,3 +181,13 @@ class Client:
             The Scheduler API.
         """
         return Scheduler(self.http_client)
+
+    @property
+    def notetakers(self) -> Notetakers:
+        """
+        Access the Notetakers API.
+
+        Returns:
+            The Notetakers API.
+        """
+        return Notetakers(self.http_client)

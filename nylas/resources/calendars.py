@@ -177,9 +177,11 @@ class Calendars(
             Response: The availability response from the API.
         """
         json_response, headers = self._http_client._execute(
-            method="POST",
-            path="/v3/calendars/availability",
-            request_body=request_body,
+            "POST",
+            "/v3/calendars/availability",
+            None,
+            None,
+            request_body,
             overrides=overrides,
         )
 
@@ -203,9 +205,11 @@ class Calendars(
             Response: The free/busy response from the API.
         """
         json_response, headers = self._http_client._execute(
-            method="POST",
-            path=f"/v3/grants/{identifier}/calendars/free-busy",
-            request_body=request_body,
+            "POST",
+            f"/v3/grants/{identifier}/calendars/free-busy",
+            None,
+            None,
+            request_body,
             overrides=overrides,
         )
 
