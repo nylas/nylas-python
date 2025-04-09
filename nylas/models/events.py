@@ -244,6 +244,19 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
     if "autocreate" in conferencing:
         return Autocreate.from_dict(conferencing)
 
+    # Handle case where provider exists but details/autocreate doesn't
+    if "provider" in conferencing:
+        # Create a Details object with empty details
+        details_dict = {
+            "provider": conferencing["provider"],
+            "details": (
+                conferencing.get("conf_settings", {})
+                if "conf_settings" in conferencing
+                else {}
+            ),
+        }
+        return Details.from_dict(details_dict)
+
     raise ValueError(f"Invalid conferencing object, unknown type found: {conferencing}")
 
 
@@ -281,6 +294,40 @@ class Reminders:
 
 @dataclass_json
 @dataclass
+class NotetakerMeetingSettings:
+    """
+    Class representing Notetaker meeting settings.
+
+    Attributes:
+        video_recording: When true, Notetaker records the meeting's video.
+        audio_recording: When true, Notetaker records the meeting's audio.
+        transcription: When true, Notetaker transcribes the meeting's audio.
+    """
+
+    video_recording: Optional[bool] = True
+    audio_recording: Optional[bool] = True
+    transcription: Optional[bool] = True
+
+
+@dataclass_json
+@dataclass
+class EventNotetaker:
+    """
+    Class representing Notetaker settings for an event.
+
+    Attributes:
+        id: The Notetaker bot ID.
+        name: The display name for the Notetaker bot.
+        meeting_settings: Notetaker Meeting Settings.
+    """
+
+    id: Optional[str] = None
+    name: Optional[str] = "Nylas Notetaker"
+    meeting_settings: Optional[NotetakerMeetingSettings] = None
+
+
+@dataclass_json
+@dataclass
 class Event:
     """
     Class representation of a Nylas Event object.
@@ -313,6 +360,7 @@ class Event:
         visibility: The Event's visibility (private or public).
         capacity: Sets the maximum number of participants that may attend the event.
         master_event_id: For recurring events, this field contains the main (master) event's ID.
+        notetaker: Notetaker meeting bot settings.
     """
 
     id: str
@@ -343,6 +391,7 @@ class Event:
     created_at: Optional[int] = None
     updated_at: Optional[int] = None
     master_event_id: Optional[str] = None
+    notetaker: Optional[EventNotetaker] = None
 
 
 class CreateParticipant(TypedDict):
@@ -627,6 +676,48 @@ UpdateWhen = Union[UpdateTime, UpdateTimespan, UpdateDate, UpdateDatespan]
 """ Union type representing the different types of event time configurations for updating an Event."""
 
 
+class EventNotetakerSettings(TypedDict):
+    """
+    Interface representing Notetaker meeting settings for an event.
+
+    Attributes:
+        video_recording: When true, Notetaker records the meeting's video.
+        audio_recording: When true, Notetaker records the meeting's audio.
+        transcription: When true, Notetaker transcribes the meeting's audio.
+    """
+
+    video_recording: NotRequired[bool]
+    audio_recording: NotRequired[bool]
+    transcription: NotRequired[bool]
+
+
+class EventNotetakerRequest(TypedDict):
+    """
+    Interface representing Notetaker settings for an event.
+
+    Attributes:
+        id: The Notetaker bot ID.
+        name: The display name for the Notetaker bot.
+        meeting_settings: Notetaker Meeting Settings.
+    """
+
+    id: NotRequired[str]
+    name: NotRequired[str]
+    meeting_settings: NotRequired[EventNotetakerSettings]
+
+
+class CreateEventNotetaker(TypedDict):
+    """
+    Class representing Notetaker settings for an event.
+
+    Attributes:
+        name: The display name for the Notetaker bot.
+        meeting_settings: Notetaker Meeting Settings.
+    """
+
+    name: Optional[str] = "Nylas Notetaker"
+    meeting_settings: Optional[EventNotetakerSettings] = None
+
 class CreateEventRequest(TypedDict):
     """
     Interface representing a request to create an event.
@@ -646,6 +737,7 @@ class CreateEventRequest(TypedDict):
         visibility: The visibility of the event.
         capacity: The capacity of the event.
         hide_participants: Whether to hide participants of the event.
+        notetaker: Notetaker meeting bot settings.
     """
 
     when: CreateWhen
@@ -661,6 +753,7 @@ class CreateEventRequest(TypedDict):
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
+    notetaker: NotRequired[CreateEventNotetaker]
 
 
 class UpdateEventRequest(TypedDict):
@@ -681,6 +774,7 @@ class UpdateEventRequest(TypedDict):
         visibility: The visibility of the event.
         capacity: The capacity of the event.
         hide_participants: Whether to hide participants of the event.
+        notetaker: Notetaker meeting bot settings.
     """
 
     when: NotRequired[UpdateWhen]
@@ -696,6 +790,7 @@ class UpdateEventRequest(TypedDict):
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
     hide_participants: NotRequired[bool]
+    notetaker: NotRequired[EventNotetakerRequest]
 
 
 class ListEventQueryParams(ListQueryParams):
@@ -727,6 +822,8 @@ class ListEventQueryParams(ListQueryParams):
             You can pass the query parameter multiple times to select or exclude multiple event types.
         master_event_id (NotRequired[str]): Filter for instances of recurring events with the
             specified master_event_id. Not respected by metadata filtering.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
         select: Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
         limit (NotRequired[int]): The maximum number of objects to return.
@@ -749,6 +846,7 @@ class ListEventQueryParams(ListQueryParams):
     event_type: NotRequired[List[EventType]]
     master_event_id: NotRequired[str]
     select: NotRequired[str]
+    tentative_as_busy: NotRequired[bool]
 
 
 class CreateEventQueryParams(TypedDict):
@@ -758,10 +856,13 @@ class CreateEventQueryParams(TypedDict):
     Attributes:
         calendar_id: The ID of the calendar to create the event in.
         notify_participants: Email notifications containing the calendar event is sent to all event participants.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
     """
 
     calendar_id: str
     notify_participants: NotRequired[bool]
+    tentative_as_busy: NotRequired[bool]
 
 
 class FindEventQueryParams(TypedDict):
@@ -771,9 +872,12 @@ class FindEventQueryParams(TypedDict):
     Attributes:
         calendar_id: Calendar ID to find the event in.
             "primary" is a supported value indicating the user's primary calendar.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
     """
 
     calendar_id: str
+    tentative_as_busy: NotRequired[bool]
 
 
 UpdateEventQueryParams = CreateEventQueryParams
