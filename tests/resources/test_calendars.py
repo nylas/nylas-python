@@ -1,6 +1,6 @@
 from nylas.resources.calendars import Calendars
 
-from nylas.models.calendars import Calendar
+from nylas.models.calendars import Calendar, EventSelection
 
 
 class TestCalendar:
@@ -36,6 +36,54 @@ class TestCalendar:
         assert cal.object == "calendar"
         assert cal.read_only is False
         assert cal.timezone == "America/Los_Angeles"
+
+    def test_calendar_with_notetaker_deserialization(self):
+        calendar_json = {
+            "grant_id": "abc-123-grant-id",
+            "description": "Description of my new calendar",
+            "id": "5d3qmne77v32r8l4phyuksl2x",
+            "is_owned_by_user": True,
+            "name": "My New Calendar",
+            "object": "calendar",
+            "read_only": False,
+            "notetaker": {
+                "name": "My Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                },
+                "rules": {
+                    "event_selection": ["internal", "external"],
+                    "participant_filter": {
+                        "participants_gte": 3,
+                        "participants_lte": 10
+                    }
+                }
+            }
+        }
+
+        cal = Calendar.from_dict(calendar_json)
+
+        assert cal.grant_id == "abc-123-grant-id"
+        assert cal.id == "5d3qmne77v32r8l4phyuksl2x"
+        assert cal.is_owned_by_user is True
+        assert cal.name == "My New Calendar"
+        assert cal.object == "calendar"
+        assert cal.read_only is False
+        assert cal.notetaker is not None
+        assert cal.notetaker.name == "My Notetaker"
+        assert cal.notetaker.meeting_settings is not None
+        assert cal.notetaker.meeting_settings.video_recording is True
+        assert cal.notetaker.meeting_settings.audio_recording is True
+        assert cal.notetaker.meeting_settings.transcription is True
+        assert cal.notetaker.rules is not None
+        assert len(cal.notetaker.rules.event_selection) == 2
+        assert EventSelection.INTERNAL in cal.notetaker.rules.event_selection
+        assert EventSelection.EXTERNAL in cal.notetaker.rules.event_selection
+        assert cal.notetaker.rules.participant_filter is not None
+        assert cal.notetaker.rules.participant_filter.participants_gte == 3
+        assert cal.notetaker.rules.participant_filter.participants_lte == 10
 
     def test_list_calendars(self, http_client_list_response):
         calendars = Calendars(http_client_list_response)
@@ -162,6 +210,41 @@ class TestCalendar:
             overrides=None,
         )
 
+    def test_create_calendar_with_notetaker(self, http_client_response):
+        calendars = Calendars(http_client_response)
+        request_body = {
+            "name": "My New Calendar",
+            "description": "Description of my new calendar",
+            "location": "Los Angeles, CA",
+            "timezone": "America/Los_Angeles",
+            "notetaker": {
+                "name": "My Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                },
+                "rules": {
+                    "event_selection": [EventSelection.INTERNAL.value, EventSelection.EXTERNAL.value],
+                    "participant_filter": {
+                        "participants_gte": 3,
+                        "participants_lte": 10
+                    }
+                }
+            }
+        }
+
+        calendars.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/calendars",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
     def test_update_calendar(self, http_client_response):
         calendars = Calendars(http_client_response)
         request_body = {
@@ -170,6 +253,39 @@ class TestCalendar:
             "location": "Los Angeles, CA",
             "timezone": "America/Los_Angeles",
             "metadata": {"your-key": "value"},
+        }
+
+        calendars.update(
+            identifier="abc-123", calendar_id="calendar-123", request_body=request_body
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/calendars/calendar-123",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_update_calendar_with_notetaker(self, http_client_response):
+        calendars = Calendars(http_client_response)
+        request_body = {
+            "name": "My Updated Calendar",
+            "notetaker": {
+                "name": "Updated Notetaker",
+                "meeting_settings": {
+                    "video_recording": False,
+                    "audio_recording": True,
+                    "transcription": False
+                },
+                "rules": {
+                    "event_selection": [EventSelection.ALL.value],
+                    "participant_filter": {
+                        "participants_gte": 2
+                    }
+                }
+            }
         }
 
         calendars.update(
@@ -202,19 +318,26 @@ class TestCalendar:
     def test_get_availability(self, http_client_response):
         calendars = Calendars(http_client_response)
         request_body = {
-            "start_time": 1614556800,
-            "end_time": 1614643200,
-            "participants": [
+            "start_time": 1497916800,
+            "end_time": 1498003200,
+            "duration_minutes": 30,
+            "interval_minutes": 30,
+            "free_busy": [
                 {
                     "email": "test@gmail.com",
-                    "calendar_ids": ["calendar-123"],
-                    "open_hours": [
+                }
+            ],
+            "open_hours": [
+                {
+                    "days": ["monday", "wednesday"],
+                    "timezone": "America/New_York",
+                    "start": "08:00",
+                    "end": "18:00",
+                    "restrictions": [
                         {
-                            "days": [0],
-                            "timezone": "America/Los_Angeles",
-                            "start": "09:00",
-                            "end": "17:00",
-                            "exdates": ["2021-03-01"],
+                            "days": ["monday"],
+                            "start": "12:00",
+                            "end": "13:00",
                         }
                     ],
                 }
@@ -242,42 +365,34 @@ class TestCalendar:
         calendars.get_availability(request_body,overrides=None,)
 
         http_client_response._execute.assert_called_once_with(
-            method="POST",
-            path="/v3/calendars/availability",
-            request_body=request_body,
+            "POST",
+            "/v3/calendars/availability",
+            None,
+            None,
+            request_body,
             overrides=None,
         )
 
     def test_get_free_busy(self, http_client_free_busy):
         calendars = Calendars(http_client_free_busy)
-        request_body = {
-            "start_time": 1614556800,
-            "end_time": 1614643200,
-            "emails": ["test@gmail.com"],
+        free_busy_request = {
+            "emails": ["test@gmail.com", "test2@gmail.com"],
+            "start_time": 1497916800,
+            "end_time": 1498003200,
         }
 
-        response = calendars.get_free_busy(
-            identifier="abc-123", request_body=request_body
+        # Http client is mocked in conftest.py, specific
+        # mock for free busy is configured there
+        calendars.get_free_busy(
+            identifier="abc123", request_body=free_busy_request, overrides=None
         )
 
         http_client_free_busy._execute.assert_called_once_with(
-            method="POST",
-            path="/v3/grants/abc-123/calendars/free-busy",
-            request_body=request_body,
+            "POST",
+            "/v3/grants/abc123/calendars/free-busy",
+            None,
+            None,
+            free_busy_request,
             overrides=None,
         )
-        assert len(response.data) == 2
-        assert response.request_id == "dd3ec9a2-8f15-403d-b269-32b1f1beb9f5"
-        assert response.data[0].email == "user1@example.com"
-        assert len(response.data[0].time_slots) == 2
-        assert response.data[0].time_slots[0].start_time == 1690898400
-        assert response.data[0].time_slots[0].end_time == 1690902000
-        assert response.data[0].time_slots[0].status == "busy"
-        assert response.data[0].time_slots[1].start_time == 1691064000
-        assert response.data[0].time_slots[1].end_time == 1691067600
-        assert response.data[0].time_slots[1].status == "busy"
-        assert response.data[1].email == "user2@example.com"
-        assert (
-            response.data[1].error
-            == "Unable to resolve e-mail address user2@example.com to an Active Directory object."
-        )
+

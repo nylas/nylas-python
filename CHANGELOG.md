@@ -4,7 +4,9 @@ nylas-python Changelog
 Unreleased
 ----------------
 * Support for tentative_as_busy parameter that controls whether tentative events are treated as busy time. 
-  * Available as a query parameter for Events requests and as a property in Availability request bodies
+* Available as a query parameter for Events requests and as a property in Availability request bodies
+* Added support for Notetaker APIs
+* Added support for Notetaker via the calendar and event APIs
 
 v6.8.0
 ----------------
