@@ -15,6 +15,7 @@ from nylas.models.drafts import (
     Draft,
     UpdateDraftRequest,
     CreateDraftRequest,
+    FindDraftQueryParams,
 )
 from nylas.models.messages import Message
 from nylas.models.response import ListResponse, Response, DeleteResponse
@@ -67,6 +68,7 @@ class Drafts(
         identifier: str,
         draft_id: str,
         overrides: RequestOverrides = None,
+        query_params: FindDraftQueryParams = None,
     ) -> Response[Draft]:
         """
         Return a Draft.
@@ -75,6 +77,7 @@ class Drafts(
             identifier: The identifier of the grant to get the draft for.
             draft_id: The identifier of the draft to get.
             overrides: The request overrides to use for the request.
+            query_params: The query parameters to include in the request.
 
         Returns:
             The requested Draft.
@@ -82,6 +85,7 @@ class Drafts(
         return super().find(
             path=f"/v3/grants/{identifier}/drafts/{urllib.parse.quote(draft_id, safe='')}",
             response_type=Draft,
+            query_params=query_params,
             overrides=overrides,
         )
 

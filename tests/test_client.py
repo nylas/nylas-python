@@ -86,3 +86,9 @@ class TestClient:
     def test_client_webhooks_property(self, client):
         assert client.webhooks is not None
         assert type(client.webhooks) is Webhooks
+
+    def test_scheduler(self, client):
+        assert client.scheduler is not None
+
+    def test_notetakers(self, client):
+        assert client.notetakers is not None

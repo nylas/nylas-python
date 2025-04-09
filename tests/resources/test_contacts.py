@@ -112,6 +112,41 @@ class TestContact:
             overrides=None,
         )
 
+    def test_list_contacts_with_select_param(self, http_client_list_response):
+        contacts = Contacts(http_client_list_response)
+
+        # Set up mock response data
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "contact-123",
+                "given_name": "John",
+                "surname": "Doe",
+                "emails": [{"email": "john@example.com", "type": "work"}]
+            }]
+        }
+
+        # Call the API method
+        result = contacts.list(
+            identifier="abc-123",
+            query_params={
+                "select": "id,given_name,surname,emails"
+            }
+        )
+
+        # Verify API call
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/contacts",
+            None,
+            {"select": "id,given_name,surname,emails"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
+
     def test_find_contact(self, http_client_response):
         contacts = Contacts(http_client_response)
 
@@ -125,6 +160,40 @@ class TestContact:
             None,
             overrides=None,
         )
+
+    def test_find_contact_with_select_param(self, http_client_response):
+        contacts = Contacts(http_client_response)
+
+        # Set up mock response data
+        http_client_response._execute.return_value = ({
+            "request_id": "abc-123",
+            "data": {
+                "id": "contact-123",
+                "given_name": "John",
+                "surname": "Doe",
+                "emails": [{"email": "john@example.com", "type": "work"}]
+            }
+        }, {"X-Test-Header": "test"})
+
+        # Call the API method
+        result = contacts.find(
+            identifier="abc-123",
+            contact_id="contact-123",
+            query_params={"select": "id,given_name,surname,emails"}
+        )
+
+        # Verify API call
+        http_client_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/contacts/contact-123",
+            None,
+            {"select": "id,given_name,surname,emails"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
 
     def test_find_contact_with_query_params(self, http_client_response):
         contacts = Contacts(http_client_response)

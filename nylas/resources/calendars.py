@@ -20,6 +20,7 @@ from nylas.models.calendars import (
     CreateCalendarRequest,
     UpdateCalendarRequest,
     ListCalendarsQueryParams,
+    FindCalendarQueryParams,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -66,7 +67,11 @@ class Calendars(
         )
 
     def find(
-        self, identifier: str, calendar_id: str, overrides: RequestOverrides = None
+        self,
+        identifier: str,
+        calendar_id: str,
+        overrides: RequestOverrides = None,
+        query_params: FindCalendarQueryParams = None,
     ) -> Response[Calendar]:
         """
         Return a Calendar.
@@ -76,6 +81,7 @@ class Calendars(
             calendar_id: The ID of the Calendar to retrieve.
                 Use "primary" to refer to the primary Calendar associated with the Grant.
             overrides: The request overrides to use for the request.
+            query_params: The query parameters to include in the request.
 
         Returns:
             The Calendar.
@@ -83,6 +89,7 @@ class Calendars(
         return super().find(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}",
             response_type=Calendar,
+            query_params=query_params,
             overrides=overrides,
         )
 
@@ -156,8 +163,7 @@ class Calendars(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}", overrides=overrides
         )
 
-    def get_availability(
-        self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
+    def get_availability(self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.
@@ -170,9 +176,11 @@ class Calendars(
             Response: The availability response from the API.
         """
         json_response, headers = self._http_client._execute(
-            method="POST",
-            path="/v3/calendars/availability",
-            request_body=request_body,
+            "POST",
+            "/v3/calendars/availability",
+            None,
+            None,
+            request_body,
             overrides=overrides,
         )
 
@@ -196,9 +204,11 @@ class Calendars(
             Response: The free/busy response from the API.
         """
         json_response, headers = self._http_client._execute(
-            method="POST",
-            path=f"/v3/grants/{identifier}/calendars/free-busy",
-            request_body=request_body,
+            "POST",
+            f"/v3/grants/{identifier}/calendars/free-busy",
+            None,
+            None,
+            request_body,
             overrides=overrides,
         )
 

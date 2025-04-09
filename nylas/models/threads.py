@@ -116,6 +116,7 @@ ListThreadsQueryParams = TypedDict(
         "latest_message_after": NotRequired[int],
         "has_attachment": NotRequired[bool],
         "search_query_native": NotRequired[str],
+        "select": NotRequired[str],
     },
 )
 """
@@ -136,6 +137,8 @@ Attributes:
     latest_message_after: Return threads whose most recent message was received after this Unix timestamp.
     has_attachment: Filter threads by whether they have an attachment.
     search_query_native: A native provider search query for Google or Microsoft.
+    select: Comma-separated list of fields to return in the response.
+        This allows you to receive only the portion of object data that you're interested in.
     limit (NotRequired[int]): The maximum number of objects to return.
         This field defaults to 50. The maximum allowed value is 200.
     page_token (NotRequired[str]): An identifier that specifies which page of data to return.

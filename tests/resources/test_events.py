@@ -1,5 +1,4 @@
 from nylas.resources.events import Events
-
 from nylas.models.events import Event
 
 
@@ -123,6 +122,168 @@ class TestEvent:
             overrides=None,
         )
 
+    def test_list_events_with_query_params(self, http_client_list_response):
+        events = Events(http_client_list_response)
+
+        events.list(identifier="abc-123", query_params={"limit": 20})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/events",
+            None,
+            {"limit": 20},
+            None,
+            overrides=None,
+        )
+
+    def test_list_events_with_select_param(self, http_client_list_response):
+        events = Events(http_client_list_response)
+
+        # Set up mock response data
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "event-123",
+                "title": "Team Meeting",
+                "description": "Weekly team sync",
+                "when": {
+                    "start_time": 1625097600,
+                    "end_time": 1625101200
+                }
+            }]
+        }
+
+        # Call the API method
+        result = events.list(
+            identifier="abc-123",
+            query_params={
+                "select": "id,title,description,when"
+            }
+        )
+
+        # Verify API call
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/events",
+            None,
+            {"select": "id,title,description,when"},
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
+
+    def test_list_import_events(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary"},
+            None,
+            overrides=None,
+        )
+
+    def test_list_import_events_with_select_param(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary", "select": "id,title,participants"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary", "select": "id,title,participants"},
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_limit(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={"calendar_id": "primary", "limit": 100},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {"calendar_id": "primary", "limit": 100},
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_time_filters(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        # Using Unix timestamps for Jan 1, 2023 and Dec 31, 2023
+        start_time = 1672531200  # Jan 1, 2023
+        end_time = 1704067199  # Dec 31, 2023
+        
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={
+                "calendar_id": "primary",
+                "start": start_time,
+                "end": end_time
+            },
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {
+                "calendar_id": "primary",
+                "start": start_time,
+                "end": end_time
+            },
+            None,
+            overrides=None,
+        )
+        
+    def test_list_import_events_with_all_params(self, http_client_list_response):
+        events = Events(http_client=http_client_list_response)
+        # Using Unix timestamps for Jan 1, 2023 and Dec 31, 2023
+        start_time = 1672531200  # Jan 1, 2023
+        end_time = 1704067199  # Dec 31, 2023
+        
+        events.list_import_events(
+            identifier="grant-123",
+            query_params={
+                "calendar_id": "primary",
+                "limit": 50,
+                "start": start_time,
+                "end": end_time,
+                "select": "id,title,participants,when",
+                "page_token": "next-page-token-123"
+            },
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/grant-123/events/import",
+            None,
+            {
+                "calendar_id": "primary",
+                "limit": 50,
+                "start": start_time,
+                "end": end_time,
+                "select": "id,title,participants,when",
+                "page_token": "next-page-token-123"
+            },
+            None,
+            overrides=None,
+        )
+
     def test_find_event(self, http_client_response):
         events = Events(http_client_response)
 
@@ -140,6 +301,49 @@ class TestEvent:
             None,
             overrides=None,
         )
+
+    def test_find_event_with_select_param(self, http_client_response):
+        events = Events(http_client_response)
+
+        # Set up mock response data
+        http_client_response._execute.return_value = ({
+            "request_id": "abc-123",
+            "data": {
+                "id": "event-123",
+                "title": "Team Meeting",
+                "description": "Weekly team sync",
+                "when": {
+                    "start_time": 1625097600,
+                    "end_time": 1625101200
+                }
+            }
+        }, {"X-Test-Header": "test"})
+
+        # Call the API method
+        result = events.find(
+            identifier="abc-123",
+            event_id="event-123",
+            query_params={
+                "calendar_id": "abc-123",
+                "select": "id,title,description,when"
+            }
+        )
+
+        # Verify API call
+        http_client_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/events/event-123",
+            None,
+            {
+                "calendar_id": "abc-123",
+                "select": "id,title,description,when"
+            },
+            None,
+            overrides=None,
+        )
+
+        # The actual response validation is handled by the mock in conftest.py
+        assert result is not None
 
     def test_create_event(self, http_client_response):
         events = Events(http_client_response)
@@ -234,5 +438,115 @@ class TestEvent:
             path="/v3/grants/abc-123/events/event-123/send-rsvp",
             request_body=request_body,
             query_params={"calendar_id": "abc-123"},
+            overrides=None,
+        )
+
+    def test_event_with_notetaker_deserialization(self):
+        event_json = {
+            "id": "event-123",
+            "grant_id": "grant-123",
+            "calendar_id": "calendar-123",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "title": "Test Event with Notetaker",
+            "notetaker": {
+                "id": "notetaker-123",
+                "name": "Custom Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                }
+            }
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert event.id == "event-123"
+        assert event.grant_id == "grant-123"
+        assert event.calendar_id == "calendar-123"
+        assert event.busy is True
+        assert event.title == "Test Event with Notetaker"
+        assert event.notetaker is not None
+        assert event.notetaker.id == "notetaker-123"
+        assert event.notetaker.name == "Custom Notetaker"
+        assert event.notetaker.meeting_settings is not None
+        assert event.notetaker.meeting_settings.video_recording is True
+        assert event.notetaker.meeting_settings.audio_recording is True
+        assert event.notetaker.meeting_settings.transcription is True
+
+    def test_create_event_with_notetaker(self, http_client_response):
+        events = Events(http_client_response)
+        request_body = {
+            "title": "Test Event with Notetaker",
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400
+            },
+            "participants": [
+                {"email": "test@example.com", "name": "Test User"}
+            ],
+            "notetaker": {
+                "name": "Custom Notetaker",
+                "meeting_settings": {
+                    "video_recording": True,
+                    "audio_recording": True,
+                    "transcription": True
+                }
+            }
+        }
+        query_params = {"calendar_id": "calendar-123"}
+
+        events.create(
+            identifier="abc-123",
+            request_body=request_body,
+            query_params=query_params
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/events",
+            None,
+            query_params,
+            request_body,
+            overrides=None,
+        )
+
+    def test_update_event_with_notetaker(self, http_client_response):
+        events = Events(http_client_response)
+        request_body = {
+            "title": "Updated Test Event",
+            "notetaker": {
+                "id": "notetaker-123",
+                "name": "Updated Notetaker",
+                "meeting_settings": {
+                    "video_recording": False,
+                    "audio_recording": True,
+                    "transcription": False
+                }
+            }
+        }
+        query_params = {"calendar_id": "calendar-123"}
+
+        events.update(
+            identifier="abc-123",
+            event_id="event-123",
+            request_body=request_body,
+            query_params=query_params
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/events/event-123",
+            None,
+            query_params,
+            request_body,
             overrides=None,
         )

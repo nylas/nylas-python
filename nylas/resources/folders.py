@@ -13,6 +13,7 @@ from nylas.models.folders import (
     CreateFolderRequest,
     UpdateFolderRequest,
     ListFolderQueryParams,
+    FindFolderQueryParams,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
@@ -60,6 +61,7 @@ class Folders(
         identifier: str,
         folder_id: str,
         overrides: RequestOverrides = None,
+        query_params: FindFolderQueryParams = None,
     ) -> Response[Folder]:
         """
         Return a Folder.
@@ -68,6 +70,7 @@ class Folders(
             identifier: The identifier of the Grant to act upon.
             folder_id: The ID of the Folder to retrieve.
             overrides: The request overrides to use.
+            query_params: The query parameters to include in the request.
 
         Returns:
             The Folder.
@@ -75,6 +78,7 @@ class Folders(
         return super().find(
             path=f"/v3/grants/{identifier}/folders/{folder_id}",
             response_type=Folder,
+            query_params=query_params,
             overrides=overrides,
         )
 

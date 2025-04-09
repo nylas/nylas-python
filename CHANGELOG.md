@@ -1,6 +1,21 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Support for tentative_as_busy parameter that controls whether tentative events are treated as busy time. 
+* Available as a query parameter for Events requests and as a property in Availability request bodies
+* Added support for Notetaker APIs
+* Added support for Notetaker via the calendar and event APIs
+
+v6.8.0
+----------------
+* Added support for `list_import_events`
+
+v6.7.0
+----------------
+* Added support for `select` query parameter in list calendars, list events, and list messages.
+
 v6.6.0
 ----------------
 * Added response headers to all responses from the Nylas API
@@ -26,7 +41,6 @@ v6.3.1
 * Fixed request session being reused across multiple requests
 * Added Folder Webhooks
 * Removed use of TestCommand
-
 
 v6.3.0
 ----------------

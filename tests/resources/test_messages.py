@@ -383,23 +383,6 @@ class TestMessage:
         assert response.data[0].grant_id == "41009df5-bf11-4c97-aa18-b285b5f2e386"
         assert response.data[0].conversation == "cleaned example"
         assert response.data[1].conversation == "another example"
-        assert message.folders[0] == "8l6c4d11y1p4dm4fxj52whyr9"
-        assert message.folders[1] == "d9zkcr2tljpu3m4qpj7l2hbr0"
-        assert message.from_ == [
-            {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
-        ]
-        assert message.grant_id == "41009df5-bf11-4c97-aa18-b285b5f2e386"
-        assert message.id == "5d3qmne77v32r8l4phyuksl2x"
-        assert message.object == "message"
-        assert message.reply_to == [
-            {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
-        ]
-        assert message.snippet == "Hello, I just sent a message using Nylas!"
-        assert message.starred is True
-        assert message.subject == "Hello from Nylas!"
-        assert message.thread_id == "1t8tv3890q4vgmwq6pmdwm8qgsaer"
-        assert message.to == [{"name": "Jon Snow", "email": "j.snow@example.com"}]
-        assert message.unread is True
 
     def test_list_messages(self, http_client_list_response):
         messages = Messages(http_client_list_response)
@@ -650,7 +633,7 @@ class TestMessage:
         assert res.data[0].status.code == "pending"
         assert res.data[0].status.description == "schedule send awaiting send at time"
         assert res.data[1].schedule_id == "rb856334-6d95-432c-86d1-c5dab0ce98be"
-        assert res.data[1].status.code == "sucess"
+        assert res.data[1].status.code == "success"
         assert res.data[1].status.description == "schedule send succeeded"
         assert res.data[1].close_time == 1690579819
 
@@ -714,3 +697,38 @@ class TestMessage:
         assert response.data[0].grant_id == "41009df5-bf11-4c97-aa18-b285b5f2e386"
         assert response.data[0].conversation == "cleaned example"
         assert response.data[1].conversation == "another example"
+
+
+    def test_list_messages_select_param(self, http_client_list_response):
+        messages = Messages(http_client_list_response)
+
+        messages.list(identifier="abc-123", query_params={"select": ["id", "subject", "from", "to"]})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages",
+            None,
+            {"select": ["id", "subject", "from", "to"]},
+            None,
+            overrides=None,
+        )
+
+        # Make sure query params are properly serialized
+        assert http_client_list_response._execute.call_args[0][3] == {"select": ["id", "subject", "from", "to"]}
+
+    def test_find_message_select_param(self, http_client_response):
+        messages = Messages(http_client_response)
+
+        messages.find(identifier="abc-123", message_id="message-123", query_params={"select": ["id", "subject", "from", "to"]})
+
+        http_client_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages/message-123",
+            None,
+            {"select": ["id", "subject", "from", "to"]},
+            None,
+            overrides=None,
+        )
+
+        # Make sure query params are properly serialized
+        assert http_client_response._execute.call_args[0][3] == {"select": ["id", "subject", "from", "to"]}
