@@ -163,8 +163,7 @@ class Calendars(
             path=f"/v3/grants/{identifier}/calendars/{calendar_id}", overrides=overrides
         )
 
-    def get_availability(
-        self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
+    def get_availability(self, request_body: GetAvailabilityRequest, overrides: RequestOverrides = None
     ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Calendar.

@@ -90,12 +90,16 @@ class AvailabilityRules(TypedDict):
         round_robin_group_id: The ID on events that Nylas considers when calculating the order of
             round-robin participants.
             This is used for both max-fairness and max-availability methods.
+        tentative_as_busy: Controls whether tentative calendar events should be treated as busy time.
+            When set to false, tentative events will be considered as free in availability calculations.
+            Defaults to true. Only applicable for Microsoft and EWS calendar providers.
     """
 
     availability_method: NotRequired[AvailabilityMethod]
     buffer: NotRequired[MeetingBuffer]
     default_open_hours: NotRequired[List[OpenHours]]
     round_robin_group_id: NotRequired[str]
+    tentative_as_busy: NotRequired[bool]
 
 
 class AvailabilityParticipant(TypedDict):

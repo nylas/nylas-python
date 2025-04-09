@@ -342,26 +342,27 @@ class TestCalendar:
                     ],
                 }
             ],
-            "locale": "en",
+            "duration_minutes": 60,
+            "interval_minutes": 30,
+            "round_to_30_minutes": True,
+            "availability_rules": {
+                "availability_method": "max-availability",
+                "buffer": {"before": 10, "after": 10},
+                "default_open_hours": [
+                    {
+                        "days": [0],
+                        "timezone": "America/Los_Angeles",
+                        "start": "09:00",
+                        "end": "17:00",
+                        "exdates": ["2021-03-01"],
+                    }
+                ],
+                "round_robin_group_id": "event-123",
+                "tentative_as_busy": False
+            },
         }
 
-        # Set up mock response data
-        http_client_response._execute.return_value = ({
-            "availability": [
-                {
-                    "end_time": 1497960800,
-                    "start_time": 1497960600,
-                    "status": "free",
-                    "object": "availability_status",
-                }
-            ],
-            "object": "availability",
-            "time_slots": [
-                {"end_time": 1497960800, "start_time": 1497960600, "status": "free"}
-            ],
-        }, {})
-
-        calendars.get_availability(request_body=request_body)
+        calendars.get_availability(request_body,overrides=None,)
 
         http_client_response._execute.assert_called_once_with(
             "POST",

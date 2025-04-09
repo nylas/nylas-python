@@ -822,6 +822,8 @@ class ListEventQueryParams(ListQueryParams):
             You can pass the query parameter multiple times to select or exclude multiple event types.
         master_event_id (NotRequired[str]): Filter for instances of recurring events with the
             specified master_event_id. Not respected by metadata filtering.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
         select: Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
         limit (NotRequired[int]): The maximum number of objects to return.
@@ -844,6 +846,7 @@ class ListEventQueryParams(ListQueryParams):
     event_type: NotRequired[List[EventType]]
     master_event_id: NotRequired[str]
     select: NotRequired[str]
+    tentative_as_busy: NotRequired[bool]
 
 
 class CreateEventQueryParams(TypedDict):
@@ -853,10 +856,13 @@ class CreateEventQueryParams(TypedDict):
     Attributes:
         calendar_id: The ID of the calendar to create the event in.
         notify_participants: Email notifications containing the calendar event is sent to all event participants.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
     """
 
     calendar_id: str
     notify_participants: NotRequired[bool]
+    tentative_as_busy: NotRequired[bool]
 
 
 class FindEventQueryParams(TypedDict):
@@ -866,9 +872,12 @@ class FindEventQueryParams(TypedDict):
     Attributes:
         calendar_id: Calendar ID to find the event in.
             "primary" is a supported value indicating the user's primary calendar.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
     """
 
     calendar_id: str
+    tentative_as_busy: NotRequired[bool]
 
 
 UpdateEventQueryParams = CreateEventQueryParams
