@@ -79,10 +79,20 @@ def get_notetaker_media(notetaker_id):
         
         if media.recording:
             print(f"Recording URL: {media.data.recording.url}")
-            print(f"Recording Size: {media.data.recording.size} MB")
+            print(f"Recording Name: {media.data.recording.name}")
+            print(f"Recording Type: {media.data.recording.type}")
+            print(f"Recording Size: {media.data.recording.size} bytes")
+            print(f"Recording Created At: {media.data.recording.created_at}")
+            print(f"Recording Expires At: {media.data.recording.expires_at}")
+            print(f"Recording TTL: {media.data.recording.ttl} seconds")
         if media.transcript:
             print(f"Transcript URL: {media.data.transcript.url}")
-            print(f"Transcript Size: {media.data.transcript.size} MB")
+            print(f"Transcript Name: {media.data.transcript.name}")
+            print(f"Transcript Type: {media.data.transcript.type}")
+            print(f"Transcript Size: {media.data.transcript.size} bytes")
+            print(f"Transcript Created At: {media.data.transcript.created_at}")
+            print(f"Transcript Expires At: {media.data.transcript.expires_at}")
+            print(f"Transcript TTL: {media.data.transcript.ttl} seconds")
         
         return media
     except NylasApiError as e:
