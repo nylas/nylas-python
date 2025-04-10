@@ -8,7 +8,7 @@ from nylas.models.redirect_uri import RedirectUri
 Region = Literal["us", "eu"]
 """ Literal representing the available Nylas API regions. """
 
-Environment = Literal["production", "staging"]
+Environment = Literal["production", "staging", "development", "sandbox"]
 """ Literal representing the different Nylas API environments. """
 
 
