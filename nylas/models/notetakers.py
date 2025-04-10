@@ -91,12 +91,22 @@ class NotetakerMediaRecording:
     Class representing a Notetaker media recording.
 
     Attributes:
-        url: A link to the meeting recording.
-        size: The size of the file, in MB.
+        size: The size of the file in bytes.
+        name: The name of the file.
+        type: The MIME type of the file.
+        created_at: Unix timestamp when the file was uploaded to the storage server.
+        expires_at: Unix timestamp when the file will be deleted.
+        url: A link to download the file.
+        ttl: Time-to-live in seconds until the file will be deleted off Nylas' storage server.
     """
 
-    url: str
     size: int
+    name: str
+    type: str
+    created_at: int
+    expires_at: int
+    url: str
+    ttl: int
 
 
 @dataclass_json
@@ -106,8 +116,8 @@ class NotetakerMedia:
     Class representing Notetaker media.
 
     Attributes:
-        recording: The meeting recording.
-        transcript: The meeting transcript.
+        recording: The meeting recording (video/mp4).
+        transcript: The meeting transcript (application/json).
     """
 
     recording: Optional[NotetakerMediaRecording] = None

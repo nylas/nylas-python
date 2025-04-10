@@ -364,21 +364,42 @@ class TestNotetaker:
     def test_media_deserialization(self):
         media_json = {
             "recording": {
-                "url": "https://example.com/recording.mp4",
-                "size": 25
+                "size": 21550491,
+                "name": "meeting_recording.mp4",
+                "type": "video/mp4",
+                "created_at": 1744222418,
+                "expires_at": 1744481618,
+                "url": "url_for_recording",
+                "ttl": 259106
             },
             "transcript": {
-                "url": "https://example.com/transcript.txt",
-                "size": 2
+                "size": 862,
+                "name": "raw_transcript.json",
+                "type": "application/json",
+                "created_at": 1744222418,
+                "expires_at": 1744481618,
+                "url": "url_for_transcript",
+                "ttl": 259106
             }
         }
 
         media = NotetakerMedia.from_dict(media_json)
 
-        assert media.recording.url == "https://example.com/recording.mp4"
-        assert media.recording.size == 25
-        assert media.transcript.url == "https://example.com/transcript.txt"
-        assert media.transcript.size == 2
+        assert media.recording.url == "url_for_recording"
+        assert media.recording.size == 21550491
+        assert media.recording.name == "meeting_recording.mp4"
+        assert media.recording.type == "video/mp4"
+        assert media.recording.created_at == 1744222418
+        assert media.recording.expires_at == 1744481618
+        assert media.recording.ttl == 259106
+
+        assert media.transcript.url == "url_for_transcript"
+        assert media.transcript.size == 862
+        assert media.transcript.name == "raw_transcript.json"
+        assert media.transcript.type == "application/json"
+        assert media.transcript.created_at == 1744222418
+        assert media.transcript.expires_at == 1744481618
+        assert media.transcript.ttl == 259106
 
     def test_meeting_provider_enum(self):
         """Test that the MeetingProvider enum works correctly."""
