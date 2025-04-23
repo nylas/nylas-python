@@ -35,6 +35,34 @@ class NotetakerState(str, Enum):
     MEDIA_DELETED = "media_deleted"
 
 
+class NotetakerOrderBy(str, Enum):
+    """
+    Enum representing the possible fields to order Notetaker bots by.
+
+    Values:
+        NAME: Order by the Notetaker's name.
+        JOIN_TIME: Order by the Notetaker's join time.
+        CREATED_AT: Order by when the Notetaker was created.
+    """
+
+    NAME = "name"
+    JOIN_TIME = "join_time"
+    CREATED_AT = "created_at"
+
+
+class NotetakerOrderDirection(str, Enum):
+    """
+    Enum representing the possible directions to order Notetaker bots by.
+
+    Values:
+        ASC: Ascending order.
+        DESC: Descending order.
+    """
+
+    ASC = "asc"
+    DESC = "desc"
+
+
 class MeetingProvider(str, Enum):
     """
     Enum representing the possible meeting providers for Notetaker.
@@ -57,7 +85,7 @@ class NotetakerMeetingSettingsRequest(TypedDict):
     Attributes:
         video_recording: When true, Notetaker records the meeting's video.
         audio_recording: When true, Notetaker records the meeting's audio.
-        transcription: When true, Notetaker transcribes the meeting's audio. 
+        transcription: When true, Notetaker transcribes the meeting's audio.
             If transcription is true, audio_recording must also be true.
     """
 
@@ -75,7 +103,7 @@ class NotetakerMeetingSettings:
     Attributes:
         video_recording: When true, Notetaker records the meeting's video.
         audio_recording: When true, Notetaker records the meeting's audio.
-        transcription: When true, Notetaker transcribes the meeting's audio. 
+        transcription: When true, Notetaker transcribes the meeting's audio.
             If transcription is true, audio_recording must also be true.
     """
 
@@ -182,7 +210,7 @@ class InviteNotetakerRequest(TypedDict):
 
     Attributes:
         meeting_link: A meeting invitation link that Notetaker uses to join the meeting.
-        join_time: When Notetaker should join the meeting, in Unix timestamp format. 
+        join_time: When Notetaker should join the meeting, in Unix timestamp format.
             If empty, Notetaker joins the meeting immediately.
         name: The display name for the Notetaker bot.
         meeting_settings: Notetaker Meeting Settings.
@@ -217,23 +245,41 @@ class ListNotetakerQueryParams(ListQueryParams):
         state: Filter for Notetaker bots with the specified meeting state.
             Use the NotetakerState enum.
             Example: state=NotetakerState.SCHEDULED
-        join_time_from: Filter for Notetaker bots that are scheduled to join meetings after the specified time.
-        join_time_until: Filter for Notetaker bots that are scheduled to join meetings until the specified time.
+        join_time_start: Filter for Notetaker bots that have join times that start at or after a specific time,
+            in Unix timestamp format.
+        join_time_end: Filter for Notetaker bots that have join times that end at or are before a specific time,
+            in Unix timestamp format.
         limit: The maximum number of objects to return. This field defaults to 50. The maximum allowed value is 200.
         page_token: An identifier that specifies which page of data to return.
         prev_page_token: An identifier that specifies which page of data to return.
+        order_by: The field to order the Notetaker bots by. Defaults to created_at.
+            Use the NotetakerOrderBy enum.
+            Example: order_by=NotetakerOrderBy.NAME
+        order_direction: The direction to order the Notetaker bots by. Defaults to asc.
+            Use the NotetakerOrderDirection enum.
+            Example: order_direction=NotetakerOrderDirection.DESC
     """
 
     state: NotRequired[NotetakerState]
-    join_time_from: NotRequired[int]
-    join_time_until: NotRequired[int]
+    join_time_start: NotRequired[int]
+    join_time_end: NotRequired[int]
+    order_by: NotRequired[NotetakerOrderBy]
+    order_direction: NotRequired[NotetakerOrderDirection]
 
     def __post_init__(self):
-        """Convert NotetakerState enum to string value for API requests."""
+        """Convert enums to string values for API requests."""
         super().__post_init__()
         # Convert state enum to string if present
         if hasattr(self, "state") and isinstance(self.state, NotetakerState):
             self.state = self.state.value
+        # Convert order_by enum to string if present
+        if hasattr(self, "order_by") and isinstance(self.order_by, NotetakerOrderBy):
+            self.order_by = self.order_by.value
+        # Convert order_direction enum to string if present
+        if hasattr(self, "order_direction") and isinstance(
+            self.order_direction, NotetakerOrderDirection
+        ):
+            self.order_direction = self.order_direction.value
 
 
 class FindNotetakerQueryParams(TypedDict):
