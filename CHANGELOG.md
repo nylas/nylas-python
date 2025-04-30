@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.9.0
 ----------------
 * Added support for for tentative_as_busy parameter to the availability request
 * Added missing webhook triggers
