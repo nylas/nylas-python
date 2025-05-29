@@ -732,3 +732,161 @@ class TestMessage:
 
         # Make sure query params are properly serialized
         assert http_client_response._execute.call_args[0][3] == {"select": ["id", "subject", "from", "to"]}
+
+    # New tests for tracking_options and raw_mime features
+    def test_message_deserialization_with_tracking_options(self):
+        """Test deserialization of message with tracking_options field."""
+        message_json = {
+            "body": "Hello, I just sent a message using Nylas!",
+            "from": [{"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}],
+            "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
+            "id": "5d3qmne77v32r8l4phyuksl2x",
+            "object": "message",
+            "subject": "Hello from Nylas!",
+            "tracking_options": {
+                "opens": True,
+                "thread_replies": False,
+                "links": True,
+                "label": "Marketing Campaign"
+            }
+        }
+
+        message = Message.from_dict(message_json)
+
+        assert message.tracking_options is not None
+        assert message.tracking_options.opens is True
+        assert message.tracking_options.thread_replies is False
+        assert message.tracking_options.links is True
+        assert message.tracking_options.label == "Marketing Campaign"
+
+    def test_message_deserialization_with_raw_mime(self):
+        """Test deserialization of message with raw_mime field."""
+        message_json = {
+            "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
+            "id": "5d3qmne77v32r8l4phyuksl2x",
+            "object": "message",
+            "raw_mime": "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFyc2V0PXV0Zi04CgpIZWxsbyBXb3JsZCE="
+        }
+
+        message = Message.from_dict(message_json)
+
+        assert message.raw_mime == "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFyc2V0PXV0Zi04CgpIZWxsbyBXb3JsZCE="
+
+    def test_message_deserialization_backwards_compatibility(self):
+        """Test that existing message deserialization still works (backwards compatibility)."""
+        message_json = {
+            "body": "Hello, I just sent a message using Nylas!",
+            "from": [{"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}],
+            "grant_id": "41009df5-bf11-4c97-aa18-b285b5f2e386",
+            "id": "5d3qmne77v32r8l4phyuksl2x",
+            "object": "message",
+            "subject": "Hello from Nylas!",
+        }
+
+        message = Message.from_dict(message_json)
+
+        # These new fields should be None when not provided
+        assert message.tracking_options is None
+        assert message.raw_mime is None
+        # Existing fields should still work
+        assert message.body == "Hello, I just sent a message using Nylas!"
+        assert message.subject == "Hello from Nylas!"
+
+    def test_list_messages_with_include_tracking_options_field(self, http_client_list_response):
+        """Test listing messages with include_tracking_options field."""
+        messages = Messages(http_client_list_response)
+
+        messages.list(
+            identifier="abc-123",
+            query_params={"fields": "include_tracking_options"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages",
+            None,
+            {"fields": "include_tracking_options"},
+            None,
+            overrides=None,
+        )
+
+    def test_list_messages_with_raw_mime_field(self, http_client_list_response):
+        """Test listing messages with raw_mime field."""
+        messages = Messages(http_client_list_response)
+
+        messages.list(
+            identifier="abc-123",
+            query_params={"fields": "raw_mime"},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages",
+            None,
+            {"fields": "raw_mime"},
+            None,
+            overrides=None,
+        )
+
+    def test_find_message_with_include_tracking_options_field(self, http_client_response):
+        """Test finding a message with include_tracking_options field."""
+        messages = Messages(http_client_response)
+
+        messages.find(
+            identifier="abc-123",
+            message_id="message-123",
+            query_params={"fields": "include_tracking_options"},
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages/message-123",
+            None,
+            {"fields": "include_tracking_options"},
+            None,
+            overrides=None,
+        )
+
+    def test_find_message_with_raw_mime_field(self, http_client_response):
+        """Test finding a message with raw_mime field."""
+        messages = Messages(http_client_response)
+
+        messages.find(
+            identifier="abc-123",
+            message_id="message-123",
+            query_params={"fields": "raw_mime"},
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/messages/message-123",
+            None,
+            {"fields": "raw_mime"},
+            None,
+            overrides=None,
+        )
+
+    def test_tracking_options_serialization(self):
+        """Test that tracking_options can be serialized to JSON."""
+        from nylas.models.messages import TrackingOptions
+        
+        tracking_options = TrackingOptions(
+            opens=True,
+            thread_replies=False,
+            links=True,
+            label="Test Campaign"
+        )
+        
+        # Test serialization
+        json_data = tracking_options.to_dict()
+        assert json_data["opens"] is True
+        assert json_data["thread_replies"] is False
+        assert json_data["links"] is True
+        assert json_data["label"] == "Test Campaign"
+        
+        # Test deserialization
+        tracking_options_from_dict = TrackingOptions.from_dict(json_data)
+        assert tracking_options_from_dict.opens is True
+        assert tracking_options_from_dict.thread_replies is False
+        assert tracking_options_from_dict.links is True
+        assert tracking_options_from_dict.label == "Test Campaign" 
