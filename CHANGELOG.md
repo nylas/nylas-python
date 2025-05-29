@@ -1,6 +1,14 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------------
+* Added support for new message fields query parameter values: `include_tracking_options` and `raw_mime`
+* Added `tracking_options` field to Message model for message tracking settings
+* Added `raw_mime` field to Message model for Base64url-encoded message data
+* Added TrackingOptions model for message tracking configuration
+* Maintained backwards compatibility for existing message functionality
+
 v6.9.0
 ----------------
 * Added support for for tentative_as_busy parameter to the availability request

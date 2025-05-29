@@ -8,7 +8,7 @@ from nylas.models.list_query_params import ListQueryParams
 from nylas.models.events import EmailName
 
 
-Fields = Literal["standard", "include_headers"]
+Fields = Literal["standard", "include_headers", "include_tracking_options", "raw_mime"]
 """ Literal representing which headers to include with a message. """
 
 
@@ -25,6 +25,25 @@ class MessageHeader:
 
     name: str
     value: str
+
+
+@dataclass_json
+@dataclass
+class TrackingOptions:
+    """
+    Message tracking options.
+
+    Attributes:
+        opens: When true, shows that message open tracking is enabled.
+        thread_replies: When true, shows that thread replied tracking is enabled.
+        links: When true, shows that link clicked tracking is enabled.
+        label: A label describing the message tracking purpose.
+    """
+
+    opens: Optional[bool] = None
+    thread_replies: Optional[bool] = None
+    links: Optional[bool] = None
+    label: Optional[str] = None
 
 
 @dataclass_json
@@ -55,6 +74,8 @@ class Message:
         created_at: Unix timestamp of when the message was created.
         schedule_id: The ID of the scheduled email message. Nylas returns the schedule_id if send_at is set.
         send_at: Unix timestamp of when the message will be sent, if scheduled.
+        tracking_options: The tracking options for the message.
+        raw_mime: A Base64url-encoded string containing the message data (including the body content).
     """
 
     grant_id: str
@@ -81,6 +102,8 @@ class Message:
     schedule_id: Optional[str] = None
     send_at: Optional[int] = None
     metadata: Optional[Dict[str, Any]] = None
+    tracking_options: Optional[TrackingOptions] = None
+    raw_mime: Optional[str] = None
 
 
 # Need to use Functional typed dicts because "from" and "in" are Python
@@ -124,7 +147,11 @@ Attributes:
     received_before: Return messages with received dates before received_before.
     received_after: Return messages with received dates after received_after.
     has_attachment: Filter messages by whether they have an attachment.
-    fields: Specify "include_headers" to include headers in the response. "standard" is the default.
+    fields: Specify which headers to include in the response. 
+        - "standard" (default): Returns the standard message payload.
+        - "include_headers": Returns messages and their custom headers.
+        - "include_tracking_options": Returns messages and their tracking settings.
+        - "raw_mime": Returns the grant_id, object, id, and raw_mime fields for each message.
     search_query_native: A native provider search query for Google or Microsoft.
     select: Comma-separated list of fields to return in the response.
         This allows you to receive only the portion of object data that you're interested in.
@@ -140,7 +167,11 @@ class FindMessageQueryParams(TypedDict):
     Query parameters for finding a message.
 
     Attributes:
-        fields: Specify "include_headers" to include headers in the response. "standard" is the default.
+        fields: Specify which headers to include in the response.
+            - "standard" (default): Returns the standard message payload.
+            - "include_headers": Returns messages and their custom headers.
+            - "include_tracking_options": Returns messages and their tracking settings.
+            - "raw_mime": Returns the grant_id, object, id, and raw_mime fields for each message.
         select: Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
     """
