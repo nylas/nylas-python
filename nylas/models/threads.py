@@ -112,6 +112,7 @@ ListThreadsQueryParams = TypedDict(
         "unread": NotRequired[bool],
         "starred": NotRequired[bool],
         "thread_id": NotRequired[str],
+        "earliest_message_date": NotRequired[int],
         "latest_message_before": NotRequired[int],
         "latest_message_after": NotRequired[int],
         "has_attachment": NotRequired[bool],
