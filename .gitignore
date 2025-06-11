@@ -1,36 +1,81 @@
-# Byte-compiled / optimized / DLL files
+# UV virtual environment
+.venv/
+.venv
+
+# UV cache and lock files
+.uv/
+uv.lock
+
+# Python cache and compiled files
 __pycache__/
 *.py[cod]
-
-# C extensions
+*$py.class
 *.so
 
 # Distribution / packaging
 .Python
-env/
-bin/
 build/
 develop-eggs/
 dist/
+downloads/
 eggs/
+.eggs/
+lib/
+lib64/
 parts/
 sdist/
 var/
+wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# PyInstaller
+*.manifest
+*.spec
 
 # Unit test / coverage reports
 htmlcov/
 .tox/
+.nox/
 .coverage
+.coverage.*
 .cache
 nosetests.xml
 coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Environments
+.env
+.venv
+ENV/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Docs
+docs/_build/
+site/
+
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Translations
 *.mo
