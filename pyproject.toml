@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=69.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nylas"
+dynamic = ["version"]
+description = "Python bindings for the Nylas API platform."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Nylas Team", email = "support@nylas.com"}
+]
+keywords = ["inbox", "app", "appserver", "email", "nylas", "contacts", "calendar"]
+requires-python = ">=3.8"
+dependencies = [
+    "requests[security]>=2.31.0",
+    "requests-toolbelt>=1.0.0",
+    "dataclasses-json>=0.5.9",
+    "typing_extensions>=4.7.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "setuptools>=69.0.3",
+]
+docs = [
+    "mkdocs>=1.5.2",
+    "mkdocstrings[python]>=0.22.0",
+    "mkdocs-material>=9.2.6",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-literate-nav>=0.6.0",
+]
+release = [
+    "bumpversion>=0.6.0",
+    "twine>=4.0.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/nylas/nylas-python"
+Repository = "https://github.com/nylas/nylas-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "nylas._client_sdk_version.__VERSION__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nylas*"]
