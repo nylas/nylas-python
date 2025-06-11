@@ -134,6 +134,7 @@ Attributes:
     unread: Filter threads by unread status.
     starred: Filter threads by starred status.
     thread_id: Filter threads by thread_id.
+    earliest_message_date: Unix timestamp of the earliest or first message in the thread.
     latest_message_before: Return threads whose most recent message was received before this Unix timestamp.
     latest_message_after: Return threads whose most recent message was received after this Unix timestamp.
     has_attachment: Filter threads by whether they have an attachment.
