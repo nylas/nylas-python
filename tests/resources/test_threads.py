@@ -188,6 +188,44 @@ class TestThread:
 
         # The actual response validation is handled by the mock in conftest.py
         assert result is not None
+        
+    def test_list_threads_with_earliest_message_date_param(self, http_client_list_response):
+        threads = Threads(http_client_list_response)
+        
+        timestamp = 1672531200
+        
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "thread-123",
+                "has_attachments": False,
+                "earliest_message_date": 1672617600,
+                "participants": [
+                    {"email": "test@example.com", "name": "Test User"}
+                ],
+                "snippet": "Test snippet",
+                "unread": False,
+                "subject": "Test subject",
+                "message_ids": ["msg-123"],
+                "folders": ["folder-123"]
+            }]
+        }
+        
+        result = threads.list(
+            identifier="abc-123",
+            query_params={"earliest_message_date": timestamp}
+        )
+        
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/threads",
+            None,
+            {"earliest_message_date": timestamp},
+            None,
+            overrides=None,
+        )
+        
+        assert result is not None
 
     def test_find_thread(self, http_client_response):
         threads = Threads(http_client_response)
