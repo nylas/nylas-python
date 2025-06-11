@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Added support for `earliest_message_date` query parameter for threads
 * Added support for new message fields query parameter values: `include_tracking_options` and `raw_mime`
 * Added `tracking_options` field to Message model for message tracking settings
 * Added `raw_mime` field to Message model for Base64url-encoded message data
