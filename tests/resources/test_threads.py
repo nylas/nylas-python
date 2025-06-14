@@ -227,6 +227,53 @@ class TestThread:
         
         assert result is not None
 
+    def test_list_threads_without_earliest_message_date_in_response(self, http_client_list_response):
+        threads = Threads(http_client_list_response)
+        
+        http_client_list_response._execute.return_value = {
+            "request_id": "abc-123",
+            "data": [{
+                "id": "thread-123",
+                "grant_id": "test-grant-id",
+                "has_drafts": False,
+                "starred": False,
+                "unread": False,
+                "message_ids": ["msg-123"],
+                "folders": ["folder-123"],
+                "latest_draft_or_message": {
+                    "body": "Test message body",
+                    "date": 1672617600,
+                    "from": [{"name": "Test User", "email": "test@example.com"}],
+                    "grant_id": "test-grant-id",
+                    "id": "msg-123",
+                    "object": "message",
+                    "subject": "Test subject",
+                    "thread_id": "thread-123",
+                    "to": [{"name": "Recipient", "email": "recipient@example.com"}],
+                    "unread": False,
+                },
+                "has_attachments": False,
+                "participants": [
+                    {"email": "test@example.com", "name": "Test User"}
+                ],
+                "snippet": "Test snippet",
+                "subject": "Test subject"
+            }]
+        }
+        
+        result = threads.list(identifier="abc-123")
+        
+        http_client_list_response._execute.assert_called_with(
+            "GET",
+            "/v3/grants/abc-123/threads",
+            None,
+            None,
+            None,
+            overrides=None,
+        )
+        
+        assert result is not None
+
     def test_find_thread(self, http_client_response):
         threads = Threads(http_client_response)
 

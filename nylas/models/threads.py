@@ -65,13 +65,13 @@ class Thread:
     has_drafts: bool
     starred: bool
     unread: bool
-    earliest_message_date: int
     message_ids: List[str]
     folders: List[str]
     latest_draft_or_message: Union[Message, Draft] = field(
         metadata=config(decoder=_decode_draft_or_message)
     )
     object: str = "thread"
+    earliest_message_date: Optional[int] = None
     latest_message_received_date: Optional[int] = None
     draft_ids: Optional[List[str]] = None
     snippet: Optional[str] = None
