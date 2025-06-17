@@ -18,7 +18,25 @@ from nylas.models.errors import (
 
 
 def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
-    json = response.json()
+    try:
+        json = response.json()
+    except ValueError:
+        if response.status_code >= 400:
+            response_text = response.text[:500] if response.text else ""
+            raise NylasApiError(
+                NylasApiErrorResponse(
+                    None,
+                    NylasApiErrorResponseData(
+                        type="server_error",
+                        message=f"HTTP {response.status_code}: {response_text}",
+                    ),
+                ),
+                status_code=response.status_code,
+                headers=response.headers,
+            )
+        else:
+            return ({}, response.headers)
+    
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
         try:

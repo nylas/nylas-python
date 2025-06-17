@@ -432,3 +432,67 @@ class TestHttpClient:
             timeout=30,
             data=None,
         )
+
+    def test_validate_response_500_error_html(self):
+        response = Mock()
+        response.status_code = 500
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = "<html><body><h1>Internal Server Error</h1></body></html>"
+        response.headers = {"Content-Type": "text/html"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "server_error"
+        assert "HTTP 500:" in str(e.value)
+        assert "<html>" in str(e.value)
+        assert e.value.status_code == 500
+
+    def test_validate_response_502_error_plain_text(self):
+        response = Mock()
+        response.status_code = 502
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = "Bad Gateway"
+        response.headers = {"Content-Type": "text/plain"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "server_error"
+        assert "HTTP 502: Bad Gateway" == str(e.value)
+        assert e.value.status_code == 502
+
+    def test_validate_response_200_success_non_json(self):
+        response = Mock()
+        response.status_code = 200
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.headers = {"Content-Type": "text/plain"}
+
+        response_json, response_headers = _validate_response(response)
+        assert response_json == {}
+        assert response_headers == {"Content-Type": "text/plain"}
+
+    def test_validate_response_error_empty_response(self):
+        response = Mock()
+        response.status_code = 500
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = ""
+        response.headers = {"Content-Type": "text/html"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "server_error"
+        assert str(e.value) == "HTTP 500: "
+        assert e.value.status_code == 500
+
+    def test_validate_response_error_long_response_truncated(self):
+        response = Mock()
+        response.status_code = 500
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = "A" * 600
+        response.headers = {"Content-Type": "text/html"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "server_error"
+        assert len(str(e.value)) == len("HTTP 500: ") + 500
+        assert str(e.value).endswith("A" * 500)
+        assert e.value.status_code == 500
