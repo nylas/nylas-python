@@ -85,6 +85,7 @@ class ListFolderQueryParams(ListQueryParams):
 
     Attributes:
         parent_id: (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+        include_hidden_folders: (Microsoft only) When true, Nylas includes hidden folders in its response.
         select (NotRequired[str]): Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
         limit (NotRequired[int]): The maximum number of objects to return.
@@ -94,6 +95,7 @@ class ListFolderQueryParams(ListQueryParams):
     """
 
     parent_id: NotRequired[str]
+    include_hidden_folders: NotRequired[bool]
 
 
 class FindFolderQueryParams(TypedDict):

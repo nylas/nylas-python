@@ -10,6 +10,7 @@ Unreleased
 * Added `raw_mime` field to Message model for Base64url-encoded message data
 * Added TrackingOptions model for message tracking configuration
 * Maintained backwards compatibility for existing message functionality
+* Added support for `include_hidden_folders` query parameter for listing folders (Microsoft only)
 
 v6.9.0
 ----------------
