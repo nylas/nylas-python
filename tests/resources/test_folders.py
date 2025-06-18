@@ -58,6 +58,15 @@ class TestFolder:
             overrides=None,
         )
 
+    def test_list_folders_with_include_hidden_folders_param(
+        self, http_client_list_response
+    ):
+        folders = Folders(http_client_list_response)
+
+        folders.list(
+            identifier="abc-123", query_params={"include_hidden_folders": True}
+        )
+
     def test_list_folders_with_single_level_param(self, http_client_list_response):
         folders = Folders(http_client_list_response)
 
@@ -68,6 +77,24 @@ class TestFolder:
             "/v3/grants/abc-123/folders",
             None,
             {"single_level": True},
+            None,
+            overrides=None,
+        )
+
+    def test_list_folders_with_include_hidden_folders_false(
+        self, http_client_list_response
+    ):
+        folders = Folders(http_client_list_response)
+
+        folders.list(
+            identifier="abc-123", query_params={"include_hidden_folders": False}
+        )
+        
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"include_hidden_folders": False},
             None,
             overrides=None,
         )
@@ -86,19 +113,26 @@ class TestFolder:
             overrides=None,
         )
 
-    def test_list_folders_with_combined_params(self, http_client_list_response):
+    def test_list_folders_with_multiple_params_including_hidden_folders(
+        self, http_client_list_response
+    ):
         folders = Folders(http_client_list_response)
 
         folders.list(
             identifier="abc-123",
-            query_params={"single_level": True, "parent_id": "parent-123", "limit": 10},
+            query_params={
+                "limit": 20,
+                "parent_id": "parent-123",
+                "include_hidden_folders": True,
+                "single_level": True,
+            },
         )
 
         http_client_list_response._execute.assert_called_once_with(
             "GET",
             "/v3/grants/abc-123/folders",
             None,
-            {"single_level": True, "parent_id": "parent-123", "limit": 10},
+            {"limit": 20, "parent_id": "parent-123", "include_hidden_folders": True, "single_level": True},
             None,
             overrides=None,
         )

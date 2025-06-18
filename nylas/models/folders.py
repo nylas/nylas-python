@@ -85,6 +85,7 @@ class ListFolderQueryParams(ListQueryParams):
 
     Attributes:
         parent_id: (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+        include_hidden_folders: (Microsoft only) When true, Nylas includes hidden folders in its response.
         single_level: (Microsoft only) If true, retrieves folders from a single-level hierarchy only.
             If false, retrieves folders across a multi-level hierarchy. Defaults to false.
         select (NotRequired[str]): Comma-separated list of fields to return in the response.
@@ -96,6 +97,7 @@ class ListFolderQueryParams(ListQueryParams):
     """
 
     parent_id: NotRequired[str]
+    include_hidden_folders: NotRequired[bool]
     single_level: NotRequired[bool]
 
 
