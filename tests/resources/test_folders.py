@@ -58,26 +58,71 @@ class TestFolder:
             overrides=None,
         )
 
+    def test_list_folders_with_single_level_param(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(identifier="abc-123", query_params={"single_level": True})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"single_level": True},
+            None,
+            overrides=None,
+        )
+
+    def test_list_folders_with_single_level_false(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(identifier="abc-123", query_params={"single_level": False})
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"single_level": False},
+            None,
+            overrides=None,
+        )
+
+    def test_list_folders_with_combined_params(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(
+            identifier="abc-123",
+            query_params={"single_level": True, "parent_id": "parent-123", "limit": 10},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/folders",
+            None,
+            {"single_level": True, "parent_id": "parent-123", "limit": 10},
+            None,
+            overrides=None,
+        )
+
     def test_list_folders_with_select_param(self, http_client_list_response):
         folders = Folders(http_client_list_response)
 
         # Set up mock response data
         http_client_list_response._execute.return_value = {
             "request_id": "abc-123",
-            "data": [{
-                "id": "folder-123",
-                "name": "Important",
-                "total_count": 42,
-                "unread_count": 5
-            }]
+            "data": [
+                {
+                    "id": "folder-123",
+                    "name": "Important",
+                    "total_count": 42,
+                    "unread_count": 5,
+                }
+            ],
         }
 
         # Call the API method
         result = folders.list(
             identifier="abc-123",
-            query_params={
-                "select": "id,name,total_count,unread_count"
-            }
+            query_params={"select": "id,name,total_count,unread_count"},
         )
 
         # Verify API call
@@ -111,21 +156,24 @@ class TestFolder:
         folders = Folders(http_client_response)
 
         # Set up mock response data
-        http_client_response._execute.return_value = ({
-            "request_id": "abc-123",
-            "data": {
-                "id": "folder-123",
-                "name": "Important",
-                "total_count": 42,
-                "unread_count": 5
-            }
-        }, {"X-Test-Header": "test"})
+        http_client_response._execute.return_value = (
+            {
+                "request_id": "abc-123",
+                "data": {
+                    "id": "folder-123",
+                    "name": "Important",
+                    "total_count": 42,
+                    "unread_count": 5,
+                },
+            },
+            {"X-Test-Header": "test"},
+        )
 
         # Call the API method
         result = folders.find(
             identifier="abc-123",
             folder_id="folder-123",
-            query_params={"select": "id,name,total_count,unread_count"}
+            query_params={"select": "id,name,total_count,unread_count"},
         )
 
         # Verify API call

@@ -85,6 +85,8 @@ class ListFolderQueryParams(ListQueryParams):
 
     Attributes:
         parent_id: (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+        single_level: (Microsoft only) If true, retrieves folders from a single-level hierarchy only.
+            If false, retrieves folders across a multi-level hierarchy. Defaults to false.
         select (NotRequired[str]): Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
         limit (NotRequired[int]): The maximum number of objects to return.
@@ -94,6 +96,7 @@ class ListFolderQueryParams(ListQueryParams):
     """
 
     parent_id: NotRequired[str]
+    single_level: NotRequired[bool]
 
 
 class FindFolderQueryParams(TypedDict):
