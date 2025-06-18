@@ -67,11 +67,17 @@ class TestFolder:
             identifier="abc-123", query_params={"include_hidden_folders": True}
         )
 
+    def test_list_folders_with_single_level_param(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(identifier="abc-123", query_params={"single_level": True})
+
         http_client_list_response._execute.assert_called_once_with(
             "GET",
             "/v3/grants/abc-123/folders",
             None,
             {"include_hidden_folders": True},
+            {"single_level": True},
             None,
             overrides=None,
         )
@@ -85,11 +91,17 @@ class TestFolder:
             identifier="abc-123", query_params={"include_hidden_folders": False}
         )
 
+    def test_list_folders_with_single_level_false(self, http_client_list_response):
+        folders = Folders(http_client_list_response)
+
+        folders.list(identifier="abc-123", query_params={"single_level": False})
+
         http_client_list_response._execute.assert_called_once_with(
             "GET",
             "/v3/grants/abc-123/folders",
             None,
             {"include_hidden_folders": False},
+            {"single_level": False},
             None,
             overrides=None,
         )
@@ -97,6 +109,8 @@ class TestFolder:
     def test_list_folders_with_multiple_params_including_hidden_folders(
         self, http_client_list_response
     ):
+      
+    def test_list_folders_with_combined_params(self, http_client_list_response):
         folders = Folders(http_client_list_response)
 
         folders.list(
@@ -106,6 +120,7 @@ class TestFolder:
                 "parent_id": "parent-123",
                 "include_hidden_folders": True,
             },
+            query_params={"single_level": True, "parent_id": "parent-123", "limit": 10},
         )
 
         http_client_list_response._execute.assert_called_once_with(
@@ -113,6 +128,7 @@ class TestFolder:
             "/v3/grants/abc-123/folders",
             None,
             {"limit": 20, "parent_id": "parent-123", "include_hidden_folders": True},
+            {"single_level": True, "parent_id": "parent-123", "limit": 10},
             None,
             overrides=None,
         )

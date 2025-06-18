@@ -3,6 +3,7 @@ nylas-python Changelog
 
 Unreleased
 ----------------
+* Added support for `single_level` query parameter in `ListFolderQueryParams` for Microsoft accounts to control folder hierarchy traversal
 * Added support for `earliest_message_date` query parameter for threads
 * Fixed `earliest_message_date` not being an optional response field
 * Added support for new message fields query parameter values: `include_tracking_options` and `raw_mime`
@@ -98,7 +99,7 @@ v6.0.0
 * **BREAKING CHANGE**: Models no longer inherit from `dict` but instead either are a `dataclass` or inherit from `TypedDict`
 * **BREAKING CHANGE**: Renamed the SDK entrypoint from `APIClient` to `Client`
 * **REMOVED**: Local Webhook development support is removed due to incompatibility
-* Rewrote the majority of SDK to be more intuitive, explicit, and efficient
+* Rewritten the majority of SDK to be more intuitive, explicit, and efficient
 * Created models for all API resources and endpoints, for all HTTP methods to reduce confusion on which fields are available for each endpoint
 * Created error classes for the different API errors as well as SDK-specific errors
 
