@@ -28,9 +28,9 @@ class AbstractNylasApiError(Exception):
             status_code: The HTTP status code of the error response.
             message: The error message.
         """
-        self.request_id: str = request_id
-        self.status_code: int = status_code
-        self.headers: CaseInsensitiveDict = headers
+        self.request_id: Optional[str] = request_id
+        self.status_code: Optional[int] = status_code
+        self.headers: Optional[CaseInsensitiveDict] = headers
         super().__init__(message)
 
 
@@ -70,7 +70,7 @@ class NylasApiErrorResponse:
         error: The error data.
     """
 
-    request_id: str
+    request_id: Optional[str]
     error: NylasApiErrorResponseData
 
 
