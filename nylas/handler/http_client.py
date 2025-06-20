@@ -22,13 +22,12 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
         json = response.json()
     except ValueError as exc:
         if response.status_code >= 400:
-            response_text = response.text[:500] if response.text else ""
             raise NylasApiError(
                 NylasApiErrorResponse(
                     None,
                     NylasApiErrorResponseData(
-                        type="server_error",
-                        message=f"HTTP {response.status_code}: {response_text}",
+                        type="network_error",
+                        message=f"HTTP {response.status_code}: Non-JSON response received",
                     ),
                 ),
                 status_code=response.status_code,
