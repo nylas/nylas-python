@@ -92,6 +92,7 @@ class Grants(
             response_type=Grant,
             request_body=request_body,
             overrides=overrides,
+            method="PATCH",
         )
 
     def destroy(
