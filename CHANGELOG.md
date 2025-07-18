@@ -5,6 +5,7 @@ Unreleased
 ----------
 * Added `message.deleted` to the Webhook enum, appended tests
 * Fixed Participant.email not being optional, Microsoft events can now be represented 
+* Added support for metadata_pair query params to the messages and drafts list endpoints
 
 v6.13.1
 ----------

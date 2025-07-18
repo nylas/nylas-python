@@ -160,7 +160,7 @@ Attributes:
         This field defaults to 50. The maximum allowed value is 200.
     page_token (NotRequired[str]): An identifier that specifies which page of data to return.
         This value should be taken from a ListResponse object's next_cursor parameter.
-    metadata_pair (NotRequired[int]): Pass a metadata key/value pair (for example, ?metadata_pair=key1:value) to search for metadata associated with objects. See Metadata for more information. 
+    metadata_pair (NotRequired[str]): Pass a metadata key/value pair (for example, ?metadata_pair=key1:value) to search for metadata associated with objects. See Metadata for more information. 
 """
 
 
