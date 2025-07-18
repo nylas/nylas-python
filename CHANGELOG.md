@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+**UNRELEASED**
+----------------
+* Added support for metadata_pair query params to the messages and drafts list endpoints
+
 v6.10.0
 ----------------
 * Added support for `single_level` query parameter in `ListFolderQueryParams` for Microsoft accounts to control folder hierarchy traversal
