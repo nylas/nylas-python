@@ -164,7 +164,7 @@ def _decode_when(when: dict) -> When:
 
 
 ConferencingProvider = Literal[
-    "Google Meet", "Zoom Meeting", "Microsoft Teams", "GoToMeeting", "WebEx"
+    "Google Meet", "Zoom Meeting", "Microsoft Teams", "GoToMeeting", "WebEx", "unknown"
 ]
 """ Literal for the different conferencing providers. """
 
