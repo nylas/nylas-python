@@ -550,3 +550,113 @@ class TestEvent:
             request_body,
             overrides=None,
         )
+
+    def test_event_with_empty_conferencing_deserialization(self):
+        """Test event deserialization with empty conferencing object."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "conferencing": {},  # Empty conferencing object
+            "title": "Test Event with Empty Conferencing"
+        }
+
+        event = Event.from_dict(event_json)
+        
+        assert event.id == "test-event-id"
+        assert event.title == "Test Event with Empty Conferencing"
+        assert event.conferencing is None
+
+    def test_event_with_incomplete_conferencing_details_deserialization(self):
+        """Test event deserialization with conferencing details missing provider."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "conferencing": {
+                "details": {
+                    "meeting_code": "code-123456",
+                    "password": "password-123456",
+                    "url": "https://zoom.us/j/1234567890?pwd=1234567890",
+                }
+            },  # Details without provider
+            "title": "Test Event with Incomplete Conferencing Details"
+        }
+
+        event = Event.from_dict(event_json)
+        
+        assert event.id == "test-event-id"
+        assert event.title == "Test Event with Incomplete Conferencing Details"
+        assert event.conferencing is None
+
+    def test_event_with_incomplete_conferencing_autocreate_deserialization(self):
+        """Test event deserialization with conferencing autocreate missing provider."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "conferencing": {
+                "autocreate": {}
+            },  # Autocreate without provider
+            "title": "Test Event with Incomplete Conferencing Autocreate"
+        }
+
+        event = Event.from_dict(event_json)
+        
+        assert event.id == "test-event-id"
+        assert event.title == "Test Event with Incomplete Conferencing Autocreate"
+        assert event.conferencing is None
+
+    def test_event_with_unknown_conferencing_fields_deserialization(self):
+        """Test event deserialization with conferencing containing unknown fields."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan"
+            },
+            "conferencing": {
+                "unknown_field": "value"
+            },  # Unknown conferencing fields
+            "title": "Test Event with Unknown Conferencing Fields"
+        }
+
+        event = Event.from_dict(event_json)
+        
+        assert event.id == "test-event-id"
+        assert event.title == "Test Event with Unknown Conferencing Fields"
+        assert event.conferencing is None

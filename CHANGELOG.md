@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Fixed KeyError when processing events with empty or incomplete conferencing objects
+
 v6.11.0
 ----------------
 * Added `unknown` to ConferencingProvider
