@@ -227,21 +227,23 @@ Conferencing = Union[Details, Autocreate]
 
 def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
     """
-    Decode a when object into a When object.
+    Decode a conferencing object into a Conferencing object.
 
     Args:
-        when: The when object to decode.
+        conferencing: The conferencing object to decode.
 
     Returns:
-        The decoded When object.
+        The decoded Conferencing object, or None if empty or incomplete.
     """
     if not conferencing:
         return None
 
-    if "details" in conferencing:
+    # Handle details case - must have provider to be valid
+    if "details" in conferencing and "provider" in conferencing:
         return Details.from_dict(conferencing)
 
-    if "autocreate" in conferencing:
+    # Handle autocreate case - must have provider to be valid
+    if "autocreate" in conferencing and "provider" in conferencing:
         return Autocreate.from_dict(conferencing)
 
     # Handle case where provider exists but details/autocreate doesn't
@@ -257,7 +259,9 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
         }
         return Details.from_dict(details_dict)
 
-    raise ValueError(f"Invalid conferencing object, unknown type found: {conferencing}")
+    # Handle unknown or incomplete conferencing objects by returning None
+    # This provides backwards compatibility for malformed conferencing data
+    return None
 
 
 @dataclass_json
