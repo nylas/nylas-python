@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.11.1
 ----------
 * Fixed KeyError when processing events with empty or incomplete conferencing objects
 
