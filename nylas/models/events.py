@@ -239,20 +239,12 @@ def _decode_conferencing(conferencing: dict) -> Union[Conferencing, None]:
         return None
 
     # Handle details case - must have provider to be valid
-    if "details" in conferencing:
-        if "provider" in conferencing:
-            return Details.from_dict(conferencing)
-        else:
-            # Incomplete details without provider - return None for backwards compatibility
-            return None
+    if "details" in conferencing and "provider" in conferencing:
+        return Details.from_dict(conferencing)
 
-    # Handle autocreate case - must have provider to be valid  
-    if "autocreate" in conferencing:
-        if "provider" in conferencing:
-            return Autocreate.from_dict(conferencing)
-        else:
-            # Incomplete autocreate without provider - return None for backwards compatibility
-            return None
+    # Handle autocreate case - must have provider to be valid
+    if "autocreate" in conferencing and "provider" in conferencing:
+        return Autocreate.from_dict(conferencing)
 
     # Handle case where provider exists but details/autocreate doesn't
     if "provider" in conferencing:
