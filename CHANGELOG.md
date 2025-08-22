@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Added Yahoo, Zoom, EWS as providers to models/auth.py
+
 v6.11.1
 ----------
 * Fixed KeyError when processing events with empty or incomplete conferencing objects

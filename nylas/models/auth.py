@@ -7,7 +7,7 @@ from typing_extensions import TypedDict, NotRequired
 AccessType = Literal["online", "offline"]
 """ Literal for the access type of the authentication URL. """
 
-Provider = Literal["google", "imap", "microsoft", "icloud", "virtual-calendar"]
+Provider = Literal["google", "imap", "microsoft", "icloud", "virtual-calendar", "yahoo", "ews", "zoom"]
 """ Literal for the different authentication providers. """
 
 Prompt = Literal[
