@@ -67,7 +67,7 @@ class TestGrants:
         )
 
         http_client_response._execute.assert_called_once_with(
-            "PUT", "/v3/grants/grant-123", None, None, request_body, overrides=None
+            "PATCH", "/v3/grants/grant-123", None, None, request_body, overrides=None
         )
 
     def test_destroy_grant(self, http_client_delete_response):
