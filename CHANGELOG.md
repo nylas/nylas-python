@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------
 * Added Yahoo, Zoom, EWS as providers to models/auth.py
+* Fixed grants.update() not using the correct "PATCH" method
 
 v6.11.1
 ----------
