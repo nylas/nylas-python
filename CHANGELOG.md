@@ -5,6 +5,7 @@ Unreleased
 ----------
 * Added Yahoo, Zoom, EWS as providers to models/auth.py
 * Fixed grants.update() not using the correct "PATCH" method
+* Added support for `is_plaintext` property in messages send and drafts create endpoints
 
 v6.11.1
 ----------
