@@ -889,4 +889,64 @@ class TestMessage:
         assert tracking_options_from_dict.opens is True
         assert tracking_options_from_dict.thread_replies is False
         assert tracking_options_from_dict.links is True
-        assert tracking_options_from_dict.label == "Test Campaign" 
+        assert tracking_options_from_dict.label == "Test Campaign"
+
+    def test_send_message_with_is_plaintext_true(self, http_client_response):
+        """Test sending a message with is_plaintext=True."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "is_plaintext": True,
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_with_is_plaintext_false(self, http_client_response):
+        """Test sending a message with is_plaintext=False."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "is_plaintext": False,
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_without_is_plaintext_backwards_compatibility(self, http_client_response):
+        """Test that existing code without is_plaintext still works (backwards compatibility)."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+        }
+
+        # Should work without any issues
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        ) 

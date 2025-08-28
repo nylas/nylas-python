@@ -403,3 +403,66 @@ class TestDraft:
             path="/v3/grants/abc-123/drafts/%3C%21%26%21AAAAAAAAAAAuAAAAAAAAABQ%2FwHZyqaNCptfKg5rnNAoBAMO2jhD3dRHOtM0AqgC7tuYAAAAAAA4AABAAAACTn3BxdTQ%2FT4N%2F0BgqPmf%2BAQAAAAA%3D%40example.com%3E",
             overrides=None,
         )
+
+    def test_create_draft_with_is_plaintext_true(self, http_client_response):
+        """Test creating a draft with is_plaintext=True."""
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "is_plaintext": True,
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_create_draft_with_is_plaintext_false(self, http_client_response):
+        """Test creating a draft with is_plaintext=False."""
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my draft message.",
+            "is_plaintext": False,
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_create_draft_without_is_plaintext_backwards_compatibility(self, http_client_response):
+        """Test that existing code without is_plaintext still works (backwards compatibility)."""
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my draft message.",
+        }
+
+        # Should work without any issues
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )

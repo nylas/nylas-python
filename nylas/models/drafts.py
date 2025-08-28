@@ -88,6 +88,8 @@ class CreateDraftRequest(TypedDict):
         tracking_options: Options for tracking opens, links, and thread replies.
         custom_headers: Custom headers to add to the message.
         metadata: A dictionary of key-value pairs storing additional data.
+        is_plaintext: When true, the message body is sent as plain text and the MIME data doesn't include 
+            the HTML version of the message. When false, the message body is sent as HTML.
     """
 
     body: NotRequired[str]
@@ -103,6 +105,7 @@ class CreateDraftRequest(TypedDict):
     tracking_options: NotRequired[TrackingOptions]
     custom_headers: NotRequired[List[CustomHeader]]
     metadata: NotRequired[Dict[str, Any]]
+    is_plaintext: NotRequired[bool]
 
 
 UpdateDraftRequest = CreateDraftRequest
@@ -178,6 +181,8 @@ class SendMessageRequest(CreateDraftRequest):
         reply_to_message_id (NotRequired[str]): The ID of the message that you are replying to.
         tracking_options (NotRequired[TrackingOptions]): Options for tracking opens, links, and thread replies.
         custom_headers(NotRequired[List[CustomHeader]]): Custom headers to add to the message.
+        is_plaintext (NotRequired[bool]): When true, the message body is sent as plain text and the MIME data 
+            doesn't include the HTML version of the message. When false, the message body is sent as HTML.
         from_: The sender of the message.
         use_draft: Whether or not to use draft support. This is primarily used when dealing with large attachments.
     """
