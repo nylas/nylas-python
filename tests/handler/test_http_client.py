@@ -443,7 +443,9 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 500: Non-JSON response received (flow_id: fastly-123). Body: <html><body><h1>Internal Server Error</h1></body></html>"
+        assert str(e.value) == """
+                        HTTP 500: Non-JSON response received (flow_id: fastly-123).
+                        Body: <html><body><h1>Internal Server Error</h1></body></html>"""
         assert e.value.status_code == 500
 
     def test_validate_response_502_error_plain_text(self):
@@ -456,7 +458,9 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 502: Non-JSON response received. Body: Bad Gateway"
+        assert str(e.value) == """
+                        HTTP 502: Non-JSON response received.
+                        Body: Bad Gateway"""
         assert e.value.status_code == 502
 
     def test_validate_response_200_success_non_json(self):
@@ -479,7 +483,9 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 500: Non-JSON response received. Body: "
+        assert str(e.value) == """
+                        HTTP 500: Non-JSON response received.
+                        Body: """
         assert e.value.status_code == 500
 
     def test_validate_response_error_long_response_not_truncated(self):
@@ -493,7 +499,9 @@ class TestHttpClient:
             _validate_response(response)
         assert e.value.type == "network_error"
         expected_body = "A" * 200 + "..."
-        assert str(e.value) == f"HTTP 500: Non-JSON response received. Body: {expected_body}"
+        assert str(e.value) == f"""
+                        HTTP 500: Non-JSON response received.
+                        Body: {expected_body}"""
         assert e.value.status_code == 500
 
     def test_validate_response_with_flow_id_header(self):
@@ -506,7 +514,9 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 503: Non-JSON response received (flow_id: ABC123DEF456). Body: Service Unavailable"
+        assert str(e.value) == """
+                        HTTP 503: Non-JSON response received (flow_id: ABC123DEF456).
+                        Body: Service Unavailable"""
         assert e.value.status_code == 503
 
     def test_validate_response_without_flow_id_header(self):
@@ -519,7 +529,9 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 504: Non-JSON response received. Body: Gateway Timeout"
+        assert str(e.value) == """
+                        HTTP 504: Non-JSON response received.
+                        Body: Gateway Timeout"""
         assert e.value.status_code == 504
 
     def test_validate_response_different_content_types(self):
@@ -540,5 +552,7 @@ class TestHttpClient:
             with pytest.raises(NylasApiError) as e:
                 _validate_response(response)
             assert e.value.type == "network_error"
-            assert str(e.value) == f"HTTP 500: Non-JSON response received. Body: {body}"
+            assert str(e.value) == f"""
+                        HTTP 500: Non-JSON response received.
+                        Body: {body}"""
             assert e.value.status_code == 500
