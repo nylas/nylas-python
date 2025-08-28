@@ -1,6 +1,19 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Added Yahoo, Zoom, EWS as providers to models/auth.py
+* Fixed grants.update() not using the correct "PATCH" method
+
+v6.11.1
+----------
+* Fixed KeyError when processing events with empty or incomplete conferencing objects
+
+v6.11.0
+----------------
+* Added `unknown` to ConferencingProvider
+
 v6.10.0
 ----------------
 * Added handling for non-JSON responses
