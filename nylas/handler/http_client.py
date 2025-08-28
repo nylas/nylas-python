@@ -22,16 +22,21 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
         json = response.json()
     except ValueError as exc:
         if response.status_code >= 400:
-            body_preview = response.text[:200] + "..." if len(response.text) > 200 else response.text
+            body_preview = (
+                response.text[:200] + "..."
+                if len(response.text) > 200
+                else response.text
+            )
             flow_id = response.headers.get("x-fastly-id", "")
             flow_info = f" (flow_id: {flow_id})" if flow_id else ""
-            
             raise NylasApiError(
                 NylasApiErrorResponse(
                     "",
                     NylasApiErrorResponseData(
                         type="network_error",
-                        message=f"HTTP {response.status_code}: Non-JSON response received{flow_info}. Body: {body_preview}",
+                        message=f"""
+                        HTTP {response.status_code}: Non-JSON response received{flow_info}.
+                        Body: {body_preview}""",
                     ),
                 ),
                 status_code=response.status_code,
@@ -46,7 +51,9 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 or "connect/revoke" in parsed_url.path
             ):
                 parsed_error = NylasOAuthErrorResponse.from_dict(json)
-                raise NylasOAuthError(parsed_error, response.status_code, response.headers)
+                raise NylasOAuthError(
+                    parsed_error, response.status_code, response.headers
+                )
 
             parsed_error = NylasApiErrorResponse.from_dict(json)
             raise NylasApiError(parsed_error, response.status_code, response.headers)
@@ -64,6 +71,7 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 headers=response.headers,
             ) from exc
     return (json, response.headers)
+
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
@@ -128,7 +136,7 @@ class HttpClient:
         query_params=None,
         stream=False,
         overrides=None,
-    ) -> Union[bytes, Response,dict]:
+    ) -> Union[bytes, Response, dict]:
         request = self._build_request("GET", path, headers, query_params, overrides)
 
         timeout = self.timeout
