@@ -443,7 +443,7 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 500: Non-JSON response received"
+        assert str(e.value) == "HTTP 500: Non-JSON response received (flow_id: fastly-123). Body: <html><body><h1>Internal Server Error</h1></body></html>"
         assert e.value.status_code == 500
 
     def test_validate_response_502_error_plain_text(self):
@@ -456,7 +456,7 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 502: Non-JSON response received"
+        assert str(e.value) == "HTTP 502: Non-JSON response received. Body: Bad Gateway"
         assert e.value.status_code == 502
 
     def test_validate_response_200_success_non_json(self):
@@ -479,7 +479,7 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 500: Non-JSON response received"
+        assert str(e.value) == "HTTP 500: Non-JSON response received. Body: "
         assert e.value.status_code == 500
 
     def test_validate_response_error_long_response_not_truncated(self):
@@ -492,5 +492,53 @@ class TestHttpClient:
         with pytest.raises(NylasApiError) as e:
             _validate_response(response)
         assert e.value.type == "network_error"
-        assert str(e.value) == "HTTP 500: Non-JSON response received"
+        expected_body = "A" * 200 + "..."
+        assert str(e.value) == f"HTTP 500: Non-JSON response received. Body: {expected_body}"
         assert e.value.status_code == 500
+
+    def test_validate_response_with_flow_id_header(self):
+        response = Mock()
+        response.status_code = 503
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = "Service Unavailable"
+        response.headers = {"x-fastly-id": "ABC123DEF456"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "network_error"
+        assert str(e.value) == "HTTP 503: Non-JSON response received (flow_id: ABC123DEF456). Body: Service Unavailable"
+        assert e.value.status_code == 503
+
+    def test_validate_response_without_flow_id_header(self):
+        response = Mock()
+        response.status_code = 504
+        response.json.side_effect = ValueError("No JSON object could be decoded")
+        response.text = "Gateway Timeout"
+        response.headers = {"Content-Type": "text/plain"}
+
+        with pytest.raises(NylasApiError) as e:
+            _validate_response(response)
+        assert e.value.type == "network_error"
+        assert str(e.value) == "HTTP 504: Non-JSON response received. Body: Gateway Timeout"
+        assert e.value.status_code == 504
+
+    def test_validate_response_different_content_types(self):
+        content_types = [
+            ("text/html", "<h1>Error</h1>"),
+            ("text/plain", "Plain text error"),
+            ("application/xml", "<?xml version='1.0'?><error/>"),
+            ("text/css", "body { color: red; }"),
+        ]
+        
+        for content_type, body in content_types:
+            response = Mock()
+            response.status_code = 500
+            response.json.side_effect = ValueError("No JSON object could be decoded")
+            response.text = body
+            response.headers = {"Content-Type": content_type}
+
+            with pytest.raises(NylasApiError) as e:
+                _validate_response(response)
+            assert e.value.type == "network_error"
+            assert str(e.value) == f"HTTP 500: Non-JSON response received. Body: {body}"
+            assert e.value.status_code == 500

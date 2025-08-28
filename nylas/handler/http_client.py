@@ -22,12 +22,16 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
         json = response.json()
     except ValueError as exc:
         if response.status_code >= 400:
+            body_preview = response.text[:200] + "..." if len(response.text) > 200 else response.text
+            flow_id = response.headers.get("x-fastly-id", "")
+            flow_info = f" (flow_id: {flow_id})" if flow_id else ""
+            
             raise NylasApiError(
                 NylasApiErrorResponse(
-                    None,
+                    "",
                     NylasApiErrorResponseData(
                         type="network_error",
-                        message=f"HTTP {response.status_code}: Non-JSON response received",
+                        message=f"HTTP {response.status_code}: Non-JSON response received{flow_info}. Body: {body_preview}",
                     ),
                 ),
                 status_code=response.status_code,

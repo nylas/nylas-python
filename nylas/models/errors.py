@@ -70,7 +70,7 @@ class NylasApiErrorResponse:
         error: The error data.
     """
 
-    request_id: Optional[str]
+    request_id: str
     error: NylasApiErrorResponseData
 
 
