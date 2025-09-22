@@ -170,7 +170,11 @@ class Messages(
         json_body = None
 
         # From is a reserved keyword in Python, so we need to pull the data from 'from_' instead
-        request_body["from"] = request_body.get("from_", None)
+        # Handle both dictionary-style "from" and typed "from_" field
+        if "from_" in request_body and "from" not in request_body:
+            request_body["from"] = request_body["from_"]
+            del request_body["from_"]
+        # If "from" already exists, leave it unchanged
 
         # Use form data only if the attachment size is greater than 3mb
         attachment_size = sum(

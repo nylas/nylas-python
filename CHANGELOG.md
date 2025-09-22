@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Fixed from field handling in messages.send() to properly map "from_" field to "from field
+
 v6.12.0
 ----------
 * Added Yahoo, Zoom, EWS as providers to models/auth.py
