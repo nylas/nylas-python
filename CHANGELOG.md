@@ -4,6 +4,7 @@ nylas-python Changelog
 Unreleased
 ----------
 * Fixed from field handling in messages.send() to properly map "from_" field to "from field
+* Fixed content_id handling for large inline attachments to use content_id as field name instead of generic file{index}
 
 v6.12.0
 ----------
