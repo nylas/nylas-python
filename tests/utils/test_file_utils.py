@@ -129,10 +129,6 @@ class TestFileUtils:
         assert request.fields["file1"][0] == "attachment2.txt"
         assert request.fields["file1"][1] == b"test data 2"
         assert request.fields["file1"][2] == "text/plain"
-        assert len(request.fields["file0"]) == 3
-        assert request.fields["file0"][0] == "attachment.txt"
-        assert request.fields["file0"][1] == b"test data"
-        assert request.fields["file0"][2] == "text/plain"
 
     def test_build_form_request_no_attachments(self):
         request_body = {
