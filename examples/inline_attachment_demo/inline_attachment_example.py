@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import base64
 import io
 import os
 from nylas import Client
@@ -18,15 +19,22 @@ def send_message_with_inline_attachment():
     nylas = Client(
         api_key=os.environ.get("NYLAS_API_KEY"),  # Replace with your API key
     )
+
+    # Get test email
+    test_email = os.environ.get("TEST_EMAIL")
+
+    # Get grant
+    grant_id = os.environ.get("NYLAS_GRANT_ID")
     
-    # Create a sample image content (you would typically read from a file)
-    # For demonstration, we'll create a small PNG-like binary data
-    image_content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
+    # Create a sample image content using base64 decoded data
+    # This is a small PNG image that can be used for demonstration
+    base64_image = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEQUlEQVRYhe2WW2wUVRyHv5nZS7vb3XbLdrfXjSZ9AxOqDRANGjDRSKLRKoIYNLENpEgJRQIKKvSi0tI28oImhtISqg9cTEzUhIgmSkAQY4UWQ2yALi3d7S4UaPcyO7MzPkwlJXG3S02sD5yH8zLJ//vO7/zPmSMsqR0MMIvDBHhnU0CcTfh9gf+FgOnfFlCTIKs6mg6iABaTgFn6DwQ0DUYnNBaVW3iyMpvcHImJmMaPvTG+75PxOkSkDPKdkUBC1bFZRb76sIhyn/WubyufyePaqEJdW5DAWBKrWUhb6557QFZ13E6Jb/eUUe6zcuzkOMu3DlG0/DLPbrrKl8dvUewxc6S1lJI5EqqWvp6wpHZQzxiu6HjyJI60lCKKsLkjwI1xjfdr3PiKLYyMKnQcvE7oVpIDjSWEx1QW1w1R5Ey9zowTkBUd7xR4fVsAm1Wgc0cxD5RY6P8zRrHHTPtbhZS6TXzxzU3cLhNVC7NJqKnXmJGArOgUuiQOtxrwjbsDOG0ijW96kRM6T2+4yorGIAuqB1FUnc2vu9lz9BYAC+ZmkVBT155WQFZ0ilwSh1tKEQXY0DqCK0ekYZ2HeEJn6Xo/t6MahU6RuKJztj9Kfq7EwA1j8y1mkXR7nFZASeoU50scai1FEKCuZQS3U2JHrYe4rLGgZpDmmjn4CiRkVcdmFaica2PsdpLyfKN0QtFIdw5SHkNdB6tZ4FBLKQDrd43gdUm8t9ZDTNaorPbzycYCHq+0Y8sSWdMe4sTeMswmgd1dYTZU5QJwpj+OJc1hT5uApsGAX6Zu1wiF+ZPwuMbD1X4+rTfgv5yPUtUU5MTeMhx2kY4DYQaDKquW5REeUzl6OobFlDqDlAKCYKSwuP4aZV4T767xEI1rVFT7+WxTAYsfsXPmfJTnGoL07fPhsIu0d4c5e1Gm54MSANa1BCiwp2+ztDfheFxny/MO6le7icY0Kmr8dG4u4LEKO6fPRXmhKciFTh8up8TurjC9AzKfT8Jf3T7M0PUkWdPchCkFlCQ8Mc9K/Wo3kZix8q4tBTw6387Pv0d4sXmUC50+8hwSrftDnLuUoKfZgK/aPszlUZXsaeCQZgskEa4EVH76NcKitX66txrwU70RXpoCb+kM0XcpwcEmA/7KtmGuZAhPm4AoQHhcY1lTkO+aCln4kI2Tv0VY8dEo/ft95OZI7NoX4o/BBAcm4Su3DeMPqdPGnpEAQHhC44fmQirnGfA32kL0d/pw5hixX7qm0N1owFe8M8TV8PR7nrFARNZpeM1lwHsjPLUzyLGdXpw5Em3dYT7+eoLjrUUAvPz2UEYN908j5d8woeosnZ/N3ActNPTcxOMQybOJlHkkTl1M4MgSUJNGryQ1HbN07/C0An9LKEmwW43img5JjTtPLn1yEmbGBqbpAYtJuOsaFQUQp7z3hDvTzMesv4rvC8y6gAmIzKbAX+u0pDGsEb6KAAAAAElFTkSuQmCC"
+    image_content = base64.b64decode(base64_image)
     
     # Create the message with inline attachment
     message_request = {
-        "to": [{"email": "recipient@example.com", "name": "Recipient Name"}],
-        "from": [{"email": "sender@example.com", "name": "Sender Name"}],
+        "to": [{"email": test_email, "name": "Recipient Name"}],
+        "from": [{"email": test_email, "name": "Sender Name"}],
         "subject": "Message with Inline Image",
         "body": """
         <html>
@@ -62,7 +70,7 @@ def send_message_with_inline_attachment():
     try:
         # Send the message
         response = nylas.messages.send(
-            identifier="your-grant-id",  # Replace with your grant ID
+            identifier=grant_id,  # Replace with your grant ID
             request_body=message_request
         )
         
@@ -87,15 +95,22 @@ def send_draft_with_inline_attachment():
         api_key=os.environ.get("NYLAS_API_KEY"),  # Replace with your API key
     )
     
+    # Get test email
+    test_email = os.environ.get("TEST_EMAIL")
+
+    # Get grant
+    grant_id = os.environ.get("NYLAS_GRANT_ID")
+    
     # Create a larger image content to trigger form data usage (>3MB threshold)
-    # For demo purposes, we'll create a smaller example but in real usage,
-    # large images would automatically use the content_id functionality
-    large_image_content = b'LARGE_IMAGE_DATA_PLACEHOLDER' * 1000  # Simulated large content
+    # For demo purposes, we'll replicate the same image data multiple times
+    # In real usage, large images would automatically use the content_id functionality
+    base64_image = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEQUlEQVRYhe2WW2wUVRyHv5nZS7vb3XbLdrfXjSZ9AxOqDRANGjDRSKLRKoIYNLENpEgJRQIKKvSi0tI28oImhtISqg9cTEzUhIgmSkAQY4UWQ2yALi3d7S4UaPcyO7MzPkwlJXG3S02sD5yH8zLJ//vO7/zPmSMsqR0MMIvDBHhnU0CcTfh9gf+FgOnfFlCTIKs6mg6iABaTgFn6DwQ0DUYnNBaVW3iyMpvcHImJmMaPvTG+75PxOkSkDPKdkUBC1bFZRb76sIhyn/WubyufyePaqEJdW5DAWBKrWUhb6557QFZ13E6Jb/eUUe6zcuzkOMu3DlG0/DLPbrrKl8dvUewxc6S1lJI5EqqWvp6wpHZQzxiu6HjyJI60lCKKsLkjwI1xjfdr3PiKLYyMKnQcvE7oVpIDjSWEx1QW1w1R5Ey9zowTkBUd7xR4fVsAm1Wgc0cxD5RY6P8zRrHHTPtbhZS6TXzxzU3cLhNVC7NJqKnXmJGArOgUuiQOtxrwjbsDOG0ijW96kRM6T2+4yorGIAuqB1FUnc2vu9lz9BYAC+ZmkVBT155WQFZ0ilwSh1tKEQXY0DqCK0ekYZ2HeEJn6Xo/t6MahU6RuKJztj9Kfq7EwA1j8y1mkXR7nFZASeoU50scai1FEKCuZQS3U2JHrYe4rLGgZpDmmjn4CiRkVcdmFaica2PsdpLyfKN0QtFIdw5SHkNdB6tZ4FBLKQDrd43gdUm8t9ZDTNaorPbzycYCHq+0Y8sSWdMe4sTeMswmgd1dYTZU5QJwpj+OJc1hT5uApsGAX6Zu1wiF+ZPwuMbD1X4+rTfgv5yPUtUU5MTeMhx2kY4DYQaDKquW5REeUzl6OobFlDqDlAKCYKSwuP4aZV4T767xEI1rVFT7+WxTAYsfsXPmfJTnGoL07fPhsIu0d4c5e1Gm54MSANa1BCiwp2+ztDfheFxny/MO6le7icY0Kmr8dG4u4LEKO6fPRXmhKciFTh8up8TurjC9AzKfT8Jf3T7M0PUkWdPchCkFlCQ8Mc9K/Wo3kZix8q4tBTw6387Pv0d4sXmUC50+8hwSrftDnLuUoKfZgK/aPszlUZXsaeCQZgskEa4EVH76NcKitX66txrwU70RXpoCb+kM0XcpwcEmA/7KtmGuZAhPm4AoQHhcY1lTkO+aCln4kI2Tv0VY8dEo/ft95OZI7NoX4o/BBAcm4Su3DeMPqdPGnpEAQHhC44fmQirnGfA32kL0d/pw5hixX7qm0N1owFe8M8TV8PR7nrFARNZpeM1lwHsjPLUzyLGdXpw5Em3dYT7+eoLjrUUAvPz2UEYN908j5d8woeosnZ/N3ActNPTcxOMQybOJlHkkTl1M4MgSUJNGryQ1HbN07/C0An9LKEmwW43img5JjTtPLn1yEmbGBqbpAYtJuOsaFQUQp7z3hDvTzMesv4rvC8y6gAmIzKbAX+u0pDGsEb6KAAAAAElFTkSuQmCC"
+    large_image_content = base64.b64decode(base64_image) * 1000  # Replicated to make it large
     
     # Create the draft with inline attachment
     draft_request = {
-        "to": [{"email": "recipient@example.com", "name": "Recipient Name"}],
-        "from": [{"email": "sender@example.com", "name": "Sender Name"}],
+        "to": [{"email": test_email, "name": "Recipient Name"}],
+        "from": [{"email": test_email, "name": "Sender Name"}],
         "subject": "Draft with Inline Image",
         "body": """
         <html>
@@ -123,7 +138,7 @@ def send_draft_with_inline_attachment():
     try:
         # Create the draft
         draft_response = nylas.drafts.create(
-            identifier="your-grant-id",  # Replace with your grant ID
+            identifier=grant_id,  # Replace with your grant ID
             request_body=draft_request
         )
         
@@ -132,7 +147,7 @@ def send_draft_with_inline_attachment():
         
         # Send the draft
         send_response = nylas.drafts.send(
-            identifier="your-grant-id",  # Replace with your grant ID
+            identifier=grant_id,  # Replace with your grant ID
             draft_id=draft_response.data.id
         )
         
@@ -152,6 +167,18 @@ if __name__ == "__main__":
     if not os.environ.get("NYLAS_API_KEY"):
         print("Please set the NYLAS_API_KEY environment variable")
         print("export NYLAS_API_KEY='your-api-key-here'")
+        exit(1)
+    
+    # Check if grant ID is set
+    if not os.environ.get("NYLAS_GRANT_ID"):
+        print("Please set the NYLAS_GRANT_ID environment variable")
+        print("export NYLAS_GRANT_ID='your-grant-id-here'")
+        exit(1)
+    
+    # Check if test email is set
+    if not os.environ.get("TEST_EMAIL"):
+        print("Please set the TEST_EMAIL environment variable")
+        print("export TEST_EMAIL='your-test-email-here'")
         exit(1)
     
     print("1. Sending message with inline attachment...")
