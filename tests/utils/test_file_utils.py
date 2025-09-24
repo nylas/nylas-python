@@ -1,6 +1,6 @@
 from unittest.mock import patch, mock_open
 
-from nylas.utils.file_utils import attach_file_request_builder, _build_form_request
+from nylas.utils.file_utils import attach_file_request_builder, _build_form_request, encode_stream_to_base64
 
 
 class TestFileUtils:
@@ -47,6 +47,28 @@ class TestFileUtils:
             == '{"to": [{"email": "test@gmail.com"}], "subject": "test subject", "body": "test body"}'
         )
         assert request.fields["message"][2] == "application/json"
+
+    def test_encode_stream_to_base64(self):
+        """Test that binary streams are properly encoded to base64."""
+        import io
+        
+        # Create a binary stream with test data
+        test_data = b"Hello, World! This is test data."
+        binary_stream = io.BytesIO(test_data)
+        
+        # Move the stream position to simulate it being read
+        binary_stream.seek(10)
+        
+        # Encode to base64
+        encoded = encode_stream_to_base64(binary_stream)
+        
+        # Verify the result
+        import base64
+        expected = base64.b64encode(test_data).decode("utf-8")
+        assert encoded == expected
+        
+        # Verify the stream position was reset to 0 and read completely
+        assert binary_stream.tell() == len(test_data)
 
     def test_build_form_request_with_content_id(self):
         """Test that content_id is used as field name when provided."""
@@ -148,3 +170,25 @@ class TestFileUtils:
             == '{"to": [{"email": "test@gmail.com"}], "subject": "test subject", "body": "test body"}'
         )
         assert request.fields["message"][2] == "application/json"
+
+    def test_encode_stream_to_base64(self):
+        """Test that binary streams are properly encoded to base64."""
+        import io
+        
+        # Create a binary stream with test data
+        test_data = b"Hello, World! This is test data."
+        binary_stream = io.BytesIO(test_data)
+        
+        # Move the stream position to simulate it being read
+        binary_stream.seek(10)
+        
+        # Encode to base64
+        encoded = encode_stream_to_base64(binary_stream)
+        
+        # Verify the result
+        import base64
+        expected = base64.b64encode(test_data).decode("utf-8")
+        assert encoded == expected
+        
+        # Verify the stream position was reset to 0 and read completely
+        assert binary_stream.tell() == len(test_data)
