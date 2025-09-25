@@ -42,26 +42,35 @@ source .venv/bin/activate
 # .venv\Scripts\activate
 ```
 
+**Important**: If you encounter issues with `pip` not being available in the virtual environment, run:
+
+```bash
+# Ensure pip is available in the virtual environment
+python -m ensurepip --upgrade
+```
+
 ### 3. Install Development Dependencies
 
 Install the package in editable mode with all optional dependencies:
 
 ```bash
 # Install the package in development mode with all optional dependencies
-pip install -e ".[test,docs,release]"
+python -m pip install -e ".[test,docs,release]"
 
 # Or install specific dependency groups as needed:
-# pip install -e ".[test]"     # For running tests
-# pip install -e ".[docs]"     # For building documentation
-# pip install -e ".[release]"  # For release management
+# python -m pip install -e ".[test]"     # For running tests
+# python -m pip install -e ".[docs]"     # For building documentation
+# python -m pip install -e ".[release]"  # For release management
 ```
+
+**Note**: We use `python -m pip` instead of just `pip` to ensure we're using the pip from the virtual environment.
 
 ### 4. Install Code Quality Tools
 
 Install the linting and formatting tools used by the project:
 
 ```bash
-pip install pylint black
+python -m pip install pylint black
 ```
 
 ### 5. Verify Your Setup
