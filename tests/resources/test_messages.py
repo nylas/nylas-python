@@ -950,3 +950,123 @@ class TestMessage:
             data=None,
             overrides=None,
         ) 
+
+    def test_send_message_with_from_field_mapping(self, http_client_response):
+        """Test that from_ field is properly mapped to from field in request body."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from_": [
+                {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
+            ],
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        # Verify that from_ was mapped to from and from_ was removed
+        expected_request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from": [{"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}],
+        }
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=expected_request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_with_existing_from_field_unchanged(
+        self, http_client_response
+    ):
+        """Test that existing from field is left unchanged when both from and from_ are present."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from": [{"name": "Existing Sender", "email": "existing@example.com"}],
+            "from_": [
+                {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
+            ],
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        # Verify that the original from field is preserved and from_ is not processed
+        expected_request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from": [{"name": "Existing Sender", "email": "existing@example.com"}],
+            "from_": [
+                {"name": "Daenerys Targaryen", "email": "daenerys.t@example.com"}
+            ],
+        }
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=expected_request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_with_only_from_field_unchanged(self, http_client_response):
+        """Test that when only from field is present, it remains unchanged."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from": [{"name": "Direct Sender", "email": "direct@example.com"}],
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        # Verify that the from field remains unchanged
+        expected_request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+            "from": [{"name": "Direct Sender", "email": "direct@example.com"}],
+        }
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=expected_request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_without_from_fields_unchanged(self, http_client_response):
+        """Test that request body without from or from_ fields remains unchanged."""
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        # Verify that the request body remains unchanged
+        expected_request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "This is the body of my message.",
+        }
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=expected_request_body,
+            data=None,
+            overrides=None,
+        )

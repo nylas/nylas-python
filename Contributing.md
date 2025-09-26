@@ -3,6 +3,160 @@
 
 The following is a set of guidelines for contributing to the Nylas Python SDK; these are guidelines, not rules, so please use your best judgement and feel free to propose changes to this document via pull request.
 
+# Development Setup
+
+To get started contributing to this repository, you'll need to set up a local development environment. Follow these steps:
+
+## Prerequisites
+
+- Python 3.8 or higher (the project supports Python 3.8+)
+- Git
+- A GitHub account
+
+## Setup Steps
+
+### 1. Fork and Clone the Repository
+
+```bash
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR_USERNAME/nylas-python.git
+cd nylas-python
+
+# Add the upstream repository as a remote
+git remote add upstream https://github.com/nylas/nylas-python.git
+```
+
+### 2. Set Up Python Virtual Environment
+
+We recommend using a virtual environment to isolate your development dependencies:
+
+```bash
+# Create a virtual environment
+python3 -m venv .venv
+
+# Activate the virtual environment
+# On macOS/Linux:
+source .venv/bin/activate
+
+# On Windows:
+# .venv\Scripts\activate
+```
+
+**Important**: If you encounter issues with `pip` not being available in the virtual environment, run:
+
+```bash
+# Ensure pip is available in the virtual environment
+python -m ensurepip --upgrade
+```
+
+### 3. Install Development Dependencies
+
+Install the package in editable mode with all optional dependencies:
+
+```bash
+# Install the package in development mode with all optional dependencies
+python -m pip install -e ".[test,docs,release]"
+
+# Or install specific dependency groups as needed:
+# python -m pip install -e ".[test]"     # For running tests
+# python -m pip install -e ".[docs]"     # For building documentation
+# python -m pip install -e ".[release]"  # For release management
+```
+
+**Note**: We use `python -m pip` instead of just `pip` to ensure we're using the pip from the virtual environment.
+
+### 4. Install Code Quality Tools
+
+Install the linting and formatting tools used by the project:
+
+```bash
+python -m pip install pylint black
+```
+
+### 5. Verify Your Setup
+
+Run the tests to make sure everything is working correctly:
+
+```bash
+# Run the test suite
+python setup.py test
+
+# Or run tests with pytest directly
+pytest
+
+# Run with coverage
+pytest --cov=nylas tests/
+```
+
+Check code formatting and linting:
+
+```bash
+# Check code formatting (this will modify files)
+black .
+
+# Run linting
+pylint nylas
+```
+
+## Development Workflow
+
+1. **Create a branch** for your feature or bug fix:
+   ```bash
+   git checkout -b your-feature-branch
+   ```
+
+2. **Make your changes** and write tests for any new functionality
+
+3. **Run tests and linting**:
+   ```bash
+   python setup.py test
+   black .
+   pylint nylas
+   ```
+
+4. **Commit your changes** following [conventional commit practices](https://www.conventionalcommits.org/)
+
+5. **Push to your fork** and create a pull request
+
+## Project Structure
+
+- `nylas/` - Main SDK source code
+- `tests/` - Test files
+- `examples/` - Example usage scripts
+- `scripts/` - Build and development scripts
+- `pyproject.toml` - Project configuration and dependencies
+- `setup.py` - Legacy setup file (still used for some operations)
+
+## Running Tests
+
+The project uses pytest for testing:
+
+```bash
+# Run all tests
+pytest
+
+# Run tests with coverage
+pytest --cov=nylas tests/
+
+# Run specific test files
+pytest tests/test_specific_module.py
+
+# Run tests matching a pattern
+pytest -k "test_pattern"
+```
+
+## Documentation
+
+To build the documentation locally:
+
+```bash
+# Make sure you have docs dependencies installed
+pip install -e ".[docs]"
+
+# Generate documentation (if there are scripts for this)
+python scripts/generate-docs.py
+```
+
 # How to Ask a Question
 
 If you have a question about how to use the Python SDK, please [create an issue](https://github.com/nylas/nylas-python/issues) and label it as a question. If you have more general questions about the Nylas Communications Platform, or the Nylas Email, Calendar, and Contacts API, please reach out to support@nylas.com to get help.

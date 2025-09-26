@@ -70,7 +70,9 @@ def _build_form_request(request_body: dict) -> MultipartEncoder:
     # Create the multipart/form-data encoder
     fields = {"message": ("", message_payload, "application/json")}
     for index, attachment in enumerate(attachments):
-        fields[f"file{index}"] = (
+        # Use content_id as field name if provided, otherwise fallback to file{index}
+        field_name = attachment.get("content_id", f"file{index}")
+        fields[field_name] = (
             attachment["filename"],
             attachment["content"],
             attachment["content_type"],
