@@ -22,6 +22,7 @@ v6.11.0
 
 v6.10.0
 ----------------
+* Added handling for non-JSON responses
 * Added support for `single_level` query parameter in `ListFolderQueryParams` for Microsoft accounts to control folder hierarchy traversal
 * Added support for `earliest_message_date` query parameter for threads
 * Fixed `earliest_message_date` not being an optional response field

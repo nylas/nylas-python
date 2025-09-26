@@ -28,9 +28,9 @@ class AbstractNylasApiError(Exception):
             status_code: The HTTP status code of the error response.
             message: The error message.
         """
-        self.request_id: str = request_id
-        self.status_code: int = status_code
-        self.headers: CaseInsensitiveDict = headers
+        self.request_id: Optional[str] = request_id
+        self.status_code: Optional[int] = status_code
+        self.headers: Optional[CaseInsensitiveDict] = headers
         super().__init__(message)
 
 
@@ -169,3 +169,47 @@ class NylasSdkTimeoutError(AbstractNylasSdkError):
         self.url: str = url
         self.timeout: int = timeout
         self.headers: CaseInsensitiveDict = headers
+
+
+class NylasNetworkError(AbstractNylasSdkError):
+    """
+    Error thrown when the SDK receives a non-JSON response with an error status code.
+    This typically happens when the request never reaches the Nylas API due to
+    infrastructure issues (e.g., proxy errors, load balancer failures).
+
+    Note: This error class will be used in v7.0 to replace NylasApiError for non-JSON
+    HTTP error responses. Currently, non-JSON errors still throw NylasApiError with 
+    type="network_error" for backwards compatibility.
+
+    Attributes:
+        request_id: The unique identifier of the request.
+        status_code: The HTTP status code of the error response.
+        raw_body: The non-JSON response body.
+        headers: The headers returned from the server.
+        flow_id: The value from x-fastly-id header if present.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        request_id: Optional[str] = None,
+        status_code: Optional[int] = None,
+        raw_body: Optional[str] = None,
+        headers: Optional[CaseInsensitiveDict] = None,
+        flow_id: Optional[str] = None,
+    ):
+        """
+        Args:
+            message: The error message.
+            request_id: The unique identifier of the request.
+            status_code: The HTTP status code of the error response.
+            raw_body: The non-JSON response body.
+            headers: The headers returned from the server.
+            flow_id: The value from x-fastly-id header if present.
+        """
+        super().__init__(message)
+        self.request_id: Optional[str] = request_id
+        self.status_code: Optional[int] = status_code
+        self.raw_body: Optional[str] = raw_body
+        self.headers: Optional[CaseInsensitiveDict] = headers
+        self.flow_id: Optional[str] = flow_id
