@@ -63,7 +63,7 @@ class TestHttpClient:
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key",
-            "Content-type": "application/json",
+            "Content-type": "application/json; charset=utf-8",
         }
 
     def test_build_headers_form_body(self, http_client, patched_version_and_sys):
@@ -200,7 +200,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json",
+                "Content-type": "application/json; charset=utf-8",
             },
             timeout=60,
             stream=False,
@@ -299,12 +299,11 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json",
+                "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data='{"foo": "bar"}',
             timeout=30,
-            data=None,
         )
 
     def test_execute_override_timeout(
@@ -334,12 +333,11 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json",
+                "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data='{"foo": "bar"}',
             timeout=60,
-            data=None,
         )
 
     def test_execute_timeout(self, http_client, mock_session_timeout):
@@ -425,10 +423,122 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json",
+                "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data='{"foo": "bar"}',
             timeout=30,
-            data=None,
         )
+
+    def test_execute_with_utf8_characters(self, http_client, patched_version_and_sys, patched_request):
+        """Test that UTF-8 characters are preserved in JSON requests (not escaped)."""
+        mock_response = Mock()
+        mock_response.json.return_value = {"success": True}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        # Request with special characters
+        request_body = {
+            "title": "Réunion d'équipe",
+            "description": "De l'idée à la post-prod, sans friction",
+            "location": "café",
+        }
+
+        response_json, response_headers = http_client._execute(
+            method="POST",
+            path="/events",
+            request_body=request_body,
+        )
+
+        assert response_json == {"success": True}
+        # Verify that the data sent preserves UTF-8 characters (not escaped)
+        call_kwargs = patched_request.call_args[1]
+        assert "data" in call_kwargs
+        sent_data = call_kwargs["data"]
+        
+        # The JSON should contain actual UTF-8 characters, not escape sequences
+        assert "Réunion d'équipe" in sent_data
+        assert "De l'idée à la post-prod" in sent_data
+        assert "café" in sent_data
+        # Should NOT contain unicode escape sequences
+        assert "\\u" not in sent_data
+
+    def test_execute_with_none_request_body(self, http_client, patched_version_and_sys, patched_request):
+        """Test that None request_body is handled correctly."""
+        mock_response = Mock()
+        mock_response.json.return_value = {"success": True}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        response_json, response_headers = http_client._execute(
+            method="GET",
+            path="/events",
+            request_body=None,
+        )
+
+        assert response_json == {"success": True}
+        # Verify that data is None when request_body is None
+        call_kwargs = patched_request.call_args[1]
+        assert "data" in call_kwargs
+        assert call_kwargs["data"] is None
+
+    def test_execute_with_emoji_and_international_characters(self, http_client, patched_version_and_sys, patched_request):
+        """Test that emoji and various international characters are preserved."""
+        mock_response = Mock()
+        mock_response.json.return_value = {"success": True}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        request_body = {
+            "emoji": "🎉 Party time! 🥳",
+            "japanese": "こんにちは",
+            "chinese": "你好",
+            "russian": "Привет",
+            "german": "Größe",
+            "spanish": "¿Cómo estás?",
+        }
+
+        response_json, response_headers = http_client._execute(
+            method="POST",
+            path="/messages",
+            request_body=request_body,
+        )
+
+        assert response_json == {"success": True}
+        call_kwargs = patched_request.call_args[1]
+        sent_data = call_kwargs["data"]
+        
+        # All characters should be preserved
+        assert "🎉 Party time! 🥳" in sent_data
+        assert "こんにちは" in sent_data
+        assert "你好" in sent_data
+        assert "Привет" in sent_data
+        assert "Größe" in sent_data
+        assert "¿Cómo estás?" in sent_data
+
+    def test_execute_with_multipart_data_not_affected(self, http_client, patched_version_and_sys, patched_request):
+        """Test that multipart/form-data is not affected by the change."""
+        mock_response = Mock()
+        mock_response.json.return_value = {"success": True}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        # When data is provided (multipart), request_body should be ignored
+        mock_data = Mock()
+        mock_data.content_type = "multipart/form-data"
+
+        response_json, response_headers = http_client._execute(
+            method="POST",
+            path="/messages/send",
+            request_body={"foo": "bar"},  # This should be ignored
+            data=mock_data,
+        )
+
+        assert response_json == {"success": True}
+        call_kwargs = patched_request.call_args[1]
+        # Should use the multipart data, not JSON
+        assert call_kwargs["data"] == mock_data

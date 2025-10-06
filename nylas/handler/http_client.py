@@ -1,4 +1,5 @@
 import sys
+import json
 from typing import Union, Tuple, Dict
 from urllib.parse import urlparse, quote
 
@@ -88,14 +89,20 @@ class HttpClient:
         timeout = self.timeout
         if overrides and overrides.get("timeout"):
             timeout = overrides["timeout"]
+        
+        # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
+        # This ensures special characters (accented letters, emoji, etc.) are not escaped
+        json_data = None
+        if request_body is not None and data is None:
+            json_data = json.dumps(request_body, ensure_ascii=False)
+        
         try:
             response = requests.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
-                json=request_body,
+                data=json_data or data,
                 timeout=timeout,
-                data=data,
             )
         except requests.exceptions.Timeout as exc:
             raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
@@ -186,6 +193,6 @@ class HttpClient:
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
         elif response_body is not None:
-            headers["Content-type"] = "application/json"
+            headers["Content-type"] = "application/json; charset=utf-8"
 
         return {**headers, **extra_headers, **override_headers}
