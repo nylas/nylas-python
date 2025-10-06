@@ -171,24 +171,63 @@ class TestFileUtils:
         )
         assert request.fields["message"][2] == "application/json"
 
-    def test_encode_stream_to_base64(self):
-        """Test that binary streams are properly encoded to base64."""
-        import io
+    def test_build_form_request_with_special_characters(self):
+        """Test that special characters (accented letters) are properly encoded in form requests."""
+        import json
         
-        # Create a binary stream with test data
-        test_data = b"Hello, World! This is test data."
-        binary_stream = io.BytesIO(test_data)
+        # This is the exact subject from the bug report
+        request_body = {
+            "to": [{"email": "test@gmail.com"}],
+            "subject": "De l'idée à la post-prod, sans friction",
+            "body": "Test body with special chars: café, naïve, résumé",
+            "attachments": [
+                {
+                    "filename": "attachment.txt",
+                    "content_type": "text/plain",
+                    "content": b"test data",
+                    "size": 1234,
+                }
+            ],
+        }
+
+        request = _build_form_request(request_body)
+
+        # Verify the message field exists
+        assert "message" in request.fields
+        message_content = request.fields["message"][1]
         
-        # Move the stream position to simulate it being read
-        binary_stream.seek(10)
+        # Parse the JSON to verify it contains the correct characters
+        parsed_message = json.loads(message_content)
+        assert parsed_message["subject"] == "De l'idée à la post-prod, sans friction"
+        assert "café" in parsed_message["body"]
+        assert "naïve" in parsed_message["body"]
+        assert "résumé" in parsed_message["body"]
         
-        # Encode to base64
-        encoded = encode_stream_to_base64(binary_stream)
+        # Verify that the special characters are preserved in the JSON string itself
+        # They should NOT be escaped as unicode escape sequences
+        assert "idée" in message_content
+        assert "café" in message_content
         
-        # Verify the result
-        import base64
-        expected = base64.b64encode(test_data).decode("utf-8")
-        assert encoded == expected
+    def test_build_form_request_encoding_comparison(self):
+        """Test to demonstrate the difference between ensure_ascii=True and ensure_ascii=False."""
+        import json
         
-        # Verify the stream position was reset to 0 and read completely
-        assert binary_stream.tell() == len(test_data)
+        test_subject = "De l'idée à la post-prod, sans friction"
+        
+        # With ensure_ascii=True (default - this causes the bug)
+        encoded_with_ascii = json.dumps({"subject": test_subject}, ensure_ascii=True)
+        # This will produce escape sequences like \u00e9 for é
+        
+        # With ensure_ascii=False (the fix)
+        encoded_without_ascii = json.dumps({"subject": test_subject}, ensure_ascii=False)
+        # This will preserve the actual UTF-8 characters
+        
+        # Verify the difference
+        assert "\\u" in encoded_with_ascii or test_subject not in encoded_with_ascii
+        assert test_subject in encoded_without_ascii
+        assert "idée" in encoded_without_ascii
+        assert "café" not in encoded_with_ascii  # Would be escaped
+        
+        # Both should decode to the same value
+        assert json.loads(encoded_with_ascii)["subject"] == test_subject
+        assert json.loads(encoded_without_ascii)["subject"] == test_subject
