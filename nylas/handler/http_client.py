@@ -1,4 +1,5 @@
 import sys
+import json
 from typing import Union, Tuple, Dict
 from urllib.parse import urlparse, quote
 
@@ -18,7 +19,7 @@ from nylas.models.errors import (
 
 
 def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
-    json = response.json()
+    response_data = response.json()
     if response.status_code >= 400:
         parsed_url = urlparse(response.url)
         try:
@@ -26,25 +27,25 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 "connect/token" in parsed_url.path
                 or "connect/revoke" in parsed_url.path
             ):
-                parsed_error = NylasOAuthErrorResponse.from_dict(json)
+                parsed_error = NylasOAuthErrorResponse.from_dict(response_data)
                 raise NylasOAuthError(parsed_error, response.status_code, response.headers)
 
-            parsed_error = NylasApiErrorResponse.from_dict(json)
+            parsed_error = NylasApiErrorResponse.from_dict(response_data)
             raise NylasApiError(parsed_error, response.status_code, response.headers)
         except (KeyError, TypeError) as exc:
-            request_id = json.get("request_id", None)
+            request_id = response_data.get("request_id", None)
             raise NylasApiError(
                 NylasApiErrorResponse(
                     request_id,
                     NylasApiErrorResponseData(
                         type="unknown",
-                        message=json,
+                        message=response_data,
                     ),
                 ),
                 status_code=response.status_code,
                 headers=response.headers,
             ) from exc
-    return (json, response.headers)
+    return (response_data, response.headers)
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
@@ -88,14 +89,19 @@ class HttpClient:
         timeout = self.timeout
         if overrides and overrides.get("timeout"):
             timeout = overrides["timeout"]
+
+        # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
+        # This ensures special characters (accented letters, emoji, etc.) are not escaped
+        json_data = None
+        if request_body is not None and data is None:
+            json_data = json.dumps(request_body, ensure_ascii=False)
         try:
             response = requests.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
-                json=request_body,
+                data=json_data or data,
                 timeout=timeout,
-                data=data,
             )
         except requests.exceptions.Timeout as exc:
             raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
@@ -186,6 +192,6 @@ class HttpClient:
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
         elif response_body is not None:
-            headers["Content-type"] = "application/json"
+            headers["Content-type"] = "application/json; charset=utf-8"
 
         return {**headers, **extra_headers, **override_headers}

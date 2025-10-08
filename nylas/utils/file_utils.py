@@ -65,7 +65,9 @@ def _build_form_request(request_body: dict) -> MultipartEncoder:
     """
     attachments = request_body.get("attachments", [])
     request_body.pop("attachments", None)
-    message_payload = json.dumps(request_body)
+    # Use ensure_ascii=False to preserve UTF-8 characters (accented letters, etc.)
+    # instead of escaping them as unicode sequences
+    message_payload = json.dumps(request_body, ensure_ascii=False)
 
     # Create the multipart/form-data encoder
     fields = {"message": ("", message_payload, "application/json")}

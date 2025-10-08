@@ -466,3 +466,67 @@ class TestDraft:
             request_body,
             overrides=None,
         )
+
+    def test_create_draft_with_special_characters_in_subject(self, http_client_response):
+        """Test creating a draft with special characters (accented letters) in subject."""
+        drafts = Drafts(http_client_response)
+        # This is the exact subject from the bug report
+        request_body = {
+            "subject": "De l'idée à la post-prod, sans friction",
+            "to": [{"name": "Jean Dupont", "email": "jean@example.com"}],
+            "body": "Message avec des caractères accentués: café, naïve, résumé",
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_create_draft_with_special_characters_large_attachment(self, http_client_response):
+        """Test that special characters are preserved in drafts when using form data (large attachments)."""
+        from unittest.mock import Mock
+        
+        drafts = Drafts(http_client_response)
+        mock_encoder = Mock()
+        
+        # Mock the _build_form_request to capture what it's called with
+        with patch("nylas.resources.drafts._build_form_request") as mock_build_form:
+            mock_build_form.return_value = mock_encoder
+            
+            # This is the exact subject from the bug report
+            request_body = {
+                "subject": "De l'idée à la post-prod, sans friction",
+                "to": [{"name": "Jean Dupont", "email": "jean@example.com"}],
+                "body": "Message avec des caractères: café, naïve",
+                "attachments": [
+                    {
+                        "filename": "large_file.pdf",
+                        "content_type": "application/pdf",
+                        "content": b"large file content",
+                        "size": 3 * 1024 * 1024,  # 3MB - triggers form data
+                    }
+                ],
+            }
+
+            drafts.create(identifier="abc-123", request_body=request_body)
+
+            # Verify _build_form_request was called
+            mock_build_form.assert_called_once()
+            
+            # Verify the subject with special characters was passed correctly
+            call_args = mock_build_form.call_args[0][0]
+            assert call_args["subject"] == "De l'idée à la post-prod, sans friction"
+            assert "café" in call_args["body"]
+
+            http_client_response._execute.assert_called_once_with(
+                method="POST",
+                path="/v3/grants/abc-123/drafts",
+                data=mock_encoder,
+                overrides=None,
+            )
