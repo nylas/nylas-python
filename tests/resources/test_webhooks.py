@@ -57,6 +57,7 @@ class TestWebhooks:
             "message.bounce_detected",
             "message.created",
             "message.updated",
+            "message.deleted",
             "message.opened",
             "message.link_clicked",
             "message.opened.legacy",

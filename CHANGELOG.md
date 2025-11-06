@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Added `message.deleted` to the Webhook enum, appended tests
+
 v6.13.1
 ----------
 * Fixed UTF-8 character encoding for all API requests to preserve special characters (accented letters, emoji, etc.) instead of escaping them as unicode sequences
