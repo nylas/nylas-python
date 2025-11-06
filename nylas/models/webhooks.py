@@ -33,6 +33,7 @@ class WebhookTriggers(str, Enum):
     MESSAGE_BOUNCE_DETECTED = "message.bounce_detected"
     MESSAGE_CREATED = "message.created"
     MESSAGE_UPDATED = "message.updated"
+    MESSAGE_DELETED= "message.deleted"
     MESSAGE_OPENED = "message.opened"
     MESSAGE_LINK_CLICKED = "message.link_clicked"
     MESSAGE_OPENED_LEGACY = "message.opened.legacy"
