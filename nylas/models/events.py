@@ -29,14 +29,14 @@ class Participant:
     Interface representing an Event participant.
 
     Attributes:
-        email: Participant's email address.
+        email: Participant's email address. Required for all providers except Microsoft.
         name: Participant's name.
         status: Participant's status.
         comment: Comment by the participant.
         phone_number: Participant's phone number.
     """
 
-    email: str
+    email: Optional[str] = None
     status: Optional[ParticipantStatus] = None
     name: Optional[str] = None
     comment: Optional[str] = None
@@ -409,7 +409,7 @@ class CreateParticipant(TypedDict):
         phone_number: Participant's phone number.
     """
 
-    email: str
+    email: NotRequired[str]
     name: NotRequired[str]
     comment: NotRequired[str]
     phone_number: NotRequired[str]
