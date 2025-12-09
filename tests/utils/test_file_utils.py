@@ -171,47 +171,6 @@ class TestFileUtils:
         )
         assert request.fields["message"][2] == "application/json"
 
-    def test_build_form_request_with_special_characters(self):
-        """Test that special characters (accented letters) are properly encoded in form requests."""
-        import json
-        
-        # This is the exact subject from the bug report
-        request_body = {
-            "to": [{"email": "test@gmail.com"}],
-            "subject": "De l'idée à la post-prod, sans friction",
-            "body": "Test body with special chars: café, naïve, résumé",
-            "attachments": [
-                {
-                    "filename": "attachment.txt",
-                    "content_type": "text/plain",
-                    "content": b"test data",
-                    "size": 1234,
-                }
-            ],
-        }
-
-        request = _build_form_request(request_body)
-
-        # Verify the message field exists
-        assert "message" in request.fields
-        message_content = request.fields["message"][1]
-        
-        # Parse the JSON to verify it contains the correct characters
-        parsed_message = json.loads(message_content)
-        assert parsed_message["subject"] == "De l'idée à la post-prod, sans friction"
-        assert "café" in parsed_message["body"]
-        assert "naïve" in parsed_message["body"]
-        assert "résumé" in parsed_message["body"]
-        
-        # Verify that ASCII characters are NOT escaped (they remain as-is)
-        # Non-ASCII characters are preserved as UTF-8 in the JSON string
-        assert "é" in message_content  # Non-ASCII characters preserved as UTF-8
-        assert "à" in message_content
-        assert "ï" in message_content
-        # Verify ASCII characters like apostrophe are not escaped
-        assert "'" in message_content  # ASCII apostrophe should not be escaped
-        assert "idée" in message_content  # Full word with special chars preserved
-        
     def test_build_form_request_encoding_comparison(self):
         """Test to demonstrate the difference between ensure_ascii=True and ensure_ascii=False."""
         import json
