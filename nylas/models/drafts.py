@@ -129,6 +129,7 @@ ListDraftsQueryParams = TypedDict(
         "starred": NotRequired[bool],
         "thread_id": NotRequired[str],
         "has_attachment": NotRequired[bool],
+        "metadata_pair": NotRequired[str],
     },
 )
 """
@@ -145,6 +146,7 @@ Attributes:
     unread: Filter messages by unread status.
     starred: Filter messages by starred status.
     has_attachment: Filter messages by whether they have an attachment.
+    metadata_pair (NotRequired[str]): Filter messages by metadata key/value pair.
     limit (NotRequired[int]): The maximum number of objects to return.
         This field defaults to 50. The maximum allowed value is 200.
     page_token (NotRequired[str]): An identifier that specifies which page of data to return.
