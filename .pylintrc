@@ -11,6 +11,7 @@ disable=
     too-many-instance-attributes,
     unnecessary-pass,
     too-many-arguments,
+    too-many-positional-arguments,
     too-few-public-methods,
 
 [TYPECHECK]
