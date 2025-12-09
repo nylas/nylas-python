@@ -268,7 +268,6 @@ class ListNotetakerQueryParams(ListQueryParams):
 
     def __post_init__(self):
         """Convert enums to string values for API requests."""
-        super().__post_init__()
         # Convert state enum to string if present
         if hasattr(self, "state") and isinstance(self.state, NotetakerState):
             self.state = self.state.value
