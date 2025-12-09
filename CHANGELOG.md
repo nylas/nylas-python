@@ -5,6 +5,7 @@ Unreleased
 ----------
 * Added `message.deleted` to the Webhook enum, appended tests
 * Fixed Participant.email not being optional, Microsoft events can now be represented 
+* Clarified UTF-8 encoding behavior: ASCII characters are preserved as-is (not escaped) while non-ASCII characters are preserved as UTF-8 in JSON payloads
 
 v6.13.1
 ----------

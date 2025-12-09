@@ -203,10 +203,14 @@ class TestFileUtils:
         assert "naïve" in parsed_message["body"]
         assert "résumé" in parsed_message["body"]
         
-        # Verify that the special characters are preserved in the JSON string itself
-        # They should NOT be escaped as unicode escape sequences
-        assert "idée" in message_content
-        assert "café" in message_content
+        # Verify that ASCII characters are NOT escaped (they remain as-is)
+        # Non-ASCII characters are preserved as UTF-8 in the JSON string
+        assert "é" in message_content  # Non-ASCII characters preserved as UTF-8
+        assert "à" in message_content
+        assert "ï" in message_content
+        # Verify ASCII characters like apostrophe are not escaped
+        assert "'" in message_content  # ASCII apostrophe should not be escaped
+        assert "idée" in message_content  # Full word with special chars preserved
         
     def test_build_form_request_encoding_comparison(self):
         """Test to demonstrate the difference between ensure_ascii=True and ensure_ascii=False."""
