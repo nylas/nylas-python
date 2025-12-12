@@ -1,7 +1,7 @@
 nylas-python Changelog
 ======================
 
-Unreleased
+v6.14.0
 ----------
 * Added `message.deleted` to the Webhook enum, appended tests
 * Fixed Participant.email not being optional, Microsoft events can now be represented 
