@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unrelease
+----------
+* Update attachment schema to not make it mandatory
+
 v6.14.0
 ----------
 * Added `message.deleted` to the Webhook enum, appended tests
