@@ -22,7 +22,7 @@ class Attachment:
         is_inline: Whether the attachment is inline.
     """
 
-    id: str
+    id: Optional[str] = None
     grant_id: Optional[str] = None
     filename: Optional[str] = None
     content_type: Optional[str] = None
