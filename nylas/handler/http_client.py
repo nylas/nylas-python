@@ -91,10 +91,11 @@ class HttpClient:
             timeout = overrides["timeout"]
 
         # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
-        # This ensures special characters (accented letters, emoji, etc.) are not escaped
+        # (special characters, emoji, accented letters, etc.) and encode as UTF-8 bytes
+        # to avoid Latin-1 encoding errors in the HTTP layer
         json_data = None
         if request_body is not None and data is None:
-            json_data = json.dumps(request_body, ensure_ascii=False)
+            json_data = json.dumps(request_body, ensure_ascii=False).encode('utf-8')
         try:
             response = requests.request(
                 request["method"],
