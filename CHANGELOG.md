@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unrelease
+----------
+* Update to use requests' json parameter for proper UTF-8 handling when sending JSON
+
 v6.14.1
 ----------
 * Fix attachment id to not be a requirement
