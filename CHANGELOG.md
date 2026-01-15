@@ -1,9 +1,9 @@
 nylas-python Changelog
 ======================
 
-Unrelease
+v6.14.1
 ----------
-* Update attachment schema to not make it mandatory
+* Update attachment schema to not make id mandatory
 
 v6.14.0
 ----------
