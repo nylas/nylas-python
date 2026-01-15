@@ -90,20 +90,25 @@ class HttpClient:
         if overrides and overrides.get("timeout"):
             timeout = overrides["timeout"]
 
-        # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
-        # (special characters, emoji, accented letters, etc.) and encode as UTF-8 bytes
-        # to avoid Latin-1 encoding errors in the HTTP layer
-        json_data = None
-        if request_body is not None and data is None:
-            json_data = json.dumps(request_body, ensure_ascii=False).encode('utf-8')
+        # Use requests' json parameter for proper UTF-8 handling when sending JSON
+        # This avoids Latin-1 encoding errors with special characters (emoji, accented letters, etc.)
         try:
-            response = requests.request(
-                request["method"],
-                request["url"],
-                headers=request["headers"],
-                data=json_data or data,
-                timeout=timeout,
-            )
+            if request_body is not None and data is None:
+                response = requests.request(
+                    request["method"],
+                    request["url"],
+                    headers=request["headers"],
+                    json=request_body,
+                    timeout=timeout,
+                )
+            else:
+                response = requests.request(
+                    request["method"],
+                    request["url"],
+                    headers=request["headers"],
+                    data=data,
+                    timeout=timeout,
+                )
         except requests.exceptions.Timeout as exc:
             raise NylasSdkTimeoutError(url=request["url"], timeout=timeout) from exc
 
