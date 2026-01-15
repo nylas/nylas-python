@@ -1,9 +1,94 @@
 nylas-python Changelog
 ======================
 
-Unrelease
+v6.14.1
 ----------
-* Update attachment schema to not make it mandatory
+* Fix attachment id to not be a requirement by @pengfeiye in #449
+* Fix KeyError when using tokeninfo functions by @mrashed-dev in #342
+* Fix schema issue in the Event model by @mrashed-dev in #343
+* Add email field in CodeExchangeResponse model by @mrashed-dev in #344
+* v6.0.1 Release by @mrashed-dev in #345
+* Missing Webhook Secret on Webhooks.create response by @atejada in #346
+* v6.0.1 Changes to fields by @mrashed-dev in #348
+* Fix responses not deserializing correctly by @mrashed-dev in #350
+* v6.1.0 Release by @mrashed-dev in #351
+* Change default timeout to match API (90 seconds) by @mrashed-dev in #353
+* Improved message sending and draft create/update performance by @mrashed-dev in #352
+* v6.1.1 Release by @mrashed-dev in #356
+* Add clean conversation support by @mrashed-dev in #361
+* Python SDK - Add missing Webhook triggers by @atejada in #357
+* Update events.py by @atejada in #358
+* Add new fields; provider for code exchange and custom_headers for drafts/messages by @mrashed-dev in #360
+* Fixed issue where attachments < 3mb were not being encoded correctly by @mrashed-dev in #362
+* Added support for overriding various fields of outgoing requests by @mrashed-dev in #363
+* Added support for event_type filtering field for listing events by @mrashed-dev in #364
+* Adding scope as an optional parameter to the CodeExchangeResponse by @kraju3 in #368
+* Fix deserialization error with event participant by @mrashed-dev in #369
+* v6.2.0 Release by @mrashed-dev in #370
+* Adding Folder query param support and setting background image to none by @kraju3 in #371
+* Add master_event_id to events by @nickbair-nylas in #372
+* v6.3.0 Release by @mrashed-dev in #373
+* Fix typo on Clean Messages by @atejada in #375
+* Remove use of TestCommand by @mrashed-dev in #377
+* Add Folder Webhooks - Python SDK by @atejada in #374
+* Use a fresh connection on every request by @grego118 in #380
+* v6.3.1 release by @AaronDDM in #381
+* Make from field Optional to not cause Key errors by @kraju3 in #382
+* Fix IMAP identifiers not encoding correctly by @mrashed-dev in #383
+* Add missing schedule-specific fields to Message model by @mrashed-dev in #385
+* Add migration grant props by @kraju3 in #387
+* Add support for from field for sending messages by @mrashed-dev in #386
+* Fix NylasOAuthError not setting the status code properly by @mrashed-dev in #388
+* v6.4.0 Release by @mrashed-dev in #389
+* adding this header reduces the networking by 10X by @johnjjung in #391
+* Revert "adding this header reduces the networking by 10X" by @SubashPradhan in #392
+* Scheduler API support by @SubashPradhan in #393
+* fix: handle missing attributes when using select param by @devin-ai-integration[bot] in #397
+* Validate attachment response and throw error by @kraju3 in #396
+* Add metadata field to SendMessageRequest and Message model by @devin-ai-integration[bot] in #399
+* v6.5.0 Release by @AaronDDM in #400
+* Added an example showing how to access provider errors by @AaronDDM in #403
+* Added response headers to all responses from the Nylas API by @AaronDDM in #404
+* v6.6.0 Release by @AaronDDM in #405
+* feat: Added support for select query parameter to optimize API response size by @AaronDDM in #407
+* Release v6.7.0 by @AaronDDM in #409
+* feat: Added support for list_import_events by @AaronDDM in #411
+* Release v6.8.0 by @AaronDDM in #413
+* feat: Add Notetaker API support by @AaronDDM in #414
+* Add tentative_as_busy flag to the availability request by @kraju3 in #415
+* Add webhook triggers to bypass ValueErrors by @kraju3 in #406
+* Updated the Environment enum, added 'sandbox' + Corrected 'in' type-hint for ListQueryParams by @samuelpx in #408
+* fix: update notetaker media endpoint by @AaronDDM in #416
+* Updated notetaker GET endpoint to support changes to the query params by @AaronDDM in #417
+* Release v6.9.0 by @AaronDDM in #418
+* feat(messages): add support for tracking_options, raw_mime fields and new MessageFields enum values by @AaronDDM in #419
+* [Build] Added UV folders to .gitignore + created pyproject.toml by @samuelpx in #420
+* CUST 4499 python sdk list thread query params missing earliest message date by @samuelpx in #421
+* Cust 4499 python sdk list thread query params missing earliest message date by @samuelpx in #422
+* CUST 4511 - earliest_message_date on models.Thread made optional, tests, added line to CHANGELOG by @samuelpx in #423
+* feat: add single_level query parameter support for folders API by @AaronDDM in #425
+* feat: add support for include_hidden_folders query parameter in list folders endpoint by @AaronDDM in #426
+* Release v6.10.0 by @AaronDDM in #427
+* Added 'unknown' to ConferencingProvider by @samuelpx in #429
+* Release v6.11.0 by @AaronDDM in #431
+* fix: handle empty or incomplete conferencing objects in events by @AaronDDM in #432
+* Release v6.11.1 by @AaronDDM in #433
+* CUST-3643 added yahoo, zoom, ews as providers on auth.py for API parity. by @samuelpx in #434
+* CUST-4719 Fixed grants.update() not using PATCH, fixed tests) by @samuelpx in #435
+* feat: add is_plaintext support for messages send and drafts create endpoints by @AaronDDM in #436
+* Release v6.12.0 release by @AaronDDM in #437
+* Improved the contributing to explain how to get the SDK running by @AaronDDM in #438
+* CUST-4797 from field handles "from" and "from_" by @samLRodrigues in #439
+* [CUST-4448] Fix: content id not being respected for large inline attachments. by @AaronDDM in #440
+* Release v6.13.0 by @AaronDDM in #441
+* Investigate and fix email subject encoding issue by @AaronDDM in #442
+* Release v6.13.1 release by @AaronDDM in #443
+* CUST-4901 added message.deleted to the webhook enum, appended webhook test suite by @samuelpx in #444
+* CUST-4960 Fixed Participant.email not being optional by @samuelpx in #445
+* feat(drafts,messages): Add metadata_pair to both messages and drafts by @kraju3 in #430
+* fix(encoding): ensure ASCII characters are not escaped in JSON payloads by @AaronDDM in #446
+* Release v6.14. by @AaronDDM in #447
+* CUST-5037 Fix attachment id to not be a requirement by @pengfeiye in #449
 
 v6.14.0
 ----------
