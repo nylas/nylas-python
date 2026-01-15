@@ -3,7 +3,7 @@ nylas-python Changelog
 
 v6.14.1
 ----------
-* Fix attachment id to not be a requirements
+* Fix attachment id to not be a requirement
 
 v6.14.0
 ----------
