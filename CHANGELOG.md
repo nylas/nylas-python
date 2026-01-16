@@ -1,6 +1,10 @@
 nylas-python Changelog
 ======================
 
+Unreleased
+----------
+* Fix UTF-8 encoding for special characters (emoji, accented letters, etc.) by encoding JSON as UTF-8 bytes
+
 v6.14.1
 ----------
 * Fix attachment id to not be a requirement

@@ -1,5 +1,5 @@
-import sys
 import json
+import sys
 from typing import Union, Tuple, Dict
 from urllib.parse import urlparse, quote
 
@@ -91,16 +91,17 @@ class HttpClient:
             timeout = overrides["timeout"]
 
         # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
-        # This ensures special characters (accented letters, emoji, etc.) are not escaped
+        # and allow_nan=True to support NaN/Infinity values (matching default json.dumps behavior).
+        # Encode as UTF-8 bytes to avoid Latin-1 encoding errors with special characters.
         json_data = None
         if request_body is not None and data is None:
-            json_data = json.dumps(request_body, ensure_ascii=False)
+            json_data = json.dumps(request_body, ensure_ascii=False, allow_nan=True).encode("utf-8")
         try:
             response = requests.request(
                 request["method"],
                 request["url"],
                 headers=request["headers"],
-                data=json_data or data,
+                data=json_data if json_data is not None else data,
                 timeout=timeout,
             )
         except requests.exceptions.Timeout as exc:
