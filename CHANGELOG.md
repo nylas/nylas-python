@@ -4,7 +4,6 @@ nylas-python Changelog
 Unreleased
 ----------
 * Fix UTF-8 encoding for special characters (emoji, accented letters, etc.) by encoding JSON as UTF-8 bytes
-* Maintain support for NaN and Infinity float values (using allow_nan=True in JSON serialization)
 
 v6.14.1
 ----------
