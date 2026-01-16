@@ -302,7 +302,7 @@ class TestHttpClient:
                 "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data=b'{"foo": "bar"}',
             timeout=30,
         )
 
@@ -336,7 +336,7 @@ class TestHttpClient:
                 "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data=b'{"foo": "bar"}',
             timeout=60,
         )
 
@@ -426,12 +426,12 @@ class TestHttpClient:
                 "Content-type": "application/json; charset=utf-8",
                 "test": "header",
             },
-            json={"foo": "bar"},
+            data=b'{"foo": "bar"}',
             timeout=30,
         )
 
     def test_execute_with_utf8_characters(self, http_client, patched_version_and_sys, patched_request):
-        """Test that UTF-8 characters are safely encoded in JSON requests."""
+        """Test that UTF-8 characters are preserved in JSON requests (not escaped)."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
         mock_response.headers = {"X-Test-Header": "test"}
@@ -452,15 +452,19 @@ class TestHttpClient:
         )
 
         assert response_json == {"success": True}
-        # Verify that the json parameter is used with original data
+        # Verify that the data is sent as UTF-8 encoded bytes
         call_kwargs = patched_request.call_args[1]
-        assert "json" in call_kwargs
-        sent_json = call_kwargs["json"]
+        assert "data" in call_kwargs
+        sent_data = call_kwargs["data"]
         
-        # The JSON should contain actual UTF-8 characters
-        assert sent_json["title"] == "Réunion d'équipe"
-        assert sent_json["description"] == "De l'idée à la post-prod, sans friction"
-        assert sent_json["location"] == "café"
+        # The data should be bytes with actual UTF-8 characters (not escape sequences)
+        assert isinstance(sent_data, bytes)
+        decoded_data = sent_data.decode("utf-8")
+        assert "Réunion d'équipe" in decoded_data
+        assert "De l'idée à la post-prod, sans friction" in decoded_data
+        assert "café" in decoded_data
+        # Should NOT contain unicode escape sequences
+        assert "\\u" not in decoded_data
 
     def test_execute_with_none_request_body(self, http_client, patched_version_and_sys, patched_request):
         """Test that None request_body is handled correctly."""
@@ -507,7 +511,7 @@ class TestHttpClient:
         assert call_kwargs["data"] is None
 
     def test_execute_with_emoji_and_international_characters(self, http_client, patched_version_and_sys, patched_request):
-        """Test that emoji and various international characters are safely encoded."""
+        """Test that emoji and various international characters are preserved."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
         mock_response.headers = {"X-Test-Header": "test"}
@@ -531,15 +535,17 @@ class TestHttpClient:
 
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
-        sent_json = call_kwargs["json"]
+        sent_data = call_kwargs["data"]
         
-        # All characters should be preserved in the json dict
-        assert sent_json["emoji"] == "🎉 Party time! 🥳"
-        assert sent_json["japanese"] == "こんにちは"
-        assert sent_json["chinese"] == "你好"
-        assert sent_json["russian"] == "Привет"
-        assert sent_json["german"] == "Größe"
-        assert sent_json["spanish"] == "¿Cómo estás?"
+        # All characters should be preserved as UTF-8 encoded bytes
+        assert isinstance(sent_data, bytes)
+        decoded_data = sent_data.decode("utf-8")
+        assert "🎉 Party time! 🥳" in decoded_data
+        assert "こんにちは" in decoded_data
+        assert "你好" in decoded_data
+        assert "Привет" in decoded_data
+        assert "Größe" in decoded_data
+        assert "¿Cómo estás?" in decoded_data
 
     def test_execute_with_right_single_quotation_mark(self, http_client, patched_version_and_sys, patched_request):
         """Test that right single quotation mark (\\u2019) is handled correctly.
@@ -567,13 +573,14 @@ class TestHttpClient:
 
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
-        sent_json = call_kwargs["json"]
+        sent_data = call_kwargs["data"]
         
-        # The \u2019 character should be preserved
-        assert "'" in sent_json["subject"]  # \u2019 right single quotation mark
-        assert sent_json["subject"] == "It's a test"
-        assert "'" in sent_json["body"]
-        assert "Here's another" in sent_json["body"]
+        # The data should be UTF-8 encoded bytes with the \u2019 character preserved
+        assert isinstance(sent_data, bytes)
+        decoded_data = sent_data.decode("utf-8")
+        assert "'" in decoded_data  # \u2019 right single quotation mark
+        assert "It's a test" in decoded_data
+        assert "Here's another" in decoded_data
 
     def test_execute_with_emojis(self, http_client, patched_version_and_sys, patched_request):
         """Test that emojis are handled correctly in request bodies.
@@ -602,16 +609,58 @@ class TestHttpClient:
 
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
-        sent_json = call_kwargs["json"]
+        sent_data = call_kwargs["data"]
         
-        # All emojis should be preserved exactly
-        assert sent_json["subject"] == "Hello 👋 World 🌍"
-        assert "🎉" in sent_json["body"]
-        assert "💪" in sent_json["body"]
-        assert "😊" in sent_json["body"]
-        assert sent_json["emoji_only"] == "🔥🚀✨💯"
-        assert "📅" in sent_json["mixed"]
-        assert "⏰" in sent_json["mixed"]
+        # All emojis should be preserved in UTF-8 encoded bytes
+        assert isinstance(sent_data, bytes)
+        decoded_data = sent_data.decode("utf-8")
+        assert "Hello 👋 World 🌍" in decoded_data
+        assert "🎉" in decoded_data
+        assert "💪" in decoded_data
+        assert "😊" in decoded_data
+        assert "🔥🚀✨💯" in decoded_data
+        assert "📅" in decoded_data
+        assert "⏰" in decoded_data
+
+    def test_execute_with_nan_and_infinity(self, http_client, patched_version_and_sys, patched_request):
+        """Test that NaN and Infinity float values are handled correctly.
+        
+        The requests library's json= parameter uses allow_nan=False which raises
+        ValueError for NaN/Infinity. Our implementation uses json.dumps with
+        allow_nan=True to maintain backward compatibility.
+        """
+        mock_response = Mock()
+        mock_response.json.return_value = {"success": True}
+        mock_response.headers = {"X-Test-Header": "test"}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        request_body = {
+            "nan_value": float("nan"),
+            "infinity": float("inf"),
+            "neg_infinity": float("-inf"),
+            "normal": 42.5,
+        }
+
+        # This should NOT raise ValueError
+        response_json, response_headers = http_client._execute(
+            method="POST",
+            path="/data",
+            request_body=request_body,
+        )
+
+        assert response_json == {"success": True}
+        call_kwargs = patched_request.call_args[1]
+        sent_data = call_kwargs["data"]
+        
+        # The data should be UTF-8 encoded bytes with NaN/Infinity serialized
+        assert isinstance(sent_data, bytes)
+        decoded_data = sent_data.decode("utf-8")
+        # json.dumps with allow_nan=True produces NaN, Infinity, -Infinity (JS-style)
+        assert "NaN" in decoded_data
+        assert "Infinity" in decoded_data
+        assert "-Infinity" in decoded_data
+        assert "42.5" in decoded_data
 
     def test_execute_with_multipart_data_not_affected(self, http_client, patched_version_and_sys, patched_request):
         """Test that multipart/form-data is not affected by the change."""
