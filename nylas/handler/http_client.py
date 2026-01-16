@@ -1,5 +1,4 @@
 import sys
-import json
 from typing import Union, Tuple, Dict
 from urllib.parse import urlparse, quote
 
