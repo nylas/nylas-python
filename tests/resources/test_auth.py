@@ -137,6 +137,25 @@ class TestAuth:
             == "https://test.nylas.com/v3/connect/auth?client_id=abc-123&redirect_uri=https%3A//example.com/oauth/callback&scope=email.read_only%20calendar%20contacts&login_hint=test%40gmail.com&provider=google&prompt=select_provider%2Cdetect&state=abc-123-state&response_type=code&access_type=online"
         )
 
+    def test_url_for_oauth2_with_credential_id(self, http_client):
+        auth = Auth(http_client)
+        config = {
+            "client_id": "abc-123",
+            "redirect_uri": "https://example.com/oauth/callback",
+            "scope": ["Mail.Read", "User.Read"],
+            "login_hint": "test@outlook.com",
+            "provider": "microsoft",
+            "state": "abc-123-state",
+            "credential_id": "cred-abc-123",
+        }
+
+        url = auth.url_for_oauth2(config)
+
+        assert (
+            url
+            == "https://test.nylas.com/v3/connect/auth?client_id=abc-123&redirect_uri=https%3A//example.com/oauth/callback&scope=Mail.Read%20User.Read&login_hint=test%40outlook.com&provider=microsoft&state=abc-123-state&credential_id=cred-abc-123&response_type=code&access_type=online"
+        )
+
     def test_exchange_code_for_token(self, http_client_token_exchange):
         auth = Auth(http_client_token_exchange)
         config = {

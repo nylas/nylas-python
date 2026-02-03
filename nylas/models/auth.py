@@ -47,6 +47,7 @@ class URLForAuthenticationConfig(TypedDict):
     include_grant_scopes: NotRequired[bool]
     state: NotRequired[str]
     login_hint: NotRequired[str]
+    credential_id: NotRequired[str]
 
 
 class URLForAdminConsentConfig(URLForAuthenticationConfig):

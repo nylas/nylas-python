@@ -30,6 +30,35 @@ class TestGrants:
         assert grant.created_at == 1617817109
         assert grant.updated_at == 1617817109
 
+    def test_grant_deserialization_with_credential_id(self, http_client):
+        grant_json = {
+            "id": "e19f8e1a-eb1c-41c0-b6a6-d2e59daf7f47",
+            "provider": "microsoft",
+            "grant_status": "valid",
+            "email": "email@example.com",
+            "scope": ["Mail.Read", "User.Read", "offline_access"],
+            "user_agent": "string",
+            "ip": "string",
+            "state": "my-state",
+            "created_at": 1617817109,
+            "updated_at": 1617817109,
+            "credential_id": "cred-abc-123",
+        }
+
+        grant = Grant.from_dict(grant_json)
+
+        assert grant.id == "e19f8e1a-eb1c-41c0-b6a6-d2e59daf7f47"
+        assert grant.provider == "microsoft"
+        assert grant.grant_status == "valid"
+        assert grant.email == "email@example.com"
+        assert grant.scope == ["Mail.Read", "User.Read", "offline_access"]
+        assert grant.user_agent == "string"
+        assert grant.ip == "string"
+        assert grant.state == "my-state"
+        assert grant.created_at == 1617817109
+        assert grant.updated_at == 1617817109
+        assert grant.credential_id == "cred-abc-123"
+
     def test_list_grants(self, http_client_list_response):
         grants = Grants(http_client_list_response)
 
