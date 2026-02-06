@@ -34,6 +34,7 @@ class BaseCreateConnectorRequest(TypedDict):
     """
 
     provider: Provider
+    active_credential_id: NotRequired[str]
 
 
 class GoogleCreateConnectorSettings(TypedDict):
@@ -141,6 +142,7 @@ class UpdateConnectorRequest(TypedDict):
     name: NotRequired[str]
     settings: NotRequired[Dict[str, Any]]
     scope: NotRequired[List[str]]
+    active_credential_id: NotRequired[str]
 
 
 class ListConnectorQueryParams(ListQueryParams):

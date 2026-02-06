@@ -42,6 +42,7 @@ class Grant:
     updated_at: Optional[int] = None
     provider_user_id: Optional[str] = None
     settings: Optional[Dict[str, Any]] = None
+    credential_id: Optional[str] = None
 
 
 class CreateGrantRequest(TypedDict):

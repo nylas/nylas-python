@@ -66,6 +66,28 @@ class TestConnectors:
             "POST", "/v3/connectors", None, None, request_body, overrides=None
         )
 
+    def test_create_connector_with_active_credential_id(self, http_client_response):
+        connectors = Connectors(http_client_response)
+        request_body = {
+            "provider": "microsoft",
+            "settings": {
+                "client_id": "string",
+                "client_secret": "string",
+                "tenant": "common",
+            },
+            "scope": [
+                "Mail.Read",
+                "User.Read",
+            ],
+            "active_credential_id": "cred-abc-123",
+        }
+
+        connectors.create(request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST", "/v3/connectors", None, None, request_body, overrides=None
+        )
+
     def test_update_connector(self, http_client_response):
         connectors = Connectors(http_client_response)
         request_body = {
@@ -87,6 +109,29 @@ class TestConnectors:
 
         http_client_response._execute.assert_called_once_with(
             "PATCH", "/v3/connectors/google", None, None, request_body, overrides=None
+        )
+
+    def test_update_connector_with_active_credential_id(self, http_client_response):
+        connectors = Connectors(http_client_response)
+        request_body = {
+            "settings": {
+                "client_id": "string",
+                "client_secret": "string",
+            },
+            "scope": [
+                "Mail.Read",
+                "User.Read",
+            ],
+            "active_credential_id": "cred-xyz-789",
+        }
+
+        connectors.update(
+            provider="microsoft",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PATCH", "/v3/connectors/microsoft", None, None, request_body, overrides=None
         )
 
     def test_destroy_connector(self, http_client_delete_response):

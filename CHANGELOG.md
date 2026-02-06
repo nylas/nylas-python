@@ -1,5 +1,8 @@
 nylas-python Changelog
 ======================
+Unreleased
+----------
+* UAS multi-credential update
 
 v6.14.2
 ----------
