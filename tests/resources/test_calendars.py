@@ -320,31 +320,23 @@ class TestCalendar:
         request_body = {
             "start_time": 1497916800,
             "end_time": 1498003200,
-            "duration_minutes": 30,
+            "duration_minutes": 60,
             "interval_minutes": 30,
-            "free_busy": [
+            "round_to_30_minutes": True,
+            "participants": [
                 {
                     "email": "test@gmail.com",
-                }
-            ],
-            "open_hours": [
-                {
-                    "days": ["monday", "wednesday"],
-                    "timezone": "America/New_York",
-                    "start": "08:00",
-                    "end": "18:00",
-                    "restrictions": [
+                    "calendar_ids": ["primary"],
+                    "open_hours": [
                         {
-                            "days": ["monday"],
-                            "start": "12:00",
-                            "end": "13:00",
+                            "days": [1, 3],
+                            "timezone": "America/New_York",
+                            "start": "08:00",
+                            "end": "18:00",
                         }
                     ],
                 }
             ],
-            "duration_minutes": 60,
-            "interval_minutes": 30,
-            "round_to_30_minutes": True,
             "availability_rules": {
                 "availability_method": "max-availability",
                 "buffer": {"before": 10, "after": 10},
@@ -362,7 +354,56 @@ class TestCalendar:
             },
         }
 
-        calendars.get_availability(request_body,overrides=None,)
+        calendars.get_availability(request_body, overrides=None)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/calendars/availability",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_get_availability_with_specific_time_availability(self, http_client_response):
+        calendars = Calendars(http_client_response)
+        request_body = {
+            "start_time": 1497916800,
+            "end_time": 1498003200,
+            "duration_minutes": 60,
+            "interval_minutes": 30,
+            "participants": [
+                {
+                    "email": "test@gmail.com",
+                    "calendar_ids": ["primary"],
+                    "open_hours": [
+                        {
+                            "days": [1, 2, 3, 4, 5],
+                            "timezone": "America/New_York",
+                            "start": "9:00",
+                            "end": "17:00",
+                        }
+                    ],
+                    "specific_time_availability": [
+                        {
+                            "date": "2024-03-15",
+                            "start": "10:00",
+                            "end": "14:00",
+                        },
+                        {
+                            "date": "2024-03-16",
+                            "start": "10:00",
+                            "end": "14:00",
+                        }
+                    ],
+                }
+            ],
+            "availability_rules": {
+                "availability_method": "max-availability",
+            },
+        }
+
+        calendars.get_availability(request_body, overrides=None)
 
         http_client_response._execute.assert_called_once_with(
             "POST",

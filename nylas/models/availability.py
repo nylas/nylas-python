@@ -77,6 +77,22 @@ class OpenHours(TypedDict):
     exdates: NotRequired[List[str]]
 
 
+class SpecificTimeAvailability(TypedDict):
+    """
+    Interface of a participant's availability for specific dates.
+    Overrides open_hours for the specified dates.
+
+    Attributes:
+        dates: The date in ISO 8601 format.
+        start: Start time in 24-hour time format. Leading 0's are left off.
+        end: End time in 24-hour time format. Leading 0's are left off.
+    """
+
+    date: str
+    start: str
+    end: str
+
+
 class AvailabilityRules(TypedDict):
     """
     Interface for the availability rules for a Nylas calendar.
@@ -111,11 +127,14 @@ class AvailabilityParticipant(TypedDict):
         calendar_ids: An optional list of the calendar IDs associated with each participant's email address.
             If not provided, Nylas uses the primary calendar ID.
         open_hours: Open hours for this participant. The endpoint searches for free time slots during these open hours.
+        specific_time_availability: Specific availability for this participant that overrides open_hours
+            for the specified dates.
     """
 
     email: str
     calendar_ids: NotRequired[List[str]]
     open_hours: NotRequired[List[OpenHours]]
+    specific_time_availability: NotRequired[List[SpecificTimeAvailability]]
 
 
 class GetAvailabilityRequest(TypedDict):
