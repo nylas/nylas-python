@@ -35,6 +35,9 @@ def _build_query(config: dict) -> dict:
     if "scope" in config:
         config["scope"] = " ".join(config["scope"])
 
+    if config.get("smtp_required"):
+        config["options"] = "smtp_required"
+
     return config
 
 

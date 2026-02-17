@@ -36,6 +36,8 @@ class URLForAuthenticationConfig(TypedDict):
         state: Optional state to be returned after authentication
         login_hint: Prefill the login name (usually email) during authorization flow.
             If a Grant for the provided email already exists, a Grant's re-auth will automatically be initiated.
+        smtp_required: If True, adds options=smtp_required so users must enter SMTP settings during
+            authentication. Relevant for IMAP; avoids grant errors when sending email later.
     """
 
     client_id: str
@@ -48,6 +50,7 @@ class URLForAuthenticationConfig(TypedDict):
     state: NotRequired[str]
     login_hint: NotRequired[str]
     credential_id: NotRequired[str]
+    smtp_required: NotRequired[bool]
 
 
 class URLForAdminConsentConfig(URLForAuthenticationConfig):
