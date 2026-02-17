@@ -3,6 +3,7 @@ nylas-python Changelog
 Unreleased
 ----------
 * UAS multi-credential update
+* Added `specific_time_availability` field to `AvailabilityParticipant` for overriding open hours on specific dates
 
 v6.14.2
 ----------
