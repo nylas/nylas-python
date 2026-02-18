@@ -45,6 +45,7 @@ class TestAuth:
         }
         result = _build_query(config)
         assert result["options"] == "smtp_required"
+        assert "smtp_required" not in result  # must not leak into URL params
 
     def test_build_query_smtp_required_false_omits_options(self):
         config = {
@@ -83,6 +84,7 @@ class TestAuth:
         }
         result = _build_query_with_pkce(config, "secret-hash-123")
         assert result["options"] == "smtp_required"
+        assert "smtp_required" not in result  # must not leak into URL params
         assert result["code_challenge"] == "secret-hash-123"
         assert result["code_challenge_method"] == "s256"
 
