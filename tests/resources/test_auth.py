@@ -37,6 +37,30 @@ class TestAuth:
             "scope": "email calendar",
         }
 
+    def test_build_query_with_smtp_required_true(self):
+        config = {
+            "foo": "bar",
+            "scope": ["email"],
+            "smtp_required": True,
+        }
+        result = _build_query(config)
+        assert result["options"] == "smtp_required"
+        assert "smtp_required" not in result  # must not leak into URL params
+
+    def test_build_query_smtp_required_false_omits_options(self):
+        config = {
+            "foo": "bar",
+            "scope": ["email"],
+            "smtp_required": False,
+        }
+        result = _build_query(config)
+        assert "options" not in result
+
+    def test_build_query_smtp_required_omitted_omits_options(self):
+        config = {"foo": "bar", "scope": ["email"]}
+        result = _build_query(config)
+        assert "options" not in result
+
     def test_build_query_with_pkce(self):
         config = {
             "foo": "bar",
@@ -51,6 +75,18 @@ class TestAuth:
             "code_challenge": "secret-hash-123",
             "code_challenge_method": "s256",
         }
+
+    def test_build_query_with_pkce_and_smtp_required(self):
+        config = {
+            "foo": "bar",
+            "scope": ["email"],
+            "smtp_required": True,
+        }
+        result = _build_query_with_pkce(config, "secret-hash-123")
+        assert result["options"] == "smtp_required"
+        assert "smtp_required" not in result  # must not leak into URL params
+        assert result["code_challenge"] == "secret-hash-123"
+        assert result["code_challenge_method"] == "s256"
 
     def test_build_query_with_admin_consent(self):
         config = {
