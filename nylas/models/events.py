@@ -818,21 +818,21 @@ class ListEventQueryParams(ListQueryParams):
         expand_recurring: If true, the response will include an event for each occurrence of a recurring event within
             the requested time range.
             If false, only a single primary event will be returned for each recurring event.
-            Cannot be used when filtering on metadata. Defaults to false.
+            Cannot be used when filtering on metadata.
         busy: Returns events with a busy status of true.
         order_by: Order results by the specified field.
             Currently only start is supported.
-        event_type (NotRequired[List[EventType]]): (Google only) Filter events by event type.
+        event_type: (Google only) Filter events by event type.
             You can pass the query parameter multiple times to select or exclude multiple event types.
-        master_event_id (NotRequired[str]): Filter for instances of recurring events with the
-            specified master_event_id. Not respected by metadata filtering.
-        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
-            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
+        master_event_id: Filter for instances of recurring events with the given
+            master event ID. Not respected by metadata filtering.
         select: Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
-        limit (NotRequired[int]): The maximum number of objects to return.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
+        limit: The maximum number of objects to return.
             This field defaults to 50. The maximum allowed value is 200.
-        page_token (NotRequired[str]): An identifier that specifies which page of data to return.
+        page_token: An identifier that specifies which page of data to return.
             This value should be taken from a ListResponse object's next_cursor parameter.
     """
 

@@ -5,6 +5,7 @@ Unreleased
 * UAS multi-credential update
 * Added `specific_time_availability` field to `AvailabilityParticipant` for overriding open hours on specific dates
 * Added `smtp_required` option to hosted authentication config to require users to enter SMTP settings during IMAP authentication
+* Clarified `ListEventQueryParams` documentation (attribute order, field descriptions, and `expand_recurring` wording)
 
 v6.14.2
 ----------
