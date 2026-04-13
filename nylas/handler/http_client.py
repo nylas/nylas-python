@@ -49,15 +49,22 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
+    query_param_key_aliases = {
+        "sortBy": "sort_by",
+        "orderBy": "order_by",
+        "grantStatus": "grant_status",
+    }
+
     for key, value in query_params.items():
+        normalized_key = query_param_key_aliases.get(key, key)
         if isinstance(value, list):
             for item in value:
-                query_param_parts.append(f"{key}={quote(str(item))}")
+                query_param_parts.append(f"{normalized_key}={quote(str(item))}")
         elif isinstance(value, dict):
             for k, v in value.items():
-                query_param_parts.append(f"{key}={k}:{quote(str(v))}")
+                query_param_parts.append(f"{normalized_key}={k}:{quote(str(v))}")
         else:
-            query_param_parts.append(f"{key}={quote(str(value))}")
+            query_param_parts.append(f"{normalized_key}={quote(str(value))}")
 
     query_string = "&".join(query_param_parts)
     return f"{base_url}?{query_string}"
