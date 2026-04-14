@@ -13,6 +13,28 @@ from nylas.models.grants import (
 from nylas.models.response import Response, ListResponse, DeleteResponse
 
 
+def _normalize_grants_query_params(query_params: ListGrantsQueryParams = None) -> dict:
+    if not query_params:
+        return query_params
+
+    normalized_query_params = dict(query_params)
+    key_aliases = {
+        "sortBy": "sort_by",
+        "orderBy": "order_by",
+        "grantStatus": "grant_status",
+    }
+
+    for camel_case_key, snake_case_key in key_aliases.items():
+        if camel_case_key in normalized_query_params:
+            if snake_case_key not in normalized_query_params:
+                normalized_query_params[snake_case_key] = normalized_query_params[
+                    camel_case_key
+                ]
+            del normalized_query_params[camel_case_key]
+
+    return normalized_query_params
+
+
 class Grants(
     ListableApiResource,
     FindableApiResource,
@@ -47,7 +69,7 @@ class Grants(
         return super().list(
             path="/v3/grants",
             response_type=Grant,
-            query_params=query_params,
+            query_params=_normalize_grants_query_params(query_params),
             overrides=overrides,
         )
 
