@@ -13,6 +13,7 @@ from nylas.resources.transactional_send import TransactionalSend
 from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
+from nylas.resources.domains import Domains
 from nylas.resources.grants import Grants
 from nylas.resources.scheduler import Scheduler
 from nylas.resources.notetakers import Notetakers
@@ -112,6 +113,16 @@ class Client:
             The Drafts API.
         """
         return Drafts(self.http_client)
+
+    @property
+    def domains(self) -> Domains:
+        """
+        Access the Manage Domains API.
+
+        Returns:
+            The Manage Domains API.
+        """
+        return Domains(self.http_client)
 
     @property
     def events(self) -> Events:

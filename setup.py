@@ -20,6 +20,7 @@ RUN_DEPENDENCIES = [
     "requests-toolbelt>=1.0.0",
     "dataclasses-json>=0.5.9",
     "typing_extensions>=4.7.1",
+    "cryptography>=42.0.0",
 ]
 
 TEST_DEPENDENCIES = ["pytest>=7.4.0", "pytest-cov>=4.1.0", "setuptools>=69.0.3"]

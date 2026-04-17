@@ -6,6 +6,7 @@ from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
+from nylas.resources.domains import Domains
 from nylas.resources.events import Events
 from nylas.resources.folders import Folders
 from nylas.resources.grants import Grants
@@ -63,6 +64,10 @@ class TestClient:
     def test_client_drafts_property(self, client):
         assert client.drafts is not None
         assert type(client.drafts) is Drafts
+
+    def test_client_domains_property(self, client):
+        assert client.domains is not None
+        assert type(client.domains) is Domains
 
     def test_client_events_property(self, client):
         assert client.events is not None
