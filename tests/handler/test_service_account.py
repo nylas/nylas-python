@@ -1,13 +1,15 @@
 import base64
+import string
 
 import pytest
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
 
 from nylas.handler.service_account import (
     ServiceAccountSigner,
     _signing_envelope_bytes,
     canonical_json,
+    generate_nonce,
     load_rsa_private_key_from_pem,
     sign_bytes,
 )
@@ -29,6 +31,11 @@ class TestCanonicalJson:
         assert '"msg":' in s
         assert "quote" in s
 
+    def test_list_and_bool_values_use_json_dumps(self):
+        s = canonical_json({"ok": True, "items": [3, 1, 2]})
+        assert '"items":[3,1,2]' in s
+        assert '"ok":true' in s
+
 
 class TestServiceAccountSigning:
     @pytest.fixture
@@ -47,6 +54,31 @@ class TestServiceAccountSigning:
         _, pem = rsa_pem
         loaded = load_rsa_private_key_from_pem(pem)
         assert isinstance(loaded, rsa.RSAPrivateKey)
+
+    def test_load_pkcs1_traditional_pem(self, rsa_pem):
+        private_key, _ = rsa_pem
+        pem_pkcs1 = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+        loaded = load_rsa_private_key_from_pem(pem_pkcs1)
+        assert isinstance(loaded, rsa.RSAPrivateKey)
+
+    def test_load_pem_accepts_bytes(self, rsa_pem):
+        _, pem = rsa_pem
+        loaded = load_rsa_private_key_from_pem(pem.encode("ascii"))
+        assert isinstance(loaded, rsa.RSAPrivateKey)
+
+    def test_load_non_rsa_raises(self):
+        ec_key = ec.generate_private_key(ec.SECP256R1())
+        pem = ec_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        ).decode("ascii")
+        with pytest.raises(ValueError, match="Private key must be RSA"):
+            load_rsa_private_key_from_pem(pem)
 
     def test_sign_bytes_verifies_with_public_key(self, rsa_pem):
         private_key, pem = rsa_pem
@@ -104,3 +136,42 @@ class TestServiceAccountSigning:
         )
         assert body_bytes is None
         assert "X-Nylas-Signature" in headers
+
+    def test_signing_envelope_get_omits_payload(self, rsa_pem):
+        private_key, _ = rsa_pem
+        env = _signing_envelope_bytes("/v3/admin/domains", "GET", 1, "n" * 20, None)
+        assert b"payload" not in env
+        sig_b64 = sign_bytes(private_key, env)
+        private_key.public_key().verify(
+            base64.b64decode(sig_b64), env, padding.PKCS1v15(), hashes.SHA256()
+        )
+
+    def test_signing_envelope_put_and_patch_include_payload(self, rsa_pem):
+        private_key, _ = rsa_pem
+        for method in ("PUT", "patch"):
+            env = _signing_envelope_bytes(
+                "/v3/admin/domains/x", method, 2, "m" * 20, {"name": "n"}
+            )
+            assert b"payload" in env
+            sig_b64 = sign_bytes(private_key, env)
+            private_key.public_key().verify(
+                base64.b64decode(sig_b64), env, padding.PKCS1v15(), hashes.SHA256()
+            )
+
+    def test_generate_nonce_custom_length(self):
+        n = generate_nonce(12)
+        assert len(n) == 12
+        assert all(c in (string.ascii_letters + string.digits) for c in n)
+
+    def test_build_headers_patch(self, rsa_pem):
+        _, pem = rsa_pem
+        signer = ServiceAccountSigner(pem, "kid")
+        headers, body_bytes = signer.build_headers(
+            "PATCH",
+            "/v3/admin/example",
+            {"op": "replace"},
+            timestamp=9,
+            nonce="z" * 20,
+        )
+        assert body_bytes == canonical_json({"op": "replace"}).encode("utf-8")
+        assert headers["X-Nylas-Timestamp"] == "9"
