@@ -2,6 +2,7 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Added Transactional Send: `Client.transactional_send.send()` for `POST /v3/domains/{domain_name}/messages/send`, with `TransactionalSendMessageRequest` and `TransactionalTemplate` models (JSON and multipart send behavior aligned with grant `messages.send`)
 
 v6.14.3
 ----------
