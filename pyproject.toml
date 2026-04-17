@@ -7,7 +7,7 @@ name = "nylas"
 dynamic = ["version"]
 description = "Python bindings for the Nylas API platform."
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 authors = [
     {name = "Nylas Team", email = "support@nylas.com"}
 ]
