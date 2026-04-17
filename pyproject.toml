@@ -7,7 +7,7 @@ name = "nylas"
 dynamic = ["version"]
 description = "Python bindings for the Nylas API platform."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Nylas Team", email = "support@nylas.com"}
 ]
@@ -18,6 +18,7 @@ dependencies = [
     "requests-toolbelt>=1.0.0",
     "dataclasses-json>=0.5.9",
     "typing_extensions>=4.7.1",
+    "cryptography>=42.0.0",
 ]
 
 [project.optional-dependencies]

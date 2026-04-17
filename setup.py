@@ -113,7 +113,6 @@ def main():
         packages=find_packages(),
         install_requires=RUN_DEPENDENCIES,
         dependency_links=[],
-        tests_require=TEST_DEPENDENCIES,
         extras_require={
             "test": TEST_DEPENDENCIES,
             "docs": DOCS_DEPENDENCIES,

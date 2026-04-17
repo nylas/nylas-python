@@ -150,6 +150,18 @@ class Domains(
         signer: Optional[ServiceAccountSigner] = None,
         overrides: RequestOverrides = None,
     ) -> Response[DomainVerificationDetails]:
+        """
+        Return DNS record information and verification status for the given verification type.
+
+        Args:
+            domain_id: The domain ID.
+            request_body: Body with ``type`` (for example ``ownership`` or ``dkim``).
+            signer: Optional service account signer for ``X-Nylas-*`` headers.
+            overrides: Request overrides (for example extra headers).
+
+        Returns:
+            Verification details including required DNS records.
+        """
         path = f"/v3/admin/domains/{domain_id}/info"
         body = dict(request_body)
         merged = overrides
@@ -177,6 +189,18 @@ class Domains(
         signer: Optional[ServiceAccountSigner] = None,
         overrides: RequestOverrides = None,
     ) -> Response[DomainVerificationDetails]:
+        """
+        Trigger a verification check for the specified DNS record type.
+
+        Args:
+            domain_id: The domain ID.
+            request_body: Body with ``type`` of verification to run.
+            signer: Optional service account signer for ``X-Nylas-*`` headers.
+            overrides: Request overrides (for example extra headers).
+
+        Returns:
+            Verification attempt details and status.
+        """
         path = f"/v3/admin/domains/{domain_id}/verify"
         body = dict(request_body)
         merged = overrides
