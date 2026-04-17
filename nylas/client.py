@@ -9,6 +9,7 @@ from nylas.resources.events import Events
 from nylas.resources.folders import Folders
 from nylas.resources.messages import Messages
 from nylas.resources.threads import Threads
+from nylas.resources.transactional_send import TransactionalSend
 from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
@@ -161,6 +162,16 @@ class Client:
             The Threads API.
         """
         return Threads(self.http_client)
+
+    @property
+    def transactional_send(self) -> TransactionalSend:
+        """
+        Access the Transactional Send API.
+
+        Returns:
+            The Transactional Send API.
+        """
+        return TransactionalSend(self.http_client)
 
     @property
     def webhooks(self) -> Webhooks:
