@@ -2,6 +2,7 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Added Manage Domains (`Client.domains`, `/v3/admin/domains`): list, create, find, update, delete, `get_info`, and `verify` with models in `nylas.models.domains`; optional `ServiceAccountSigner` (`nylas.handler.service_account`) for service-account headers (`X-Nylas-Kid`, `X-Nylas-Nonce`, `X-Nylas-Timestamp`, `X-Nylas-Signature`) on each `Domains` method; new `cryptography` dependency, RSA signing, and `HttpClient` `serialized_json_body` so signed payloads match the wire body
 * Added Transactional Send: `Client.transactional_send.send()` for `POST /v3/domains/{domain_name}/messages/send`, with `TransactionalSendMessageRequest` and `TransactionalTemplate` models (JSON and multipart send behavior aligned with grant `messages.send`)
 
 v6.14.3

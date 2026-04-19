@@ -81,9 +81,17 @@ class HttpClient:
         request_body=None,
         data=None,
         overrides=None,
+        serialized_json_body=None,
     ) -> dict:
         request = self._build_request(
-            method, path, headers, query_params, request_body, data, overrides
+            method,
+            path,
+            headers,
+            query_params,
+            request_body,
+            data,
+            overrides,
+            serialized_json_body=serialized_json_body,
         )
 
         timeout = self.timeout
@@ -93,8 +101,12 @@ class HttpClient:
         # Serialize request_body to JSON with ensure_ascii=False to preserve UTF-8 characters
         # and allow_nan=True to support NaN/Infinity values (matching default json.dumps behavior).
         # Encode as UTF-8 bytes to avoid Latin-1 encoding errors with special characters.
+        # When serialized_json_body is set (e.g. Nylas service account signing), send those exact
+        # bytes so the wire body matches the payload that was signed.
         json_data = None
-        if request_body is not None and data is None:
+        if serialized_json_body is not None and data is None:
+            json_data = serialized_json_body
+        elif request_body is not None and data is None:
             json_data = json.dumps(request_body, ensure_ascii=False, allow_nan=True).encode("utf-8")
         try:
             response = requests.request(
@@ -151,6 +163,7 @@ class HttpClient:
         request_body=None,
         data=None,
         overrides=None,
+        serialized_json_body=None,
     ) -> dict:
         api_server = self.api_server
         if overrides and overrides.get("api_uri"):
@@ -158,7 +171,10 @@ class HttpClient:
 
         base_url = f"{api_server}{path}"
         url = _build_query_params(base_url, query_params) if query_params else base_url
-        headers = self._build_headers(headers, request_body, data, overrides)
+        body_for_content_type = (
+            request_body if request_body is not None else serialized_json_body
+        )
+        headers = self._build_headers(headers, body_for_content_type, data, overrides)
 
         return {
             "method": method,
