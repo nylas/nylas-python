@@ -31,6 +31,7 @@ class Rules(
         query_params: ListRulesQueryParams = None,
         overrides: RequestOverrides = None,
     ) -> ListResponse[Rule]:
+        """Return all rules for the application."""
         return super().list(
             path="/v3/rules",
             response_type=Rule,
@@ -43,6 +44,7 @@ class Rules(
         request_body: CreateRuleRequest,
         overrides: RequestOverrides = None,
     ) -> Response[Rule]:
+        """Create a new rule."""
         return super().create(
             path="/v3/rules",
             request_body=request_body,
@@ -51,6 +53,7 @@ class Rules(
         )
 
     def find(self, rule_id: str, overrides: RequestOverrides = None) -> Response[Rule]:
+        """Return a specific rule by ID."""
         return super().find(
             path=f"/v3/rules/{rule_id}",
             response_type=Rule,
@@ -63,6 +66,7 @@ class Rules(
         request_body: UpdateRuleRequest,
         overrides: RequestOverrides = None,
     ) -> Response[Rule]:
+        """Update a rule by ID."""
         return super().update(
             path=f"/v3/rules/{rule_id}",
             response_type=Rule,
@@ -72,6 +76,7 @@ class Rules(
         )
 
     def destroy(self, rule_id: str, overrides: RequestOverrides = None) -> DeleteResponse:
+        """Delete a rule by ID."""
         return super().destroy(path=f"/v3/rules/{rule_id}", overrides=overrides)
 
     def list_evaluations(
@@ -80,6 +85,7 @@ class Rules(
         query_params: ListRuleEvaluationsQueryParams = None,
         overrides: RequestOverrides = None,
     ) -> ListResponse[RuleEvaluation]:
+        """Return rule evaluation audit records for a grant."""
         return super().list(
             path=f"/v3/grants/{grant_id}/rule-evaluations",
             response_type=RuleEvaluation,
