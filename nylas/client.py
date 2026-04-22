@@ -15,6 +15,7 @@ from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
 from nylas.resources.domains import Domains
 from nylas.resources.grants import Grants
+from nylas.resources.policies import Policies
 from nylas.resources.scheduler import Scheduler
 from nylas.resources.notetakers import Notetakers
 
@@ -153,6 +154,16 @@ class Client:
             The Grants API.
         """
         return Grants(self.http_client)
+
+    @property
+    def policies(self) -> Policies:
+        """
+        Access the Policies API.
+
+        Returns:
+            The Policies API.
+        """
+        return Policies(self.http_client)
 
     @property
     def messages(self) -> Messages:
