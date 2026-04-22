@@ -12,6 +12,7 @@ from nylas.resources.folders import Folders
 from nylas.resources.grants import Grants
 from nylas.resources.messages import Messages
 from nylas.resources.policies import Policies
+from nylas.resources.rules import Rules
 from nylas.resources.threads import Threads
 from nylas.resources.transactional_send import TransactionalSend
 from nylas.resources.webhooks import Webhooks
@@ -89,6 +90,10 @@ class TestClient:
     def test_client_messages_property(self, client):
         assert client.messages is not None
         assert type(client.messages) is Messages
+
+    def test_client_rules_property(self, client):
+        assert client.rules is not None
+        assert type(client.rules) is Rules
 
     def test_client_threads_property(self, client):
         assert client.threads is not None
