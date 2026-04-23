@@ -18,6 +18,7 @@ from nylas.resources.grants import Grants
 from nylas.resources.policies import Policies
 from nylas.resources.scheduler import Scheduler
 from nylas.resources.notetakers import Notetakers
+from nylas.resources.rules import Rules
 
 
 class Client:
@@ -164,6 +165,16 @@ class Client:
             The Policies API.
         """
         return Policies(self.http_client)
+
+    @property
+    def rules(self) -> Rules:
+        """
+        Access the Rules API.
+
+        Returns:
+            The Rules API.
+        """
+        return Rules(self.http_client)
 
     @property
     def messages(self) -> Messages:
