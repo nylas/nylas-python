@@ -114,14 +114,14 @@ class Drafts(
             for attachment in request_body.get("attachments", [])
         )
         if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
-            json_response = self._http_client._execute(
+            json_response, headers = self._http_client._execute(
                 method="POST",
                 path=path,
                 data=_build_form_request(request_body),
                 overrides=overrides,
             )
 
-            return Response.from_dict(json_response, Draft)
+            return Response.from_dict(json_response, Draft, headers)
 
         # Encode the content of the attachments to base64
         for attachment in request_body.get("attachments", []):
@@ -162,14 +162,14 @@ class Drafts(
             for attachment in request_body.get("attachments", [])
         )
         if attachment_size >= MAXIMUM_JSON_ATTACHMENT_SIZE:
-            json_response = self._http_client._execute(
+            json_response, headers = self._http_client._execute(
                 method="PUT",
                 path=path,
                 data=_build_form_request(request_body),
                 overrides=overrides,
             )
 
-            return Response.from_dict(json_response, Draft)
+            return Response.from_dict(json_response, Draft, headers)
 
         # Encode the content of the attachments to base64
         for attachment in request_body.get("attachments", []):
