@@ -11,6 +11,7 @@ from nylas.resources.events import Events
 from nylas.resources.folders import Folders
 from nylas.resources.grants import Grants
 from nylas.resources.messages import Messages
+from nylas.resources.lists import Lists
 from nylas.resources.policies import Policies
 from nylas.resources.rules import Rules
 from nylas.resources.threads import Threads
@@ -90,6 +91,10 @@ class TestClient:
     def test_client_messages_property(self, client):
         assert client.messages is not None
         assert type(client.messages) is Messages
+
+    def test_client_lists_property(self, client):
+        assert client.lists is not None
+        assert type(client.lists) is Lists
 
     def test_client_rules_property(self, client):
         assert client.rules is not None
