@@ -51,6 +51,7 @@ where = ["."]
 include = ["nylas*"]
 
 [tool.pytest.ini_options]
+addopts = "-m 'not e2e'"
 markers = [
     "e2e: marks tests that call live Nylas APIs",
 ]

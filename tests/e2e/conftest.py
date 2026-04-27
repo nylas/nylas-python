@@ -7,16 +7,37 @@ import pytest
 from nylas import Client
 
 
-_API_KEY_ENV_VARS = ("NYLAS_E2E_API_KEY", "NYLAS_API_KEY")
-_API_URI_ENV_VARS = ("NYLAS_E2E_API_URI", "NYLAS_API_URI")
+_E2E_API_KEY_ENV = "NYLAS_E2E_API_KEY"
+_E2E_API_URI_ENV = "NYLAS_E2E_API_URI"
+_E2E_RUN_ENV = "NYLAS_E2E_RUN"
 
 
-def _first_env_value(keys: tuple) -> str:
-    for key in keys:
-        value = os.getenv(key)
-        if value:
-            return value
-    return ""
+def _is_truthy(value: str) -> bool:
+    return value.lower() in {"1", "true", "yes", "on"}
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--run-e2e",
+        action="store_true",
+        default=False,
+        help="Run live E2E tests that call Nylas APIs.",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    run_e2e = config.getoption("--run-e2e") or _is_truthy(os.getenv(_E2E_RUN_ENV, ""))
+    if run_e2e:
+        return
+
+    skip_e2e = pytest.mark.skip(
+        reason=(
+            "E2E tests are opt-in. Set NYLAS_E2E_RUN=1 or pass --run-e2e to execute."
+        )
+    )
+    for item in items:
+        if "e2e" in item.keywords:
+            item.add_marker(skip_e2e)
 
 
 @pytest.fixture
@@ -47,13 +68,13 @@ def paginated_list_contains_id():
 
 @pytest.fixture(scope="session")
 def e2e_client() -> Client:
-    api_key = _first_env_value(_API_KEY_ENV_VARS)
+    api_key = os.getenv(_E2E_API_KEY_ENV, "")
     if not api_key:
         pytest.skip(
-            "E2E tests require NYLAS_E2E_API_KEY (or NYLAS_API_KEY) to be set."
+            "E2E tests require NYLAS_E2E_API_KEY to be set."
         )
 
-    api_uri = _first_env_value(_API_URI_ENV_VARS)
+    api_uri = os.getenv(_E2E_API_URI_ENV, "")
     timeout = int(os.getenv("NYLAS_E2E_TIMEOUT", "90"))
     if api_uri:
         return Client(api_key=api_key, api_uri=api_uri, timeout=timeout)
