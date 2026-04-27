@@ -49,3 +49,9 @@ version = {attr = "nylas._client_sdk_version.__VERSION__"}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["nylas*"]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: marks tests that call live Nylas APIs",
+]
