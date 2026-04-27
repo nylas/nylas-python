@@ -110,14 +110,22 @@ class ListResponse(tuple, Generic[T]):
             headers: The headers returned from the API.
         """
 
+        raw_data = resp.get("data", [])
+        if isinstance(raw_data, dict):
+            next_cursor = resp.get("next_cursor", raw_data.get("next_cursor"))
+            data = raw_data.get("items", [])
+        else:
+            next_cursor = resp.get("next_cursor")
+            data = raw_data
+
         converted_data = []
-        for item in resp["data"]:
+        for item in data:
             converted_data.append(generic_type.from_dict(item, infer_missing=True))
 
         return cls(
             data=converted_data,
             request_id=resp["request_id"],
-            next_cursor=resp.get("next_cursor", None),
+            next_cursor=next_cursor,
             headers=headers,
         )
 

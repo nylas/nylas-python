@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.e2e
 def test_policies_lifecycle_with_rule_association_e2e(
-    e2e_client, e2e_resource_registry, unique_name, raw_list_ids_helper
+    e2e_client, e2e_resource_registry, unique_name, paginated_list_contains_id
 ):
     rule_response = e2e_client.rules.create(
         {
@@ -57,8 +57,7 @@ def test_policies_lifecycle_with_rule_association_e2e(
     assert refetch_response.data.rules is not None
     assert created_rule.id in refetch_response.data.rules
 
-    returned_policy_ids = raw_list_ids_helper(e2e_client, "/v3/policies")
-    assert created_policy.id in returned_policy_ids
+    assert paginated_list_contains_id(e2e_client.policies.list, created_policy.id)
 
     destroy_policy_response = e2e_client.policies.destroy(created_policy.id)
     assert destroy_policy_response.request_id

@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.e2e
 def test_rules_lifecycle_e2e(
-    e2e_client, e2e_resource_registry, unique_name, raw_list_ids_helper
+    e2e_client, e2e_resource_registry, unique_name, paginated_list_contains_id
 ):
     create_response = e2e_client.rules.create(
         {
@@ -42,8 +42,7 @@ def test_rules_lifecycle_e2e(
     assert update_response.data.id == created_rule.id
     assert update_response.data.name == updated_name
 
-    returned_rule_ids = raw_list_ids_helper(e2e_client, "/v3/rules")
-    assert created_rule.id in returned_rule_ids
+    assert paginated_list_contains_id(e2e_client.rules.list, created_rule.id)
 
     destroy_response = e2e_client.rules.destroy(created_rule.id)
     assert destroy_response.request_id

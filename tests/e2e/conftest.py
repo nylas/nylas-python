@@ -19,37 +19,30 @@ def _first_env_value(keys: tuple) -> str:
     return ""
 
 
-def extract_list_items(response_data):
-    """
-    Normalize list endpoint response payloads across API shapes.
-    """
-    if isinstance(response_data, list):
-        return response_data
-
-    if isinstance(response_data, dict):
-        items = response_data.get("items")
-        if isinstance(items, list):
-            return items
-
-    return []
-
-
-def raw_list_ids(client: Client, path: str, id_key: str = "id", query_params=None):
-    json_response, _headers = client.http_client._execute(
-        "GET",
-        path,
-        None,
-        query_params or {"limit": 200},
-        None,
-    )
-    response_data = json_response.get("data")
-    items = extract_list_items(response_data)
-    return {item.get(id_key) for item in items if isinstance(item, dict) and item.get(id_key)}
-
-
 @pytest.fixture
-def raw_list_ids_helper():
-    return raw_list_ids
+def paginated_list_contains_id():
+    def _contains_id(list_method, resource_id: str, limit: int = 100, max_pages: int = 20) -> bool:
+        next_cursor = None
+        seen_cursors = set()
+
+        for _ in range(max_pages):
+            query_params = {"limit": limit}
+            if next_cursor:
+                query_params["page_token"] = next_cursor
+
+            response = list_method(query_params=query_params)
+            if any(item.id == resource_id for item in response.data if item and item.id):
+                return True
+
+            if not response.next_cursor or response.next_cursor in seen_cursors:
+                return False
+
+            seen_cursors.add(response.next_cursor)
+            next_cursor = response.next_cursor
+
+        return False
+
+    return _contains_id
 
 
 @pytest.fixture(scope="session")
