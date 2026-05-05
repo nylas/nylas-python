@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional, Union, BinaryIO
+from typing import Optional, Union, BinaryIO, Dict
 
 from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict, NotRequired
+from typing_extensions import TypedDict, NotRequired, Literal
 
 
 @dataclass_json
@@ -66,3 +66,71 @@ class FindAttachmentQueryParams(TypedDict):
     """
 
     message_id: str
+
+
+AttachmentUploadSessionStatusType = Literal["uploading", "ready", "failed", "expired"]
+
+
+class CreateAttachmentUploadSessionRequest(TypedDict):
+    """
+    Request body for creating a large-attachment upload session (Graph only).
+
+    Attributes:
+        filename: The name of the file as it will appear in the email.
+        content_type: MIME type of the file (e.g. 'application/pdf').
+        size: Expected file size in bytes (max 157286400 / 150 MB). Recommended —
+              Nylas validates the upload matches this size at completion.
+    """
+
+    filename: str
+    content_type: str
+    size: NotRequired[int]
+
+
+@dataclass_json
+@dataclass
+class AttachmentUploadSession:
+    """
+    Upload session returned when creating a large-attachment upload session.
+
+    Attributes:
+        attachment_id: Unique session ID — use when completing the session and when
+                       referencing the attachment in send/draft.
+        method: HTTP method to use when uploading to `url`. Always 'PUT'.
+        url: Pre-signed URL to upload file bytes (no Nylas auth header needed).
+        headers: Headers to include when uploading to `url`.
+        expires_at: When the session expires (RFC 3339).
+        max_size: Maximum allowed file size in bytes (157286400).
+        size: Expected file size echoing the request; 0 if `size` was omitted.
+        content_type: MIME type of the file.
+        filename: Name of the file.
+        grant_id: Grant ID the session belongs to.
+    """
+
+    attachment_id: Optional[str] = None
+    method: Optional[str] = None
+    url: Optional[str] = None
+    headers: Optional[Dict[str, str]] = None
+    expires_at: Optional[str] = None
+    max_size: Optional[int] = None
+    size: Optional[int] = None
+    content_type: Optional[str] = None
+    filename: Optional[str] = None
+    grant_id: Optional[str] = None
+
+
+@dataclass_json
+@dataclass
+class AttachmentUploadSessionComplete:
+    """
+    Result of completing a large-attachment upload session.
+
+    Attributes:
+        attachment_id: The session ID.
+        grant_id: Grant ID the session belongs to.
+        status: Upload status; typically 'ready' after successful completion.
+    """
+
+    attachment_id: Optional[str] = None
+    grant_id: Optional[str] = None
+    status: Optional[str] = None
