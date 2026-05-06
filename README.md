@@ -1,123 +1,190 @@
-<a href="https://www.nylas.com/">
-    <img src="https://brand.nylas.com/assets/downloads/logo_horizontal_png/Nylas-Logo-Horizontal-Blue_.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
-</a>
+<div align="center">
+  <a href="https://www.nylas.com/">
+    <img src="/diagrams/nylas-logo.png" alt="Nylas" height="80" />
+  </a>
 
-# Nylas Python SDK
+  <h1>Nylas Python SDK</h1>
 
-[![PyPI - Version](https://img.shields.io/pypi/v/nylas)](https://pypi.org/project/nylas/)
-[![codecov](https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg?token=HyxGAn5bJR)](https://codecov.io/gh/nylas/nylas-python)
+  <p>
+    <strong>The official Python SDK for Nylas — the infrastructure that powers communications</strong>
+  </p>
 
-This is the GitHub repository for the Nylas Python SDK. The repo is primarily for anyone who wants to install the SDK from source or make contributions to it.
+  <p>
+    <a href="https://pypi.org/project/nylas/"><img src="https://img.shields.io/pypi/v/nylas" alt="version" /></a>
+    <a href="https://codecov.io/gh/nylas/nylas-python"><img src="https://codecov.io/gh/nylas/nylas-python/branch/main/graph/badge.svg?token=HyxGAn5bJR" alt="code coverage" /></a>
+    <a href="https://pypi.org/project/nylas/"><img src="https://img.shields.io/pypi/dm/nylas" alt="downloads" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license" /></a>
+  </p>
 
-If you're looking to use Python to access the Nylas Email, Calendar, or Contacts APIs, see our [Python SDK Quickstart guide](https://docs.nylas.com/docs/quickstart-python).
+  <p>
+    <a href="https://developer.nylas.com/docs/v3/sdks/python/">📖 SDK Guide</a> ·
+    <a href="https://developer.nylas.com/docs/api/v3/">📚 API Reference</a> ·
+    <a href="https://dashboard-v3.nylas.com/register">🚀 Sign up</a> ·
+    <a href="https://github.com/orgs/nylas-samples/repositories?q=python">💡 Samples</a> ·
+    <a href="https://forums.nylas.com">💬 Forum</a>
+  </p>
+</div>
 
-The Nylas platform provides REST APIs for [Email](https://docs.nylas.com/docs/quickstart-email), [Calendar](https://docs.nylas.com/docs/quickstart-calendar), and [Contacts](https://docs.nylas.com/docs/quickstart-contacts), and the Python SDK is the quickest way to build your integration using Python.
+<br />
 
-Here are some resources to help you get started:
+The official Python SDK for [Nylas](https://developer.nylas.com/docs/v3/) — the infrastructure that powers communications. Integrate with Gmail, Microsoft, IMAP, Zoom, and 250+ email, calendar, and meeting providers in 5 minutes. Covers [Email](https://developer.nylas.com/docs/v3/email/), [Calendar](https://developer.nylas.com/docs/v3/calendar/), [Contacts](https://developer.nylas.com/docs/v3/email/contacts/), [Scheduler](https://developer.nylas.com/docs/v3/scheduler/), [Notetaker](https://developer.nylas.com/docs/v3/notetaker/), and [Agent Accounts](https://developer.nylas.com/docs/v3/agent-accounts/).
 
-- [Sign up for a free Nylas account](https://dashboard.nylas.com/register).
-- Follow the [Nylas API v3 Quickstart guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/).
-- Browse the [Nylas SDK reference docs](https://nylas-python-sdk-reference.pages.dev/).
-- Browse the [Nylas API reference docs](https://developer.nylas.com/docs/api/).
-- See our code samples in the [Nylas Samples repo](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python).
+This repository is for contributors and anyone installing the SDK from source. If you just want to use the SDK in your app, head straight to the [**Python SDK guide**](https://developer.nylas.com/docs/v3/sdks/python/) on developer.nylas.com.
 
-If you have any questions about the Nylas platform, please reach out to support@nylas.com.
+## Get started
+
+1. [Sign up for a free Nylas account](https://dashboard-v3.nylas.com/register) and grab your API key from the [Nylas Dashboard](https://dashboard-v3.nylas.com/).
+2. Read the [Getting started guide](https://developer.nylas.com/docs/v3/getting-started/) for the core concepts (applications, grants, API keys).
+3. Install the SDK and make your first request — see below.
+
+You can also bootstrap from the terminal:
+
+```bash
+brew install nylas/nylas-cli/nylas
+nylas init
+```
+
+More options in the [CLI getting-started guide](https://cli.nylas.com/guides/getting-started).
 
 ## ⚙️ Install
 
-The Nylas Python SDK is available via pip:
+> **Requirements:** Python 3.8 or later.
 
 ```bash
-pip install nylas --pre
+pip install nylas
 ```
 
-To install the SDK from source, clone this repo and run the install script:
+To install from source:
 
 ```bash
-git clone https://github.com/nylas/nylas-python.git && cd nylas-python
-python setup.py install
+git clone https://github.com/nylas/nylas-python.git
+cd nylas-python
+pip install -e .
 ```
+
+### Runtime support
+
+Tested on CPython 3.8+. Runs on standard servers as well as serverless platforms like AWS Lambda, Google Cloud Functions, and Vercel — install `nylas` like any other dependency in your deployment package.
 
 ## ⚡️ Usage
 
-Before you use the Nylas Python SDK, you must first [create a Nylas account](https://dashboard.nylas.com/register). Then, follow our [API v3 Quickstart guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/) to set up your first app and get your API keys.
-
-For code samples and example applications, take a look at our [Python repos in the Nylas Samples collection](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=python).
-
-### 🚀 Make your first request
-
-After you've installed and set up the Nylas Python SDK, you can make your first API request. To do so, use the `Client` class from the `nylas` package.
-
-The SDK is organized into different resources, each of which has methods to make requests to the Nylas API. Each resource is available through the `Client` object that you configured with your API key. For example, you can use this code to get a list of Calendars:
+You access Nylas resources (messages, calendars, events, contacts, …) through an instance of `Client`. Initialize it with your API key — and optionally an `api_uri` matching your [data residency](https://developer.nylas.com/docs/dev-guide/platform/data-residency/).
 
 ```python
+import os
 from nylas import Client
 
 nylas = Client(
-    api_key="API_KEY",
+    api_key=os.environ["NYLAS_API_KEY"],
+    api_uri=os.environ.get("NYLAS_API_URI", "https://api.us.nylas.com"),
+    timeout=30,  # optional, in seconds
 )
-
-calendars, request_id, next_cursor = nylas.calendars.list("GRANT_ID")
-
-event, request_id = nylas.events.create(
-    identifier="GRANT_ID",
-    request_body={
-        "title": "test title",
-        "description": "test description",
-        "when": {
-            "start_time": start_unix_timestamp,
-            "end_time": end_unix_timestamp,
-        }
-    },
-    query_params={"calendar_id": "primary", "notify_participants": True},
-    )
-)
-
-event, request_id = nylas.events.find(
-    identifier="GRANT_ID",
-    event_id=event.id,
-    query_params={
-        "calendar_id": "primary",
-    },
-)
-
-nylas.events.destroy("GRANT_ID", event.id, {"calendar_id": "primary"})
-
 ```
 
-## 📚 Documentation
+Once initialized, use it to make requests against a [grant](https://developer.nylas.com/docs/v3/auth/) (an authenticated end-user account):
 
-This SDK makes heavy use of [Python 3 dataclasses](https://realpython.com/python-data-classes/) to define the REST resources and request/response schemas of the Nylas APIs. The Client object is a wrapper around all of these resources and is used to interact with the corresponding APIs. Basic CRUD operations are handled by the `create()`, `find()`, `list()`, `update()`, and `destroy()` methods on each resource. Resources may also have other methods which are all detailed in the [reference guide for the Python SDK](https://nylas-python-sdk-reference.pages.dev/). In the code reference, start at `client`, and then `resources` will give more info on available API call methods. `models` is the place to find schemas for requests, responses, and all Nylas object types.
-
-While most resources are accessed via the top-level Client object, note that `auth` contains the sub-resource `grants` as well as a collection of other auth-related API calls.
-
-You'll want to catch `nylas.models.errors.NylasAPIError` to handle errors.
-
-Have fun!!
-
-## ✨ Upgrade from v5.x
-
-See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from v5.x to v6.x.
-
-## 💙 Contribute
-
-Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
-
-## 🛠️  Debugging
-
-It can sometimes be helpful to turn on request logging during development. Adding the following snippet to your code that calls the SDK should get you sorted:
-
+```python
+calendars, request_id, next_cursor = nylas.calendars.list(
+    identifier=os.environ["NYLAS_GRANT_ID"],
+)
+print(calendars)
 ```
+
+Resources expose a consistent CRUD surface — `create()`, `find()`, `list()`, `update()`, `destroy()` — plus resource-specific methods (e.g. `messages.send()`, `events.send_rsvp()`). Request and response models are [`dataclasses-json`](https://github.com/lidatong/dataclasses-json) dataclasses, so every payload is fully type-hinted and supports `to_dict()` / `from_dict()`.
+
+### Error handling
+
+The SDK raises typed exceptions you can catch and inspect. Every API error carries a `request_id` and `status_code` — include both when filing a support ticket so we can trace the request end-to-end.
+
+```python
+from nylas import Client
+from nylas.models.errors import (
+    NylasApiError,
+    NylasOAuthError,
+    NylasSdkTimeoutError,
+)
+
+try:
+    nylas.calendars.list(identifier=grant_id)
+except NylasApiError as err:
+    print(err.status_code, err.type, str(err), err.request_id)
+except NylasOAuthError as err:
+    print(err.error, err.error_code, err.error_description)
+except NylasSdkTimeoutError as err:
+    print("Timed out:", err.url, err.timeout)
+```
+
+Step-by-step walkthroughs in the SDK guide:
+
+- [Send messages](https://developer.nylas.com/docs/v3/sdks/python/send-email/)
+- [Read messages and threads](https://developer.nylas.com/docs/v3/sdks/python/read-messages-threads/)
+- [Manage events on a calendar](https://developer.nylas.com/docs/v3/sdks/python/manage-events/)
+- [Manage contacts](https://developer.nylas.com/docs/v3/sdks/python/manage-contacts/)
+- [Manage folders and labels](https://developer.nylas.com/docs/v3/sdks/python/manage-folders-labels/)
+
+### Debugging
+
+To inspect the raw HTTP traffic the SDK sends, turn on `requests`-level logging:
+
+```python
 import logging
-import requests
 
-# Set up logging to print out HTTP request information
 logging.basicConfig(level=logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+logging.getLogger("urllib3").setLevel(logging.DEBUG)
 ```
+
+## 💡 Examples
+
+Runnable examples live in [`examples/`](examples/) — including [send email](examples/send_email_demo/), [inline attachments](examples/inline_attachment_demo/), [folders](examples/folders_demo/), [import events](examples/import_events_demo/), [Notetaker API](examples/notetaker_api_demo/), [Notetaker calendar](examples/notetaker_calendar_demo/), [message fields](examples/message_fields_demo/), [metadata fields](examples/metadata_field_demo/), [provider errors](examples/provider_error_demo/), [response headers](examples/response_headers_demo/), [`select` parameter](examples/select_param_demo/), [special characters](examples/special_characters_demo/), [hidden folders](examples/include_hidden_folders_demo/), and [plain text](examples/is_plaintext_demo/).
+
+For full sample apps and product quickstarts, browse [**nylas-samples** on GitHub](https://github.com/orgs/nylas-samples/repositories?q=python) — every official SDK has Email, Calendar, Contacts, Scheduler, and Webhooks quickstarts.
+
+## 🤖 AI agents
+
+[nylas/skills](https://github.com/nylas/skills) drops Nylas into Claude Code, Cursor, Codex, and other agents that support the skills format:
+
+```bash
+npx skills add nylas/skills
+/plugin marketplace add nylas/skills   # Claude Code
+```
+
+The CLI also installs an MCP server for Claude Desktop, Claude Code, Cursor, Windsurf, or VS Code:
+
+```bash
+brew install nylas/nylas-cli/nylas
+nylas mcp install
+```
+
+Walkthrough: [give AI agents email access via MCP](https://cli.nylas.com/guides/give-ai-agents-email-access-via-mcp).
+
+## 📚 Reference
+
+- **SDK guide:** [developer.nylas.com/docs/v3/sdks/python](https://developer.nylas.com/docs/v3/sdks/python/)
+- **API reference:** [developer.nylas.com/docs/api/v3](https://developer.nylas.com/docs/api/v3/)
+- **Python SDK reference:** [nylas-python-sdk-reference.pages.dev](https://nylas-python-sdk-reference.pages.dev/) — generated method/class docs for this SDK
+- **Webhooks (notifications):** [developer.nylas.com/docs/v3/notifications](https://developer.nylas.com/docs/v3/notifications/)
+- **Auth flows:** [developer.nylas.com/docs/v3/auth](https://developer.nylas.com/docs/v3/auth/)
+- **Dev guide & best practices:** [developer.nylas.com/docs/dev-guide](https://developer.nylas.com/docs/dev-guide/)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+
+## ✨ Upgrading
+
+See [`CHANGELOG.md`](CHANGELOG.md) for per-release notes. Older upgrade guidance (v5.x → v6.x) lives in [`UPGRADE.md`](UPGRADE.md).
+
+## 💙 Contributing
+
+Issues, ideas, and pull requests welcome — see [Contributing.md](Contributing.md). Before opening a large change, please open an issue or post in the [forum](https://forums.nylas.com) so we can sanity-check the direction.
+
+## 🔒 Security
+
+Found a vulnerability? Please **don't** open a public issue. Report it through our [Vulnerability Disclosure Policy](https://www.nylas.com/security/vulnerability-disclosure-policy/).
+
+## 🔗 Other Nylas SDKs
+
+- [nylas-nodejs](https://github.com/nylas/nylas-nodejs) · `npm install nylas`
+- [nylas-ruby](https://github.com/nylas/nylas-ruby) · `gem install nylas`
+- [nylas-java](https://github.com/nylas/nylas-java) · Maven / Gradle (Kotlin too)
 
 ## 📝 License
 
-This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms.
+MIT — see [LICENSE](LICENSE).
