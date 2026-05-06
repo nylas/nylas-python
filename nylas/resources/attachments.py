@@ -3,13 +3,21 @@ from requests import Response
 from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     FindableApiResource,
+    CreatableApiResource,
 )
-from nylas.models.attachments import Attachment, FindAttachmentQueryParams
+from nylas.models.attachments import (
+    Attachment,
+    FindAttachmentQueryParams,
+    CreateAttachmentUploadSessionRequest,
+    AttachmentUploadSession,
+    AttachmentUploadSessionComplete,
+)
 from nylas.models.response import Response as NylasResponse
 
 
 class Attachments(
     FindableApiResource,
+    CreatableApiResource,
 ):
     """
     Nylas Attachments API
@@ -110,5 +118,60 @@ class Attachments(
             path=f"/v3/grants/{identifier}/attachments/{attachment_id}/download",
             query_params=query_params,
             stream=False,
+            overrides=overrides,
+        )
+
+    def create_upload_session(
+        self,
+        identifier: str,
+        request_body: CreateAttachmentUploadSessionRequest,
+        overrides: RequestOverrides = None,
+    ) -> NylasResponse[AttachmentUploadSession]:
+        """
+        Create a resumable upload session for a large attachment (up to 150 MB).
+
+        After receiving the session, upload file bytes via HTTP PUT to the returned
+        `url` (include the returned `headers`; no Nylas auth header needed), then
+        call complete_upload_session() with the returned `attachment_id`.
+
+        Args:
+            identifier: The identifier of the Grant to act upon.
+            request_body: Session parameters (filename, content_type, optional size).
+            overrides: The request overrides to use for the request.
+
+        Returns:
+            The upload session, including the pre-signed URL and attachment_id.
+        """
+        return super().create(
+            path=f"/v3/grants/{identifier}/attachment-uploads",
+            response_type=AttachmentUploadSession,
+            request_body=request_body,
+            overrides=overrides,
+        )
+
+    def complete_upload_session(
+        self,
+        identifier: str,
+        attachment_id: str,
+        overrides: RequestOverrides = None,
+    ) -> NylasResponse[AttachmentUploadSessionComplete]:
+        """
+        Complete an upload session after file bytes have been PUT to the pre-signed URL.
+
+        Use the `attachment_id` from the completed session when referencing the
+        attachment in a subsequent messages.send() or drafts.create() call.
+
+        Args:
+            identifier: The identifier of the Grant to act upon.
+            attachment_id: The upload session ID returned by create_upload_session().
+            overrides: The request overrides to use for the request.
+
+        Returns:
+            The completed session status.
+        """
+        return super().create(
+            path=f"/v3/grants/{identifier}/attachment-uploads/{attachment_id}/complete",
+            response_type=AttachmentUploadSessionComplete,
+            request_body={},
             overrides=overrides,
         )
