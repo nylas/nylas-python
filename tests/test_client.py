@@ -6,11 +6,16 @@ from nylas.resources.calendars import Calendars
 from nylas.resources.connectors import Connectors
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
+from nylas.resources.domains import Domains
 from nylas.resources.events import Events
 from nylas.resources.folders import Folders
 from nylas.resources.grants import Grants
 from nylas.resources.messages import Messages
+from nylas.resources.lists import Lists
+from nylas.resources.policies import Policies
+from nylas.resources.rules import Rules
 from nylas.resources.threads import Threads
+from nylas.resources.transactional_send import TransactionalSend
 from nylas.resources.webhooks import Webhooks
 
 
@@ -63,6 +68,10 @@ class TestClient:
         assert client.drafts is not None
         assert type(client.drafts) is Drafts
 
+    def test_client_domains_property(self, client):
+        assert client.domains is not None
+        assert type(client.domains) is Domains
+
     def test_client_events_property(self, client):
         assert client.events is not None
         assert type(client.events) is Events
@@ -75,13 +84,29 @@ class TestClient:
         assert client.grants is not None
         assert type(client.grants) is Grants
 
+    def test_client_policies_property(self, client):
+        assert client.policies is not None
+        assert type(client.policies) is Policies
+
     def test_client_messages_property(self, client):
         assert client.messages is not None
         assert type(client.messages) is Messages
 
+    def test_client_lists_property(self, client):
+        assert client.lists is not None
+        assert type(client.lists) is Lists
+
+    def test_client_rules_property(self, client):
+        assert client.rules is not None
+        assert type(client.rules) is Rules
+
     def test_client_threads_property(self, client):
         assert client.threads is not None
         assert type(client.threads) is Threads
+
+    def test_client_transactional_send_property(self, client):
+        assert client.transactional_send is not None
+        assert type(client.transactional_send) is TransactionalSend
 
     def test_client_webhooks_property(self, client):
         assert client.webhooks is not None

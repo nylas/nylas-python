@@ -18,6 +18,7 @@ dependencies = [
     "requests-toolbelt>=1.0.0",
     "dataclasses-json>=0.5.9",
     "typing_extensions>=4.7.1",
+    "cryptography>=42.0.0",
 ]
 
 [project.optional-dependencies]
@@ -48,3 +49,9 @@ version = {attr = "nylas._client_sdk_version.__VERSION__"}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["nylas*"]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: marks tests that call live Nylas APIs",
+]

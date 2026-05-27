@@ -186,7 +186,9 @@ class Messages(
         else:
             # Encode the content of the attachments to base64
             for attachment in request_body.get("attachments", []):
-                if issubclass(type(attachment["content"]), io.IOBase):
+                if "content" in attachment and issubclass(
+                    type(attachment["content"]), io.IOBase
+                ):
                     attachment["content"] = encode_stream_to_base64(
                         attachment["content"]
                     )

@@ -83,23 +83,30 @@ class ListGrantsQueryParams(TypedDict):
         limit: The maximum number of objects to return.
             This field defaults to 10. The maximum allowed value is 200.
         offset: Offset grant results by this number.
-        sortBy: Sort entries by field name
-        orderBy: Specify ascending or descending order.
+        sort_by: Sort entries by field name.
+        order_by: Specify ascending or descending order.
         since: Scope grants from a specific point in time by Unix timestamp.
         before: Scope grants to a specific point in time by Unix timestamp.
         email: Filtering your query based on grant email address (if applicable)
-        grantStatus: Filtering your query based on grant email status (if applicable)
+        grant_status: Filtering your query based on grant email status (if applicable)
         ip: Filtering your query based on grant IP address
         provider: Filtering your query based on OAuth provider
+        sortBy: Deprecated camelCase alias for sort_by.
+        orderBy: Deprecated camelCase alias for order_by.
+        grantStatus: Deprecated camelCase alias for grant_status.
     """
 
     limit: NotRequired[int]
     offset: NotRequired[int]
-    sortBy: NotRequired[str]
-    orderBy: NotRequired[str]
+    sort_by: NotRequired[str]
+    order_by: NotRequired[str]
     since: NotRequired[int]
     before: NotRequired[int]
     email: NotRequired[str]
-    grantStatus: NotRequired[str]
+    grant_status: NotRequired[str]
     ip: NotRequired[str]
     provider: NotRequired[Provider]
+    # Backward-compatible aliases for callers still passing camelCase keys.
+    sortBy: NotRequired[str]
+    orderBy: NotRequired[str]
+    grantStatus: NotRequired[str]

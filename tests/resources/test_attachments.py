@@ -1,7 +1,14 @@
 from io import BytesIO
 from unittest.mock import Mock
 
-from nylas.models.attachments import Attachment, CreateAttachmentRequest, FindAttachmentQueryParams
+from nylas.models.attachments import (
+    Attachment,
+    CreateAttachmentRequest,
+    FindAttachmentQueryParams,
+    AttachmentUploadSession,
+    AttachmentUploadSessionComplete,
+    CreateAttachmentUploadSessionRequest,
+)
 from nylas.resources.attachments import Attachments
 
 
@@ -315,3 +322,245 @@ class TestAttachments:
             stream=False,
             overrides=None,
         )
+
+    def test_create_upload_session(self, http_client_response):
+        attachments = Attachments(http_client_response)
+        request_body: CreateAttachmentUploadSessionRequest = {
+            "filename": "document.pdf",
+            "content_type": "application/pdf",
+            "size": 5242880,
+        }
+
+        attachments.create_upload_session(
+            identifier="abc-123",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/attachment-uploads",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_create_upload_session_without_size(self, http_client_response):
+        attachments = Attachments(http_client_response)
+        request_body: CreateAttachmentUploadSessionRequest = {
+            "filename": "report.xlsx",
+            "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }
+
+        attachments.create_upload_session(
+            identifier="abc-123",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/attachment-uploads",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_complete_upload_session(self, http_client_response):
+        attachments = Attachments(http_client_response)
+
+        attachments.complete_upload_session(
+            identifier="abc-123",
+            attachment_id="session-id-123",
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/attachment-uploads/session-id-123/complete",
+            None,
+            None,
+            {},
+            overrides=None,
+        )
+
+
+class TestAttachmentUploadSession:
+    """Tests for the AttachmentUploadSession dataclass model."""
+
+    def test_deserialization_full(self):
+        session_json = {
+            "attachment_id": "session-abc-123",
+            "method": "PUT",
+            "url": "https://storage.example.com/upload/session-abc-123",
+            "headers": {"x-ms-blob-type": "BlockBlob"},
+            "expires_at": "2026-05-05T12:00:00Z",
+            "max_size": 157286400,
+            "size": 5242880,
+            "content_type": "application/pdf",
+            "filename": "document.pdf",
+            "grant_id": "grant-abc-123",
+        }
+
+        session = AttachmentUploadSession.from_dict(session_json)
+
+        assert session.attachment_id == "session-abc-123"
+        assert session.method == "PUT"
+        assert session.url == "https://storage.example.com/upload/session-abc-123"
+        assert session.headers == {"x-ms-blob-type": "BlockBlob"}
+        assert session.expires_at == "2026-05-05T12:00:00Z"
+        assert session.max_size == 157286400
+        assert session.size == 5242880
+        assert session.content_type == "application/pdf"
+        assert session.filename == "document.pdf"
+        assert session.grant_id == "grant-abc-123"
+
+    def test_deserialization_without_size(self):
+        """When size is omitted from the request, the API echoes 0."""
+        session_json = {
+            "attachment_id": "session-no-size",
+            "method": "PUT",
+            "url": "https://storage.example.com/upload/session-no-size",
+            "headers": {},
+            "expires_at": "2026-05-05T12:00:00Z",
+            "max_size": 157286400,
+            "size": 0,
+            "content_type": "text/plain",
+            "filename": "notes.txt",
+            "grant_id": "grant-xyz",
+        }
+
+        session = AttachmentUploadSession.from_dict(session_json)
+
+        assert session.attachment_id == "session-no-size"
+        assert session.size == 0
+        assert session.headers == {}
+
+    def test_deserialization_partial(self):
+        """Partial response should not raise; unset fields default to None."""
+        session = AttachmentUploadSession.from_dict({"attachment_id": "partial-session"})
+
+        assert session.attachment_id == "partial-session"
+        assert session.method is None
+        assert session.url is None
+        assert session.headers is None
+        assert session.expires_at is None
+        assert session.max_size is None
+        assert session.size is None
+        assert session.content_type is None
+        assert session.filename is None
+        assert session.grant_id is None
+
+    def test_deserialization_empty_dict(self):
+        session = AttachmentUploadSession.from_dict({})
+
+        assert session.attachment_id is None
+        assert session.grant_id is None
+
+    def test_roundtrip_serialization(self):
+        original = AttachmentUploadSession(
+            attachment_id="rt-session",
+            method="PUT",
+            url="https://example.com/upload",
+            headers={"Content-Type": "application/octet-stream"},
+            expires_at="2026-05-05T12:00:00Z",
+            max_size=157286400,
+            size=1024,
+            content_type="application/octet-stream",
+            filename="file.bin",
+            grant_id="grant-rt",
+        )
+
+        serialized = original.to_dict()
+        deserialized = AttachmentUploadSession.from_dict(serialized)
+
+        assert deserialized.attachment_id == original.attachment_id
+        assert deserialized.method == original.method
+        assert deserialized.url == original.url
+        assert deserialized.headers == original.headers
+        assert deserialized.expires_at == original.expires_at
+        assert deserialized.max_size == original.max_size
+        assert deserialized.size == original.size
+        assert deserialized.content_type == original.content_type
+        assert deserialized.filename == original.filename
+        assert deserialized.grant_id == original.grant_id
+
+
+class TestAttachmentUploadSessionComplete:
+    """Tests for the AttachmentUploadSessionComplete dataclass model."""
+
+    def test_deserialization_ready(self):
+        complete_json = {
+            "attachment_id": "session-abc-123",
+            "grant_id": "grant-abc-123",
+            "status": "ready",
+        }
+
+        complete = AttachmentUploadSessionComplete.from_dict(complete_json)
+
+        assert complete.attachment_id == "session-abc-123"
+        assert complete.grant_id == "grant-abc-123"
+        assert complete.status == "ready"
+
+    def test_deserialization_various_statuses(self):
+        for status in ("uploading", "failed", "expired"):
+            complete = AttachmentUploadSessionComplete.from_dict({
+                "attachment_id": "session-123",
+                "grant_id": "grant-123",
+                "status": status,
+            })
+            assert complete.status == status
+
+    def test_deserialization_empty_dict(self):
+        complete = AttachmentUploadSessionComplete.from_dict({})
+
+        assert complete.attachment_id is None
+        assert complete.grant_id is None
+        assert complete.status is None
+
+    def test_roundtrip_serialization(self):
+        original = AttachmentUploadSessionComplete(
+            attachment_id="session-rt",
+            grant_id="grant-rt",
+            status="ready",
+        )
+
+        serialized = original.to_dict()
+        deserialized = AttachmentUploadSessionComplete.from_dict(serialized)
+
+        assert deserialized.attachment_id == original.attachment_id
+        assert deserialized.grant_id == original.grant_id
+        assert deserialized.status == original.status
+
+
+class TestCreateAttachmentUploadSessionRequest:
+    """Tests for the CreateAttachmentUploadSessionRequest TypedDict."""
+
+    def test_required_fields_only(self):
+        request: CreateAttachmentUploadSessionRequest = {
+            "filename": "document.pdf",
+            "content_type": "application/pdf",
+        }
+
+        assert request["filename"] == "document.pdf"
+        assert request["content_type"] == "application/pdf"
+        assert "size" not in request
+
+    def test_with_size(self):
+        request: CreateAttachmentUploadSessionRequest = {
+            "filename": "video.mp4",
+            "content_type": "video/mp4",
+            "size": 104857600,  # 100 MB
+        }
+
+        assert request["filename"] == "video.mp4"
+        assert request["content_type"] == "video/mp4"
+        assert request["size"] == 104857600
+
+    def test_max_allowed_size(self):
+        request: CreateAttachmentUploadSessionRequest = {
+            "filename": "archive.zip",
+            "content_type": "application/zip",
+            "size": 157286400,  # 150 MB max
+        }
+
+        assert request["size"] == 157286400

@@ -68,6 +68,61 @@ class TestGrants:
             "GET", "/v3/grants", None, None, None, overrides=None
         )
 
+    def test_list_grants_normalizes_camel_case_query_params(
+        self, http_client_list_response
+    ):
+        grants = Grants(http_client_list_response)
+
+        grants.list(
+            query_params={
+                "sortBy": "created_at",
+                "orderBy": "asc",
+                "grantStatus": "valid",
+                "limit": 10,
+            }
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants",
+            None,
+            {
+                "sort_by": "created_at",
+                "order_by": "asc",
+                "grant_status": "valid",
+                "limit": 10,
+            },
+            None,
+            overrides=None,
+        )
+
+    def test_list_grants_prefers_snake_case_query_params(self, http_client_list_response):
+        grants = Grants(http_client_list_response)
+
+        grants.list(
+            query_params={
+                "sortBy": "updated_at",
+                "sort_by": "created_at",
+                "orderBy": "desc",
+                "order_by": "asc",
+                "grantStatus": "invalid",
+                "grant_status": "valid",
+            }
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants",
+            None,
+            {
+                "sort_by": "created_at",
+                "order_by": "asc",
+                "grant_status": "valid",
+            },
+            None,
+            overrides=None,
+        )
+
     def test_find_grant(self, http_client_response):
         grants = Grants(http_client_response)
 

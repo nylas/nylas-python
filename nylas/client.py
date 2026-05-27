@@ -8,13 +8,18 @@ from nylas.resources.connectors import Connectors
 from nylas.resources.events import Events
 from nylas.resources.folders import Folders
 from nylas.resources.messages import Messages
+from nylas.resources.lists import Lists
 from nylas.resources.threads import Threads
+from nylas.resources.transactional_send import TransactionalSend
 from nylas.resources.webhooks import Webhooks
 from nylas.resources.contacts import Contacts
 from nylas.resources.drafts import Drafts
+from nylas.resources.domains import Domains
 from nylas.resources.grants import Grants
+from nylas.resources.policies import Policies
 from nylas.resources.scheduler import Scheduler
 from nylas.resources.notetakers import Notetakers
+from nylas.resources.rules import Rules
 
 
 class Client:
@@ -113,6 +118,16 @@ class Client:
         return Drafts(self.http_client)
 
     @property
+    def domains(self) -> Domains:
+        """
+        Access the Manage Domains API.
+
+        Returns:
+            The Manage Domains API.
+        """
+        return Domains(self.http_client)
+
+    @property
     def events(self) -> Events:
         """
         Access the Events API.
@@ -143,6 +158,26 @@ class Client:
         return Grants(self.http_client)
 
     @property
+    def policies(self) -> Policies:
+        """
+        Access the Policies API.
+
+        Returns:
+            The Policies API.
+        """
+        return Policies(self.http_client)
+
+    @property
+    def rules(self) -> Rules:
+        """
+        Access the Rules API.
+
+        Returns:
+            The Rules API.
+        """
+        return Rules(self.http_client)
+
+    @property
     def messages(self) -> Messages:
         """
         Access the Messages API.
@@ -153,6 +188,16 @@ class Client:
         return Messages(self.http_client)
 
     @property
+    def lists(self) -> Lists:
+        """
+        Access the Lists API.
+
+        Returns:
+            The Lists API.
+        """
+        return Lists(self.http_client)
+
+    @property
     def threads(self) -> Threads:
         """
         Access the Threads API.
@@ -161,6 +206,16 @@ class Client:
             The Threads API.
         """
         return Threads(self.http_client)
+
+    @property
+    def transactional_send(self) -> TransactionalSend:
+        """
+        Access the Transactional Send API.
+
+        Returns:
+            The Transactional Send API.
+        """
+        return TransactionalSend(self.http_client)
 
     @property
     def webhooks(self) -> Webhooks:

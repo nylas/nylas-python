@@ -306,6 +306,49 @@ class TestHttpClient:
             timeout=30,
         )
 
+    def test_execute_with_serialized_json_body(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
+        """Pre-serialized body bytes are sent as-is (e.g. Nylas service account signing)."""
+        mock_response = Mock()
+        mock_response.json.return_value = {"ok": True}
+        mock_response.headers = {}
+        mock_response.status_code = 200
+        patched_request.return_value = mock_response
+
+        canonical = b'{"a":1,"b":2}'
+        response_json, response_headers = http_client._execute(
+            method="POST",
+            path="/v3/admin/domains",
+            request_body=None,
+            serialized_json_body=canonical,
+        )
+
+        assert response_json == {"ok": True}
+        patched_request.assert_called_once_with(
+            "POST",
+            "https://test.nylas.com/v3/admin/domains",
+            headers={
+                "X-Nylas-API-Wrapper": "python",
+                "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+                "Authorization": "Bearer test-key",
+                "Content-type": "application/json; charset=utf-8",
+            },
+            data=canonical,
+            timeout=30,
+        )
+
+    def test_build_request_sets_content_type_for_serialized_json_body(
+        self, http_client, patched_version_and_sys
+    ):
+        request = http_client._build_request(
+            method="POST",
+            path="/signed",
+            request_body=None,
+            serialized_json_body=b"{}",
+        )
+        assert request["headers"]["Content-type"] == "application/json; charset=utf-8"
+
     def test_execute_override_timeout(
         self, http_client, patched_version_and_sys, patched_request
     ):

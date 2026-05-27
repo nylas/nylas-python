@@ -49,10 +49,14 @@ class CreatableApiResource(Resource):
         query_params=None,
         request_body=None,
         overrides=None,
+        serialized_json_body=None,
     ) -> Response:
 
+        kwargs = {"overrides": overrides}
+        if serialized_json_body is not None:
+            kwargs["serialized_json_body"] = serialized_json_body
         response_json, response_headers = self._http_client._execute(
-            "POST", path, headers, query_params, request_body, overrides=overrides
+            "POST", path, headers, query_params, request_body, **kwargs
         )
 
         return Response.from_dict(response_json, response_type, response_headers)
@@ -68,9 +72,13 @@ class UpdatableApiResource(Resource):
         request_body=None,
         method="PUT",
         overrides=None,
+        serialized_json_body=None,
     ):
+        kwargs = {"overrides": overrides}
+        if serialized_json_body is not None:
+            kwargs["serialized_json_body"] = serialized_json_body
         response_json, response_headers = self._http_client._execute(
-            method, path, headers, query_params, request_body, overrides=overrides
+            method, path, headers, query_params, request_body, **kwargs
         )
 
         return Response.from_dict(response_json, response_type, response_headers)
@@ -86,9 +94,13 @@ class UpdatablePatchApiResource(Resource):
         request_body=None,
         method="PATCH",
         overrides=None,
+        serialized_json_body=None,
     ):
+        kwargs = {"overrides": overrides}
+        if serialized_json_body is not None:
+            kwargs["serialized_json_body"] = serialized_json_body
         response_json, response_headers = self._http_client._execute(
-            method, path, headers, query_params, request_body, overrides=overrides
+            method, path, headers, query_params, request_body, **kwargs
         )
 
         return Response.from_dict(response_json, response_type, response_headers)
