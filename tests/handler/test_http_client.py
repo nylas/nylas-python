@@ -63,7 +63,7 @@ class TestHttpClient:
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
             "Authorization": "Bearer test-key",
-            "Content-type": "application/json; charset=utf-8",
+            "Content-type": "application/json",
         }
 
     def test_build_headers_form_body(self, http_client, patched_version_and_sys):
@@ -200,7 +200,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json; charset=utf-8",
+                "Content-type": "application/json",
             },
             timeout=60,
             stream=False,
@@ -299,7 +299,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json; charset=utf-8",
+                "Content-type": "application/json",
                 "test": "header",
             },
             data=b'{"foo": "bar"}',
@@ -332,7 +332,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json; charset=utf-8",
+                "Content-type": "application/json",
             },
             data=canonical,
             timeout=30,
@@ -347,7 +347,7 @@ class TestHttpClient:
             request_body=None,
             serialized_json_body=b"{}",
         )
-        assert request["headers"]["Content-type"] == "application/json; charset=utf-8"
+        assert request["headers"]["Content-type"] == "application/json"
 
     def test_execute_override_timeout(
         self, http_client, patched_version_and_sys, patched_request
@@ -376,7 +376,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json; charset=utf-8",
+                "Content-type": "application/json",
                 "test": "header",
             },
             data=b'{"foo": "bar"}',
@@ -466,7 +466,7 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json; charset=utf-8",
+                "Content-type": "application/json",
                 "test": "header",
             },
             data=b'{"foo": "bar"}',
@@ -497,6 +497,7 @@ class TestHttpClient:
         assert response_json == {"success": True}
         # Verify that the data is sent as UTF-8 encoded bytes
         call_kwargs = patched_request.call_args[1]
+        assert call_kwargs["headers"]["Content-type"] == "application/json"
         assert "data" in call_kwargs
         sent_data = call_kwargs["data"]
         

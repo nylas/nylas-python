@@ -209,6 +209,6 @@ class HttpClient:
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
         elif response_body is not None:
-            headers["Content-type"] = "application/json; charset=utf-8"
+            headers["Content-type"] = "application/json"
 
         return {**headers, **extra_headers, **override_headers}

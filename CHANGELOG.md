@@ -2,6 +2,7 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Fix draft and other JSON API requests failing with "only JSON and multipart supported" by sending `Content-Type: application/json` instead of `application/json; charset=utf-8`
 
 v6.15.0
 ----------
