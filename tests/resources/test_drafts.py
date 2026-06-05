@@ -530,3 +530,89 @@ class TestDraft:
                 data=mock_encoder,
                 overrides=None,
             )
+
+    def test_create_draft_large_attachment_unpacks_execute_tuple(self):
+        """Regression test for #454: drafts.create() must unpack the
+        (json_response, headers) tuple returned by _execute() when the
+        multipart code path is triggered (attachments >= 3MB)."""
+        mock_http_client = Mock()
+        mock_http_client._execute.return_value = (
+            {
+                "request_id": "req-multipart-create",
+                "data": {
+                    "id": "draft-large-1",
+                    "grant_id": "abc-123",
+                    "object": "draft",
+                },
+            },
+            {"X-Test-Header": "multipart"},
+        )
+        drafts = Drafts(mock_http_client)
+        request_body = {
+            "subject": "Large attachment regression",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "Body",
+            "attachments": [
+                {
+                    "filename": "big.bin",
+                    "content_type": "application/octet-stream",
+                    "content": b"x",
+                    "size": 3 * 1024 * 1024,
+                },
+            ],
+        }
+
+        with patch(
+            "nylas.resources.drafts._build_form_request", return_value=Mock()
+        ):
+            response = drafts.create(identifier="abc-123", request_body=request_body)
+
+        assert isinstance(response.data, Draft)
+        assert response.data.id == "draft-large-1"
+        assert response.request_id == "req-multipart-create"
+        assert response.headers == {"X-Test-Header": "multipart"}
+
+    def test_update_draft_large_attachment_unpacks_execute_tuple(self):
+        """Regression test for #454: drafts.update() must unpack the
+        (json_response, headers) tuple returned by _execute() when the
+        multipart code path is triggered (attachments >= 3MB)."""
+        mock_http_client = Mock()
+        mock_http_client._execute.return_value = (
+            {
+                "request_id": "req-multipart-update",
+                "data": {
+                    "id": "draft-large-2",
+                    "grant_id": "abc-123",
+                    "object": "draft",
+                },
+            },
+            {"X-Test-Header": "multipart"},
+        )
+        drafts = Drafts(mock_http_client)
+        request_body = {
+            "subject": "Large attachment regression update",
+            "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
+            "body": "Body",
+            "attachments": [
+                {
+                    "filename": "big.bin",
+                    "content_type": "application/octet-stream",
+                    "content": b"x",
+                    "size": 3 * 1024 * 1024,
+                },
+            ],
+        }
+
+        with patch(
+            "nylas.resources.drafts._build_form_request", return_value=Mock()
+        ):
+            response = drafts.update(
+                identifier="abc-123",
+                draft_id="draft-large-2",
+                request_body=request_body,
+            )
+
+        assert isinstance(response.data, Draft)
+        assert response.data.id == "draft-large-2"
+        assert response.request_id == "req-multipart-update"
+        assert response.headers == {"X-Test-Header": "multipart"}
