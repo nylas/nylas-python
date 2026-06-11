@@ -13,8 +13,9 @@ class TestWorkspaces:
             "name": "Acme Workspace",
             "domain": "acme.com",
             "auto_group": True,
+            "default": True,
             "policy_id": "policy-789",
-            "rules_ids": ["rule-1", "rule-2"],
+            "rule_ids": ["rule-1", "rule-2"],
             "created_at": 1234567890,
             "updated_at": 1234567899,
         }
@@ -26,13 +27,14 @@ class TestWorkspaces:
         assert workspace.name == "Acme Workspace"
         assert workspace.domain == "acme.com"
         assert workspace.auto_group is True
+        assert workspace.default is True
         assert workspace.policy_id == "policy-789"
-        assert workspace.rules_ids == ["rule-1", "rule-2"]
+        assert workspace.rule_ids == ["rule-1", "rule-2"]
         assert workspace.created_at == 1234567890
         assert workspace.updated_at == 1234567899
 
     def test_workspace_deserialization_source_only_fields_absent(self, http_client):
-        # policy_id / rules_ids are source-only and may be absent; they must default
+        # default / policy_id / rule_ids may be absent; they must default
         # to None rather than raising.
         workspace_json = {
             "workspace_id": "ws-123",
@@ -48,8 +50,9 @@ class TestWorkspaces:
 
         assert workspace.domain == ""
         assert workspace.auto_group is False
+        assert workspace.default is None
         assert workspace.policy_id is None
-        assert workspace.rules_ids is None
+        assert workspace.rule_ids is None
 
     def test_manual_assign_response_null_grants(self, http_client):
         # grants_assigned / grants_removed serialize as null when no grant matched;
@@ -109,7 +112,7 @@ class TestWorkspaces:
             "domain": "acme.com",
             "auto_group": True,
             "policy_id": "policy-789",
-            "rules_ids": ["rule-1"],
+            "rule_ids": ["rule-1"],
         }
 
         workspaces.create(request_body=request_body)

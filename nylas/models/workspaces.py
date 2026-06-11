@@ -24,10 +24,11 @@ class Workspace:
             created with auto_group=false and no domain.
         auto_group: When true, new grants whose email domain matches `domain` are
             automatically assigned to the workspace.
+        default: When true, this is the application's default workspace.
         created_at: Creation timestamp, represented as a Unix timestamp in seconds.
         updated_at: Last-update timestamp, represented as a Unix timestamp in seconds.
         policy_id: Inbox policy attached to the workspace (UUID).
-        rules_ids: Inbox rules attached to the workspace (list of UUIDs).
+        rule_ids: Inbox rules attached to the workspace (list of UUIDs).
     """
 
     workspace_id: str
@@ -37,8 +38,9 @@ class Workspace:
     auto_group: bool
     created_at: int
     updated_at: int
+    default: Optional[bool] = None
     policy_id: Optional[str] = None
-    rules_ids: Optional[List[str]] = None
+    rule_ids: Optional[List[str]] = None
 
 
 @dataclass_json
@@ -90,14 +92,14 @@ class CreateWorkspaceRequest(TypedDict):
             auto-assigned. Defaults server-side to true when a domain is provided,
             false otherwise.
         policy_id: Inbox policy to attach to the workspace (UUID).
-        rules_ids: Inbox rules to attach to the workspace (list of UUIDs).
+        rule_ids: Inbox rules to attach to the workspace (list of UUIDs).
     """
 
     name: str
     domain: NotRequired[str]
     auto_group: NotRequired[bool]
     policy_id: NotRequired[str]
-    rules_ids: NotRequired[List[str]]
+    rule_ids: NotRequired[List[str]]
 
 
 class UpdateWorkspaceRequest(TypedDict):
@@ -113,7 +115,7 @@ class UpdateWorkspaceRequest(TypedDict):
         auto_group: Whether to auto-group matching grants. Cannot be set to true on a
             workspace with an empty domain.
         policy_id: Inbox policy to attach (UUID). Send `None` to clear, omit to preserve.
-        rules_ids: Inbox rules to attach (list of UUIDs). Send a list (including `[]`)
+        rule_ids: Inbox rules to attach (list of UUIDs). Send a list (including `[]`)
             to overwrite, omit to preserve.
     """
 
@@ -121,7 +123,7 @@ class UpdateWorkspaceRequest(TypedDict):
     domain: NotRequired[str]
     auto_group: NotRequired[bool]
     policy_id: NotRequired[Optional[str]]
-    rules_ids: NotRequired[Optional[List[str]]]
+    rule_ids: NotRequired[Optional[List[str]]]
 
 
 class WorkspaceAutoGroupRequest(TypedDict):
