@@ -2,6 +2,9 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, and `manual_assign`
+* Corrected RedirectUris `update` to use PATCH instead of PUT; added `deleted_at` to the RedirectUri model and made `platform` optional on create
+* Verified and extended Applications: added `update` (PATCH `/v3/applications`) and source-only response fields (`idp_settings`, hosted-authentication legal URLs, `v2_application_id`, `domain`, `blocked`, timestamps)
 * Fix draft and other JSON API requests failing with "only JSON and multipart supported" by sending `Content-Type: application/json` instead of `application/json; charset=utf-8`
 
 v6.15.0
@@ -26,15 +29,6 @@ v6.14.2
 v6.14.1
 ----------
 * Fix attachment id to not be a requirement
-
-Unreleased
-----------
-* Added Policies resource (`client.policies`) with `list`, `find`, `create`, `update` (PUT), and `destroy`
-* Added Rules resource (`client.rules`) with `list`, `find`, `create`, `update` (PUT), `destroy`, and `list_evaluations` (per-grant rule evaluations)
-* Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, and `manual_assign`
-* Added Manage Domains resource (`client.domains`) with `list`, `find`, `create`, `update` (PUT), `destroy`, `info`, and `verify` against `/v3/admin/domains`
-* Corrected RedirectUris `update` to use PATCH instead of PUT; added `deleted_at` to the RedirectUri model and made `platform` optional on create
-* Verified and extended Applications: added `update` (PATCH `/v3/applications`) and source-only response fields (`idp_settings`, hosted-authentication legal URLs, `v2_application_id`, `domain`, `blocked`, timestamps)
 
 v6.14.0
 ----------
@@ -557,4 +551,3 @@ Added tests
 v0.3.5
 ------
 Drafts can now be sent without an implicit intermediate save to the mail provider.
-

@@ -2,6 +2,9 @@
 good-names=id,k,v,cc,to,ip
 max-line-length=120
 
+[DESIGN]
+max-public-methods=25
+
 [MESSAGES CONTROL]
 disable=
     missing-module-docstring,
