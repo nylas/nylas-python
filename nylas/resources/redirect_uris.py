@@ -3,7 +3,7 @@ from nylas.handler.api_resources import (
     ListableApiResource,
     FindableApiResource,
     CreatableApiResource,
-    UpdatableApiResource,
+    UpdatablePatchApiResource,
     DestroyableApiResource,
 )
 from nylas.models.redirect_uri import (
@@ -18,7 +18,7 @@ class RedirectUris(
     ListableApiResource,
     FindableApiResource,
     CreatableApiResource,
-    UpdatableApiResource,
+    UpdatablePatchApiResource,
     DestroyableApiResource,
 ):
     """
@@ -103,7 +103,7 @@ class RedirectUris(
             The updated Redirect URI.
         """
 
-        return super().update(
+        return super().patch(
             path=f"/v3/applications/redirect-uris/{redirect_uri_id}",
             request_body=request_body,
             response_type=RedirectUri,

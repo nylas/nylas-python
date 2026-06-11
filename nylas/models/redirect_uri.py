@@ -39,12 +39,14 @@ class RedirectUri:
         url: Redirect URL.
         platform: Platform identifier.
         settings: Configuration settings.
+        deleted_at: Soft-delete timestamp (Unix seconds); omitted when not deleted.
     """
 
     id: str
     url: str
     platform: str
     settings: Optional[RedirectUriSettings] = None
+    deleted_at: Optional[int] = None
 
 
 class WritableRedirectUriSettings(TypedDict):
@@ -74,12 +76,12 @@ class CreateRedirectUriRequest(TypedDict):
 
     Attributes:
         url: Redirect URL.
-        platform: Platform identifier.
+        platform: Platform identifier. Optional; defaults to "web" server-side.
         settings: Optional settings for the redirect uri.
     """
 
     url: str
-    platform: str
+    platform: NotRequired[str]
     settings: NotRequired[WritableRedirectUriSettings]
 
 
