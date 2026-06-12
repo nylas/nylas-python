@@ -4,7 +4,7 @@ Unreleased
 ----------
 * Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, `manual_assign`, `default`, `policy_id`, and `rule_ids`
 * Corrected RedirectUris `update` to use PATCH instead of PUT; added `deleted_at` to the RedirectUri model and made `platform` optional on create
-* Verified and extended Applications: added `update` (PATCH `/v3/applications`) and source-only response fields (`idp_settings`, hosted-authentication legal URLs, `v2_application_id`, `domain`, `blocked`, timestamps)
+* Verified and extended Applications: added `update` (PATCH `/v3/applications`) and public response fields (`idp_settings`, hosted-authentication legal URLs, `domain`, `blocked`, timestamps)
 * Fix draft and other JSON API requests failing with "only JSON and multipart supported" by sending `Content-Type: application/json` instead of `application/json; charset=utf-8`
 
 v6.15.0

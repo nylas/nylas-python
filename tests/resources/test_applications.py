@@ -128,7 +128,7 @@ class TestApplications:
         res = app.info()
 
         assert type(res.data) == ApplicationDetails
-        assert res.data.v2_application_id == "v2-app-123"
+        assert not hasattr(res.data, "v2_application_id")
         # region/environment are free-form strings, not enums (discrepancies #6, #7)
         assert res.data.region == "eu"
         assert res.data.environment == "sandbox"

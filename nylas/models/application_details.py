@@ -90,7 +90,6 @@ class ApplicationDetails:
         region: Region identifier.
         environment: Environment identifier.
         branding: Branding details for the application.
-        v2_application_id: The associated v2 application ID, if any.
         domain: The white-label domain associated with the application, if any.
         hosted_authentication: Hosted authentication branding details.
         idp_settings: Identity provider settings.
@@ -105,7 +104,6 @@ class ApplicationDetails:
     region: Region
     environment: Environment
     branding: Branding
-    v2_application_id: Optional[str] = None
     domain: Optional[str] = None
     hosted_authentication: Optional[HostedAuthentication] = None
     idp_settings: Optional[IdpSettings] = None
