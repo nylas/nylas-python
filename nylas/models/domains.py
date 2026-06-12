@@ -6,6 +6,7 @@ from typing_extensions import NotRequired, TypedDict
 
 from nylas.models.list_query_params import ListQueryParams
 
+DomainVerificationRequestType = Literal["ownership", "dkim", "spf", "feedback", "mx"]
 DomainVerificationType = Literal[
     "ownership", "dkim", "spf", "feedback", "mx", "dmarc", "arc"
 ]
@@ -45,14 +46,14 @@ class UpdateDomainRequest(TypedDict, total=False):
 class GetDomainInfoRequest(TypedDict):
     """Request body for retrieving DNS records for a verification type."""
 
-    type: DomainVerificationType
+    type: DomainVerificationRequestType
     options: NotRequired[DomainVerificationOptions]
 
 
 class VerifyDomainRequest(TypedDict):
     """Request body for triggering DNS verification."""
 
-    type: DomainVerificationType
+    type: DomainVerificationRequestType
     options: NotRequired[DomainVerificationOptions]
 
 
