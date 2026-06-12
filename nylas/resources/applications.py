@@ -51,8 +51,6 @@ class Applications(UpdatablePatchApiResource):
         Update the application information.
 
         Note:
-            ``callback_uris`` / ``redirect_uris`` cannot be updated here; the server
-            silently ignores them. Use the redirect URIs endpoints instead.
             ``additional_settings`` is write-only and is stripped from the response.
 
         Args:
