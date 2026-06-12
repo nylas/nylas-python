@@ -40,6 +40,14 @@ def _merge_signer_headers(
     return merged
 
 
+def _service_account_overrides(
+    overrides: Optional[RequestOverrides],
+) -> RequestOverrides:
+    merged: RequestOverrides = dict(overrides) if overrides else {}
+    merged["skip_auth"] = True
+    return merged
+
+
 def _require_service_account_headers(overrides: Optional[RequestOverrides]) -> None:
     headers = (overrides or {}).get("headers") or {}
     normalized = {key.lower(): value for key, value in headers.items()}
@@ -80,6 +88,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("GET", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().list(
             path=path,
@@ -103,6 +112,7 @@ class Domains(
             merged = _merge_signer_headers(overrides, hdrs)
             if serialized is not None:
                 body_arg = None
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().create(
             path=path,
@@ -123,6 +133,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("GET", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().find(
             path=path,
@@ -146,6 +157,7 @@ class Domains(
             merged = _merge_signer_headers(overrides, hdrs)
             if serialized is not None:
                 body_arg = None
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().update(
             path=path,
@@ -166,6 +178,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("DELETE", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().destroy(path=path, overrides=merged)
 
@@ -195,6 +208,7 @@ class Domains(
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         exec_kwargs = {"overrides": merged}
         if serialized is not None:
@@ -235,6 +249,7 @@ class Domains(
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)
+        merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         exec_kwargs = {"overrides": merged}
         if serialized is not None:

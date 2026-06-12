@@ -18,6 +18,10 @@ SERVICE_ACCOUNT_HEADERS = {
 }
 
 
+def service_account_overrides(headers=None):
+    return {"headers": headers or SERVICE_ACCOUNT_HEADERS, "skip_auth": True}
+
+
 def _test_rsa_pem():
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     return key.private_bytes(
@@ -50,7 +54,9 @@ def domain_data():
 
 class TestMergeSignerHeaders:
     def test_returns_overrides_when_no_signer_headers(self):
-        assert domains_module._merge_signer_headers({"timeout": 5}, None) == {"timeout": 5}
+        assert domains_module._merge_signer_headers({"timeout": 5}, None) == {
+            "timeout": 5
+        }
         assert domains_module._merge_signer_headers(None, {}) is None
 
     def test_merges_headers_preserving_existing(self):
@@ -64,9 +70,7 @@ class TestMergeSignerHeaders:
         assert merged["headers"]["X-Nylas-Signature"] == "sig"
 
     def test_creates_overrides_when_none(self):
-        merged = domains_module._merge_signer_headers(
-            None, {"X-Nylas-Kid": "kid"}
-        )
+        merged = domains_module._merge_signer_headers(None, {"X-Nylas-Kid": "kid"})
         assert merged == {"headers": {"X-Nylas-Kid": "kid"}}
 
 
@@ -109,7 +113,7 @@ class TestDomains:
             None,
             None,
             None,
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_list_with_query_and_signer(self, http_client_list_response):
@@ -125,6 +129,7 @@ class TestDomains:
         assert args[0] == "GET"
         assert "/v3/admin/domains" in args[1]
         ov = kwargs.get("overrides") or {}
+        assert ov.get("skip_auth") is True
         assert "X-Nylas-Signature" in (ov.get("headers") or {})
 
     def test_create_with_signed_headers(self, http_client_response, domain_data):
@@ -143,7 +148,7 @@ class TestDomains:
             None,
             None,
             {"name": "My domain", "domain_address": "mail.example.com"},
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_find_with_signed_headers(self, http_client_response, domain_data):
@@ -159,7 +164,7 @@ class TestDomains:
             None,
             None,
             None,
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_find_with_signer(self, http_client_response, domain_data):
@@ -172,6 +177,7 @@ class TestDomains:
             domains = Domains(http_client_response)
             domains.find("dom_abc", signer=signer)
         ov = http_client_response._execute.call_args.kwargs.get("overrides") or {}
+        assert ov.get("skip_auth") is True
         assert "X-Nylas-Signature" in (ov.get("headers") or {})
 
     def test_update_with_signed_headers(self, http_client_response, domain_data):
@@ -191,7 +197,7 @@ class TestDomains:
             None,
             None,
             {"name": "Renamed"},
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_update_with_signer(self, http_client_response, domain_data):
@@ -204,10 +210,13 @@ class TestDomains:
             domains = Domains(http_client_response)
             domains.update("dom_123", {"name": "Renamed"}, signer=signer)
         kwargs = http_client_response._execute.call_args.kwargs
+        assert kwargs["overrides"]["skip_auth"] is True
         assert "serialized_json_body" in kwargs
         assert http_client_response._execute.call_args[0][4] is None
 
-    def test_create_with_signer_sends_serialized_body(self, http_client_response, domain_data):
+    def test_create_with_signer_sends_serialized_body(
+        self, http_client_response, domain_data
+    ):
         pem = _test_rsa_pem()
         signer = ServiceAccountSigner(pem, "kid-1")
         with patch(
@@ -220,6 +229,7 @@ class TestDomains:
                 signer=signer,
             )
         kwargs = http_client_response._execute.call_args.kwargs
+        assert kwargs["overrides"]["skip_auth"] is True
         assert "serialized_json_body" in kwargs
         assert kwargs["serialized_json_body"].startswith(b"{")
         pos = http_client_response._execute.call_args[0]
@@ -237,6 +247,7 @@ class TestDomains:
         domains = Domains(http_client_delete_response)
         domains.destroy("dom_123", signer=signer)
         ov = http_client_delete_response._execute.call_args.kwargs["overrides"]
+        assert ov["skip_auth"] is True
         assert "X-Nylas-Signature" in ov["headers"]
 
     def test_destroy_with_signed_headers(self, http_client_delete_response):
@@ -247,9 +258,7 @@ class TestDomains:
             {},
         )
         domains = Domains(http_client_delete_response)
-        out = domains.destroy(
-            "dom_123", overrides={"headers": SERVICE_ACCOUNT_HEADERS}
-        )
+        out = domains.destroy("dom_123", overrides={"headers": SERVICE_ACCOUNT_HEADERS})
         assert isinstance(out, DeleteResponse)
         http_client_delete_response._execute.assert_called_once_with(
             "DELETE",
@@ -257,7 +266,7 @@ class TestDomains:
             None,
             None,
             None,
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_get_info_with_signer(self, http_client_response):
@@ -275,6 +284,7 @@ class TestDomains:
             domains = Domains(http_client_response)
             domains.get_info("dom_123", {"type": "spf"}, signer=signer)
         kwargs = http_client_response._execute.call_args.kwargs
+        assert kwargs["overrides"]["skip_auth"] is True
         assert "serialized_json_body" in kwargs
         assert http_client_response._execute.call_args[0][4] is None
 
@@ -300,7 +310,7 @@ class TestDomains:
             None,
             None,
             {"type": "mx"},
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_verify_with_signer(self, http_client_response):
@@ -317,7 +327,9 @@ class TestDomains:
         ):
             domains = Domains(http_client_response)
             domains.verify("dom_123", {"type": "dkim"}, signer=signer)
-        assert "serialized_json_body" in http_client_response._execute.call_args.kwargs
+        kwargs = http_client_response._execute.call_args.kwargs
+        assert kwargs["overrides"]["skip_auth"] is True
+        assert "serialized_json_body" in kwargs
 
     def test_get_info_with_signed_headers(self, http_client_response):
         info = {
@@ -344,7 +356,7 @@ class TestDomains:
             None,
             None,
             {"type": "ownership"},
-            overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            overrides=service_account_overrides(),
         )
 
     def test_merge_signer_with_existing_headers(self, http_client_list_response):
@@ -359,6 +371,14 @@ class TestDomains:
                 signer=signer,
                 overrides={"headers": {"X-Custom": "precedence"}},
             )
-        headers = http_client_list_response._execute.call_args.kwargs["overrides"]["headers"]
+        headers = http_client_list_response._execute.call_args.kwargs["overrides"][
+            "headers"
+        ]
+        assert (
+            http_client_list_response._execute.call_args.kwargs["overrides"][
+                "skip_auth"
+            ]
+            is True
+        )
         assert headers["X-Custom"] == "precedence"
         assert "X-Nylas-Kid" in headers

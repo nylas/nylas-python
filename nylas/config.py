@@ -22,12 +22,15 @@ class RequestOverrides(TypedDict):
         api_uri: The API URI to use for the request.
         timeout: The timeout to use for the request.
         headers: Additional headers to include in the request.
+        skip_auth: Suppress the default bearer Authorization header for endpoints
+            that use a different authentication mechanism.
     """
 
     api_key: NotRequired[str]
     api_uri: NotRequired[str]
     timeout: NotRequired[int]
     headers: NotRequired[dict]
+    skip_auth: NotRequired[bool]
 
 
 DEFAULT_REGION = Region.US

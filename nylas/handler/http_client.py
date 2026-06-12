@@ -28,7 +28,9 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 or "connect/revoke" in parsed_url.path
             ):
                 parsed_error = NylasOAuthErrorResponse.from_dict(response_data)
-                raise NylasOAuthError(parsed_error, response.status_code, response.headers)
+                raise NylasOAuthError(
+                    parsed_error, response.status_code, response.headers
+                )
 
             parsed_error = NylasApiErrorResponse.from_dict(response_data)
             raise NylasApiError(parsed_error, response.status_code, response.headers)
@@ -46,6 +48,7 @@ def _validate_response(response: Response) -> Tuple[Dict, CaseInsensitiveDict]:
                 headers=response.headers,
             ) from exc
     return (response_data, response.headers)
+
 
 def _build_query_params(base_url: str, query_params: dict = None) -> str:
     query_param_parts = []
@@ -107,7 +110,9 @@ class HttpClient:
         if serialized_json_body is not None and data is None:
             json_data = serialized_json_body
         elif request_body is not None and data is None:
-            json_data = json.dumps(request_body, ensure_ascii=False, allow_nan=True).encode("utf-8")
+            json_data = json.dumps(
+                request_body, ensure_ascii=False, allow_nan=True
+            ).encode("utf-8")
         try:
             response = requests.request(
                 request["method"],
@@ -128,7 +133,7 @@ class HttpClient:
         query_params=None,
         stream=False,
         overrides=None,
-    ) -> Union[bytes, Response,dict]:
+    ) -> Union[bytes, Response, dict]:
         request = self._build_request("GET", path, headers, query_params, overrides)
 
         timeout = self.timeout
@@ -204,8 +209,9 @@ class HttpClient:
         headers = {
             "X-Nylas-API-Wrapper": "python",
             "User-Agent": user_agent_header,
-            "Authorization": f"Bearer {api_key}",
         }
+        if not (overrides and overrides.get("skip_auth")):
+            headers["Authorization"] = f"Bearer {api_key}"
         if data is not None and data.content_type is not None:
             headers["Content-type"] = data.content_type
         elif response_body is not None:
