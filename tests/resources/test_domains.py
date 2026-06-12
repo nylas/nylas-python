@@ -147,8 +147,9 @@ class TestDomains:
             "/v3/admin/domains",
             None,
             None,
-            {"name": "My domain", "domain_address": "mail.example.com"},
+            None,
             overrides=service_account_overrides(),
+            serialized_json_body=b'{"domain_address":"mail.example.com","name":"My domain"}',
         )
 
     def test_find_with_signed_headers(self, http_client_response, domain_data):
@@ -157,10 +158,12 @@ class TestDomains:
             return_value=Response(domain_data, "rid", {}),
         ):
             domains = Domains(http_client_response)
-            domains.find("dom_abc", overrides={"headers": SERVICE_ACCOUNT_HEADERS})
+            domains.find(
+                "mail/example.com", overrides={"headers": SERVICE_ACCOUNT_HEADERS}
+            )
         http_client_response._execute.assert_called_once_with(
             "GET",
-            "/v3/admin/domains/dom_abc",
+            "/v3/admin/domains/mail%2Fexample.com",
             None,
             None,
             None,
@@ -196,8 +199,9 @@ class TestDomains:
             "/v3/admin/domains/dom_123",
             None,
             None,
-            {"name": "Renamed"},
+            None,
             overrides=service_account_overrides(),
+            serialized_json_body=b'{"name":"Renamed"}',
         )
 
     def test_update_with_signer(self, http_client_response, domain_data):
@@ -309,8 +313,9 @@ class TestDomains:
             "/v3/admin/domains/dom_123/verify",
             None,
             None,
-            {"type": "mx"},
+            None,
             overrides=service_account_overrides(),
+            serialized_json_body=b'{"type":"mx"}',
         )
 
     def test_verify_with_signer(self, http_client_response):
@@ -355,8 +360,38 @@ class TestDomains:
             "/v3/admin/domains/dom_123/info",
             None,
             None,
-            {"type": "ownership"},
+            None,
             overrides=service_account_overrides(),
+            serialized_json_body=b'{"type":"ownership"}',
+        )
+
+    def test_get_info_accepts_extended_verification_options(self, http_client_response):
+        info = {
+            "domain_id": "dom_123",
+            "attempt": {"type": "dkim", "options": {"key_length": 2048}},
+        }
+        http_client_response._execute.return_value = (
+            {"request_id": "r1", "data": info},
+            {},
+        )
+        with patch(
+            "nylas.models.response.Response.from_dict",
+            return_value=Response(info, "r1", {}),
+        ):
+            domains = Domains(http_client_response)
+            domains.get_info(
+                "dom_123",
+                {"type": "dkim", "options": {"key_length": 2048}},
+                overrides={"headers": SERVICE_ACCOUNT_HEADERS},
+            )
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/admin/domains/dom_123/info",
+            None,
+            None,
+            None,
+            overrides=service_account_overrides(),
+            serialized_json_body=b'{"options":{"key_length":2048},"type":"dkim"}',
         )
 
     def test_merge_signer_with_existing_headers(self, http_client_list_response):

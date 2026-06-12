@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Optional
 
 from nylas.config import RequestOverrides
@@ -8,7 +9,7 @@ from nylas.handler.api_resources import (
     ListableApiResource,
     UpdatableApiResource,
 )
-from nylas.handler.service_account import ServiceAccountSigner
+from nylas.handler.service_account import ServiceAccountSigner, canonical_json
 from nylas.models.domains import (
     CreateDomainRequest,
     Domain,
@@ -62,6 +63,14 @@ def _require_service_account_headers(overrides: Optional[RequestOverrides]) -> N
         )
 
 
+def _encode_domain_id(domain_id: str) -> str:
+    return urllib.parse.quote(domain_id, safe="")
+
+
+def _canonical_body_bytes(request_body: dict) -> bytes:
+    return canonical_json(dict(request_body)).encode("utf-8")
+
+
 class Domains(
     ListableApiResource,
     FindableApiResource,
@@ -105,13 +114,13 @@ class Domains(
     ) -> Response[Domain]:
         path = "/v3/admin/domains"
         merged = overrides
-        serialized = None
+        serialized = _canonical_body_bytes(request_body)
         body_arg = request_body
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, dict(request_body))
             merged = _merge_signer_headers(overrides, hdrs)
-            if serialized is not None:
-                body_arg = None
+        if serialized is not None:
+            body_arg = None
         merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().create(
@@ -128,7 +137,7 @@ class Domains(
         signer: Optional[ServiceAccountSigner] = None,
         overrides: RequestOverrides = None,
     ) -> Response[Domain]:
-        path = f"/v3/admin/domains/{domain_id}"
+        path = f"/v3/admin/domains/{_encode_domain_id(domain_id)}"
         merged = overrides
         if signer:
             hdrs, _ = signer.build_headers("GET", path, None)
@@ -148,15 +157,15 @@ class Domains(
         signer: Optional[ServiceAccountSigner] = None,
         overrides: RequestOverrides = None,
     ) -> Response[Domain]:
-        path = f"/v3/admin/domains/{domain_id}"
+        path = f"/v3/admin/domains/{_encode_domain_id(domain_id)}"
         merged = overrides
-        serialized = None
+        serialized = _canonical_body_bytes(request_body)
         body_arg = request_body
         if signer:
             hdrs, serialized = signer.build_headers("PUT", path, dict(request_body))
             merged = _merge_signer_headers(overrides, hdrs)
-            if serialized is not None:
-                body_arg = None
+        if serialized is not None:
+            body_arg = None
         merged = _service_account_overrides(merged)
         _require_service_account_headers(merged)
         return super().update(
@@ -173,7 +182,7 @@ class Domains(
         signer: Optional[ServiceAccountSigner] = None,
         overrides: RequestOverrides = None,
     ) -> DeleteResponse:
-        path = f"/v3/admin/domains/{domain_id}"
+        path = f"/v3/admin/domains/{_encode_domain_id(domain_id)}"
         merged = overrides
         if signer:
             hdrs, _ = signer.build_headers("DELETE", path, None)
@@ -201,10 +210,10 @@ class Domains(
         Returns:
             Verification details including required DNS records.
         """
-        path = f"/v3/admin/domains/{domain_id}/info"
+        path = f"/v3/admin/domains/{_encode_domain_id(domain_id)}/info"
         body = dict(request_body)
         merged = overrides
-        serialized = None
+        serialized = _canonical_body_bytes(body)
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)
@@ -242,10 +251,10 @@ class Domains(
         Returns:
             Verification attempt details and status.
         """
-        path = f"/v3/admin/domains/{domain_id}/verify"
+        path = f"/v3/admin/domains/{_encode_domain_id(domain_id)}/verify"
         body = dict(request_body)
         merged = overrides
-        serialized = None
+        serialized = _canonical_body_bytes(body)
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)

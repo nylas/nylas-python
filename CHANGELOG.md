@@ -3,6 +3,7 @@ nylas-python Changelog
 Unreleased
 ----------
 * Aligned Lists create support with the public `POST /v3/lists` schema and added create response/schema coverage
+* Added Manage Domains service-account auth support with canonical signed request bodies, bearer-auth suppression, encoded domain path segments, and `dmarc`/`arc` verification types
 * Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, `manual_assign`, `default`, `policy_id`, and `rule_ids`
 * Corrected RedirectUris `update` to use PATCH instead of PUT; added `deleted_at` to the RedirectUri model and made `platform` optional on create
 * Verified and extended Applications: added `update` (PATCH `/v3/applications`) and public response fields (`idp_settings`, hosted-authentication legal URLs, `domain`, `blocked`, timestamps)
