@@ -33,7 +33,7 @@ class TestWorkspaces:
         assert workspace.created_at == 1234567890
         assert workspace.updated_at == 1234567899
 
-    def test_workspace_deserialization_source_only_fields_absent(self, http_client):
+    def test_workspace_deserialization_optional_fields_absent(self, http_client):
         # default / policy_id / rule_ids may be absent; they must default
         # to None rather than raising.
         workspace_json = {

@@ -11,14 +11,12 @@ class Workspace:
     """
     Class representing a Nylas workspace.
 
-    A workspace (internally a GrantWorkspace) groups grants in a Nylas application
-    by email domain. Grants can be auto-grouped (by matching email domain) or
-    manually assigned/removed.
+    A workspace groups grants in a Nylas application by email domain. Grants can
+    be auto-grouped (by matching email domain) or manually assigned/removed.
 
     Attributes:
         workspace_id: Globally unique workspace identifier (UUID).
-        application_id: The owning Nylas application UUID. Set server-side from the
-            API key, never from the request body.
+        application_id: The owning Nylas application UUID.
         name: Descriptive workspace name.
         domain: Top-level email domain. May be an empty string when the workspace was
             created with auto_group=false and no domain.

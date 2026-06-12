@@ -20,6 +20,13 @@ from nylas.models.domains import (
 )
 from nylas.models.response import DeleteResponse, ListResponse, Response
 
+_REQUIRED_SERVICE_ACCOUNT_HEADERS = (
+    "x-nylas-kid",
+    "x-nylas-timestamp",
+    "x-nylas-nonce",
+    "x-nylas-signature",
+)
+
 
 def _merge_signer_headers(
     overrides: Optional[RequestOverrides], signer_headers: Optional[dict]
@@ -31,6 +38,20 @@ def _merge_signer_headers(
     headers.update(signer_headers)
     merged["headers"] = headers
     return merged
+
+
+def _require_service_account_headers(overrides: Optional[RequestOverrides]) -> None:
+    headers = (overrides or {}).get("headers") or {}
+    normalized = {key.lower(): value for key, value in headers.items()}
+    missing = [
+        header
+        for header in _REQUIRED_SERVICE_ACCOUNT_HEADERS
+        if not str(normalized.get(header, "")).strip()
+    ]
+    if missing:
+        raise ValueError(
+            "Manage Domains API requests require Nylas Service Account signing headers."
+        )
 
 
 class Domains(
@@ -59,6 +80,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("GET", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        _require_service_account_headers(merged)
         return super().list(
             path=path,
             response_type=Domain,
@@ -81,6 +103,7 @@ class Domains(
             merged = _merge_signer_headers(overrides, hdrs)
             if serialized is not None:
                 body_arg = None
+        _require_service_account_headers(merged)
         return super().create(
             path=path,
             request_body=body_arg,
@@ -100,6 +123,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("GET", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        _require_service_account_headers(merged)
         return super().find(
             path=path,
             response_type=Domain,
@@ -122,6 +146,7 @@ class Domains(
             merged = _merge_signer_headers(overrides, hdrs)
             if serialized is not None:
                 body_arg = None
+        _require_service_account_headers(merged)
         return super().update(
             path=path,
             request_body=body_arg,
@@ -141,6 +166,7 @@ class Domains(
         if signer:
             hdrs, _ = signer.build_headers("DELETE", path, None)
             merged = _merge_signer_headers(overrides, hdrs)
+        _require_service_account_headers(merged)
         return super().destroy(path=path, overrides=merged)
 
     def get_info(
@@ -169,6 +195,7 @@ class Domains(
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)
+        _require_service_account_headers(merged)
         exec_kwargs = {"overrides": merged}
         if serialized is not None:
             exec_kwargs["serialized_json_body"] = serialized
@@ -208,6 +235,7 @@ class Domains(
         if signer:
             hdrs, serialized = signer.build_headers("POST", path, body)
             merged = _merge_signer_headers(overrides, hdrs)
+        _require_service_account_headers(merged)
         exec_kwargs = {"overrides": merged}
         if serialized is not None:
             exec_kwargs["serialized_json_body"] = serialized

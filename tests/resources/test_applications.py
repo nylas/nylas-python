@@ -92,9 +92,9 @@ class TestApplications:
             res.data.callback_uris[0].settings.sha1_certificate_fingerprint == "string"
         )
 
-    def test_info_source_only_fields(self):
+    def test_info_extended_response_fields(self):
         """idp_settings, hosted_authentication URL fields, and optional top-level
-        fields are source-confirmed and must deserialize (spec discrepancies #3, #4)."""
+        fields are public response fields and must deserialize."""
         mock_http_client = Mock()
         mock_http_client._execute.return_value = (
             {
@@ -102,7 +102,7 @@ class TestApplications:
                 "data": {
                     "application_id": "ad410018-d306-43f9-8361-fa5d7b2172e0",
                     "organization_id": "f5db4482-dbbe-4b32-b347-61c260d803ce",
-                    "v2_application_id": "v2-app-123",
+                    "unexpected_response_id": "unexpected-value",
                     "region": "eu",
                     "environment": "sandbox",
                     "domain": "auth.example.com",
@@ -128,7 +128,8 @@ class TestApplications:
         res = app.info()
 
         assert type(res.data) == ApplicationDetails
-        assert not hasattr(res.data, "v2_application_id")
+        assert not hasattr(res.data, "unexpected_response_id")
+        assert "unexpected_response_id" not in res.data.to_dict()
         # region/environment are free-form strings, not enums (discrepancies #6, #7)
         assert res.data.region == "eu"
         assert res.data.environment == "sandbox"
