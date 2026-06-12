@@ -4,7 +4,7 @@ from typing import Optional, List
 from dataclasses_json import dataclass_json
 from typing_extensions import TypedDict, NotRequired
 
-from nylas.models.redirect_uri import RedirectUri
+from nylas.models.redirect_uri import RedirectUri, WritableRedirectUriSettings
 
 Region = str
 """ The Nylas API region (free-form string, e.g. ``us``, ``eu``). """
@@ -196,20 +196,35 @@ class WritableAdditionalSettings(TypedDict):
     allow_query_param_in_redirect_uri: NotRequired[bool]
 
 
+class UpdateApplicationRedirectUriRequest(TypedDict):
+    """
+    Class representing a callback URI provided for an update application call.
+
+    Attributes:
+        id: Existing callback URI ID. Include this when preserving or updating an existing URI.
+        url: Redirect URL.
+        platform: Platform identifier. Optional; defaults to "web" server-side.
+        settings: Optional settings for the redirect URI.
+    """
+
+    id: NotRequired[str]
+    url: str
+    platform: NotRequired[str]
+    settings: NotRequired[WritableRedirectUriSettings]
+
+
 class UpdateApplicationRequest(TypedDict):
     """
     Class representing a request to update a Nylas application.
 
     Note:
-        ``callback_uris`` / ``redirect_uris`` cannot be set via this request; the
-        server silently ignores them. Manage callback URIs via the dedicated
-        redirect-uris endpoints. ``additional_settings`` is write-only and is
-        stripped from the response.
+        ``additional_settings`` is write-only and is stripped from the response.
 
     Attributes:
         branding: Branding details for the application.
         hosted_authentication: Hosted authentication branding details.
         idp_settings: Identity provider settings.
+        callback_uris: List of callback URIs for the application.
         domain: The white-label domain associated with the application.
         additional_settings: Additional (write-only) application settings.
     """
@@ -217,5 +232,6 @@ class UpdateApplicationRequest(TypedDict):
     branding: NotRequired[WritableBranding]
     hosted_authentication: NotRequired[WritableHostedAuthentication]
     idp_settings: NotRequired[WritableIdpSettings]
+    callback_uris: NotRequired[List[UpdateApplicationRedirectUriRequest]]
     domain: NotRequired[str]
     additional_settings: NotRequired[WritableAdditionalSettings]

@@ -173,6 +173,13 @@ class TestApplications:
             "branding": {"name": "Updated application"},
             "hosted_authentication": {"title": "Welcome"},
             "idp_settings": {"origins": "https://a.com"},
+            "callback_uris": [
+                {
+                    "id": "0556d035-6cb6-4262-a035-6b77e11cf8fc",
+                    "url": "https://example.com/callback",
+                    "platform": "web",
+                }
+            ],
             "domain": "auth.example.com",
             "additional_settings": {"rotate_refresh_token": True},
         }
