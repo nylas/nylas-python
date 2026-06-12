@@ -1,10 +1,17 @@
 from unittest.mock import patch
 
-from nylas.models.lists import ListItem, NylasList
+from nylas.models.lists import CreateListRequest, ListItem, ListType, NylasList
+from nylas.models.response import Response
 from nylas.resources.lists import Lists
 
 
 class TestLists:
+    def test_create_list_request_schema(self):
+        assert CreateListRequest.__required_keys__ == frozenset({"name", "type"})
+        assert CreateListRequest.__optional_keys__ == frozenset({"description"})
+        assert set(CreateListRequest.__annotations__) == {"name", "type", "description"}
+        assert set(ListType.__args__) == {"domain", "tld", "address"}
+
     def test_list_deserialization(self):
         list_json = {
             "id": "list-123",
@@ -61,6 +68,31 @@ class TestLists:
         assert item.list_id is None
         assert item.value is None
         assert item.created_at is None
+
+    def test_create_list_deserialization(self):
+        response_json = {
+            "request_id": "abc-123",
+            "data": {
+                "id": "list-123",
+                "name": "Blocked domains",
+                "description": "Known spam senders",
+                "type": "domain",
+                "items_count": 0,
+                "application_id": "app-123",
+                "organization_id": "org-123",
+                "created_at": 1712450952,
+                "updated_at": 1712450952,
+            },
+        }
+
+        response = Response.from_dict(response_json, NylasList)
+
+        assert response.request_id == "abc-123"
+        assert response.data.id == "list-123"
+        assert response.data.name == "Blocked domains"
+        assert response.data.description == "Known spam senders"
+        assert response.data.type == "domain"
+        assert response.data.items_count == 0
 
     def test_list_lists(self, http_client_list_response):
         lists = Lists(http_client_list_response)

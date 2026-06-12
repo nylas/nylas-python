@@ -2,11 +2,20 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Optional
 
 from dataclasses_json import config, dataclass_json
-from typing_extensions import TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 from nylas.models.list_query_params import ListQueryParams
 
-DomainVerificationType = Literal["ownership", "dkim", "spf", "feedback", "mx"]
+DomainVerificationRequestType = Literal["ownership", "dkim", "spf", "feedback", "mx"]
+DomainVerificationType = Literal[
+    "ownership", "dkim", "spf", "feedback", "mx", "dmarc", "arc"
+]
+
+
+class DomainVerificationOptions(TypedDict, total=False):
+    """Options for domain verification operations."""
+
+    key_length: int
 
 
 class ListDomainsQueryParams(ListQueryParams):
@@ -37,13 +46,15 @@ class UpdateDomainRequest(TypedDict, total=False):
 class GetDomainInfoRequest(TypedDict):
     """Request body for retrieving DNS records for a verification type."""
 
-    type: DomainVerificationType
+    type: DomainVerificationRequestType
+    options: NotRequired[DomainVerificationOptions]
 
 
 class VerifyDomainRequest(TypedDict):
     """Request body for triggering DNS verification."""
 
-    type: DomainVerificationType
+    type: DomainVerificationRequestType
+    options: NotRequired[DomainVerificationOptions]
 
 
 @dataclass_json

@@ -2,12 +2,17 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Aligned Lists create support with the public `POST /v3/lists` schema and added create response/schema coverage
+* Added Manage Domains service-account auth support with canonical signed request bodies, bearer-auth suppression, encoded domain path segments, and `dmarc`/`arc` verification types
+* Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, `manual_assign`, `default`, `policy_id`, and `rule_ids`
+* Corrected RedirectUris `update` to use PATCH instead of PUT; added `deleted_at` to the RedirectUri model and made `platform` optional on create
+* Verified and extended Applications: added `update` (PATCH `/v3/applications`) and public response fields (`idp_settings`, hosted-authentication legal URLs, `domain`, `blocked`, timestamps)
 * Fix draft and other JSON API requests failing with "only JSON and multipart supported" by sending `Content-Type: application/json` instead of `application/json; charset=utf-8`
 
 v6.15.0
 ----------
 * Added Lists support (`Client.lists`, `/v3/lists`): list, create, find, update, and delete lists, plus `list_items`, `add_items`, and `remove_items` for `/v3/lists/{list_id}/items`, with typed request/response models in `nylas.models.lists`
-* Added Manage Domains (`Client.domains`, `/v3/admin/domains`): list, create, find, update, delete, `get_info`, and `verify` with models in `nylas.models.domains`; optional `ServiceAccountSigner` (`nylas.handler.service_account`) for service-account headers (`X-Nylas-Kid`, `X-Nylas-Nonce`, `X-Nylas-Timestamp`, `X-Nylas-Signature`) on each `Domains` method; new `cryptography` dependency, RSA signing, and `HttpClient` `serialized_json_body` so signed payloads match the wire body
+* Added Manage Domains (`Client.domains`, `/v3/admin/domains`): list, create, find, update, delete, `get_info`, and `verify` with models in `nylas.models.domains`; optional `ServiceAccountSigner` (`nylas.handler.service_account`) for service-account auth headers (`X-Nylas-Kid`, `X-Nylas-Nonce`, `X-Nylas-Timestamp`, `X-Nylas-Signature`) on each `Domains` method; new `cryptography` dependency, RSA signing, bearer-auth suppression for signed domain requests, and `HttpClient` `serialized_json_body` so signed payloads match the wire body
 * Added Transactional Send: `Client.transactional_send.send()` for `POST /v3/domains/{domain_name}/messages/send`, with `TransactionalSendMessageRequest` and `TransactionalTemplate` models (JSON and multipart send behavior aligned with grant `messages.send`)
 * Added Policies support (`Client.policies`, `/v3/policies`): list, create, find, update, and delete, with typed request/response models in `nylas.models.policies`
 * Added Rules support (`Client.rules`): list, create, find, update, and delete for `/v3/rules`, plus `list_evaluations` for `/v3/grants/{grant_id}/rule-evaluations`, with typed request/response models in `nylas.models.rules`
@@ -548,4 +553,3 @@ Added tests
 v0.3.5
 ------
 Drafts can now be sent without an implicit intermediate save to the mail provider.
-

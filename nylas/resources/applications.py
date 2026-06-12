@@ -1,11 +1,14 @@
 from nylas.config import RequestOverrides
-from nylas.models.application_details import ApplicationDetails
+from nylas.handler.api_resources import UpdatablePatchApiResource
+from nylas.models.application_details import (
+    ApplicationDetails,
+    UpdateApplicationRequest,
+)
 from nylas.models.response import Response
 from nylas.resources.redirect_uris import RedirectUris
-from nylas.resources.resource import Resource
 
 
-class Applications(Resource):
+class Applications(UpdatablePatchApiResource):
     """
     Nylas Applications API
 
@@ -38,3 +41,31 @@ class Applications(Resource):
             method="GET", path="/v3/applications", overrides=overrides
         )
         return Response.from_dict(json_response, ApplicationDetails, headers)
+
+    def update(
+        self,
+        request_body: UpdateApplicationRequest,
+        overrides: RequestOverrides = None,
+    ) -> Response[ApplicationDetails]:
+        """
+        Update the application information.
+
+        Note:
+            ``callback_uris`` / ``redirect_uris`` cannot be updated here; the server
+            silently ignores them. Use the redirect URIs endpoints instead.
+            ``additional_settings`` is write-only and is stripped from the response.
+
+        Args:
+            request_body: The values to update the application with.
+            overrides: The request overrides to apply to the request.
+
+        Returns:
+            Response: The updated application information.
+        """
+
+        return super().patch(
+            path="/v3/applications",
+            request_body=request_body,
+            response_type=ApplicationDetails,
+            overrides=overrides,
+        )

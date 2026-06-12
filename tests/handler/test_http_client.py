@@ -112,6 +112,14 @@ class TestHttpClient:
             "Authorization": "Bearer test-key-override",
         }
 
+    def test_build_headers_skip_auth(self, http_client, patched_version_and_sys):
+        headers = http_client._build_headers(overrides={"skip_auth": True})
+
+        assert headers == {
+            "X-Nylas-API-Wrapper": "python",
+            "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
+        }
+
     def test_build_request_default(self, http_client, patched_version_and_sys):
         request = http_client._build_request(
             method="GET",
@@ -442,7 +450,9 @@ class TestHttpClient:
             _validate_response(response)
         assert e.value.headers == {"X-Test-Header": "test"}
 
-    def test_execute_with_headers(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_headers(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         mock_response = Mock()
         mock_response.json.return_value = {"foo": "bar"}
         mock_response.headers = {"X-Test-Header": "test"}
@@ -473,7 +483,9 @@ class TestHttpClient:
             timeout=30,
         )
 
-    def test_execute_with_utf8_characters(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_utf8_characters(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that UTF-8 characters are preserved in JSON requests (not escaped)."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
@@ -500,7 +512,7 @@ class TestHttpClient:
         assert call_kwargs["headers"]["Content-type"] == "application/json"
         assert "data" in call_kwargs
         sent_data = call_kwargs["data"]
-        
+
         # The data should be bytes with actual UTF-8 characters (not escape sequences)
         assert isinstance(sent_data, bytes)
         decoded_data = sent_data.decode("utf-8")
@@ -510,7 +522,9 @@ class TestHttpClient:
         # Should NOT contain unicode escape sequences
         assert "\\u" not in decoded_data
 
-    def test_execute_with_none_request_body(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_none_request_body(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that None request_body is handled correctly."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
@@ -532,7 +546,9 @@ class TestHttpClient:
         assert "json" not in call_kwargs
         assert call_kwargs["data"] is None
 
-    def test_execute_with_none_request_body_and_none_data(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_none_request_body_and_none_data(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that both None request_body and None data are handled correctly."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
@@ -554,7 +570,9 @@ class TestHttpClient:
         assert "json" not in call_kwargs
         assert call_kwargs["data"] is None
 
-    def test_execute_with_emoji_and_international_characters(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_emoji_and_international_characters(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that emoji and various international characters are preserved."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}
@@ -580,7 +598,7 @@ class TestHttpClient:
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
         sent_data = call_kwargs["data"]
-        
+
         # All characters should be preserved as UTF-8 encoded bytes
         assert isinstance(sent_data, bytes)
         decoded_data = sent_data.decode("utf-8")
@@ -591,9 +609,11 @@ class TestHttpClient:
         assert "Größe" in decoded_data
         assert "¿Cómo estás?" in decoded_data
 
-    def test_execute_with_right_single_quotation_mark(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_right_single_quotation_mark(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that right single quotation mark (\\u2019) is handled correctly.
-        
+
         This character caused UnicodeEncodeError: 'latin-1' codec can't encode character '\\u2019'.
         """
         mock_response = Mock()
@@ -618,7 +638,7 @@ class TestHttpClient:
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
         sent_data = call_kwargs["data"]
-        
+
         # The data should be UTF-8 encoded bytes with the \u2019 character preserved
         assert isinstance(sent_data, bytes)
         decoded_data = sent_data.decode("utf-8")
@@ -626,9 +646,11 @@ class TestHttpClient:
         assert "It's a test" in decoded_data
         assert "Here's another" in decoded_data
 
-    def test_execute_with_emojis(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_emojis(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that emojis are handled correctly in request bodies.
-        
+
         Emojis are multi-byte UTF-8 characters that could cause encoding issues
         if not handled properly.
         """
@@ -654,7 +676,7 @@ class TestHttpClient:
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
         sent_data = call_kwargs["data"]
-        
+
         # All emojis should be preserved in UTF-8 encoded bytes
         assert isinstance(sent_data, bytes)
         decoded_data = sent_data.decode("utf-8")
@@ -666,9 +688,11 @@ class TestHttpClient:
         assert "📅" in decoded_data
         assert "⏰" in decoded_data
 
-    def test_execute_with_nan_and_infinity(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_nan_and_infinity(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that NaN and Infinity float values are handled correctly.
-        
+
         The requests library's json= parameter uses allow_nan=False which raises
         ValueError for NaN/Infinity. Our implementation uses json.dumps with
         allow_nan=True to maintain backward compatibility.
@@ -696,7 +720,7 @@ class TestHttpClient:
         assert response_json == {"success": True}
         call_kwargs = patched_request.call_args[1]
         sent_data = call_kwargs["data"]
-        
+
         # The data should be UTF-8 encoded bytes with NaN/Infinity serialized
         assert isinstance(sent_data, bytes)
         decoded_data = sent_data.decode("utf-8")
@@ -706,7 +730,9 @@ class TestHttpClient:
         assert "-Infinity" in decoded_data
         assert "42.5" in decoded_data
 
-    def test_execute_with_multipart_data_not_affected(self, http_client, patched_version_and_sys, patched_request):
+    def test_execute_with_multipart_data_not_affected(
+        self, http_client, patched_version_and_sys, patched_request
+    ):
         """Test that multipart/form-data is not affected by the change."""
         mock_response = Mock()
         mock_response.json.return_value = {"success": True}

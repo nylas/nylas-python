@@ -20,6 +20,7 @@ from nylas.resources.policies import Policies
 from nylas.resources.scheduler import Scheduler
 from nylas.resources.notetakers import Notetakers
 from nylas.resources.rules import Rules
+from nylas.resources.workspaces import Workspaces
 
 
 class Client:
@@ -246,3 +247,13 @@ class Client:
             The Notetakers API.
         """
         return Notetakers(self.http_client)
+
+    @property
+    def workspaces(self) -> Workspaces:
+        """
+        Access the Workspaces API.
+
+        Returns:
+            The Workspaces API.
+        """
+        return Workspaces(self.http_client)

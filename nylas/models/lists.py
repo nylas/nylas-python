@@ -50,7 +50,7 @@ class NylasList:
     id: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
-    type: Optional[str] = None
+    type: Optional[ListType] = None
     items_count: Optional[int] = None
     application_id: Optional[str] = None
     organization_id: Optional[str] = None
