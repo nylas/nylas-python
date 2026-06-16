@@ -2,6 +2,9 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+
+v6.16.0
+----------
 * Aligned Lists create support with the public `POST /v3/lists` schema and added create response/schema coverage
 * Added Manage Domains service-account auth support with canonical signed request bodies, bearer-auth suppression, encoded domain path segments, and `dmarc`/`arc` verification types
 * Added Workspaces resource (`client.workspaces`) with `list`, `find`, `create`, `update` (PATCH), `destroy`, `auto_group`, `manual_assign`, `invalid_also`, `default`, `policy_id`, and `rule_ids`
