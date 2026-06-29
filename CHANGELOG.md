@@ -2,6 +2,7 @@ nylas-python Changelog
 ======================
 Unreleased
 ----------
+* Fixed `TypeError` in `drafts.create()` and `drafts.update()` when attachments trigger the multipart code path (>3MB) — `_execute()` returns a `(json_response, headers)` tuple, and both methods now unpack it correctly and forward `headers` to `Response.from_dict`
 
 v6.16.0
 ----------
