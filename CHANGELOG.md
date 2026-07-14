@@ -3,6 +3,7 @@ nylas-python Changelog
 Unreleased
 ----------
 * Clarify that event `default` visibility is Google-only
+* Added `resources` field to Event, CreateEventRequest, and UpdateEventRequest models
 
 v6.16.0
 ----------
