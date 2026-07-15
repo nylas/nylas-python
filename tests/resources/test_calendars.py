@@ -437,3 +437,27 @@ class TestCalendar:
             overrides=None,
         )
 
+    def test_get_free_busy_with_tentative_as_busy(self, http_client_free_busy):
+        calendars = Calendars(http_client_free_busy)
+        free_busy_request = {
+            "emails": ["test@gmail.com", "test2@gmail.com"],
+            "start_time": 1497916800,
+            "end_time": 1498003200,
+            "tentative_as_busy": False,
+        }
+
+        # Http client is mocked in conftest.py, specific
+        # mock for free busy is configured there
+        calendars.get_free_busy(
+            identifier="abc123", request_body=free_busy_request, overrides=None
+        )
+
+        http_client_free_busy._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc123/calendars/free-busy",
+            None,
+            None,
+            free_busy_request,
+            overrides=None,
+        )
+
