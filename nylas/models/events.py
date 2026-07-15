@@ -49,6 +49,31 @@ class Participant:
     phone_number: Optional[str] = None
 
 
+@dataclass_json
+@dataclass
+class Resource:
+    """
+    Class representing an Event resource, such as a bookable room or piece of equipment.
+
+    Attributes:
+        email: The resource's email address.
+        name: The resource's name.
+        capacity: The maximum number of people the resource can accommodate.
+        building: The building the resource is located in.
+        floor_name: The name of the floor the resource is located on.
+        floor_section: The section of the floor the resource is located in.
+        floor_number: The number of the floor the resource is located on.
+    """
+
+    email: Optional[str] = None
+    name: Optional[str] = None
+    capacity: Optional[int] = None
+    building: Optional[str] = None
+    floor_name: Optional[str] = None
+    floor_section: Optional[str] = None
+    floor_number: Optional[int] = None
+
+
 class EmailName(TypedDict):
     """
     Interface representing an email address and optional name.
@@ -351,6 +376,7 @@ class Event:
         created_at: Unix timestamp representing the Event's creation time.
         updated_at: Unix timestamp representing the time when the Event was last updated.
         participants: List of participants invited to the Event. Participants may be people, rooms, or resources.
+        resources: List of resources (such as bookable rooms or equipment) associated with the Event.
         when: Representation of an Event's time and duration.
         conferencing: Representation of an Event's conferencing details.
         object: The type of object.
@@ -402,6 +428,7 @@ class Event:
     updated_at: Optional[int] = None
     master_event_id: Optional[str] = None
     notetaker: Optional[EventNotetaker] = None
+    resources: Optional[List[Resource]] = None
 
 
 class CreateParticipant(TypedDict):
@@ -419,6 +446,29 @@ class CreateParticipant(TypedDict):
     name: NotRequired[str]
     comment: NotRequired[str]
     phone_number: NotRequired[str]
+
+
+class WritableResource(TypedDict):
+    """
+    Interface representing a resource for event creation or updating.
+
+    Attributes:
+        email: The resource's email address.
+        name: The resource's name.
+        capacity: The maximum number of people the resource can accommodate.
+        building: The building the resource is located in.
+        floor_name: The name of the floor the resource is located on.
+        floor_section: The section of the floor the resource is located in.
+        floor_number: The number of the floor the resource is located on.
+    """
+
+    email: NotRequired[str]
+    name: NotRequired[str]
+    capacity: NotRequired[int]
+    building: NotRequired[str]
+    floor_name: NotRequired[str]
+    floor_section: NotRequired[str]
+    floor_number: NotRequired[int]
 
 
 class UpdateParticipant(TypedDict):
@@ -743,6 +793,7 @@ class CreateEventRequest(TypedDict):
             If left empty or omitted, the event uses the provider defaults.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
+        resources: The resources (such as bookable rooms or equipment) of the event.
         recurrence: The recurrence rules of the event.
         visibility: The visibility of the event.
         capacity: The capacity of the event.
@@ -759,6 +810,7 @@ class CreateEventRequest(TypedDict):
     reminders: NotRequired[CreateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[CreateParticipant]]
+    resources: NotRequired[List[WritableResource]]
     recurrence: NotRequired[List[str]]
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]
@@ -780,6 +832,7 @@ class UpdateEventRequest(TypedDict):
         reminders: A list of reminders to send for the event.
         metadata: Metadata associated with the event.
         participants: The participants of the event.
+        resources: The resources (such as bookable rooms or equipment) of the event.
         recurrence: The recurrence rules of the event.
         visibility: The visibility of the event.
         capacity: The capacity of the event.
@@ -796,6 +849,7 @@ class UpdateEventRequest(TypedDict):
     reminders: NotRequired[UpdateReminders]
     metadata: NotRequired[Dict[str, Any]]
     participants: NotRequired[List[UpdateParticipant]]
+    resources: NotRequired[List[WritableResource]]
     recurrence: NotRequired[List[str]]
     visibility: NotRequired[Visibility]
     capacity: NotRequired[int]

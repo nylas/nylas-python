@@ -35,6 +35,17 @@ class TestEvent:
                     "status": "maybe",
                 }
             ],
+            "resources": [
+                {
+                    "email": "room-a@example.com",
+                    "name": "Conference Room A",
+                    "capacity": 10,
+                    "building": "Headquarters",
+                    "floor_name": "Main",
+                    "floor_section": "West Wing",
+                    "floor_number": 3,
+                }
+            ],
             "read_only": False,
             "reminders": {
                 "use_default": False,
@@ -83,6 +94,13 @@ class TestEvent:
         assert event.participants[0].name == "Aristotle"
         assert event.participants[0].phone_number == "+1 23456778"
         assert event.participants[0].status == "maybe"
+        assert event.resources[0].email == "room-a@example.com"
+        assert event.resources[0].name == "Conference Room A"
+        assert event.resources[0].capacity == 10
+        assert event.resources[0].building == "Headquarters"
+        assert event.resources[0].floor_name == "Main"
+        assert event.resources[0].floor_section == "West Wing"
+        assert event.resources[0].floor_number == 3
         assert event.read_only is False
         assert event.reminders.use_default is False
         assert event.reminders.overrides[0].reminder_minutes == 10
@@ -357,6 +375,17 @@ class TestEvent:
             "description": "Description of my new event",
             "location": "Los Angeles, CA",
             "metadata": {"your-key": "value"},
+            "resources": [
+                {
+                    "email": "room-a@example.com",
+                    "name": "Conference Room A",
+                    "capacity": 10,
+                    "building": "Headquarters",
+                    "floor_name": "Main",
+                    "floor_section": "West Wing",
+                    "floor_number": 3,
+                }
+            ],
         }
 
         events.create(
@@ -386,6 +415,17 @@ class TestEvent:
             "description": "Updated description of my event",
             "location": "Los Angeles, CA",
             "metadata": {"your-key": "value"},
+            "resources": [
+                {
+                    "email": "room-a@example.com",
+                    "name": "Conference Room A",
+                    "capacity": 10,
+                    "building": "Headquarters",
+                    "floor_name": "Main",
+                    "floor_section": "West Wing",
+                    "floor_number": 3,
+                }
+            ],
         }
 
         events.update(
@@ -660,3 +700,182 @@ class TestEvent:
         assert event.id == "test-event-id"
         assert event.title == "Test Event with Unknown Conferencing Fields"
         assert event.conferencing is None
+
+    def test_event_without_resources_deserialization(self):
+        """Test event deserialization when the resources field is absent."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan",
+            },
+            "title": "Test Event without Resources",
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert event.id == "test-event-id"
+        assert event.resources is None
+
+    def test_event_with_empty_resources_deserialization(self):
+        """Test event deserialization when the resources field is an empty list."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan",
+            },
+            "resources": [],
+            "title": "Test Event with Empty Resources",
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert event.id == "test-event-id"
+        assert event.resources == []
+
+    def test_event_with_partial_resource_deserialization(self):
+        """Test event deserialization when a resource only has some fields set."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan",
+            },
+            "resources": [
+                {"email": "room-b@example.com", "name": "Conference Room B"}
+            ],
+            "title": "Test Event with Partial Resource",
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert event.resources[0].email == "room-b@example.com"
+        assert event.resources[0].name == "Conference Room B"
+        assert event.resources[0].capacity is None
+        assert event.resources[0].building is None
+        assert event.resources[0].floor_name is None
+        assert event.resources[0].floor_section is None
+        assert event.resources[0].floor_number is None
+
+    def test_event_with_multiple_resources_deserialization(self):
+        """Test event deserialization with multiple resources."""
+        event_json = {
+            "id": "test-event-id",
+            "grant_id": "test-grant-id",
+            "calendar_id": "test-calendar-id",
+            "busy": True,
+            "participants": [
+                {"email": "test@example.com", "name": "Test User", "status": "yes"}
+            ],
+            "when": {
+                "start_time": 1497916800,
+                "end_time": 1497920400,
+                "object": "timespan",
+            },
+            "resources": [
+                {
+                    "email": "room-a@example.com",
+                    "name": "Conference Room A",
+                    "capacity": 10,
+                    "building": "Headquarters",
+                    "floor_name": "Main",
+                    "floor_section": "West Wing",
+                    "floor_number": 3,
+                },
+                {
+                    "email": "room-b@example.com",
+                    "name": "Conference Room B",
+                    "capacity": 4,
+                    "building": "Annex",
+                    "floor_name": "Ground",
+                    "floor_section": "East Wing",
+                    "floor_number": 1,
+                },
+            ],
+            "title": "Test Event with Multiple Resources",
+        }
+
+        event = Event.from_dict(event_json)
+
+        assert len(event.resources) == 2
+        assert event.resources[0].email == "room-a@example.com"
+        assert event.resources[0].capacity == 10
+        assert event.resources[1].email == "room-b@example.com"
+        assert event.resources[1].name == "Conference Room B"
+        assert event.resources[1].capacity == 4
+        assert event.resources[1].building == "Annex"
+        assert event.resources[1].floor_number == 1
+
+    def test_create_event_with_empty_resources(self, http_client_response):
+        """Test creating an event passes through an empty resources list."""
+        events = Events(http_client_response)
+        request_body = {
+            "when": {
+                "start_time": 1661874192,
+                "end_time": 1661877792,
+            },
+            "title": "Event with empty resources",
+            "resources": [],
+        }
+
+        events.create(
+            identifier="abc-123",
+            request_body=request_body,
+            query_params={"calendar_id": "abc-123"},
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/events",
+            None,
+            {"calendar_id": "abc-123"},
+            request_body,
+            overrides=None,
+        )
+
+    def test_update_event_with_partial_resource(self, http_client_response):
+        """Test updating an event passes through a resource with only some fields."""
+        events = Events(http_client_response)
+        request_body = {
+            "resources": [
+                {"email": "room-b@example.com", "name": "Conference Room B"}
+            ],
+        }
+
+        events.update(
+            identifier="abc-123",
+            event_id="event-123",
+            request_body=request_body,
+            query_params={"calendar_id": "abc-123"},
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/events/event-123",
+            None,
+            {"calendar_id": "abc-123"},
+            request_body,
+            overrides=None,
+        )
