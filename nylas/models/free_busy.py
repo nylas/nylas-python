@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from dataclasses_json import dataclass_json
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, NotRequired
 
 
 @dataclass_json
@@ -64,8 +64,11 @@ class GetFreeBusyRequest(TypedDict):
         start_time: Unix timestamp for the start time to check free/busy for.
         end_time: Unix timestamp for the end time to check free/busy for.
         emails: List of email addresses to check free/busy for.
+        tentative_as_busy: When set to false, treats tentative calendar events as busy:false.
+            Only applicable for Microsoft and EWS calendar providers. Defaults to true.
     """
 
     start_time: int
     end_time: int
     emails: List[str]
+    tentative_as_busy: NotRequired[bool]
