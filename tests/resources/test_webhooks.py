@@ -108,6 +108,16 @@ class TestWebhooks:
             "GET", "/v3/webhooks", None, None, None, overrides=None
         )
 
+    def test_list_webhooks_with_overrides(self, http_client_list_response):
+        webhooks = Webhooks(http_client_list_response)
+        overrides = {"api_key": "override-key", "api_uri": "https://override.nylas.com"}
+
+        webhooks.list(overrides=overrides)
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET", "/v3/webhooks", None, None, None, overrides=overrides
+        )
+
     def test_find_webhook(self, http_client_response):
         webhooks = Webhooks(http_client_response)
 

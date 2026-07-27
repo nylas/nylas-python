@@ -42,7 +42,11 @@ class Webhooks(
         Returns:
             The list of webhook destinations
         """
-        return super().list(path="/v3/webhooks", response_type=Webhook)
+        return super().list(
+            path="/v3/webhooks",
+            response_type=Webhook,
+            overrides=overrides,
+        )
 
     def find(
         self, webhook_id: str, overrides: RequestOverrides = None

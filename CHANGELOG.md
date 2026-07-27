@@ -1,5 +1,9 @@
 nylas-python Changelog
 ======================
+Unreleased
+----------
+* Fixed `webhooks.list()` dropping the `overrides` argument, so per request `api_key`, `api_uri`, `timeout` and `headers` now apply to it
+
 v6.17.0
 ----------
 * Clarify that event `default` visibility is Google-only
