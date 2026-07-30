@@ -30,8 +30,10 @@ class TransactionalSend(Resource):
         Send a transactional email from the specified domain.
 
         Args:
-            domain_name: The domain Nylas sends from (must be verified in the dashboard).
+            domain_name: The sender domain Nylas sends from (must be verified in the dashboard).
             request_body: Message fields; use ``from_`` for the sender (maps to JSON ``from``).
+                A separate ``tracking_options.domain_name`` value selects the custom
+                tracking hostname.
             overrides: Per-request overrides for the HTTP client.
 
         Returns:

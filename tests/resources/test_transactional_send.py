@@ -28,6 +28,80 @@ class TestTransactionalSend:
             overrides=None,
         )
 
+    def test_send_with_custom_tracking_hostname(self, http_client_response):
+        transactional_send = TransactionalSend(http_client_response)
+        request_body = {
+            "subject": "Welcome",
+            "to": [{"email": "recipient@example.com"}],
+            "from_": {"email": "support@sender.example.com"},
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+                "domain_name": "tracking.example.com",
+            },
+        }
+
+        transactional_send.send(
+            domain_name="sender.example.com",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/domains/sender.example.com/messages/send",
+            request_body={
+                "subject": "Welcome",
+                "to": [{"email": "recipient@example.com"}],
+                "from": {"email": "support@sender.example.com"},
+                "body": '<a href="https://example.com">Open example</a>',
+                "tracking_options": {
+                    "links": True,
+                    "opens": True,
+                    "domain_name": "tracking.example.com",
+                },
+            },
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_without_custom_tracking_hostname_unchanged(
+        self, http_client_response
+    ):
+        transactional_send = TransactionalSend(http_client_response)
+        request_body = {
+            "subject": "Welcome",
+            "to": [{"email": "recipient@example.com"}],
+            "from_": {"email": "support@sender.example.com"},
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+            },
+        }
+
+        transactional_send.send(
+            domain_name="sender.example.com",
+            request_body=request_body,
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/domains/sender.example.com/messages/send",
+            request_body={
+                "subject": "Welcome",
+                "to": [{"email": "recipient@example.com"}],
+                "from": {"email": "support@sender.example.com"},
+                "body": '<a href="https://example.com">Open example</a>',
+                "tracking_options": {
+                    "links": True,
+                    "opens": True,
+                },
+            },
+            data=None,
+            overrides=None,
+        )
+
     def test_send_domain_name_url_encoded(self, http_client_response):
         transactional_send = TransactionalSend(http_client_response)
         request_body = {

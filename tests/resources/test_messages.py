@@ -245,6 +245,79 @@ class TestMessage:
             overrides=None,
         )
 
+    def test_send_message_with_custom_tracking_hostname(self, http_client_response):
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"email": "recipient@example.com"}],
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+                "domain_name": "tracking.example.com",
+            },
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_message_without_custom_tracking_hostname_unchanged(
+        self, http_client_response
+    ):
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Hello from Nylas!",
+            "to": [{"email": "recipient@example.com"}],
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+            },
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        )
+
+    def test_send_scheduled_message_with_custom_tracking_hostname(
+        self, http_client_response
+    ):
+        messages = Messages(http_client_response)
+        request_body = {
+            "subject": "Scheduled update",
+            "to": [{"email": "recipient@example.com"}],
+            "body": '<a href="https://example.com">Open example</a>',
+            "send_at": 1893456000,
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+                "domain_name": "tracking.example.com",
+            },
+        }
+
+        messages.send(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            method="POST",
+            path="/v3/grants/abc-123/messages/send",
+            request_body=request_body,
+            data=None,
+            overrides=None,
+        )
+
     def test_send_message_small_attachment(self, http_client_response):
         messages = Messages(http_client_response)
         request_body = {
@@ -747,8 +820,9 @@ class TestMessage:
                 "opens": True,
                 "thread_replies": False,
                 "links": True,
-                "label": "Marketing Campaign"
-            }
+                "label": "Marketing Campaign",
+                "domain_name": "tracking.example.com",
+            },
         }
 
         message = Message.from_dict(message_json)
@@ -758,6 +832,7 @@ class TestMessage:
         assert message.tracking_options.thread_replies is False
         assert message.tracking_options.links is True
         assert message.tracking_options.label == "Marketing Campaign"
+        assert message.tracking_options.domain_name == "tracking.example.com"
 
     def test_message_deserialization_with_raw_mime(self):
         """Test deserialization of message with raw_mime field."""
@@ -874,7 +949,8 @@ class TestMessage:
             opens=True,
             thread_replies=False,
             links=True,
-            label="Test Campaign"
+            label="Test Campaign",
+            domain_name="tracking.example.com",
         )
         
         # Test serialization
@@ -883,6 +959,7 @@ class TestMessage:
         assert json_data["thread_replies"] is False
         assert json_data["links"] is True
         assert json_data["label"] == "Test Campaign"
+        assert json_data["domain_name"] == "tracking.example.com"
         
         # Test deserialization
         tracking_options_from_dict = TrackingOptions.from_dict(json_data)
@@ -890,6 +967,25 @@ class TestMessage:
         assert tracking_options_from_dict.thread_replies is False
         assert tracking_options_from_dict.links is True
         assert tracking_options_from_dict.label == "Test Campaign"
+        assert tracking_options_from_dict.domain_name == "tracking.example.com"
+
+    def test_tracking_options_omit_unset_domain_name(self):
+        """Test that existing tracking options do not gain a null wire field."""
+        from nylas.models.messages import TrackingOptions
+
+        tracking_options = TrackingOptions(
+            opens=True,
+            thread_replies=False,
+            links=True,
+            label="Test Campaign",
+        )
+
+        assert tracking_options.to_dict() == {
+            "opens": True,
+            "thread_replies": False,
+            "links": True,
+            "label": "Test Campaign",
+        }
 
     def test_send_message_with_is_plaintext_true(self, http_client_response):
         """Test sending a message with is_plaintext=True."""
