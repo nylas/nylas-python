@@ -144,6 +144,55 @@ class TestDraft:
             overrides=None,
         )
 
+    def test_create_draft_with_custom_tracking_hostname(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Tracked draft",
+            "to": [{"email": "recipient@example.com"}],
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+                "domain_name": "tracking.example.com",
+            },
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_create_draft_without_custom_tracking_hostname_unchanged(
+        self, http_client_response
+    ):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "subject": "Tracked draft",
+            "to": [{"email": "recipient@example.com"}],
+            "body": '<a href="https://example.com">Open example</a>',
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+            },
+        }
+
+        drafts.create(identifier="abc-123", request_body=request_body)
+
+        http_client_response._execute.assert_called_once_with(
+            "POST",
+            "/v3/grants/abc-123/drafts",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
     def test_create_draft_with_metadata(self, http_client_response):
         drafts = Drafts(http_client_response)
         request_body = {
@@ -230,6 +279,29 @@ class TestDraft:
             "to": [{"name": "Jon Snow", "email": "jsnow@gmail.com"}],
             "cc": [{"name": "Arya Stark", "email": "astark@gmail.com"}],
             "body": "This is the body of my draft message.",
+        }
+
+        drafts.update(
+            identifier="abc-123", draft_id="draft-123", request_body=request_body
+        )
+
+        http_client_response._execute.assert_called_once_with(
+            "PUT",
+            "/v3/grants/abc-123/drafts/draft-123",
+            None,
+            None,
+            request_body,
+            overrides=None,
+        )
+
+    def test_update_draft_with_custom_tracking_hostname(self, http_client_response):
+        drafts = Drafts(http_client_response)
+        request_body = {
+            "tracking_options": {
+                "links": True,
+                "opens": True,
+                "domain_name": "replacement-tracking.example.com",
+            },
         }
 
         drafts.update(

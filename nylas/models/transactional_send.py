@@ -39,7 +39,8 @@ class TransactionalSendMessageRequest(TypedDict, total=False):
         attachments: File attachments.
         send_at: Unix timestamp to send the message later.
         reply_to_message_id: Message being replied to.
-        tracking_options: Open/link tracking settings.
+        tracking_options: Open/link tracking settings, including an optional custom
+            tracking hostname.
         custom_headers: Custom MIME headers.
         metadata: String-keyed metadata.
         is_plaintext: Send body as plain text when true.

@@ -38,12 +38,16 @@ class TrackingOptions:
         thread_replies: When true, shows that thread replied tracking is enabled.
         links: When true, shows that link clicked tracking is enabled.
         label: A label describing the message tracking purpose.
+        domain_name: The custom hostname used for link and open tracking.
     """
 
     opens: Optional[bool] = None
     thread_replies: Optional[bool] = None
     links: Optional[bool] = None
     label: Optional[str] = None
+    domain_name: Optional[str] = field(
+        default=None, metadata=config(exclude=lambda value: value is None)
+    )
 
 
 @dataclass_json

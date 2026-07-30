@@ -49,12 +49,14 @@ class TrackingOptions(TypedDict):
         links: Whether to track links.
         opens: Whether to track opens.
         thread_replies: Whether to track thread replies.
+        domain_name: The custom hostname used for link and open tracking.
     """
 
     label: NotRequired[str]
     links: NotRequired[bool]
     opens: NotRequired[bool]
     thread_replies: NotRequired[bool]
+    domain_name: NotRequired[str]
 
 
 class CustomHeader(TypedDict):
@@ -85,7 +87,8 @@ class CreateDraftRequest(TypedDict):
         attachments: The attachments on the message.
         send_at: Unix timestamp to send the message at.
         reply_to_message_id: The ID of the message that you are replying to.
-        tracking_options: Options for tracking opens, links, and thread replies.
+        tracking_options: Options for tracking opens, links, thread replies, and an
+            optional custom hostname.
         custom_headers: Custom headers to add to the message.
         metadata: A dictionary of key-value pairs storing additional data.
         is_plaintext: When true, the message body is sent as plain text and the MIME data doesn't include 
@@ -181,7 +184,8 @@ class SendMessageRequest(CreateDraftRequest):
         attachments (NotRequired[List[CreateAttachmentRequest]]): The attachments on the message.
         send_at (NotRequired[int]): Unix timestamp to send the message at.
         reply_to_message_id (NotRequired[str]): The ID of the message that you are replying to.
-        tracking_options (NotRequired[TrackingOptions]): Options for tracking opens, links, and thread replies.
+        tracking_options (NotRequired[TrackingOptions]): Options for tracking opens,
+            links, thread replies, and an optional custom hostname.
         custom_headers(NotRequired[List[CustomHeader]]): Custom headers to add to the message.
         is_plaintext (NotRequired[bool]): When true, the message body is sent as plain text and the MIME data 
             doesn't include the HTML version of the message. When false, the message body is sent as HTML.

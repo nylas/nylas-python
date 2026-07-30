@@ -1,5 +1,9 @@
 nylas-python Changelog
 ======================
+Unreleased
+----------
+* Added optional `tracking_options.domain_name` support for custom link and open tracking hostnames in message sends, scheduled sends, drafts, and Transactional Send
+
 v6.17.0
 ----------
 * Clarify that event `default` visibility is Google-only
