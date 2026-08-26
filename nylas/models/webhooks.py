@@ -10,7 +10,13 @@ WebhookStatus = Literal["active", "failing", "failed", "pause"]
 
 
 class WebhookTriggers(str, Enum):
-    """Enum representing the available webhook triggers."""
+    """
+    Enum representing the available webhook triggers.
+
+    Native iCloud contacts support CONTACT_UPDATED and CONTACT_DELETED. Yahoo
+    contacts support neither trigger, including for changes made through the
+    Nylas API. There is no CONTACT_CREATED trigger.
+    """
     BOOKING_CREATED = "booking.created"
     BOOKING_PENDING = "booking.pending"
     BOOKING_RESCHEDULED = "booking.rescheduled"

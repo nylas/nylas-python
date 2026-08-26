@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, List
+from typing import Dict, List, Optional
 from typing_extensions import TypedDict, NotRequired
 
 from dataclasses_json import dataclass_json
@@ -132,6 +132,9 @@ class Contact:
         given_name: The contact's given name.
         job_title: The contact's job title.
         manager_name: The contact's manager name.
+        metadata: Nylas-owned metadata associated with the contact. Metadata is
+            not written to the provider and does not follow a contact if its
+            public ID changes.
         middle_name: The contact's middle name.
         nickname: The contact's nickname.
         notes: The contact's notes.
@@ -158,6 +161,7 @@ class Contact:
     given_name: Optional[str] = None
     job_title: Optional[str] = None
     manager_name: Optional[str] = None
+    metadata: Optional[Dict[str, str]] = None
     middle_name: Optional[str] = None
     nickname: Optional[str] = None
     notes: Optional[str] = None
@@ -286,6 +290,9 @@ class CreateContactRequest(TypedDict):
         given_name: The contact's given name.
         job_title: The contact's job title.
         manager_name: The contact's manager name.
+        metadata: Nylas-owned metadata for the contact. On update, omission or
+            None preserves existing metadata, an object replaces it, and an
+            empty object clears it.
         middle_name: The contact's middle name.
         nickname: The contact's nickname.
         notes: The contact's notes.
@@ -309,6 +316,7 @@ class CreateContactRequest(TypedDict):
     given_name: NotRequired[str]
     job_title: NotRequired[str]
     manager_name: NotRequired[str]
+    metadata: NotRequired[Optional[Dict[str, str]]]
     middle_name: NotRequired[str]
     nickname: NotRequired[str]
     notes: NotRequired[str]
@@ -338,6 +346,9 @@ class ListContactsQueryParams(ListQueryParams):
         source: Return contacts from a specific source.
         group: Return contacts from a specific group.
         recurse: Return contacts from all sub-groups of the specified group.
+        metadata_pair: Filter by one indexed metadata key/value pair. Use one
+            of key1 through key5. This cannot be combined with provider-side
+            contact filters; pagination parameters are supported.
         select (NotRequired[str]): Comma-separated list of fields to return in the response.
             This allows you to receive only the portion of object data that you're interested in.
         limit (NotRequired[int]): The maximum number of objects to return.
@@ -351,6 +362,7 @@ class ListContactsQueryParams(ListQueryParams):
     source: NotRequired[SourceType]
     group: NotRequired[str]
     recurse: NotRequired[bool]
+    metadata_pair: NotRequired[Dict[str, str]]
 
 
 class GroupType(str, Enum):

@@ -24,6 +24,7 @@ class TestContact:
             "im_addresses": [{"type": "other", "im_address": "myjabberaddress"}],
             "job_title": "Software Engineer",
             "manager_name": "Bill",
+            "metadata": {"key1": "sync_eligible"},
             "middle_name": "Jacob",
             "nickname": "JD",
             "notes": "Loves ramen",
@@ -64,6 +65,7 @@ class TestContact:
         ]
         assert contact.job_title == "Software Engineer"
         assert contact.manager_name == "Bill"
+        assert contact.metadata == {"key1": "sync_eligible"}
         assert contact.middle_name == "Jacob"
         assert contact.nickname == "JD"
         assert contact.notes == "Loves ramen"
@@ -108,6 +110,23 @@ class TestContact:
             "/v3/grants/abc-123/contacts",
             None,
             {"limit": 20},
+            None,
+            overrides=None,
+        )
+
+    def test_list_contacts_with_metadata_pair(self, http_client_list_response):
+        contacts = Contacts(http_client_list_response)
+
+        contacts.list(
+            identifier="abc-123",
+            query_params={"metadata_pair": {"key1": "sync_eligible"}},
+        )
+
+        http_client_list_response._execute.assert_called_once_with(
+            "GET",
+            "/v3/grants/abc-123/contacts",
+            None,
+            {"metadata_pair": {"key1": "sync_eligible"}},
             None,
             overrides=None,
         )
@@ -219,6 +238,7 @@ class TestContact:
             "given_name": "John",
             "surname": "Doe",
             "company_name": "Nylas",
+            "metadata": {"key1": "sync_eligible"},
         }
 
         contacts.create(identifier="abc-123", request_body=request_body)
@@ -238,6 +258,7 @@ class TestContact:
             "given_name": "John",
             "surname": "Doe",
             "company_name": "Nylas",
+            "metadata": {},
         }
 
         contacts.update(
