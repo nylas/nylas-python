@@ -170,6 +170,17 @@ class TestHttpClient:
             == "https://test.nylas.com/foo?foo=bar&list=a&list=b&list=c&map=key1:value1&map=key2:value2"
         )
 
+    def test_build_contact_metadata_pair_query_param(self):
+        url = _build_query_params(
+            base_url="https://test.nylas.com/v3/grants/abc-123/contacts",
+            query_params={"metadata_pair": {"key1": "sync_eligible"}},
+        )
+
+        assert (
+            url
+            == "https://test.nylas.com/v3/grants/abc-123/contacts?metadata_pair=key1:sync_eligible"
+        )
+
     def test_execute_download_request(self, http_client, patched_request):
         response = http_client._execute_download_request(
             path="/foo",

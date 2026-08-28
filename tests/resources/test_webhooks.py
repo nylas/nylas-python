@@ -5,6 +5,11 @@ from nylas.resources.webhooks import Webhooks, extract_challenge_parameter
 
 
 class TestWebhooks:
+    def test_contact_webhook_contract(self):
+        assert WebhookTriggers.CONTACT_UPDATED.value == "contact.updated"
+        assert WebhookTriggers.CONTACT_DELETED.value == "contact.deleted"
+        assert "contact.created" not in {trigger.value for trigger in WebhookTriggers}
+
     def test_webhook_deserialization(self, http_client):
         webhook_json = {
             "id": "UMWjAjMeWQ4D8gYF2moonK4486",
