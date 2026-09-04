@@ -232,8 +232,8 @@ class ConfigParticipant:
     """
 
     email: str
-    availability: ParticipantAvailability
-    booking: ParticipantBooking
+    availability: Optional[ParticipantAvailability] = None
+    booking: Optional[ParticipantBooking] = None
     name: Optional[str] = None
     is_organizer: Optional[bool] = None
     timezone: Optional[str] = None
