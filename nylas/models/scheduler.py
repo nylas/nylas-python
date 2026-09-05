@@ -530,3 +530,30 @@ class FindBookingQueryParams:
 ConfirmBookingQueryParams = FindBookingQueryParams
 RescheduleBookingQueryParams = FindBookingQueryParams
 DestroyBookingQueryParams = FindBookingQueryParams
+
+
+class GetAvailabilityQueryParams(TypedDict):
+    """
+    Class representation of query parameters for getting the availability for a Scheduler Configuration.
+
+    Attributes:
+      start_time: The time from which to check availability, in seconds using the Unix timestamp format.
+      end_time: The time until which to check availability, in seconds using the Unix timestamp format.
+      configuration_id: The ID of the Configuration object used for calculating availability.
+        If you're using session authentication (requires_session_auth: true), the configuration_id isn't required.
+      slug: The Configuration object slug. You can use this with the client_id instead of using the configuration_id.
+        If you're using session authentication (requires_session_auth: true) or using the configuration_id,
+        slug isn't required.
+      client_id: The client ID that was used to create the Configuration object.
+        Required only if you're using slug.
+      booking_id: The ID of the booking to reschedule, if you're checking availability to reschedule a round-robin
+        booking.Required only if availability_method is max-fairness or max-availability.
+
+    """
+
+    start_time: int
+    end_time: int
+    configuration_id: NotRequired[str]
+    slug: NotRequired[str]
+    client_id: NotRequired[str]
+    booking_id: NotRequired[str]
