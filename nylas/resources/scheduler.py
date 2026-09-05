@@ -44,8 +44,12 @@ class Scheduler:
             The Sessions API.
         """
         return Sessions(self.http_client)
-    
-    def get_availability(self, query_params: GetAvailabilityQueryParams, overrides: RequestOverrides = None) -> Response[GetAvailabilityResponse]:
+
+    def get_availability(
+        self,
+        query_params: GetAvailabilityQueryParams,
+        overrides: RequestOverrides = None,
+    ) -> Response[GetAvailabilityResponse]:
         """
         Get availability for a Configuration.
 
@@ -64,4 +68,3 @@ class Scheduler:
         )
 
         return Response.from_dict(json_response, GetAvailabilityResponse, headers)
-
