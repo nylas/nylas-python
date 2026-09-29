@@ -19,11 +19,13 @@ from nylas.models.messages import (
     StopScheduledMessageResponse,
     CleanMessagesRequest,
     CleanMessagesResponse,
+    SendRawMimeRequest,
 )
 from nylas.models.response import Response, ListResponse, DeleteResponse
 from nylas.resources.smart_compose import SmartCompose
 from nylas.utils.file_utils import (
     _build_form_request,
+    _build_raw_mime_form_request,
     MAXIMUM_JSON_ATTACHMENT_SIZE,
     encode_stream_to_base64,
 )
@@ -200,6 +202,36 @@ class Messages(
             path=path,
             request_body=json_body,
             data=form_data,
+            overrides=overrides,
+        )
+
+        return Response.from_dict(json_response, Message, headers)
+
+    def send_raw_mime(
+        self,
+        identifier: str,
+        request_body: SendRawMimeRequest,
+        overrides: RequestOverrides = None,
+    ) -> Response[Message]:
+        """
+        Send a Message using raw MIME data.
+
+        Use this when you need full control over the outgoing message, such as setting
+        headers (e.g. Importance or X-Priority) that the structured send request doesn't expose.
+
+        Args:
+            identifier: The identifier of the grant to send the message for.
+            request_body: The request body containing the raw MIME message.
+            overrides: The request overrides to apply to the request.
+
+        Returns:
+            The sent message.
+        """
+        json_response, headers = self._http_client._execute(
+            method="POST",
+            path=f"/v3/grants/{identifier}/messages/send",
+            query_params={"type": "mime"},
+            data=_build_raw_mime_form_request(request_body["mime"]),
             overrides=overrides,
         )
 

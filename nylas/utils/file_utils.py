@@ -79,3 +79,19 @@ def _build_form_request(request_body: dict) -> MultipartEncoder:
         )
 
     return MultipartEncoder(fields=fields)
+
+
+def _build_raw_mime_form_request(mime) -> MultipartEncoder:
+    """
+    Build a form-data request for sending a raw MIME message.
+
+    The MIME is sent as a file part so the API streams it to disk instead of
+    holding it in memory, which allows messages with large attachments.
+
+    Attributes:
+        mime: The raw MIME message, as a string or bytes.
+
+    Returns:
+        The multipart/form-data request.
+    """
+    return MultipartEncoder(fields={"mime": ("message.eml", mime, "message/rfc822")})

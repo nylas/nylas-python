@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Literal, Optional, Dict, Any
+from typing import List, Literal, Optional, Dict, Any, Union
 from dataclasses_json import dataclass_json, config
 from typing_extensions import TypedDict, NotRequired, get_type_hints
 
@@ -269,6 +269,18 @@ class CleanMessagesRequest(TypedDict):
     images_as_markdown: NotRequired[bool]
     ignore_tables: NotRequired[bool]
     remove_conclusion_phrases: NotRequired[bool]
+
+
+class SendRawMimeRequest(TypedDict):
+    """
+    A request to send a message as raw MIME data.
+
+    Attributes:
+        mime: The complete RFC 822 MIME message, including all headers and body parts.
+            Pass bytes to send the message exactly as encoded; strings are encoded as UTF-8.
+    """
+
+    mime: Union[str, bytes]
 
 
 @dataclass_json
