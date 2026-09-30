@@ -1,6 +1,11 @@
 from unittest.mock import patch, mock_open
 
-from nylas.utils.file_utils import attach_file_request_builder, _build_form_request, encode_stream_to_base64
+from nylas.utils.file_utils import (
+    attach_file_request_builder,
+    _build_form_request,
+    _build_raw_mime_form_request,
+    encode_stream_to_base64,
+)
 
 
 class TestFileUtils:
@@ -194,3 +199,22 @@ class TestFileUtils:
         # Both should decode to the same value
         assert json.loads(encoded_with_ascii)["subject"] == test_subject
         assert json.loads(encoded_without_ascii)["subject"] == test_subject
+
+    def test_build_raw_mime_form_request(self):
+        mime = "MIME-Version: 1.0\r\nImportance: High\r\nSubject: Hi\r\n\r\nHello"
+
+        request = _build_raw_mime_form_request(mime)
+
+        assert request.fields == {"mime": ("message.eml", mime, "message/rfc822")}
+        assert request.content_type.startswith("multipart/form-data; boundary=")
+        body = request.to_string()
+        assert b'Content-Disposition: form-data; name="mime"; filename="message.eml"' in body
+        assert b"Content-Type: message/rfc822" in body
+        assert b"Importance: High" in body
+
+    def test_build_raw_mime_form_request_bytes_preserved(self):
+        mime = b"MIME-Version: 1.0\r\nSubject: Hi\r\n\r\n\xc3\xa9\xff"
+
+        request = _build_raw_mime_form_request(mime)
+
+        assert mime in request.to_string()

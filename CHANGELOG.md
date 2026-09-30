@@ -4,6 +4,7 @@ Unreleased
 ----------
 * Added optional `tracking_options.domain_name` support for custom link and open tracking hostnames in message sends, scheduled sends, drafts, and Transactional Send
 * Added Contact metadata request/response models and `metadata_pair` filtering, with contact webhook compatibility documentation
+* Added `messages.send_raw_mime()` to send a raw RFC 822 MIME message via `POST /v3/grants/{grant_id}/messages/send?type=mime`, with the `SendRawMimeRequest` model
 
 v6.17.0
 ----------

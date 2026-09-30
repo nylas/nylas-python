@@ -378,6 +378,60 @@ class TestMessage:
                 overrides=None,
             )
 
+    def test_send_raw_mime(self, http_client_response):
+        messages = Messages(http_client_response)
+        mock_encoder = Mock()
+        mime = "MIME-Version: 1.0\r\nImportance: High\r\nX-Priority: 1\r\nSubject: Hi\r\n\r\nHello"
+
+        with patch(
+            "nylas.resources.messages._build_raw_mime_form_request",
+            return_value=mock_encoder,
+        ) as mock_build:
+            messages.send_raw_mime(identifier="abc-123", request_body={"mime": mime})
+
+            mock_build.assert_called_once_with(mime)
+            http_client_response._execute.assert_called_once_with(
+                method="POST",
+                path="/v3/grants/abc-123/messages/send",
+                query_params={"type": "mime"},
+                data=mock_encoder,
+                overrides=None,
+            )
+
+    def test_send_raw_mime_bytes(self, http_client_response):
+        messages = Messages(http_client_response)
+        mime = b"MIME-Version: 1.0\r\nSubject: =?UTF-8?B?w6k=?=\r\n\r\n\xc3\xa9"
+
+        with patch(
+            "nylas.resources.messages._build_raw_mime_form_request"
+        ) as mock_build:
+            messages.send_raw_mime(identifier="abc-123", request_body={"mime": mime})
+
+            mock_build.assert_called_once_with(mime)
+
+    def test_send_raw_mime_with_overrides(self, http_client_response):
+        messages = Messages(http_client_response)
+        mock_encoder = Mock()
+        overrides = {"timeout": 60}
+
+        with patch(
+            "nylas.resources.messages._build_raw_mime_form_request",
+            return_value=mock_encoder,
+        ):
+            messages.send_raw_mime(
+                identifier="abc-123",
+                request_body={"mime": "MIME-Version: 1.0\r\n\r\nHi"},
+                overrides=overrides,
+            )
+
+            http_client_response._execute.assert_called_once_with(
+                method="POST",
+                path="/v3/grants/abc-123/messages/send",
+                query_params={"type": "mime"},
+                data=mock_encoder,
+                overrides=overrides,
+            )
+
     def test_list_scheduled_messages(self, http_client_list_scheduled_messages):
         messages = Messages(http_client_list_scheduled_messages)
 
