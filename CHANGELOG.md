@@ -1,6 +1,6 @@
 nylas-python Changelog
 ======================
-Unreleased
+v6.18.0
 ----------
 * Added optional `tracking_options.domain_name` support for custom link and open tracking hostnames in message sends, scheduled sends, drafts, and Transactional Send
 * Added Contact metadata request/response models and `metadata_pair` filtering, with contact webhook compatibility documentation
