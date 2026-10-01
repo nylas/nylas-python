@@ -38,7 +38,8 @@ class TestConfiguration:
                         "calendar_id": "primary"
                     },
                     "timezone": ""
-                }
+                },
+                {"email": "guest_participant@nylas.com"}
             ],
             "requires_session_auth": False,
             "availability": {
@@ -117,6 +118,8 @@ class TestConfiguration:
         assert configuration.participants[0].availability.open_hours[0]["timezone"] == ""
         assert configuration.participants[0].booking.calendar_id == "primary"
         assert configuration.participants[0].timezone == ""
+        assert configuration.participants[1].availability == None
+        assert configuration.participants[1].booking == None
         assert configuration.requires_session_auth == False
         assert configuration.availability.duration_minutes == 30
         assert configuration.availability.interval_minutes == 15
