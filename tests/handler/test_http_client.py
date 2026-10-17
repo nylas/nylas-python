@@ -219,7 +219,6 @@ class TestHttpClient:
                 "X-Nylas-API-Wrapper": "python",
                 "User-Agent": "Nylas Python SDK 2.0.0 - 1.2.3",
                 "Authorization": "Bearer test-key",
-                "Content-type": "application/json",
             },
             timeout=60,
             stream=False,
