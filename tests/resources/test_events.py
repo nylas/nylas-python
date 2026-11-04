@@ -1,5 +1,16 @@
+import json
+from unittest.mock import Mock, patch
+
+import pytest
+
 from nylas.resources.events import Events
+from nylas.models.errors import NylasApiError
 from nylas.models.events import Event
+from nylas.models.events_batch import (
+    BatchCreateEventOperation,
+    BatchUpdateEventOperation,
+    BatchDeleteEventOperation,
+)
 
 
 class TestEvent:
@@ -878,4 +889,337 @@ class TestEvent:
             {"calendar_id": "abc-123"},
             request_body,
             overrides=None,
+        )
+
+
+BATCH_OPERATIONS = [
+    {
+        "method": "create",
+        "body": {
+            "title": "Standup",
+            "when": {"start_time": 1798794000, "end_time": 1798795800},
+        },
+    },
+    {"method": "update", "event_id": "event-1", "body": {"title": "Renamed"}},
+    {"method": "delete", "event_id": "event-2"},
+]
+
+
+def _event_json(event_id, title):
+    return {
+        "id": event_id,
+        "grant_id": "abc-123",
+        "calendar_id": "primary",
+        "busy": True,
+        "participants": [],
+        "when": {
+            "start_time": 1798794000,
+            "end_time": 1798795800,
+            "object": "timespan",
+        },
+        "title": title,
+        "object": "event",
+    }
+
+
+def _http_response(status_code, body):
+    response = Mock()
+    response.status_code = status_code
+    response.json.return_value = body
+    response.headers = {"X-Test-Header": "test"}
+    response.url = "https://test.nylas.com/v3/grants/abc-123/events/batch"
+    return response
+
+
+class TestEventBatch:
+    def _batch(self, http_client, status_code, body, operations=None):
+        events = Events(http_client)
+        with patch("requests.request", return_value=_http_response(status_code, body)):
+            return events.batch(
+                identifier="abc-123",
+                request_body={"operations": operations or BATCH_OPERATIONS},
+                query_params={"calendar_id": "primary"},
+            )
+
+    def test_batch_events_request(self, http_client):
+        events = Events(http_client)
+        body = {"request_id": "req-123", "data": [{"status": 200}] * 3}
+
+        with patch(
+            "requests.request", return_value=_http_response(200, body)
+        ) as mock_request:
+            events.batch(
+                identifier="abc-123",
+                request_body={"operations": BATCH_OPERATIONS},
+                query_params={
+                    "calendar_id": "primary",
+                    "notify_participants": False,
+                    "select": "id,title",
+                },
+                overrides={"timeout": 60},
+            )
+
+        mock_request.assert_called_once()
+        method, url = mock_request.call_args.args
+        assert method == "POST"
+        assert url == (
+            "https://test.nylas.com/v3/grants/abc-123/events/batch"
+            "?calendar_id=primary&notify_participants=False&select=id%2Ctitle"
+        )
+        assert (
+            mock_request.call_args.kwargs["headers"]["Content-type"]
+            == "application/json"
+        )
+        assert mock_request.call_args.kwargs["timeout"] == 60
+        assert json.loads(mock_request.call_args.kwargs["data"]) == {
+            "operations": [
+                {
+                    "method": "create",
+                    "body": {
+                        "title": "Standup",
+                        "when": {"start_time": 1798794000, "end_time": 1798795800},
+                    },
+                },
+                {
+                    "method": "update",
+                    "event_id": "event-1",
+                    "body": {"title": "Renamed"},
+                },
+                {"method": "delete", "event_id": "event-2"},
+            ]
+        }
+
+    def test_batch_events_all_succeeded(self, http_client):
+        response = self._batch(
+            http_client,
+            200,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {"status": 200, "data": _event_json("new-event", "Standup")},
+                    {"status": 200, "data": _event_json("event-1", "Renamed")},
+                    {"status": 200},
+                ],
+            },
+        )
+
+        assert response.request_id == "req-123"
+        assert response.headers == {"X-Test-Header": "test"}
+        created, updated, deleted = response.data
+        assert created.status == 200
+        assert isinstance(created.data, Event)
+        assert created.data.id == "new-event"
+        assert created.data.title == "Standup"
+        assert created.data.when.start_time == 1798794000
+        assert created.error is None
+        assert updated.status == 200
+        assert isinstance(updated.data, Event)
+        assert updated.data.id == "event-1"
+        assert updated.data.title == "Renamed"
+        assert updated.error is None
+        assert deleted.status == 200
+        assert deleted.data is None
+        assert deleted.error is None
+
+    def test_batch_events_multi_status_returns_results(self, http_client):
+        response = self._batch(
+            http_client,
+            207,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {
+                        "status": 500,
+                        "error": {
+                            "type": "api_error",
+                            "message": "Failed to save the event metadata.",
+                        },
+                        "provider_event_created": True,
+                    },
+                    {
+                        "status": 429,
+                        "error": {
+                            "type": "rate_limit_error",
+                            "message": "Too many requests.",
+                            "provider_error": {"error": {"code": 429}},
+                        },
+                        "retry_after": 30,
+                    },
+                    {"status": 200},
+                ],
+            },
+        )
+
+        assert response.request_id == "req-123"
+        created, updated, deleted = response.data
+        assert created.status == 500
+        assert created.data is None
+        assert created.error.type == "api_error"
+        assert created.error.message == "Failed to save the event metadata."
+        assert created.provider_event_created is True
+        assert created.retry_after is None
+        assert updated.status == 429
+        assert updated.data is None
+        assert updated.error.type == "rate_limit_error"
+        assert updated.error.message == "Too many requests."
+        assert updated.error.provider_error == {"error": {"code": 429}}
+        assert updated.retry_after == 30
+        assert updated.provider_event_created is None
+        assert deleted.status == 200
+        assert deleted.error is None
+
+    def test_batch_events_multi_status_all_failed_returns_results(self, http_client):
+        response = self._batch(
+            http_client,
+            207,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {
+                        "status": 503,
+                        "error": {
+                            "type": "internal_error",
+                            "message": "Not attempted. It is safe to retry.",
+                        },
+                    },
+                    {
+                        "status": 404,
+                        "error": {
+                            "type": "not_found_error",
+                            "message": "Event not found.",
+                        },
+                    },
+                    {
+                        "status": 404,
+                        "error": {
+                            "type": "not_found_error",
+                            "message": "Event not found.",
+                        },
+                    },
+                ],
+            },
+        )
+
+        assert [result.status for result in response.data] == [503, 404, 404]
+        assert all(result.data is None for result in response.data)
+        assert response.data[0].error.type == "internal_error"
+        assert response.data[1].error.type == "not_found_error"
+        assert response.data[2].error.type == "not_found_error"
+
+    def test_batch_events_retry_after_zero(self, http_client):
+        response = self._batch(
+            http_client,
+            207,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {
+                        "status": 429,
+                        "error": {
+                            "type": "rate_limit_error",
+                            "message": "Too many requests.",
+                        },
+                        "retry_after": 0,
+                    }
+                ],
+            },
+            operations=[{"method": "delete", "event_id": "event-2"}],
+        )
+
+        assert response.data[0].retry_after is not None
+        assert response.data[0].retry_after == 0
+
+    def test_batch_events_invalid_request_raises_api_error(self, http_client):
+        events = Events(http_client)
+        operations = [
+            {"method": "delete", "event_id": f"event-{index}"} for index in range(51)
+        ]
+        body = {
+            "request_id": "req-123",
+            "error": {
+                "type": "invalid_request_error",
+                "message": "operations cannot exceed 50",
+            },
+        }
+
+        with patch(
+            "requests.request", return_value=_http_response(400, body)
+        ) as mock_request:
+            with pytest.raises(NylasApiError) as error:
+                events.batch(
+                    identifier="abc-123",
+                    request_body={"operations": operations},
+                    query_params={"calendar_id": "primary"},
+                )
+
+        mock_request.assert_called_once()
+        assert error.value.status_code == 400
+        assert error.value.request_id == "req-123"
+        assert error.value.type == "invalid_request_error"
+        assert str(error.value) == "operations cannot exceed 50"
+
+    def test_batch_events_results_match_operation_order(self, http_client):
+        operations = [
+            {"method": "delete", "event_id": "event-2"},
+            {"method": "update", "event_id": "event-1", "body": {"title": "Renamed"}},
+            {"method": "delete", "event_id": "event-3"},
+            {"method": "create", "body": BATCH_OPERATIONS[0]["body"]},
+        ]
+
+        response = self._batch(
+            http_client,
+            207,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {"status": 200},
+                    {"status": 200, "data": _event_json("event-1", "Renamed")},
+                    {
+                        "status": 404,
+                        "error": {
+                            "type": "not_found_error",
+                            "message": "Event event-3 not found.",
+                        },
+                    },
+                    {"status": 200, "data": _event_json("new-event", "Standup")},
+                ],
+            },
+            operations=operations,
+        )
+
+        assert len(response.data) == len(operations)
+        assert response.data[0].status == 200
+        assert response.data[0].data is None
+        assert response.data[1].data.id == "event-1"
+        assert response.data[2].error.message == "Event event-3 not found."
+        assert response.data[3].data.id == "new-event"
+
+    @pytest.mark.filterwarnings("ignore:Missing value of non-optional type")
+    def test_batch_events_with_select_returns_partial_events(self, http_client):
+        response = self._batch(
+            http_client,
+            200,
+            {
+                "request_id": "req-123",
+                "data": [
+                    {"status": 200, "data": {"id": "new-event", "title": "Standup"}}
+                ],
+            },
+            operations=[BATCH_OPERATIONS[0]],
+        )
+
+        assert isinstance(response.data[0].data, Event)
+        assert response.data[0].data.id == "new-event"
+        assert response.data[0].data.title == "Standup"
+        assert response.data[0].data.when is None
+
+    def test_batch_operation_types_require_event_id_and_body(self):
+        assert BatchCreateEventOperation.__required_keys__ == frozenset(
+            {"method", "body"}
+        )
+        assert BatchUpdateEventOperation.__required_keys__ == frozenset(
+            {"method", "event_id", "body"}
+        )
+        assert BatchDeleteEventOperation.__required_keys__ == frozenset(
+            {"method", "event_id"}
         )

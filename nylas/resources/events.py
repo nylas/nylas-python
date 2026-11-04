@@ -1,3 +1,5 @@
+from typing import List
+
 from nylas.config import RequestOverrides
 from nylas.handler.api_resources import (
     ListableApiResource,
@@ -18,6 +20,11 @@ from nylas.models.events import (
     DestroyEventQueryParams,
     SendRsvpQueryParams,
     SendRsvpRequest,
+)
+from nylas.models.events_batch import (
+    BatchEventsRequest,
+    BatchEventsQueryParams,
+    BatchEventResult,
 )
 from nylas.models.response import (
     Response,
@@ -234,3 +241,45 @@ class Events(
         )
 
         return RequestIdOnlyResponse.from_dict(json_response, headers)
+
+    def batch(
+        self,
+        identifier: str,
+        request_body: BatchEventsRequest,
+        query_params: BatchEventsQueryParams,
+        overrides: RequestOverrides = None,
+    ) -> Response[List[BatchEventResult]]:
+        """
+        Create, update, and delete Events in a single request.
+        Only Google and Microsoft grants support batch operations.
+
+        The response has one result for each operation, in the same order as the operations.
+        If some or all of the operations fail, the API returns HTTP 207 and this method still
+        returns the results, so check the status and error of each result.
+        If the request itself is invalid, the API returns HTTP 400, runs none of the operations,
+        and this method raises a NylasApiError.
+
+        Args:
+            identifier: The identifier of the Grant to act upon.
+            request_body: The operations to run.
+            query_params: The query parameters to include in the request. They apply to every operation.
+            overrides: The request overrides to use for the request.
+
+        Returns:
+            The result of each operation.
+        """
+        json_response, headers = self._http_client._execute(
+            "POST",
+            f"/v3/grants/{identifier}/events/batch",
+            None,
+            query_params,
+            request_body,
+            overrides=overrides,
+        )
+
+        results = [
+            BatchEventResult.from_dict(item, infer_missing=True)
+            for item in json_response["data"]
+        ]
+
+        return Response(results, json_response["request_id"], headers)

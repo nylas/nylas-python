@@ -35,3 +35,4 @@ generated-members=
     FreeBusyError.from_dict,
     FreeBusy.from_dict,
     ScheduledMessage.from_dict,
+    BatchEventResult.from_dict,

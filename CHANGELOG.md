@@ -1,5 +1,9 @@
 nylas-python Changelog
 ======================
+Unreleased
+----------
+* Added Events batch endpoint (Google and Microsoft): `events.batch()` runs create, update, and delete operations in one `POST /v3/grants/{grant_id}/events/batch` request, with the `BatchEventsRequest`, `BatchEventsQueryParams`, and `BatchEventResult` models. A partial failure (HTTP 207) returns the per-operation results instead of raising an error
+
 v6.18.0
 ----------
 * Added optional `tracking_options.domain_name` support for custom link and open tracking hostnames in message sends, scheduled sends, drafts, and Transactional Send
