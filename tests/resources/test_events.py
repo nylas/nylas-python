@@ -5,8 +5,8 @@ import pytest
 
 from nylas.resources.events import Events
 from nylas.models.errors import NylasApiError
-from nylas.models.events import (
-    Event,
+from nylas.models.events import Event
+from nylas.models.events_batch import (
     BatchCreateEventOperation,
     BatchUpdateEventOperation,
     BatchDeleteEventOperation,
@@ -934,9 +934,7 @@ def _http_response(status_code, body):
 class TestEventBatch:
     def _batch(self, http_client, status_code, body, operations=None):
         events = Events(http_client)
-        with patch(
-            "requests.request", return_value=_http_response(status_code, body)
-        ):
+        with patch("requests.request", return_value=_http_response(status_code, body)):
             return events.batch(
                 identifier="abc-123",
                 request_body={"operations": operations or BATCH_OPERATIONS},

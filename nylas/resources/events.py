@@ -20,6 +20,8 @@ from nylas.models.events import (
     DestroyEventQueryParams,
     SendRsvpQueryParams,
     SendRsvpRequest,
+)
+from nylas.models.events_batch import (
     BatchEventsRequest,
     BatchEventsQueryParams,
     BatchEventResult,

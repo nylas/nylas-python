@@ -175,7 +175,9 @@ def main() -> None:
     except NylasApiError as error:
         # events.batch() raises only when the API rejects the whole request,
         # for example with HTTP 400 for an invalid batch or an unsupported provider.
-        print(f"Error: {error} (HTTP {error.status_code}, request ID {error.request_id})")
+        print(
+            f"Error: {error} (HTTP {error.status_code}, request ID {error.request_id})"
+        )
         sys.exit(1)
 
 
