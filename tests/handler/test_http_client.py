@@ -236,6 +236,25 @@ class TestHttpClient:
         assert response_json == {"foo": "bar"}
         assert response_headers == {"X-Test-Header": "test"}
 
+    def test_validate_response_207_multi_status(self):
+        response = Mock()
+        response.status_code = 207
+        response.json.return_value = {
+            "request_id": "123",
+            "data": [
+                {
+                    "status": 404,
+                    "error": {"type": "not_found_error", "message": "Not found."},
+                }
+            ],
+        }
+        response.url = "https://test.nylas.com/v3/grants/abc-123/events/batch"
+        response.headers = {"X-Test-Header": "test"}
+
+        response_json, response_headers = _validate_response(response)
+        assert response_json == response.json.return_value
+        assert response_headers == {"X-Test-Header": "test"}
+
     def test_validate_response_400_error(self):
         response = Mock()
         response.status_code = 400
