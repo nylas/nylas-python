@@ -8,7 +8,8 @@ on:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    # Python 3.8 has no actions/python-versions build for ubuntu-26.04, which ubuntu-latest now resolves to.
+    runs-on: ubuntu-24.04
     environment:
       name: sdk-reference
       url: ${{ steps.deploy.outputs.deployment-url }}

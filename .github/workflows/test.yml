@@ -11,7 +11,8 @@ on:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    # Python 3.8 has no actions/python-versions build for ubuntu-26.04, which ubuntu-latest now resolves to.
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: ["3.8", "3.x"]
@@ -34,7 +35,8 @@ jobs:
         uses: codecov/codecov-action@v3
 
   black:
-    runs-on: ubuntu-latest
+    # Python 3.8 has no actions/python-versions build for ubuntu-26.04, which ubuntu-latest now resolves to.
+    runs-on: ubuntu-24.04
     name: Pylint and Black
     steps:
       - uses: actions/checkout@v2
