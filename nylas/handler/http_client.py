@@ -134,7 +134,9 @@ class HttpClient:
         stream=False,
         overrides=None,
     ) -> Union[bytes, Response, dict]:
-        request = self._build_request("GET", path, headers, query_params, overrides)
+        request = self._build_request(
+            "GET", path, headers, query_params, overrides=overrides
+        )
 
         timeout = self.timeout
         if overrides and overrides.get("timeout"):
