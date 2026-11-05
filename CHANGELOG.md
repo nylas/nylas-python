@@ -1,6 +1,6 @@
 nylas-python Changelog
 ======================
-Unreleased
+v6.19.0
 ----------
 * Added Events batch endpoint (Google and Microsoft): `events.batch()` runs create, update, and delete operations in one `POST /v3/grants/{grant_id}/events/batch` request, with the `BatchEventsRequest`, `BatchEventsQueryParams`, and `BatchEventResult` models. A partial failure (HTTP 207) returns the per-operation results instead of raising an error
 
